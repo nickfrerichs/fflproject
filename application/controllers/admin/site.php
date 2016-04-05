@@ -32,7 +32,25 @@ class Site extends MY_Admin_Controller{
     public function edit_league($id)
     {
         $data = array();
+        $data['info'] = $this->site_model->get_league_info($id);
+        $data['settings'] = $this->site_model->get_league_settings($id);
         $this->admin_view('admin/site/edit_league',$data);
+    }
+
+    public function ajax_change_item()
+    {
+        $return = array();
+        $type = $this->input->post('type');
+        $value = $this->input->post('value');
+        $id = $this->input->post('var1');
+        if($type == "joinpassword")
+        {
+            $this->site_model->set_joinpassword($id, $value);
+            $return['success'] = True;
+            $return['value'] = $value;
+        }
+
+        echo json_encode($return);
     }
 
 }

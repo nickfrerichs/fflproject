@@ -79,7 +79,7 @@ class MY_Admin_Controller extends CI_Controller{
         parent::__construct();
 
         // To load the CI benchmark and memory usage profiler - set 1==1.
-        if (1==1)
+        if (1==1 && (!$this->input->is_ajax_request()))
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,

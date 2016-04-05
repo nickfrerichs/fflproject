@@ -30,4 +30,22 @@ class Site_model extends MY_Model
         $this->db->insert('league_settings',$data);
     }
 
+    function get_league_info($id)
+    {
+        return $this->db->select('league_name, league.id as id')->from('league')->where('id',$id)->get()->row();
+    }
+
+    function get_league_settings($id)
+    {
+        return $this->db->select('join_password')->from('league_settings')->where('league_settings.league_id',$id)
+            ->get()->row();
+    }
+
+    function set_joinpassword($id, $value)
+    {
+        $data = array('join_password' => $value);
+        $this->db->where('league_id',$id);
+        $this->db->update('league_settings',$data);
+    }
+
 }
