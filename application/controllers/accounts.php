@@ -31,12 +31,12 @@ class Accounts extends CI_Controller{
         redirect(site_url(''));
     }
 
-    function register($code = "")
+    function register($maskid="", $code = "")
     {
         if (!$this->account_model->admin_account_exists())
             $league_id = 0;
         else
-            $league_id = $this->account_model->get_league_id($code);
+            $league_id = $this->account_model->get_league_id($maskid, $code);
 
         if ($league_id >= 0)
         {

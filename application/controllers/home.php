@@ -24,7 +24,10 @@ class Home extends CI_Controller{
 
     public function index()
     {
+
         $data = array();
+        if ($this->input->get('redirect'))
+            $data['redirect'] = $this->input->get('redirect');
         // If 'Login' form has been submited, attempt to log the user in.
 
         if ($this->flexi_auth->ip_login_attempts_exceeded())

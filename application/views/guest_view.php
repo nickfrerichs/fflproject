@@ -15,6 +15,10 @@
 
 				<input type="password" class="form-control" placeholder="Password"  required id="password" name="login_password" />
 
+				<?php if(isset($redirect)): ?>
+					<input type="hidden" name="redirect" value="<?=$redirect?>">
+				<?php endif;?>
+
 				<?php if (isset($captcha)) {echo $captcha;} ?>
 	<!--
 				<label class="checkbox">

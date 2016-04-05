@@ -21,7 +21,8 @@ class Site_model extends MY_Model
     function create_league($name)
     {
         // Insert into league table
-        $data = array('league_name' => $name);
+        $data = array('league_name' => $name,
+                      'mask_id' => strtoupper(substr(md5(uniqid()),0,5)));
         $this->db->insert('league',$data);
         $id = $this->db->insert_id();
 

@@ -24,11 +24,12 @@ class Account_model extends CI_Model{
         return $this->db->select('uacc_email')->from('user_accounts')->where('uacc_id',$id)->get()->row()->uacc_email;
     }
 
-    function get_league_id($code)
+    function get_league_id($maskid, $code)
     {
-        $result = $this->db->select('leauge_id')->from('league_settings')->where('register_code',$code)->get()->result();
+        $result = $this->db->select('league.id')->from('league')->join('league_settings','league_settings.league_id = league.id')
+            ->where('league.mask_id',$maskid)->where('league_settings.join_password',$code)->get()->row();
         if(count($result) > 0)
-            return $result->leauge_id;
+            return $result->id;
         return -1;
     }
 
