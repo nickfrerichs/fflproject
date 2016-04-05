@@ -1,0 +1,137 @@
+/* http://toddmotto.com/flawless-clickable-drop-down-navigation/ */
+
+/* Hide smallnav by default */
+#sm-menu { 
+    display: none;
+}
+
+/* Main menu bar element */
+#lg-menu{
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top; 
+}
+
+/* Menubar main buttons */
+.lg-mainbutton, .menulink{
+    margin: 0;
+    display:inline-block;
+    width: 125px;
+    background-color:blanchedalmond;
+    font-weight:bold;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-size: 1em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    
+}
+
+/* Menubar submenu group */
+.lg-submenu{
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    width: 125px;
+    margin-top: 11px;
+    list-style-type: none;
+}
+
+.lg-submenu-button{
+    margin: 0;
+    position: relative;
+    background-color: aliceblue;
+    font-weight: normal;
+    text-transform: none;
+    border-color: #000;
+    border-width: 1px;
+    /* border-style: solid;*/
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.lg-submenu-button:hover{
+    background-color: #365;
+}
+
+.menu-button-active{
+    background-color: #999;
+}
+
+/* Small menu */
+@media only screen and (max-width: 550px) {
+
+    /* Hide large main menu bar */
+    #lg-menu { display: none; }
+
+    /* Show small main menu bar */
+    #sm-menu { 
+        display: inline-block;;
+        cursor: pointer;
+        text-align: left;
+        display: inline-block;
+        vertical-align: top; 
+        width: 100%;
+    }
+
+    /* Main button class, an individual button. */
+    .sm_mainbutton{
+        background-color: blanchedalmond;
+        font-weight:bold;
+        border-radius: 0px;
+        text-transform: uppercase;
+        font-size: 1em;
+        text-align: center;
+        padding-top: 5px;
+        padding-bottom: 5px;
+
+    }
+
+    /* Sub group of options to show when button pressed */
+    .sm_subgroup{
+        position: absolute;
+        display: inline-block;
+        vertical-align: top;
+        width: 49%;
+        right: 5px;
+        top: 0;
+    }
+
+    .sm_subbutton{
+        position: relative;
+        background-color: aliceblue;
+        font-weight: normal;
+        text-transform: none;
+        border-color: #000;
+        border-width: 1px;
+        /* border-style: solid;*/
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
+        
+    }
+
+    /* Main buttons ID */
+    #sm_maingroup{
+        display: inline-block;
+        width: 49%;
+    }
+}
+
+
+
+
+#chatbutton{
+    display: inline-block;
+    width: 36px;
+    vertical-align: top;
+    /* width: 18%;*/
+
+}
+
+.icon{
+    background-color: blanchedalmond;
+    height: 36px;
+    width: 36px;
+}

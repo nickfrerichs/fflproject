@@ -1,0 +1,54 @@
+<?php
+
+class Menu_model extends CI_Model
+{
+
+    function __construct(){
+        parent::__construct();
+        $this->current_year = $this->session->userdata('current_year');
+	}
+
+	function get_menu_items_data($admin = false)
+	{
+        if (count($this->session->userdata('leagues')) == 0)
+            $noleague = True;
+        else
+            $noleague = False;
+		$this->db->select('menu_item.text as item_text, menu_bar.text as menu_text, menu_item.url, menu_bar.url as bar_url')->
+		from('menu_bar')->join('menu_item', 'menu_bar.id = menu_item.menu_bar_id','left');
+		if ($admin)
+			$this->db->where('menu_bar.admin',1);
+		else
+			$this->db->where('menu_bar.admin', 0);
+        if ($admin && $this->flexi_auth->is_admin())
+            $this->db->where('menu_bar.super_admin',1);
+        else
+            $this->db->where('menu_bar.super_admin',0);
+        // Not a member of a league, only show noleague items.. or admin view and not league admin
+        if ($noleague || ($admin && !$this->session->userdata('is_league_admin')))
+            $this->db->where('menu_item.show_noleague',1);
+        $this->db->where('menu_bar.hide',0)->where('menu_item.hide',0)
+		      ->order_by('menu_bar.order', 'asc')->order_by('menu_item.order','asc');
+		$data = $this->db->get()->result();
+		$data_array = array();
+		foreach ($data as $row)
+		{
+            $menu_text = $this->fill_vars($row->menu_text);
+            if ($row->item_text == "")
+            {
+                $data_array[$menu_text] = $row->bar_url;
+                continue;
+            }
+            $item_text = $this->fill_vars($row->item_text);
+			$data_array[$menu_text][$item_text] = $row->url;
+		}
+		return $data_array;
+	}
+
+    function fill_vars($text)
+    {
+        $text = str_ireplace("*season_year*",$this->current_year,$text);
+        return $text;
+    }
+
+}

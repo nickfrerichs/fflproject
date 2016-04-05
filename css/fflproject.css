@@ -1,0 +1,239 @@
+
+
+/* Boot-strap customizations */
+.table-border{
+    border:1px solid #bbb;
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 1px rgba(0,0,0,0.2);
+}
+
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6 {
+  /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+  font-family: Verdana, Geneva, sans-serif;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.btn-default{
+    color: #1A4C80;
+}
+
+/* New Live Scoring */
+
+
+/* Live Scoring */
+.active-points{
+	color: #29A629;
+	font-weight: bold;
+}
+
+.ls-active{
+	//background-color: #007A29;
+	font-weight: bold;
+	color: #29A629;
+	font-size: .8em;
+	display: inline-block;
+	border-radius: 3px;
+	//padding-left: 10px;
+	//padding-right: 10px;
+	//padding-top: 1px;
+	//padding-bottom: 1px;
+	//border-color: #B2B2CC;
+	//border-style: solid;
+}
+
+.team-heading{
+	font-size: 2em;
+	display: inline-block;
+}
+.team-heading-min{
+	font-size: 1.5em;
+	display: inline-block;
+}
+
+/* ???? */
+.active_points{
+  color: #66CC33;
+}
+
+.ls-inactive{
+	font-size: 0.8em;
+	font-style: italic;
+}
+
+/* Draft stuff */
+@media (max-width: 767px) {
+
+    .btn-draft.glyphicon{
+        font-size: 2.0em;
+    }
+    .pick-round-font{
+        font-size: .7em;
+    }
+
+}
+
+@media (max-width: 1024px){
+
+}
+#recent-top-row{
+    background-color:#BDBDBD;
+    font-weight:bold
+}
+
+
+#countdown{
+    font-size:1.5em;
+}
+.d-block-team-name{
+    font-size:1.2em;
+}
+
+#d-block-team-logo, .team-logo{
+    border:1px solid #DDDDDD;
+    border-radius:5px;
+}
+
+.med-logo{
+    height: 200px;
+    width: 200px;
+}
+
+
+/* Custom classes / element ids */
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #EEEEEE;
+  cursor: pointer;
+}
+
+.valign {
+  padding-top:50px;
+  padding-bottom:50px;
+}
+
+.trade-player-selected{
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+
+#trade-offer-text, #trade-request-text{
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 4px;
+  margin-bottom: 10px;
+  min-height: 40px;
+}
+
+#messages {
+   overflow: hidden;
+   position: fixed;
+   max-width: 100%;
+   z-index: 1000;
+   display: none;
+   background: #99FF99;
+}
+
+#chat-window{
+    border:1px solid #bbb;
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 1px rgba(0,0,0,0.2);
+
+    right: 10px;
+    position: absolute;
+    background: #eeeeee;
+    /*border-style: solid;*/
+    width: 300px;
+    display: none;
+    z-index: 1000;
+}
+
+.chat-button-pressed{
+    background: #888888;
+}
+
+#chat-history-table{
+    background: #FFFFFF;
+    font-size:.9em;
+    z-index: 1000;
+    overflow: scroll;
+    max-height: 300px;
+}
+
+#chat-message{
+    width: 100%;
+    vertical-align: top;
+    font-size:.9em;
+}
+
+.chat-row{
+    word-wrap:break-word;
+    max-width:290px;
+}
+
+#footer-bar{
+    background: #1A4C80;
+    margin: 0 auto;
+    margin-top:20px;
+    border:1px solid #bbb;
+    background:#003380;
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 1px rgba(0,0,0,0.2);
+}
+#footer-bar a{
+    color: #DDDDDD;
+}
+
+/* Items for menus visible on mobile devices */
+#menu-button-xs{
+    font-size: 1.3em;
+}
+#footer-nav{
+	position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 40px;
+    margin: 0 auto;
+}
+.btn-footer{
+	background: #1A4C80;
+	height: 40px;
+	margin: 0 auto;
+}
+.btn-menu, .btn-footer{
+    color: #FBE36D;
+    height: 40px;
+}
+
+.btn-menu:hover, .btn-footer:hover, .btn-footer.focus, .btn-footer.active{
+  background-color: #0D3A69;
+  border-color: #adadad;
+  color: #AAA;;
+}
+
+#main-menu{
+  z-index: 2000;
+}
+
+.text-xxs{
+    font-size: .8em;
+}
+
+/* For iPhone 5s size screens */
+@media only screen and (max-width: 480px) {
+  /* .text-xxs{font-size: .8em;} */
+  .xxs-text-6em{font-size: .6em;}
+  .hidden-xxs{
+    display: none;
+    visibility: collapse;
+  }
+}

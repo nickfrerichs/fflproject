@@ -1,0 +1,9 @@
+RewriteEngine on
+RewriteCond $1 !^(index\.php|images|css|js|robots\.txt)
+RewriteRule ^(.*)$ /index.php/$1 [L]
+
+# Prevent user access to the CI system folder.
+RewriteCond %{REQUEST_URI} ^system.*
+
+# Prevent user access to the CI application folder
+RewriteCond %{REQUEST_URI} ^application.*

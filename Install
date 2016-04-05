@@ -1,0 +1,18 @@
+To get up and running:
+(Assuming LAMP environment)
+
+1. Create a new database and import fflproject.sql
+	mysqladmin -u mydbuser -p create mynewdatabase
+	mysql -u mydbuser -p mynewdatabase < fflproject.sql
+
+2. Configure your database settings in codeigniter:
+	./application/config/database.php
+	$db['default']['hostname'] = '';
+	$db['default']['username'] = '';
+	$db['default']['password'] = '';
+	$db['default']['database'] = '';
+
+3. Change password salt for flexi auth
+
+4. Set up a super admin user
+
