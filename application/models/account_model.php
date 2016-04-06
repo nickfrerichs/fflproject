@@ -4,9 +4,13 @@ class Account_model extends CI_Model{
 
     function add_team($email_address, $team_name, $league_id)
     {
-        $user_id = $this->db->select('uacc_id')->from('user_accounts')->
-                where('uacc_email', $email_address)->get()->row()->uacc_id;
-        $data = array('owner_id' => $user_id, 'league_id' => $league_id, 'team_name' => $team_name);
+        // $user_id = $this->db->select('uacc_id')->from('user_accounts')->
+        //         where('uacc_email', $email_address)->get()->row()->uacc_id; 
+
+        $owner_id = $this->db->select('owner.id as owner_id')->from('user_accounts')->join('owner','owner.user_accounts_id = user_accounts.uacc_id')
+            ->where('user_accounts.uacc_email',$email_address)->get()->row()->owner_id;
+
+        $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 'team_name' => $team_name);
         $this->db->insert('team', $data);
     }
 
@@ -17,6 +21,14 @@ class Account_model extends CI_Model{
         $data = array('user_accounts_id' => $user_id, 'first_name' => $first_name,
                     'last_name' => $last_name);
         $this->db->insert('owner', $data);
+    }
+
+    function set_active_league($email, $leagueid)
+    {
+        $user_id = $this->db->select('uacc_id')->from('user_accounts')->where('uacc_email',$email)->get()->row()->id;
+        $data = array('active_league' => $leagueid);
+        $this->db->where('user_accounts_id',$user_id);
+        $this->db->update('owner',$data);
     }
 
     function get_email_from_id($id)

@@ -6,13 +6,13 @@ class Security_model extends MY_Model
     function set_session_variables()
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
-                ->select('team.id as team_id, team_name, team.league_id')
+                ->select('team.id as team_id, team_name, owner.active_league')
                 ->from('owner')
                 ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
 
         $this->session->set_userdata('owner_id', $owner->owner_id);
-        $this->session->set_userdata('league_id', $owner->league_id);
+        $this->session->set_userdata('league_id', $owner->active_league);
         $this->session->set_userdata('team_id', $owner->team_id);
         $this->session->set_userdata('team_name', $owner->team_name);
         $this->session->set_userdata('first_name', $owner->first_name);

@@ -19,6 +19,11 @@
                         <a href="#" id="joinpassword-cancel" class="cancel-control"></a>
                     </td>
                 </tr>
+
+                <tr>
+                    <?php $inviteurl = site_url('joinleague/invite/'.$info->mask_id.'/'.$settings->join_password); ?>
+                    <td><b>Invite URL</b></td><td colspan=2><a href="<?=$inviteurl?>"><?=$inviteurl?></a></td>
+                </tr>
                 <tr>
                     <td colspan=3><button class="btn btn-default">Save Settings</button></td>
                 </tr>

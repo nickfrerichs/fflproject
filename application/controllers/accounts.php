@@ -68,8 +68,9 @@ class Accounts extends CI_Controller{
                 # If league_id is 0, this is the first user and is only an admin
                 if ($response && $league_id != 0)
                 {
-                    $this->account_model->add_team($email, $team_name, $league_id);
                     $this->account_model->add_owner($email, $first_name, $last_name);
+                    $this->account_model->add_team($email, $team_name, $league_id);
+                    $this->account_model->set_active_league($email, $league_id);
                 }
                 if ($response)
                     redirect(site_url());

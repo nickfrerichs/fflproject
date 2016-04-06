@@ -33,7 +33,7 @@ class Site_model extends MY_Model
 
     function get_league_info($id)
     {
-        return $this->db->select('league_name, league.id as id')->from('league')->where('id',$id)->get()->row();
+        return $this->db->select('league_name, league.id as id, league.mask_id')->from('league')->where('id',$id)->get()->row();
     }
 
     function get_league_settings($id)

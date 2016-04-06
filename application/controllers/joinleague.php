@@ -28,12 +28,22 @@ class Joinleague extends CI_Controller{
         {
             // If they aren't logged in, ask them to login, or register new account
             //redirect('accounts/register/'.$mask_id.'/'.$code);
-            echo "Not logged in";
-            redirect('/?redirect=joinleague/invite/423df2/supersecret');
+            ?>
+            <div class="container">
+                <div class="row">
+                    <div>
+                        <a href="<?=site_url('/?redirect=joinleague/invite/'.$mask_id.'/'.$code)?>">Login to join this league.</a><br>
+                        - or -<br>
+                    <a href="<?=site_url('accounts/register/'.$mask_id.'/'.$code)?>">Create a new account and join.</a></div>
+                </div>
+            </div>
+            <?php
+            //echo "Not logged in";
+            //redirect('/?redirect=joinleague/invite/'.$mask_id.'/'.$code);
         }
         else
         {
-            echo "Logged in";
+            echo "Logged in and ready to join league";
         }
 
     }
