@@ -2,30 +2,27 @@
 
 class Account_model extends CI_Model{
 
-    function add_team($email_address, $team_name, $league_id)
+    function add_team($user_id, $team_name, $league_id)
     {
         // $user_id = $this->db->select('uacc_id')->from('user_accounts')->
         //         where('uacc_email', $email_address)->get()->row()->uacc_id; 
 
         $owner_id = $this->db->select('owner.id as owner_id')->from('user_accounts')->join('owner','owner.user_accounts_id = user_accounts.uacc_id')
-            ->where('user_accounts.uacc_email',$email_address)->get()->row()->owner_id;
+            ->where('user_accounts.uacc_id',$user_id)->get()->row()->owner_id;
 
-        $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 'team_name' => $team_name);
+        $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 'team_name' => $team_name, 'long_name' => $team_name);
         $this->db->insert('team', $data);
     }
 
-    function add_owner($email_address, $first_name, $last_name)
+    function add_owner($user_id, $first_name, $last_name)
     {
-        $user_id = $this->db->select('uacc_id')->from('user_accounts')->
-            where('uacc_email', $email_address)->get()->row()->uacc_id;
         $data = array('user_accounts_id' => $user_id, 'first_name' => $first_name,
                     'last_name' => $last_name);
         $this->db->insert('owner', $data);
     }
 
-    function set_active_league($email, $leagueid)
+    function set_active_league($user_id, $leagueid)
     {
-        $user_id = $this->db->select('uacc_id')->from('user_accounts')->where('uacc_email',$email)->get()->row()->id;
         $data = array('active_league' => $leagueid);
         $this->db->where('user_accounts_id',$user_id);
         $this->db->update('owner',$data);
@@ -48,6 +45,14 @@ class Account_model extends CI_Model{
     function admin_account_exists()
     {
         if ($this->db->from('user_accounts')->where('uacc_group_fk',1)->get()->num_rows() > 0)
+            return True;
+        return False;
+    }
+
+    function user_is_owner($user_id)
+    {
+        $result = $this->db->select('id')->from('owner')->where('user_accounts_id',$user_id)->get()->result();
+        if (count($result) > 0)
             return True;
         return False;
     }

@@ -65,18 +65,23 @@ class Accounts extends CI_Controller{
 
                 $response = $this->flexi_auth->insert_user($email, $username, $password, $profile_data, $group_id, $instant_activate);
 
-                # If league_id is 0, this is the first user and is only an admin
+                
+                # If league_id is 0, this is the first user and there are no leagues yet.
                 if ($response && $league_id != 0)
                 {
-                    $this->account_model->add_owner($email, $first_name, $last_name);
-                    $this->account_model->add_team($email, $team_name, $league_id);
-                    $this->account_model->set_active_league($email, $league_id);
+                    $this->account_model->add_owner($response, $first_name, $last_name);
+                    $this->account_model->add_team($response, $team_name, $league_id);
+                    $this->account_model->set_active_league($response, $league_id);
                 }
                 if ($response)
                     redirect(site_url());
             }
             $this->load->helper('form');
             $this->load->view('guest_register',array('admin_exists' => $this->account_model->admin_account_exists()));
+        }
+        else
+        {
+            echo "<center>You need to use a valid invite link to register.</center>";
         }
     }
 

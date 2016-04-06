@@ -20,6 +20,8 @@ class Joinleague extends CI_Controller{
                 $this->output->enable_profiler(TRUE);
         }
 
+
+
     }
 
     function invite($mask_id="", $code="")
@@ -43,12 +45,9 @@ class Joinleague extends CI_Controller{
         }
         else
         {
-            echo "Logged in and ready to join league";
+            redirect('user/joinleague/'.$mask_id.'/'.$code);
         }
-
     }
-
-
 }
 
 ?>

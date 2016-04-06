@@ -254,6 +254,7 @@ DROP TABLE IF EXISTS `league`;
 CREATE TABLE `league` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `league_name` varchar(100) NOT NULL,
+  `mask_id` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1555,4 +1556,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-03 19:18:54
+-- Dump completed on 2016-04-06 13:15:35

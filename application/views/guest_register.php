@@ -6,21 +6,23 @@
 	<?php endif;?>
 
     <?=form_open(current_url())?>
-    <li>
-        <?=form_label('First Name','first_name')?>
-        <?=form_input('first_name')?>
-    </li>
-    <li>
-        <?=form_label('Last Name','last_name')?>
-        <?=form_input('last_name')?>
-    </li>
+    <?php if($admin_exists): ?>
+        <li>
+            <?=form_label('First Name','first_name')?>
+            <?=form_input('first_name')?>
+        </li>
+        <li>
+            <?=form_label('Last Name','last_name')?>
+            <?=form_input('last_name')?>
+        </li>
+        <li>
+            <?=form_label('Team Name','team_name')?>
+            <?=form_input('team_name')?>
+        </li>
+    <?php endif;?>
     <li>
         <?=form_label('Email Address','email_address')?>
         <?=form_input('email_address')?>
-    </li>
-    <li>
-        <?=form_label('Team Name','team_name')?>
-        <?=form_input('team_name')?>
     </li>
     <li>
         <?=form_label('Username','username')?>
