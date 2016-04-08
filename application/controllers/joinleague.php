@@ -9,7 +9,7 @@ class Joinleague extends CI_Controller{
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
 
-        if ((1==1) && (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
+        if ((1==0) && (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
@@ -30,16 +30,11 @@ class Joinleague extends CI_Controller{
         {
             // If they aren't logged in, ask them to login, or register new account
             //redirect('accounts/register/'.$mask_id.'/'.$code);
-            ?>
-            <div class="container">
-                <div class="row">
-                    <div>
-                        <a href="<?=site_url('/?redirect=joinleague/invite/'.$mask_id.'/'.$code)?>">Login to join this league.</a><br>
-                        - or -<br>
-                    <a href="<?=site_url('accounts/register/'.$mask_id.'/'.$code)?>">Create a new account and join.</a></div>
-                </div>
-            </div>
-            <?php
+
+            $data = array('v' => 'guest_invite',
+                          'mask_id' => $mask_id,
+                          'code' => $code);
+            $this->load->view('template/simple',$data);
             //echo "Not logged in";
             //redirect('/?redirect=joinleague/invite/'.$mask_id.'/'.$code);
         }

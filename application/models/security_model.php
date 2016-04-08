@@ -18,7 +18,7 @@ class Security_model extends MY_Model
         $this->session->set_userdata('first_name', $owner->first_name);
         $this->session->set_userdata('last_name', $owner->last_name);
 
-        if ($this->db->from('league_admin')->where('league_id',$owner->leagueid)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)
+        if ($this->db->from('league_admin')->where('league_id',$owner->active_league)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)
             $this->session->set_userdata('is_league_admin', True);
         else
             $this->session->set_userdata('is_league_admin', False);

@@ -360,7 +360,7 @@ CREATE TABLE `menu_bar` (
 
 LOCK TABLES `menu_bar` WRITE;
 /*!40000 ALTER TABLE `menu_bar` DISABLE KEYS */;
-INSERT INTO `menu_bar` VALUES (1,'My Team',1,0,0,'',0),(2,'*season_year* Season',2,0,0,'',0),(3,'League',3,0,0,'',0),(4,'Teams',1,1,0,'',0),(5,'League',2,1,0,'',0),(6,'Scores',2,0,0,'statistics/scores',1),(7,'Content',3,1,0,'',0),(8,'Site Admin',1,1,1,'',0);
+INSERT INTO `menu_bar` VALUES (1,'My Team',1,0,0,'',0),(2,'*season_year* Season',2,0,0,'',0),(3,'League',3,0,0,'',0),(4,'Teams',1,1,0,'',0),(5,'League',2,1,0,'',0),(6,'Scores',2,0,0,'statistics/scores',1),(7,'Content',3,1,0,'',0),(8,'Site Admin',1,0,1,'',0);
 /*!40000 ALTER TABLE `menu_bar` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1556,4 +1556,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-06 13:15:35
+-- Dump completed on 2016-04-08 14:20:32

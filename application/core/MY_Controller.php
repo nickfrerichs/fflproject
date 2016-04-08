@@ -14,7 +14,7 @@ class MY_Controller extends CI_Controller{
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->load->model('common/common_model');
         // To load the CI benchmark and memory usage profiler - set 1==1.
-        if ((1==1) || (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
+        if ((1==0) || (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
@@ -79,7 +79,7 @@ class MY_Admin_Controller extends CI_Controller{
         parent::__construct();
 
         // To load the CI benchmark and memory usage profiler - set 1==1.
-        if (1==1 && (!$this->input->is_ajax_request()))
+        if (1==0 && (!$this->input->is_ajax_request()))
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,

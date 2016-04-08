@@ -7,7 +7,7 @@
 			<?php if ($this->session->userdata('user_id') == 1 || $this->session->userdata('user_id') == 12): ?>
 				<a href="#" id="change-league-link">Change League</a>
 			<?php endif; ?>
-			<?php $isadmin = ($this->session->userdata('league_admin') || $this->flexi_auth->is_admin()); ?>
+			<?php $isadmin = ($this->session->userdata('is_league_admin') || $this->flexi_auth->is_admin()); ?>
 			<?php if ($isadmin && stripos($v,'admin') === false) {echo ' <a href = '.site_url().'admin>Admin </a>';} ?>
 			<?php if ($isadmin && stripos($v,'admin') > -1) {echo ' <a href = '.site_url().'>User </a>';} ?>
 

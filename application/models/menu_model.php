@@ -10,20 +10,25 @@ class Menu_model extends CI_Model
 
 	function get_menu_items_data($admin = false)
 	{
-        if (count($this->session->userdata('leagues')) == 0)
+        if ($this->session->userdata('league_id') <= 0)
             $noleague = True;
         else
             $noleague = False;
 		$this->db->select('menu_item.text as item_text, menu_bar.text as menu_text, menu_item.url, menu_bar.url as bar_url')->
 		from('menu_bar')->join('menu_item', 'menu_bar.id = menu_item.menu_bar_id','left');
-		if ($admin)
-			$this->db->where('menu_bar.admin',1);
-		else
-			$this->db->where('menu_bar.admin', 0);
-        if ($admin && $this->flexi_auth->is_admin())
+
+        if ($admin == false)
+            $this->db->where('menu_bar.admin',0)->where('menu_bar.super_admin',0);
+        elseif ($admin && $this->flexi_auth->is_admin())
+        {
+            $this->db->where('(menu_bar.super_admin = 1 or menu_bar.admin = 1)',null,false);
+        }
+        elseif($this->flexi_auth->is_admin())
             $this->db->where('menu_bar.super_admin',1);
+        elseif($admin)
+            $this->db->where('menu_bar.admin',1);
         else
-            $this->db->where('menu_bar.super_admin',0);
+            $this->db->where('menu_bar.admin', 0);
         // Not a member of a league, only show noleague items.. or admin view and not league admin
         if ($noleague || ($admin && !$this->session->userdata('is_league_admin')))
             $this->db->where('menu_item.show_noleague',1);

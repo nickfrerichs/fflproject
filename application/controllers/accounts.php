@@ -65,7 +65,7 @@ class Accounts extends CI_Controller{
 
                 $response = $this->flexi_auth->insert_user($email, $username, $password, $profile_data, $group_id, $instant_activate);
 
-                
+
                 # If league_id is 0, this is the first user and there are no leagues yet.
                 if ($response && $league_id != 0)
                 {
@@ -77,7 +77,8 @@ class Accounts extends CI_Controller{
                     redirect(site_url());
             }
             $this->load->helper('form');
-            $this->load->view('guest_register',array('admin_exists' => $this->account_model->admin_account_exists()));
+            $data = array('admin_exists' => $this->account_model->admin_account_exists(), 'v' => 'guest_register');
+            $this->load->view("template/simple",$data);
         }
         else
         {
