@@ -1,19 +1,35 @@
 <div class="container">
-<span class="table-heading"><?php echo $leaguename; ?></span>
+<h4><?php echo $leaguename; ?></h4>
 
     <table class="table table-condensed">
-        <tr>
-            <th>Team</th><th>Roster</th><th>Division</th><th>Owner</th>
-        </tr>
-        <?php foreach ($teams as $team){ ?>
-
-        <tr>
-            <td><a href=<?php echo site_url().'admin/teams/show/'.$team->id.'>'.$team->team_name; ?></a></td>
-            <td><a href="<?=site_url('admin/rosters/view/'.$team->id)?>">Edit Roster</td>
-            <td>Division</td>
-            <td><?php echo $team->first_name.' '.$team->last_name; ?></td>
-
-        </tr>
-        <?php }?>
+        <thead>
+            <th>Team</th><th>Roster</th><th>Division</th><th>Owner</th><th>Active</th>
+        </thead>
+        <tbody id="team-list">
+        </tbody>
     </table>
 </div>
+
+<script>
+$(document).ready(function(){
+    update_teams();
+});
+
+function update_teams()
+{
+    var url = "<?=site_url('admin/teams/ajax_get_teams')?>";
+    $.post(url,{},function(data){
+        $("#team-list").html(data);
+    });
+}
+
+$("#team-list").on('click','.btn-active',function(){
+    var action = $(this).data("action");
+    var teamid = $(this).data("id");
+    var url = "<?=site_url('admin/teams/ajax_toggle_active')?>";
+    $.post(url,{"action":action, "teamid":teamid},function(){
+        update_teams();
+    })
+})
+
+</script>

@@ -5,12 +5,12 @@ class Account_model extends CI_Model{
     function add_team($user_id, $team_name, $league_id)
     {
         // $user_id = $this->db->select('uacc_id')->from('user_accounts')->
-        //         where('uacc_email', $email_address)->get()->row()->uacc_id; 
+        //         where('uacc_email', $email_address)->get()->row()->uacc_id;
 
         $owner_id = $this->db->select('owner.id as owner_id')->from('user_accounts')->join('owner','owner.user_accounts_id = user_accounts.uacc_id')
             ->where('user_accounts.uacc_id',$user_id)->get()->row()->owner_id;
 
-        $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 'team_name' => $team_name, 'long_name' => $team_name);
+        $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 'team_name' => $team_name, 'long_name' => $team_name, 'active' => 1);
         $this->db->insert('team', $data);
     }
 
@@ -55,5 +55,16 @@ class Account_model extends CI_Model{
         if (count($result) > 0)
             return True;
         return False;
+    }
+
+    function ok_to_join_league($user_id,$league_id)
+    {
+        // Check to see if user already has a team in this league.
+        $num = $this->db->from('team')->join('owner','team.owner_id = owner.id')
+            ->where('team.league_id',$league_id)->where('owner.user_accounts_id',$user_id)
+            ->get()->num_rows();
+        if ($num > 0)
+            return False;
+        return True;
     }
 }

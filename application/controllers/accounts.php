@@ -67,7 +67,7 @@ class Accounts extends CI_Controller{
 
 
                 # If league_id is 0, this is the first user and there are no leagues yet.
-                if ($response && $league_id != 0)
+                if ($response && $league_id > 0 && $this->account_model->ok_to_join_league($response,$league_id))
                 {
                     $this->account_model->add_owner($response, $first_name, $last_name);
                     $this->account_model->add_team($response, $team_name, $league_id);
