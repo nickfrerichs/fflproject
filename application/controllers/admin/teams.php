@@ -46,12 +46,15 @@ class Teams extends MY_Admin_Controller
                 <td><a href="<?=site_url('admin/rosters/view/'.$team->id)?>">Edit Roster</td>
                 <td>Division</td>
                 <td><?=$team->first_name.' '.$team->last_name; ?></td>
-                <?php if($team->active): ?>
-                <?php $class="btn btn-danger btn-active"; $action="disable"; $text="Disable";?>
-                <?php else: ?>
-                <?php $class="btn btn-default btn-active"; $action="enable"; $text="Enable";?>
-                <?php endif;?>
-                <td><button class="<?=$class?>" data-id="<?=$team->id?>" data-action="<?=$action?>"><?=$text?></button></td>
+                <td class="text-center">
+                    <?php if($team->active): ?>
+                        <span style="font-weight:500">Active</span>
+                        (<a href="#" class="btn-active" data-id="<?=$team->id?>" data-action="disable">Toggle</a>)
+                    <?php else: ?>
+                        Inactive
+                        (<a href="#" class="btn-active" data-id="<?=$team->id?>" data-action="enable">Toggle</a>)
+                    <?php endif;?>
+                </td>
             </tr>
             <?php endforeach;?>
 

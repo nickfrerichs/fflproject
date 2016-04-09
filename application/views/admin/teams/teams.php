@@ -3,7 +3,7 @@
 
     <table class="table table-condensed">
         <thead>
-            <th>Team</th><th>Roster</th><th>Division</th><th>Owner</th><th>Active</th>
+            <th>Team</th><th>Roster</th><th>Division</th><th>Owner</th><th class="text-center" style="width:200px">Status</th>
         </thead>
         <tbody id="team-list">
         </tbody>
