@@ -69,7 +69,6 @@ class Teams extends MY_Admin_Controller
         $active = 0;
         if($this->input->post('action') == "enable")
             $active = 1;
-
         $this->teams_model->set_active_flag($teamid, $active);
     }
 

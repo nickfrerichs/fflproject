@@ -60,7 +60,7 @@
     <h4>Owner Settings</h4>
     <br>
 
-    <table class="table table-condensed table-striped" style="max-width:500px;">
+    <table class="table table-condensed table-striped" style="max-width:600px;">
         <thead>
         </thead>
         <tbody>
@@ -180,53 +180,6 @@ $("#logo-upload-button").on('click submit',function(e){
         });
     }
 });
-
-// Tean name, phone, etc changes
-$(".change-control").on('click', function(){
-
-    var name = $(this).attr('id').replace('-control','');
-    var control = $("#"+name+"-control");
-    var cancel = $("#"+name+"-cancel");
-    var field = $("#"+name+"-field");
-    var newvalue = $("#"+name+"-new");
-
-    if($(this).text() == "Change")
-    {
-        var current = field.text();
-        control.data('current',current);
-        field.html(
-            '<input id="'+name+'-new" type="text" placeholder="'+current+'">'
-        )
-        control.text('Save');
-        cancel.text('Cancel');
-        return;
-    }
-    if($(this).text() == 'Save')
-    {
-        var url = "<?=site_url('myteam/settings/ajax_change_item')?>";
-        var teamname = newvalue.val();
-        $.post(url,{type:name,value:newvalue.val()}, function(data){
-            if(data)
-            {
-                //newvalue.empty();
-                field.html(data);
-            }
-        });
-        //field.text(control.data('current'));
-        control.text('Change');
-        cancel.text('');
-    }
-
-});
-
-$(".cancel-control").on('click', function(){
-    var name = $(this).attr('id').replace('-cancel','');
-    var control = $("#"+name+"-control");
-    var field = $("#"+name+"-field");
-    control.text('Change');
-    field.text(control.data('current'));
-    $(this).text('');
-})
 
 // Password reset stuff
 $("#password-control").on('click', function(){

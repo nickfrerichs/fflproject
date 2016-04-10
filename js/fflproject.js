@@ -9,8 +9,23 @@ function showMessage(text, type)
 //		$('#messages').addClass('hide');
 	$('#messages').slideUp();
 	},4000);
-	console.log("here");
 }
+$(".toggle-control").on('click', function(e){
+	var url = $(this).data('url');
+	var newvalue = $(this).data('toggle');
+	var item = $(this).attr('id').replace('-toggle','');
+	$.post(url,{"item":item},function(data){
+		var d = $.parseJSON(data);
+		if(d.success)
+		{
+			var oldvalue = $("#"+item+"-field").text();
+			$("#"+item+"-field").text(newvalue);
+			$("#"+item+"-toggle").data("toggle",oldvalue);
+		}
+
+	});
+	e.preventDefault();
+});
 
 // .change-control and .cancel-control classes for editing a single setting/database value at a time.
 $(".change-control").on('click', function(e){
@@ -22,6 +37,7 @@ $(".change-control").on('click', function(e){
     var cancel = $("#"+name+"-cancel");
     var field = $("#"+name+"-field");
     var newvalue = $("#"+name+"-new");
+	var type = $(this).data('type');
     var url = $(this).data('url');
     var var1 = $(this).data('var1');
     var var2 = $(this).data('var2');
@@ -29,14 +45,15 @@ $(".change-control").on('click', function(e){
 
     if($(this).text() == "Change")
     {
-        var current = field.text();
-        control.data('current',current);
+		var current = field.text();
+		control.data('current',current);
         field.html(
-            '<input id="'+name+'-new" type="text" placeholder="'+current+'">'
-        )
+            '<input id="'+name+'-new" type="'+type+'" placeholder="'+current+'">'
+        );
         control.text('Save');
         cancel.text('Cancel');
-        return;
+		e.preventDefault();
+		return;
     }
     if($(this).text() == 'Save')
     {
@@ -44,21 +61,26 @@ $(".change-control").on('click', function(e){
             if(data)
             {
                 var d = $.parseJSON(data);
-                if(d.success){field.html(newvalue.val());}
+                if(d.success){field.html(newvalue.val());console.log(d);}
+				else
+				{field.html(newvalue.attr('placeholder'));console.log(d);}
             }
         });
         //field.text(control.data('current'));
         control.text('Change');
         cancel.text('');
+		e.preventDefault();
     }
+
 
 });
 
-$(".cancel-control").on('click', function(){
+$(".cancel-control").on('click', function(e){
     var name = $(this).attr('id').replace('-cancel','');
     var control = $("#"+name+"-control");
     var field = $("#"+name+"-field");
     control.text('Change');
     field.text(control.data('current'));
     $(this).text('');
+	e.preventDefault();
 })

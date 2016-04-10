@@ -9,7 +9,33 @@ class Leaguesettings_model extends MY_Model{
             ->select('s.twitter_player_moves, s.twitter_chat_updates, league.league_name')
             ->from('league')->join('league_settings as s','s.league_id = league.id')
             ->where('league.id',$leagueid)
-            ->get()->result();
+            ->get()->row();
     }
+
+    function toggle_setting($leagueid,$item)
+    {
+        $lookup = array('playermoves' => 'twitter_player_moves',
+                        'chatupdates' => 'twitter_chat_updates');
+        $val = !$this->db->select($lookup[$item])->from('league_settings')->where('league_id',$leagueid)
+            ->get()->row()->{$lookup[$item]};
+        $this->db->where('league_id',$leagueid);
+        $this->db->update('league_settings',array($lookup[$item] => $val));
+    }
+
+    function change_setting($leagueid, $type, $value)
+    {
+        $lookup = array('maxteams' => 'max_teams',
+              'rostermax' => 'roster_max',
+              'joinpassword' => 'join_password',
+              'consumertoken' => 'twitter_consumer_token',
+              'consumersecret' => 'twitter_consumer_secret',
+              'accesstoken' => 'twitter_access_token',
+              'accesssecret' => 'twitter_access_secret');
+
+        $this->db->where('league_id',$leagueid);
+        $this->db->update('league_settings', array($lookup[$type] => $value));
+        return $this->db->affected_rows();
+    }
+
 }
 ?>

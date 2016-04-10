@@ -6,9 +6,9 @@ class Security_model extends MY_Model
     function set_session_variables()
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
-                ->select('team.id as team_id, team_name, owner.active_league')
+                ->select('team.id as team_id, team_name, owner.active_league, team.active')
                 ->from('owner')
-                ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league')
+                ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
 
         $this->session->set_userdata('owner_id', $owner->owner_id);
@@ -103,7 +103,8 @@ class Security_model extends MY_Model
     function load_leagues($userid)
     {
         $rows = $this->db->select('league.id, league.league_name')->from('team')
-            ->join('league','league.id = team.league_id')->where('team.owner_id',$userid)->get()->result();
+            ->join('league','league.id = team.league_id')->where('team.owner_id',$userid)
+            ->where('team.active',1)->get()->result();
 
         $leagues = array();
         foreach($rows as $row)

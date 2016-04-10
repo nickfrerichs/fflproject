@@ -3,8 +3,6 @@
 		<div style="float:right; min-height:20px; padding-right:20px;">
 			<?php if (count($this->session->userdata('leagues')) > 1): ?>
 				<?php $this->load->view('template/modals/change_league'); ?>
-			<?php endif;?>
-			<?php if ($this->session->userdata('user_id') == 1 || $this->session->userdata('user_id') == 12): ?>
 				<a href="#" id="change-league-link">Change League</a>
 			<?php endif; ?>
 			<?php $isadmin = ($this->session->userdata('is_league_admin') || $this->flexi_auth->is_admin()); ?>
