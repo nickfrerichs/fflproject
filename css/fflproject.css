@@ -30,9 +30,9 @@ i{color:#2199e8;}
 /* --------------------- */
 
 /* both mobile and desktop menu bars */
-.top-bar, .top-bar ul, .top-bar li, .title-bar, .small-top-bar, #footer-bar{background-color: #444;}
+#title-bar-row, .top-bar, .top-bar ul, .top-bar li, .title-bar, .small-top-bar, #footer-bar{background-color: #444;}
 .top-bar a{color: #fff;}
-.top-bar{height:80px;}
+.top-bar-row{height:80px;}
 
 .live-scores{
 	color: #FFF;
@@ -41,7 +41,7 @@ i{color:#2199e8;}
 }
 
 /* mobile menu bar */
-.title-bar {background: #444;}
+.title-bar {background: #444;height:42px;}
 .site-title-small{
 	padding-bottom:0px;
 	padding-top:0px;
@@ -90,3 +90,4 @@ i{color:#2199e8;}
 #chat-window-small{}
 .chat-message{font-size: .8em;}
 #chat-button-small{height:42px;}
+#chat-button{margin-right:10px;}

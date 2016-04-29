@@ -2,16 +2,17 @@
 <div class="show-for-small-only small-top-bar row">
     <div class="title-bar small-9 columns align-left row" data-responsive-toggle="main-menu">
             <button class="menu-icon" type="button" data-toggle></button>
-            <div class="title-bar-title site-title-small"><?=$this->session->userdata('site_name')?>
             <?php if($this->session->userdata('league_id')): ?>
-                <?php if($this->session->userdata('live_scores')){$live="";}else{$live="hide";}?>
-                <span>
-                    <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
+                <?php if($this->session->userdata('live_scores')){$live="";$title="hide";}else{$live="hide";$title="";}?>
+                <span class="<?=$live?>">
+                    <a class="live-scores" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
+                </span>
+                <span class="<?=$title?>">
+                    <?=$this->session->userdata('site_name')?>
                 </span>
             <?php endif;?>
-            </div>
     </div>
-    <div class="small-3 columns">
+    <div class="small-3 columns text-right">
       <?php if($this->session->userdata('league_id')): ?>
           <button id="chat-button-small" class="button chat-button" type="button" data-toggle="chat-window-small">chat</button>
       <?php endif;?>
@@ -20,20 +21,22 @@
 </div>
 
 <!-- Normal menu bar for normal computers -->
-<div class="top-bar" id="main-menu">
-    <div class="top-bar-left">
+<div id="title-bar-row" class="row align-middle">
+    <div class="medium-3 columns hide-for-small-only">
+        <div class="site-title hide-for-small-only"><?=$this->session->userdata('site_name')?></div>
+        <div class="league-name-title hide-for-small-only"><?=$this->session->userdata('league_name')?></div>
 
+            <?php if($this->session->userdata('league_id')): ?>
+                <?php if($this->session->userdata('live_scores') || 1==1){$live="";}else{$live="hide";}?>
+                <span class="hide-for-small-only">
+                    <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
+                </span>
+            <?php endif;?>
+    </div>
+
+    <div class="top-bar medium-9 columns" id="main-menu">
+        <ul class="menu show-for-small-only site-title-small"><?=$this->session->userdata('league_name')?></ul>
         <ul class="dropdown menu medium-horizontal drilldown vertical" data-responsive-menu="drilldown medium-dropdown">
-          <li class="menu-text"><span class="site-title hide-for-small-only"><?=$this->session->userdata('site_name')?></span><br>
-              <span class="league-name-title"><?=$this->session->userdata('league_name')?></span>
-              <br>
-              <?php if($this->session->userdata('league_id')): ?>
-                  <?php if($this->session->userdata('live_scores')){$live="";}else{$live="hide";}?>
-                  <span class="hide-for-small-only">
-                      <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
-                  </span>
-              <?php endif;?>
-          </li>
             <?php foreach($menu_items as $button => $subitem): ?>
                 <?php if (!is_array($subitem)): ?>
                     <li><a href="<?=site_url($subitem)?>"><?=$button?></a></li>
@@ -49,37 +52,19 @@
               </li>
             <?php endforeach; ?>
         </ul>
-    </div>
-    <div class="top-bar-right align-right row">
-        <div class="row">
-            <div class="column small-12">
-                <ul class="menu medium-horizontal">
-                <?php if($this->session->userdata('league_id')): ?>
-                    <li>
-                        <button id="chat-button" class="button chat-button show-for-medium" type="button" data-toggle="chat-window">chat</button>
-                    </li>
-                <?php endif;?>
 
-                </ul>
-            </div>
-        </div>
+
+        <ul class="menu align-right">
+            <?php if($this->session->userdata('league_id')): ?>
+                    <button id="chat-button" class="button chat-button show-for-medium" type="button" data-toggle="chat-window">chat</button>
+            <?php endif;?>
+        </ul>
+
     </div>
 </div>
 
-<?php if($this->session->userdata('league_id')): ?>
-<!-- <div id="chat-window" class="dropdown-pane" data-dropdown>
-    <h4 class="text-center">League Chat</h4>
-    <div id="chat-history-table">
-        <table class="table table-striped table-condensed">
-            <tbody id="chat-history-ajax">
-            </tbody>
-        </table>
-    </div>
-    <div class="form-group">
-        <textarea id="chat-message" class="form-control" rows="3" placeholder="You put your trash talk in here..."></textarea>
-    </div>
-</div> -->
 
+<?php if($this->session->userdata('league_id')): ?>
 <div id="chat-window-small" class="dropdown-pane show-for-small-only chat-window" data-dropdown>
     <div class="text-center">League Chat</div>
     <div id="chat-history-table-small" class="chat-history-table">
@@ -113,34 +98,6 @@
 
 
 <script>
-// $(function() {
-//   $('#main-menu').smartmenus({
-//       subMenusSubOffsetX: 1,
-//       subMenusSubOffsetY: -8,
-//       showOnClick:true,
-//       hideOnClick:true
-//   });
-//
-//   menuLogic();
-//   $('#menu-button-xs').click(function() {
-//     $('#main-menu').slideToggle(200);
-//   return false;
-//   });
-//
-//   $(window).resize(function(){
-//     if ($(window).width()>768){menuLogic();}
-//   });
-//   function menuLogic()
-//   {
-//       if ($("#menu-button-xs").css("display") == "none"){
-//         $('#main-menu').show()
-//       }
-//       else{
-//         $('#main-menu').hide();
-//       }
-//   }
-// });
-
 //
 // CHAT BOX STUFF
 //
@@ -181,7 +138,6 @@ $("#chat-button, #chat-button-small").on('click', function(){
 
     	evtSource.onmessage = function(e)
         {
-
             console.log("Chat alive.")
     		if(($("#chat-window").data('chat-key') != e.data) || ($("#chat-window").data('chat-on') != true))
     		{updateChat(e.data);}
@@ -193,15 +149,12 @@ $("#chat-button, #chat-button-small").on('click', function(){
                 $("#chat-window").removeClass("is-open");
                 $("#chat-window-small").removeClass("is-open");
             }
-
-
         }
     }
     else
     {
         // Close chat stream
         closechat()
-
     }
 });
 
@@ -225,20 +178,6 @@ function closechat()
 // Post a new message to chat as long as there is
 // non-whitespace in the textarea and you didn't press
 // shift+enter
-// $('#chat-message').keypress(function(event){
-//     if(event.keyCode == 13 && !event.shiftKey){
-//         if ($("#chat-message").val().trim() == "") {event.preventDefault(); return}
-//         var url = "<?=site_url('league/chat/post')?>";
-//         $.post(url,{'message' : $('#chat-message').val()}, function(){
-//             $('#chat-message').val('');
-//             //updateChat();
-//             chatScrollBottom(true);
-//         });
-//         event.preventDefault();
-//     }
-
-// });
-
 $('.chat-message').keypress(function(event){
     if(event.keyCode == 13 && !event.shiftKey){
         if ($(this).val().trim() == "") {event.preventDefault(); return}
@@ -289,25 +228,23 @@ function updateChat(new_chat_key)
 // if true passed in, set scroll to bottom
 function chatScrollBottom(set)
 {
+    // Return true if the currently active chat is near the bottom, false if not.
+    if(set == undefined)
+    {
+        var chat_history_table_id = "#chat-history-table";
+        if (whichChatIsActive() == "small"){chat_history_table_id = "#chat-history-table-small";}
 
-
-        // Return true if the currently active chat is near the bottom, false if not.
-        if(set == undefined)
-        {
-            var chat_history_table_id = "#chat-history-table";
-            if (whichChatIsActive() == "small"){chat_history_table_id = "#chat-history-table-small";}
-
-            var h = $(chat_history_table_id).height()+$(chat_history_table_id).scrollTop();
-            if (h > $(chat_history_table_id).prop('scrollHeight')-25)
-            {return true;}
-            return false;
-        }
-        else
-        {
-            $(".chat-history-table").each(function(){
-                $(this).scrollTop($(this).prop('scrollHeight'));
-            });
-        }
+        var h = $(chat_history_table_id).height()+$(chat_history_table_id).scrollTop();
+        if (h > $(chat_history_table_id).prop('scrollHeight')-25)
+        {return true;}
+        return false;
+    }
+    else
+    {
+        $(".chat-history-table").each(function(){
+            $(this).scrollTop($(this).prop('scrollHeight'));
+        });
+    }
 }
 
 // Function to update the new chat count on the chat button.
@@ -329,7 +266,6 @@ function updateNewChatIcon()
 
 function updateLiveIcon()
 {
-
     var url = "<?=site_url('season/scores/live_scores')?>"
     $.post(url,{},function(data){
         if(data == "1")
