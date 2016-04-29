@@ -6,10 +6,13 @@ class Security_model extends MY_Model
     function set_session_variables()
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
-                ->select('team.id as team_id, team_name, owner.active_league, team.active')
+                ->select('team.id as team_id, team_name, owner.active_league, team.active, league.league_name')
                 ->from('owner')
                 ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1')
+                ->join('league','league.id = owner.active_league')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
+
+        $site_name = $this->db->select('name')->from('site_settings')->get()->row()->name;
 
         $this->session->set_userdata('owner_id', $owner->owner_id);
         $this->session->set_userdata('league_id', $owner->active_league);
@@ -17,6 +20,8 @@ class Security_model extends MY_Model
         $this->session->set_userdata('team_name', $owner->team_name);
         $this->session->set_userdata('first_name', $owner->first_name);
         $this->session->set_userdata('last_name', $owner->last_name);
+        $this->session->set_userdata('site_name', $site_name);
+        $this->session->set_userdata('league_name', $owner->league_name);
 
         if ($this->db->from('league_admin')->where('league_id',$owner->active_league)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)
             $this->session->set_userdata('is_league_admin', True);

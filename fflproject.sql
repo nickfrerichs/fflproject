@@ -300,6 +300,7 @@ DROP TABLE IF EXISTS `league_settings`;
 CREATE TABLE `league_settings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `league_id` int(11) NOT NULL,
+  `max_teams` int(11) NOT NULL,
   `roster_max` int(11) NOT NULL DEFAULT '0',
   `draft_time_limit` int(11) NOT NULL DEFAULT '300',
   `draft_start_time` datetime NOT NULL,
@@ -380,7 +381,7 @@ CREATE TABLE `menu_item` (
   `hide` tinyint(1) NOT NULL,
   `show_noleague` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -389,7 +390,7 @@ CREATE TABLE `menu_item` (
 
 LOCK TABLES `menu_item` WRITE;
 /*!40000 ALTER TABLE `menu_item` DISABLE KEYS */;
-INSERT INTO `menu_item` VALUES (1,1,'Roster','myteam/roster',0,0,0),(2,2,'Weekly Scores','season/scores',0,0,0),(3,1,'Logout','auth/logout',7,0,1),(4,2,'Standings','season/standings',2,0,0),(5,3,'News','league/news',0,0,0),(6,4,'Teams','admin/teams',1,0,0),(7,5,'Owners','admin/owners',1,0,0),(8,5,'Positions','admin/positions',2,0,0),(9,5,'Scoring','admin/scoring',3,0,0),(10,5,'Schedule','admin/schedule',4,0,0),(11,5,'Divisions','admin/divisions',5,0,0),(12,1,'Waiver Wire','myteam/waiverwire',1,0,0),(13,2,'Schedule','season/schedule',1,0,0),(14,1,'Trade','myteam/trade',3,0,0),(15,1,'Messages','myteam/messages',5,0,0),(16,3,'Players','league/players',1,0,0),(17,3,'History','league/history',3,0,0),(18,2,'Post Season','season/postseason',4,0,0),(19,2,'Money List','season/moneylist',3,0,0),(20,3,'Rules','league/rules',4,0,0),(21,2,'Draft','season/draft',5,0,0),(22,5,'Draft','admin/draft',5,0,0),(23,1,'Settings','myteam/settings',6,0,0),(24,3,'Teams','league/teams',2,0,0),(25,7,'Playoffs','admin/content/view/playoffs',1,0,0),(26,4,'Standings Notation','admin/standings',2,0,0),(27,4,'Money List','admin/moneylist',3,0,0),(28,8,'Manage Leagues','admin/site/manage_leagues',1,0,1);
+INSERT INTO `menu_item` VALUES (1,1,'Roster','myteam/roster',0,0,0),(2,2,'Weekly Scores','season/scores',0,0,0),(3,1,'Logout','auth/logout',7,0,1),(4,2,'Standings','season/standings',2,0,0),(5,3,'News','league/news',0,0,0),(6,4,'Teams','admin/teams',1,0,0),(7,5,'Owners','admin/owners',1,0,0),(8,5,'Positions','admin/positions',2,0,0),(9,5,'Scoring','admin/scoring',3,0,0),(10,5,'Schedule','admin/schedule',4,0,0),(11,5,'Divisions','admin/divisions',5,0,0),(12,1,'Waiver Wire','myteam/waiverwire',1,0,0),(13,2,'Schedule','season/schedule',1,0,0),(14,1,'Trade','myteam/trade',3,0,0),(15,1,'Messages','myteam/messages',5,0,0),(16,3,'Players','league/players',1,0,0),(17,3,'History','league/history',3,0,0),(18,2,'Post Season','season/postseason',4,0,0),(19,2,'Money List','season/moneylist',3,0,0),(20,3,'Rules','league/rules',4,0,0),(21,2,'Draft','season/draft',5,0,0),(22,5,'Draft','admin/draft',5,0,0),(23,1,'Settings','myteam/settings',6,0,0),(24,3,'Teams','league/teams',2,0,0),(25,7,'Playoffs','admin/content/view/playoffs',1,0,0),(26,4,'Standings Notation','admin/standings',2,0,0),(27,4,'Money List','admin/moneylist',3,0,0),(28,8,'Manage Leagues','admin/site/manage_leagues',1,0,1),(29,5,'Settings','admin/leaguesettings',7,0,0);
 /*!40000 ALTER TABLE `menu_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1149,6 +1150,28 @@ LOCK TABLES `scoring_def` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `site_settings`
+--
+
+DROP TABLE IF EXISTS `site_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site_settings` (
+  `name` varchar(40) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `site_settings`
+--
+
+LOCK TABLES `site_settings` WRITE;
+/*!40000 ALTER TABLE `site_settings` DISABLE KEYS */;
+INSERT INTO `site_settings` VALUES ('FFL');
+/*!40000 ALTER TABLE `site_settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `standings_notation_def`
 --
 
@@ -1556,4 +1579,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-08 14:20:32
+-- Dump completed on 2016-04-28 21:11:12

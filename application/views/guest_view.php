@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-	<hr>
-	<?php $this->load->view('template/head'); ?>
-	<?php if (!$admin_exists): ?>
-		<div class="text-center"><a href="<?=site_url('accounts/register')?>">Create Admin Account</a></div>
-	<?php else: ?>
+	<body>
+		<br><br>
+		<?php $this->load->view('template/head'); ?>
+		<div class="row align-center">
+			<div class="columns medium-6">
+			<?php if (!$admin_exists): ?>
+				<a href="<?=site_url('accounts/register')?>">Create Admin Account</a>
+			<?php else: ?>
 
-	<div class="container text-center" style="max-width: 300px;">
+				<form role="form" method="post" action="auth/login">
+					<h2>FFL</h2>
+						<input type="text" class="form-control" placeholder="Username" id="identity" name="login_identity" required autofocus />
+					<input type="password" class="form-control" placeholder="Password"  required id="password" name="login_password" />
+					<?php if(isset($redirect)): ?>
+						<input type="hidden" name="redirect" value="<?=$redirect?>">
+					<?php endif;?>
 
-			<form class="form-signin form-group" role="form" method="post" action="auth/login">
-				<h2 class="form-signin-heading text-center">FFL</h2>
+					<?php if (isset($captcha)) {echo $captcha;} ?>
+		<!--
+					<label class="checkbox">
+						<input type="checkbox" id="remember_me" name="remember_me" value="1">
+						Remember Me
+					</label>
+		-->
+					<button type="submit">Sign in</button>
+				</form>
+				<div><a href="<?=site_url('accounts/forgot')?>">Forgot Password</a></div>
 
-				<input type="username" class="form-control" placeholder="Username" id="identity" name="login_identity" required autofocus />
-
-				<input type="password" class="form-control" placeholder="Password"  required id="password" name="login_password" />
-
-				<?php if(isset($redirect)): ?>
-					<input type="hidden" name="redirect" value="<?=$redirect?>">
-				<?php endif;?>
-
-				<?php if (isset($captcha)) {echo $captcha;} ?>
-	<!--
-				<label class="checkbox">
-					<input type="checkbox" id="remember_me" name="remember_me" value="1">
-					Remember Me
-				</label>
-	-->
-				<button class="btn btn-lg btn-default" style="display:block; width:100%" type="submit">Sign in</button>
-			</form>
-
-
-			<div class="text-center"><a href="<?=site_url('accounts/forgot')?>">Forgot Password</a></div>
-
-	</div>
-	<?php endif;?>
+			<?php endif;?>
+			</div>
+		</div>
+	</body>
 </html>

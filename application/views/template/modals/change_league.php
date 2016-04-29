@@ -1,8 +1,6 @@
-<div class="modal fade" id="change-league-modal" aria-hidden="true" style="z-index:1060; top:25%">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <h4>Your leagues</h4>
+<div id="change-league-modal" class="reveal" data-reveal>
+
+                <h5>Your leagues</h5>
                 <select id="change-league-select">
                 <?php foreach($this->session->userdata('leagues') as $leagueid => $leaguename): ?>
                     <?php if($leagueid == $this->session->userdata('league_id')): ?>
@@ -17,12 +15,10 @@
                 <button class="btn btn-default" type="button" id="change-league-confirm">
                     Confirm
                 </button>
-                <button class="btn btn-default" type-"button" id="change-league-cancel" data-dismiss="modal">
-                    Cancel
+                <button class="close-button" data-close aria-label="Close reveal" type="button">
+                    <span aria-hidden="true">&times;</span>
                 </button>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 <script>
@@ -35,11 +31,8 @@ $("#change-league-confirm").on('click',function(){
     var leagueid = $("#change-league-select").val();
     $.post(url,{'leagueid' : leagueid},function(data)
     {
-        $("#change-league-modal").modal('hide');
+        $("#change-league-modal").foundation('close');
         window.location.href = "<?=site_url()?>";
     });
-});
-$("#change-league-cancel").on('click',function(){
-    $("#change-league-modal").modal('hide');
 });
 </script>
