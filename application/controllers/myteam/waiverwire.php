@@ -23,6 +23,21 @@ class Waiverwire extends MY_Controller{
         $data = array();
         if ($this->waiverwire_model->waiverwire_open())
         {
+            $data['pos'] = $this->player_search_model->get_nfl_positions_data();
+            $this->user_view('user/myteam/waiverwire.php', $data);
+        }
+        else
+        {
+            $this->user_view('user/myteam/waiverwire/closed.php',$data);
+        }
+
+    }
+
+    function index_old()
+    {
+        $data = array();
+        if ($this->waiverwire_model->waiverwire_open())
+        {
             $this->load->helper('form');
         	$data['roster'] = $this->waiverwire_model->get_roster_data();
             $data['sort'] = array('points'=>'Points','a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');

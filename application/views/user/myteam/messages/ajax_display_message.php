@@ -1,16 +1,10 @@
 <?php //print_r($message); ?>
 
-<pre>
-<?=date("D, M j - g:i a",$message->unix_date)?>
 
-Subject: <?=$message->subject?>
-<br>
-From: <?=$message->first_name.' '.$message->last_name?>
-<br>
+<p id="displayed-message" data-message-id="<?=$message->id?>" style="padding-left:20px;">
+	<b>Date:</b> <?=date("D, M j - g:i a",$message->unix_date)?><br>
+	<b>Subject:</b> <?=$message->subject?><br>
+	<b>From:</b> <?=$message->first_name.' '.$message->last_name?><br><br>
 <?=nl2br($message->body)?>
-</pre>
-<div id="message-buttons" data-message-id="<?=$message->id?>">
-	<button id="message-reply" class="btn btn-default" name="<?=$message->id?>">Reply</button>
-	<button id="message-delete" class="btn btn-default" name="<?=$message->id?>">Delete</button>
-	<button id="message-close" class="btn btn-default">Close</button>
-</div>
+</p>
+<hr>

@@ -8,7 +8,7 @@ class Myteam_settings_model extends MY_Model{
         $this->current_year = $this->session->userdata('current_year');
         $this->current_week = $this->session->userdata('current_week');
         $this->ownerid = $this->session->userdata('owner_id');
-        $this->logopath = '/www/html/ff.mylanparty/images/team_logos/';
+        $this->logopath = FCPATH.'images/team_logos/';
 
     }
 

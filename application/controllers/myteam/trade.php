@@ -22,14 +22,6 @@ class Trade extends MY_Controller{
             return;
         }
 
-
-        if(is_numeric($this->input->post('decline-trade-id')))
-        {
-            $this->trade_model->decline_trade_offer($this->input->post('decline-trade-id'));
-        }
-
-
-
         $data['team_id'] = $this->teamid;
 
         $league_teams = $this->trade_model->get_league_teams_data();
@@ -85,34 +77,51 @@ class Trade extends MY_Controller{
     function ajax_accept()
     {
         $tradeid = $this->input->post('tradeid');
+        $response = array('success' => False);
         // Need checks to make sure team is team2 in the trade table
+        if ($this->trade_model->valid_trade_action($tradeid,'accept'))
+        {
+            $limit_teamid = $this->trade_model->trade_roster_over_limit($tradeid);
 
-        $limit_teamid = $this->trade_model->trade_roster_over_limit($tradeid);
-
-        // My team is over the limit, need to drop players
-        if($limit_teamid == $this->session->userdata('team_id'))
-        {
-            echo "You have too many players on your roster to accept the trade.  You must drop some players first.";
-        }
-        elseif($limit_teamid > 0) // The other team who made the offer must be over the limit, swich offer and send back.
-        {
-            $this->trade_model->reverse_offer($tradeid);
-            echo "The offer has been accepted, pending the offering team having room on their roster to complete the trade.";
-        }
-        elseif($limit_teamid == false) // No one is over the limit, process the transaction
-        {
-            //if (!$this->trade_model->trade_roster_over_limit($tradeid))
-            if ($this->trade_model->player_ownership_ok($tradeid))
+            // My team is over the limit, need to drop players
+            if($limit_teamid == $this->session->userdata('team_id'))
             {
-                $this->trade_model->accept_trade_offer($tradeid);
-                echo "success";
+                $response['msg'] = "You have too many players on your roster to accept the trade.  You must drop some players first.";
             }
-            else
+            elseif($limit_teamid > 0) // The other team who made the offer must be over the limit, swich offer and send back.
             {
-                echo "Oops, someone dropped a player invovled in this trade, it should be canceled.";
+                $this->trade_model->reverse_offer($tradeid);
+                $response['msg'] = "The offer has been accepted, pending the offering team having room on their roster to complete the trade.";
             }
+            elseif($limit_teamid == false) // No one is over the limit, process the transaction
+            {
+                //if (!$this->trade_model->trade_roster_over_limit($tradeid))
+                if ($this->trade_model->player_ownership_ok($tradeid))
+                {
+                    $this->trade_model->accept_trade_offer($tradeid);
+                    $response['success'] = true;
+                    $response['msg'] = "Trade successfully processed!";
+                }
+                else
+                {
+                    $response['msg'] = "Oops, someone dropped a player invovled in this trade, it's no longer valid.";
+                }
+            }
+            echo json_encode($response);
         }
 
+    }
+
+    function ajax_decline()
+    {
+        $response = array('success' => false, 'msg' => '');
+        $tradeid = $this->input->post('tradeid');
+        if($this->trade_model->valid_trade_action($tradeid,'decline'))
+        {
+            $this->trade_model->decline_trade_offer($tradeid);
+            $response['success'] = true;
+        }
+        echo json_encode($response);
     }
 
     function load_open_trades()
@@ -130,46 +139,48 @@ class Trade extends MY_Controller{
             $open_trades[$type][$t->trade_id]['team2_players'] = $this->trade_model->get_trade_players_data($t->trade_id,$t->team2_id);
             $open_trades[$type][$t->trade_id]['expires_text'] = round(($t->expires - time()) / (60*60)) . " hours";
         }
-        print_r($open_trades);
 
         // Start the view
         ?>
+        <?php if (count($open_trades) == 0): ?>
+            <tr><td colspan="4" class="text-center">There no trades on the table.</td></tr>
+        <?php else: ?>
+            <?php foreach ($open_trades as $type => $trade): ?>
+                <?php foreach($trade as $trade_id => $t): ?>
+                <tr>
+                    <td>
+                        <div><strong>From <?=$t['trade']->team1_name?></strong></div>
+                        <?php foreach($t['team1_players'] as $p): ?>
+                            <div><?=$p->first_name.' '.$p->last_name?></div>
+                        <?php endforeach; ?>
+                    </td>
+                    <td>
+                        <div><strong>From <?=$t['trade']->team2_name?></strong></div>
+                        <?php foreach($t['team2_players'] as $p): ?>
+                            <div><?=$p->first_name.' '.$p->last_name?></div>
+                        <?php endforeach; ?>
+                    </td>
+                    <td>
+                        <?=$t['expires_text']?>
+                    </td>
+                    <td>
+                    <?php if ($type == 'offer'): ?>
 
-        <?php foreach ($open_trades as $type => $trade): ?>
-            <?php foreach($trade as $trade_id => $t): ?>
-            <tr>
-                <td>
-                    <div><strong>From <?=$t['trade']->team1_name?></strong></div>
-                    <?php foreach($t['team1_players'] as $p): ?>
-                        <div><?=$p->first_name.' '.$p->last_name?></div>
-                    <?php endforeach; ?>
-                </td>
-                <td>
-                    <div><strong>From <?=$t['trade']->team2_name?></strong></div>
-                    <?php foreach($t['team2_players'] as $p): ?>
-                        <div><?=$p->first_name.' '.$p->last_name?></div>
-                    <?php endforeach; ?>
-                </td>
-                <td>
-                    <?=$t['expires_text']?>
-                </td>
-                <td>
-                <?php if ($type == 'offer'): ?>
+                        <button class="button accept-button small" value="<?=$trade_id?>">
+                            Accept
+                        </button>
+                        <button class="button decline-button small" value="<?=$trade_id?>">
+                            Decline
+                        </button>
 
-                    <button class="btn btn-default accept-button" value="<?=$trade_id?>">
-                        Accept
-                    </button>
-                    <button class="btn btn-default" value="<?=$trade_id?>">
-                        Decline
-                    </button>
-
-                <?php else: ?>
-                    Waiting for response
-                <?php endif; ?>
-                </td>
-            </tr>
+                    <?php else: ?>
+                        Waiting for response
+                    <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
             <?php endforeach; ?>
-        <?php endforeach; ?>
+        <?php endif; ?>
 
         <?php
         // End the view

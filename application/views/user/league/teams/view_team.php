@@ -17,14 +17,12 @@
 }
 </style>
 
-<div class="container">
-
     <div class="row">
-        <div class="col-sm-4 text-center">
+        <div class="columns medium-4 text-center small-12">
             <h3><?=$team->long_name?></h3>
             <img class="med-logo team-logo" src="<?=$logo?>">
         </div>
-        <div class="col-sm-8">
+        <div class="columns medium-8 small-12">
             <br>
             <br>
             <div class="team-bar"></div>
@@ -56,7 +54,11 @@
     <div class="team-bar"></div>
     <br>
     <div class="row">
-        <h3 class="text-center">Schedule</h3>
+        <div class="columns">
+            <h4 class="text-center">Schedule</h4>
+        </div>
+    </div>
+    <div class="row">
         <hr>
         <?php
               $cols = array();
@@ -64,7 +66,7 @@
               $cols[] = array_slice($schedule, count($schedule) / 2);
               ?>
         <?php foreach ($cols as $col):?>
-            <div class="col-sm-6">
+            <div class="columns medium-6 small-12">
         <table class="table table-condensed, table-striped table-border" style="font-size:.8em">
             <thead>
                 <th>Week</th>
@@ -109,11 +111,15 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-sm-6">
-                        <h3 class="text-center">Starters</h3>
+        <div class="columns medium-6 small-12">
+            <div class="row">
+                <div class="columns">
+                        <h4 class="text-center">Starters</h4>
                         <hr>
+                </div>
+            </div>
 
-        <table class="table table-condensed table-striped">
+        <table class="table-condensed">
 
             <thead>
                 <th>Pos</th>
@@ -149,10 +155,14 @@
             </tbody>
         </table>
         </div>
-        <div class="col-sm-6">
-            <h3 class="text-center">Bench</h3>
-            <hr>
-            <table class="table table-condensed table-striped">
+        <div class="columns medium-6 small-12">
+            <div class="row">
+                <div class="columns">
+                    <h4 class="text-center">Bench</h4>
+                    <hr>
+                </div>
+            </div>
+            <table class="table-condensed">
                 <thead>
                     <th>Pos</th>
                     <th>Name</th>
@@ -184,5 +194,3 @@
             </div>
         </div>
     </div>
-
-</div>

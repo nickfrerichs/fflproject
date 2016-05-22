@@ -27,10 +27,9 @@ class Trade_model extends MY_Model{
     		->select('sum(fantasy_statistic.points)')
     		->from('roster')->join('player','player.id = roster.player_id')
     		->join('nfl_team','nfl_team.id = player.nfl_team_id')
-    		->join('fantasy_statistic','fantasy_statistic.player_id = player.id')
+    		->join('fantasy_statistic','fantasy_statistic.player_id = player.id and fantasy_statistic.year = '.$this->current_year,'left')
     		->join('nfl_position','nfl_position.id = player.nfl_position_id')
     		->where('roster.team_id',$team_id)
-    		->where('fantasy_statistic.year',$this->current_year)
     		->group_by('player.id')->order_by('nfl_position.display_order','asc')
     		->get()->result();
     }
@@ -175,6 +174,22 @@ class Trade_model extends MY_Model{
         $this->db->where('id',$trade_id)->update('trade',array('canceled'=>1));
     }
 
+    function valid_trade_action($tradeid,$action)
+    {
+        $trade = $this->db->select('team1_id, team2_id')->from('trade')
+            ->where('id',$tradeid)->where('completed',0)->where('canceled',0)->where('expires >','NOW()')
+            ->get()->row();
+
+        if (count($trade) == 0)
+            return False;
+
+        if ($action == "decline" || $action == "accept")
+        {
+            if ($trade->team2_id == $this->teamid)
+                return True;
+        }
+    }
+
     function add_trade($team1_id, $team2_id, $team1_players, $team2_players, $trade_expire)
     {
         $data['league_id'] = $this->leagueid;
@@ -259,14 +274,14 @@ class Trade_model extends MY_Model{
         }
 
         $this->load->library('email');
-        $this->email->from('ff.@mylanparty.net');
+        $this->email->from('ff@mylanparty.net');
         $this->email->to($team2data->owner_email);
         $this->email->subject($subject);
         $this->email->message($body);
         $this->email->send();
 
         $this->load->library('email');
-        $this->email->from('ff.@mylanparty.net');
+        $this->email->from('ff@mylanparty.net');
         $this->email->to($team1data->owner_email);
         $this->email->subject($subject);
         $this->email->message($body);

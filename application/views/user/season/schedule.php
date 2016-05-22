@@ -1,14 +1,19 @@
-<?php if ($this->session->userdata('team_id') == 11)
-{
-    //print_r($weeks);
-}
-?>
-<div class="container">
-    <div class="row">
-        <h3>Schedule</h3>
-        <?php foreach($weeks as $week => $schedule): ?>
-            <h4>Week <?=$week?></h4>
-        <table class="table table-condensed table-striped">
+
+<div class="row">
+    <div class="columns">
+        <h5>Schedule</h5>
+    </div>
+</div>
+
+<?php foreach($weeks as $week => $schedule): ?>
+<div class="row">
+    <div class="columns">
+        <h6>Week <?=$week?></h6>
+    </div>
+</div>
+<div class="row">
+    <div class="columns">
+        <table>
             <thead>
                 <th style="width:40%">Home</th>
 
@@ -29,8 +34,11 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <hr>
-        <br>
-        <?php endforeach; ?>
     </div>
 </div>
+<div class="row">
+    <div class="columns">
+        <hr>
+    </div>
+</div>
+<?php endforeach; ?>

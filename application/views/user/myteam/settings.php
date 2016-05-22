@@ -1,110 +1,137 @@
 <?php //print_r($team_info); ?>
 <link href="<?=site_url('css/cropper.min.css')?>" rel="stylesheet">
-<!-- Upload logo modal -->
-<div class="modal fade" id="logo-modal" aria-hidden="true" style="z-index:1060;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <h4> Upload Team Logo </h4>
-                <hr>
-                <div class="form-group">
-                    <form id="logo-form" action="" method="POST">
-                        <input id="logo-select" name="files" type="file" class="file text-right" accept="image/*">
-                        <br>
-                        <button id="logo-upload-button" name="logo-submit" type="submit" class="btn btn-primary hidden">Upload</button>
-                    </form>
-                </div>
-                <div style="max-height:500px;">
-                    <img id="team-logo-cropper" class="hidden" src="<?=$team_uploaded_logo_url?>">
-                </div>
-            </div>
-        </div>
+
+<!-- Confirm modal -->
+<div class="reveal" id="confirm-modal" data-reveal data-overlay="true">
+    <div class="text-center">
+            <div class="drop-text">Drop: No One</div>
+            <div class="pickup-text">Pick up: No One</div>
+        <button class="button" type="button" id="confirm-drop">
+            Confirm
+        </button>
+        <button class="button" type-"button" id="cancel-drop" data-close aria-label="Close modal">
+            Cancel
+        </button>
     </div>
 </div>
 
-<div class="container">
-
-    <h3>Settings</h3>
+<!-- Upload logo modal -->
+<div class="reveal" id="logo-modal" data-reveal data-overlay="true">
+    <h4> Upload Team Logo </h4>
     <hr>
-
-    <h4>Team Settings</h4>
-    <br>
-    <table class="table table-condensed table-striped" style="max-width:600px;">
-        <thead>
-        </thead>
-        <tbody>
-            <tr>
-                <td><b>Team Name</b></td>
-                <td id="teamname-field"><?=$team_info->long_name?></td>
-                <td>
-                    <a href="#" id="teamname-control" class="change-control">Change</a>
-                    <a href="#" id="teamname-cancel" class="cancel-control"></a>
-                </td>
-            </tr>
-            <tr>
-                <td><b>Team Logo</b></td>
-                <td id="team-logo">
-                    <?php if($team_info->logo): ?>
-                    <img src="<?=$team_thumb_logo_url?>">
-                    <?php else: ?>
-                    None
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <a href="#" id="logo-change">Upload</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <hr>
-    <h4>Owner Settings</h4>
-    <br>
-
-    <table class="table table-condensed table-striped" style="max-width:600px;">
-        <thead>
-        </thead>
-        <tbody>
-            <tr>
-                <td><b>First Name</b></td>
-                <td><?=$owner_info->first_name?></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><b>Last Name</b></td>
-                <td><?=$owner_info->last_name?></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><b>Phone Number</b></td>
-                <td id="phone-field"><?=$owner_info->phone_number?></td>
-                <td>
-                    <a href="#" id="phone-control" class="change-control">Change</a>
-                    <a href="#" id="phone-cancel" class="cancel-control"></a>
-                </td>
-            </tr>
-            <tr>
-                <td><b>Password</b></td>
-                <td id="password-field">********************</td>
-                <td class="text-left"><a href="#" id="password-control" data-command="edit">Change</a>
-                                    <a href="#" id="password-cancel"></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <form id="logo-form" action="" method="POST">
+            <input id="logo-select" name="files" type="file" class="file text-right" accept="image/*">
+            <br>
+            <button id="logo-upload-button" name="logo-submit" type="submit" class="button hide">Upload</button>
+        </form>
+    <div style="max-height:500px;">
+        <img id="team-logo-cropper" class="hide" src="<?=$team_uploaded_logo_url?>">
+    </div>
 </div>
 
+
+<div class="row">
+    <div class="columns">
+        <h3>Settings</h3>
+    </div>
+</div>
+
+    <hr>
+
+<div class="row">
+    <div class="columns">
+        <h4>Team Settings</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="columns">
+        <table class="table-condensed">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Team Name</b></td>
+
+                    <td id="teamname-field"><?=$team_info->long_name?></td>
+                    <td>
+                        <a href="#" id="teamname-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
+                        <a href="#" id="teamname-cancel" class="cancel-control"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Team Logo</b></td>
+                    <td id="team-logo">
+                        <?php if($team_info->logo): ?>
+                        <img src="<?=$team_thumb_logo_url?>">
+                        <?php else: ?>
+                        None
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <a href="#" id="logo-change">Upload</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="columns">
+        <h4>Owner Settings</h4>
+    </div>
+</div>
+    <br>
+<div class="row">
+<div class="columns">
+        <table class="table-condensed">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>First Name</b></td>
+                    <td><?=$owner_info->first_name?></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>Last Name</b></td>
+                    <td><?=$owner_info->last_name?></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>Phone Number</b></td>
+                    <td id="phone-field"><?=$owner_info->phone_number?></td>
+                    <td>
+                        <a href="#" id="phone-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
+                        <a href="#" id="phone-cancel" class="cancel-control"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Password</b></td>
+                    <td id="password-field">********************</td>
+                    <td class="text-left"><a href="#" id="password-control" data-command="edit">Change</a>
+                                        <a href="#" id="password-cancel"></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
 <script src="<?=site_url('js/cropper.min.js')?>"></script>
+
 <script>
 
 // Logo upload stuff
 $("#logo-change").on('click',function(){
     //$("#logo-file").trigger("click");
-    $("#logo-modal").modal('show');
+    $("#logo-modal").foundation('open');
     //$("#logo-upload-button").toggleClass("hidden");
 });
 
 $("#logo-select").on('change',function(){
-    $("#logo-upload-button").removeClass('hidden');
+    $("#logo-upload-button").removeClass('hide');
     $("#logo-upload-button").text('Upload');
 });
 
@@ -147,7 +174,7 @@ $("#logo-upload-button").on('click submit',function(e){
                     cropBoxResizable: false
                 });
                 $image.cropper('replace',$("#team-logo-cropper").attr("src")+"?"+Math.random() );
-                $("#team-logo-cropper").removeClass('hidden');
+                $("#team-logo-cropper").removeClass('hide');
                 $("#logo-upload-button").text('Save');
                 //$image.cropper('reset', true);
             },
@@ -171,7 +198,7 @@ $("#logo-upload-button").on('click submit',function(e){
 
             console.log(data);
             // Close modal and reset upload text
-            $("#logo-modal").modal('hide');
+            $("#logo-modal").foundation('close');
             setTimeout(function(){
                          window.location = "<?=current_url();?>";
                     }, 250);

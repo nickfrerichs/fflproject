@@ -1,3 +1,6 @@
+<?php if(count($players) == 0):?>
+	<tr><td class="text-center" style="padding-top:160px; padding-bottom:160px;">You aren't watching any players</td></tr>
+<?php else: ?>
 <?php foreach ($players as $key => $p): ?>
 	<?php if($key == 0): ?>
 		<tr class="aup-<?=$p->id?> adown-<?=$players[$key+1]->id?>">
@@ -6,37 +9,27 @@
 	<?php else:?>
 		<tr class="aup-<?=$p->id?> adown-<?=$p->id?> aup-<?=$players[$key-1]->id?> adown-<?=$players[$key+1]->id?>">
 	<?php endif;?>
-		<td style="vertical-align:middle; font-size:1.3em">
+		<td class="text-center">
 			<?=$p->order?>
 		</td>
 		<td>
+			<div>
+				<?php if($key != 0): ?>
+				<a href="#" class="btn-draft up-test" data-value="up_<?=$p->id?>"><i class="fi-arrow-up" style="font-size:1.2em"></i></a>
+				<?php else: ?>
+					<span class=""></span>
+				<?php endif;?>
+			</div>
 
-		<div>
-			<?php if($key != 0): ?>
-			<a href="#" class="glyphicon glyphicon-arrow-up btn-draft up-test" data-value="up_<?=$p->id?>"></a>
-			<?php else: ?>
-				<span class="glyphicon glyphicon-option-horizontal"></span>
-			<?php endif;?>
-		</div>
-
-		<div>
-			<?php if(count($players) != $key+1):?>
-			<a href="#" class="glyphicon glyphicon-arrow-down btn-draft" data-value="down_<?=$p->id?>"></a>
-			<?php else: ?>
-				<span class="glyphicon glyphicon-option-horizontal"></span>
-			<?php endif;?>
-		</div>
+			<div>
+				<?php if(count($players) != $key+1):?>
+				<a href="#" class="btn-draft" data-value="down_<?=$p->id?>"><i class="fi-arrow-down" style="font-size:1.2em"></i></a>
+				<?php else: ?>
+					<span class=""></span>
+				<?php endif;?>
+			</div>
 		</td>
-		<td style="vertical-align:middle">
 
-			<a href="#" class="glyphicon glyphicon-remove btn-draft" data-value="watch_<?=$p->id?>"></a>
-
-			<!--
-			<button class="btn btn-default btn-draft" value="watch_<?=$p->id?>">
-				<span class="glyphicon glyphicon-remove"></span>
-			</button>
-		-->
-		</td>
 		<?php if (count($players) == 1): ?>
 			<td>
 		<?php elseif($key == 0): ?>
@@ -47,19 +40,31 @@
 			<td class="up-<?=$p->id?> down-<?=$p->id?> up-<?=$players[$key-1]->id?> down-<?=$players[$key+1]->id?>">
 		<?php endif;?>
 
-			<div><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong> <span class="text-s2"></span></div>
+			<div><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong></div>
 			<div><?=$p->club_id.' - '.$p->position?></div>
 		</td>
-
+		<td>
+			<button class="button tiny btn-draft" data-value="watch_<?=$p->id?>">
+				Unwatch
+			</button>
+		</td>
 		<td>
 
-			<?php //echo $draft_team_id; ?>
 			<?php if($draft_team_id == $team_id && !$paused): ?>
-			<button class="btn btn-primary btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>">Draft</button>
+			<button class="button tiny btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>">Draft</button>
 			<?php else: ?>
-			<button class="btn btn-default btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>" disabled>Draft</button>
+			<button class="button tiny btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>" disabled>Draft</button>
 			<?php endif; ?>
+
 		</td>
 
 	</tr>
+
 <?php endforeach; ?>
+<tr id="watch-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$total_players?>">
+</tr>
+<?php endif;?>
+
+<script>
+$(".reload-foundation").foundation();
+</script>

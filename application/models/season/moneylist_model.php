@@ -30,7 +30,7 @@ class Moneylist_model extends MY_Model{
             ->join('team','team.id = money_list.team_id')
             ->join('owner','owner.id = team.owner_id')
             ->join('schedule_result','schedule_result.team_id = money_list.team_id and schedule_result.year = money_list.year '
-                    .'and schedule_result.week = money_list.week')
+                    .'and schedule_result.week = money_list.week','left')
             ->where('money_list.league_id',$this->leagueid)
             ->where('money_list.year',$this->current_year)
             ->order_by('week','asc')

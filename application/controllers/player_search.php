@@ -36,40 +36,91 @@ class Player_search extends MY_Controller{
         $this->order_by = array($this->data['by'],$this->data['order']);
 
     }
+    // for season/draft/live
+    function ajax_draft_list()
+    {
+        $this->load->model('season/draft_model');
+        //if ($this->order_by[0] == 'points')
+        //    $this->order_by[0] = 'last_name';
 
-    // function get_player_table()
-    // {
-    //     $in_page = $this->input->post('page');
-    //     $in_pos = $this->input->post('sel_pos');
-    //     $in_sort = $this->input->post('sel_sort');
-    //     $in_search = $this->input->post('search');
-    //     $data = array();
-    //
-    //     $data['page'] = ($in_page == '') ? 0 : $in_page;
-    //     $data['sel_pos'] = ($in_pos == '') ? '0' : $in_pos;
-    //     $data['sel_sort'] = ($in_sort == '') ? 'points' : $in_sort;
-    //     $data['search'] = $in_search;
-    // 	$this->load->library('pagination');
-    // 	$config['base_url'] = site_url('myteam/waiverwire/get_roster_table');
-    // 	$config['total_rows'] = $this->player_search_model->nfl_players_count();
-	// 	$config['per_page'] = $this->per_page;
-	// 	$config['uri_segment'] = 4;
-	// 	$config['full_tag_open'] = '<p id="pagination">';
-	// 	$config['full_tag_close'] = '</p>';
-	// 	$this->pagination->initialize($config);
-    //
-    //     if ($data['sel_sort'] == 'points')
-    //         $order_by = array('points','desc');
-    //     if ($data['sel_sort'] == 'a')
-    //         $order_by = array('last_name', 'asc');
-    //     if ($data['sel_sort'] == 'z')
-    //         $order_by = array('last_name', 'desc');
-    //     if ($data['sel_sort'] == 'nfl_team')
-    //         $order_by = array('club_id','asc');
-    //
-	// 	$data['players'] = $this->player_search_model->get_nfl_players($this->per_page, $data['page']*$this->per_page, $data['sel_pos'], $order_by, $data['search'], false);
-	// 	$this->load->view('player_search/player_search_table_view', $data);
-    // }
+        $nfl_players = $this->draft_model->get_available_players_data($this->per_page, $this->data['page']*$this->per_page, $this->data['sel_pos'], $this->order_by, $this->data['search']);
+
+        $data['total_players'] = $nfl_players['count'];
+        $data['players'] = $nfl_players['result'];
+        $data['per_page'] = $this->per_page;
+        $data['draft_team_id'] = $this->draft_model->get_draft_team_id();
+        $data['team_id'] = $this->teamid;
+        $data['paused'] = $this->draft_model->draft_paused();
+
+        $this->load->view('user/season/draft/ajax_get_draft_table', $data);
+
+    }
+
+    function ajax_get_draft_watch_list()
+    {
+        $this->load->model('season/draft_model');
+
+        echo $this->per_page;
+
+        $this->data['draft_team_id'] = $this->draft_model->get_draft_team_id();
+        $this->data['team_id'] = $this->teamid;
+
+        $watch_players = $this->draft_model->get_watch_list($this->per_page, $this->data['page']*$this->per_page, $this->data['sel_pos']);
+        $this->data['players'] = $watch_players['result'];
+        $this->data['total_players'] = $watch_players['count'];
+        $this->data['per_page'] = $this->per_page;
+        $this->data['page'] = $this->in_page;
+        $this->data['paused'] = $this->draft_model->draft_paused();
+        $this->load->view('user/season/draft/ajax_get_watch_list', $this->data);
+    }
+
+    // for myteam/waiverwire
+    function ajax_ww_player_list()
+    {
+        $this->load->model('myteam/waiverwire_model');
+        $this->load->model('myteam/myteam_roster_model');
+
+        $nfl_players = $this->waiverwire_model->get_nfl_players($this->per_page, $this->data['page']*$this->per_page, $this->data['sel_pos'], $this->order_by, $this->data['search'], true);
+
+        $this->data['total'] = $nfl_players['count'];
+        $this->data['players'] = $nfl_players['result'];
+        $this->data['per_page'] = $this->per_page;
+        $this->data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+        //$this->load->view('user/myteam/waiverwire/ajax_pickup_table',$data);
+
+        // BEGIN VIEW
+        ?>
+
+        <?php foreach($this->data['players'] as $p):?>
+            <tr class="pickup-player" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">
+                <td><?=$p->position?></td>
+                <td><a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a></td>
+                <td><?=$p->club_id?></td>
+                <td class="hide-for-small-only"><?=$this->data['matchups'][$p->club_id]['opp']?></td>
+                <td><?=$p->points?></td>
+                <td> <!-- Might want to make the waiviers not cleared notice better -->
+    				<?php if ($p->clear_time)
+    				{
+    					$remaining = $p->clear_time - time();
+    					$hr = (int)($remaining / (60*60));
+    					$min = (int)(($remaining - $hr*(60*60)) / 60);
+    					$sec = (int)(($remaining - $hr*(60*60) - $min*60));
+    				}
+    				?>
+    				<?php if($p->clear_time): ?>
+    					Waivers clear in <?=$hr?>h:<?=$min?>m:<?=$sec?>s
+    				<?php else: ?>
+    					<button class="player-pickup button tiny" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup</button>
+    				<?php endif;?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        <tr id="ww-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$this->data['total']?>">
+        </tr>
+
+        <?php
+        // END VIEW
+    }
 
     function ajax_full_player_list()
     {

@@ -1,19 +1,24 @@
-<?php //print_r($log);?>
-<div class="container">
-    <div class="row">
-        <br>
+
+<div class="row">
+    <div class="columns">
         <a href="<?=site_url('myteam/waiverwire')?>">Back to Waiver Wire</a>
         <h4>Waiver Wire Log</h4>
     </div>
-    <div class="row">
-        <h5>Players dropped before <b><?=date("n/j/y g:i a",$clear_time)?></b> have cleared waivers.</h5>
-        <table class="table table-striped">
+</div>
+
+<div class="row">
+    <div class="column">
+        <p>Players dropped before <b><?=date("n/j/y g:i a",$clear_time)?></b> have cleared waivers.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="column">
+        <table>
             <thead>
             </thead>
             <tbody>
                 <?php foreach($log as $l): ?>
-
-
                     <?php if($clear_time < $l->request_date):?>
                         <tr style="background-color:#CCCCCC">
                     <?php else: ?>
@@ -35,9 +40,7 @@
                             <div>
                                 <b>Owner:</b> <?=$l->owner_first.' '.$l->owner_last?>
                             </div>
-
                         </td>
-
                     </tr>
                 <?php endforeach; ?>
             </tbody>

@@ -7,32 +7,40 @@ height: 60px;
 line-height: 60px;
 }
 </style>
-<div class="container">
-	<div class="row">
-		<div class="col-sm-4 v-align"><h3><?=date("Y",$start_time)?> Draft</h3></div>
 
-		<div class="col-sm-8 v-align" style="min-height:50px;">
-		<?php if($this->is_admin):?>
 
-			<button class="btn btn-default" id="admin-pause-button">Start Draft</button>
-			<button class="btn btn-default" id="admin-picks" data-on="">Pick for User</button>
-			<button class="btn btn-default" disabled id="admin-undo">Undo Last Pick</button>
-
-		<?php endif;?>
-		</div>
+<?php if($this->is_league_admin):?>
+<div class="row callout">
+	<div class="columns">
+		<h5><?=$this->session->userdata('current_year')?> Draft</h5>
 	</div>
+	<div class="columns">
+
+		<a data-toggle="myteam-panel">My Team</a>
+		<a data-toggle="watch-panel">Prospects</a>
+		<a data-toggle="search-panel">Player Search</a>
+
+	</div>
+	<div class="columns">
+			<button class="button tiny" id="admin-pause-button">Start Draft</button>
+			<button class="button tiny" id="admin-picks" data-on="">Pick for User</button>
+			<button class="button tiny" disabled id="admin-undo">Undo Last Pick</button>
+	</div>
+</div>
+<?php endif;?>
+
+
 
 	<!-- Top row with Now Picking and Recent picks -->
-	<div class="row" style="min-height:10px">
-		<div class="col-sm-3 text-center">
-			<div id="on-the-block" style="min-height:150px;">
-
-			</div>
+<div class="row callout">
+	<div class="columns medium-expand small-12 text-center">
+		<div id="on-the-block">
 		</div>
-		<div class="col-sm-9">
+	</div>
+	<div class="columns medium-9 hide-for-small-only">
+		<div class="text-center"><h5><a href="<?=site_url('season/draft')?>">Recent Picks (make this open a modal)</a></h5></div>
 
-			<div class="text-center"><h4>Recent Picks</h4></div>
-			<table class="table table-striped table-condensed table-border">
+			<table class="table-condensed">
 				<thead>
 					<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
 				</thead>
@@ -40,103 +48,143 @@ line-height: 60px;
 				</tbody>
 			</table>
 
-		</div>
 	</div>
-
-	<!-- Row with draft search, watch list, and my team -->
-	<div class="row">
-
-		<div class="col-md-4 draft-box">
-			<div class="row">
-				<div class="text-center"><h4>Watch List</h4></div>
-			</div>
-
-			<table class="table text-center table-striped table-condensed table-border">
-				<thead>
-					<th class="text-center" colspan=5>Prospects</th>
-				</thead>
-				<tbody id="watch-list">
-				</tbody>
-			</table>
+	<div class="columns small-12 text-center show-for-small-only">
+			<a href="#" class="show-for-small-only">Recent Picks</a>
 		</div>
-
-		<div class="col-md-4 draft-box">
-
-			<!-- Search options -->
-			<div class="row">
-				<div class="text-center"><h4>Player Search</h4></div>
-				<div class="search-group col-xs-4">
-					<input id="search-name" type="text" class="form-control" placeholder="Search">
-				</div>
-
-				<div class='col-xs-4 sort-group'>
-					<select id="search-pos" class="form-control search-form">
-							<option value="0">All</option>
-						<?php foreach ($pos as $p): ?>
-							<option value="<?=$p->id?>"><?=$p->text_id?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-
-				<div class='col-xs-4 sort-group'>
-					<select id="search-sort" class="form-control search-form">
-						<?php foreach ($sort as $id=>$name): ?>
-							<option value="<?=$id?>"><?=$name?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-			</div> <!-- end search options -->
-
-
-			<!-- Available players -->
-			<!--<div class="row">-->
-				<table class="table text-center table-striped table-condensed table-border">
-					<tbody id="available-players">
-					</tbody>
-				</table>
-			<!--</div>-->
-
-			<!-- next/prev buttons -->
-			<div class="row">
-				<div class="btn-group btn-group-justified col-xs-12">
-					<div class="btn-group btn-group-lg">
-						<button id="prev" class="btn btn-default page-btn" type="button" value="0">
-						Previous
-						</button>
-					</div>
-					<div class="btn-group btn-group-lg">
-						<button id="next" class="btn btn-default page-btn" type="button" value="2">
-						Next
-						</button>
-					</div>
-				</div>
-			</div> <!-- next/prev -->
-		</div>
-
-
-		<div class="col-md-4 draft-box">
-			<div class="row">
-				<div class="d-myteam-heading text-center"><h4>My Team</h4></div>
-			</div>
-
-			<table class="table text-center table-striped table-condensed table-border">
-				<thead>
-					<th class="text-center">Player Name</th><th class="text-center">Pick</th><th class="text-center">Round</th>
-				</thead>
-				<tbody id="myteam-list">
-				</tbody>
-			</table>
-		</div>
-	</div>
-
 </div>
+
+
+<!-- Row with draft search, watch list -->
+<div class="row callout">
+
+	<div id="watch-panel" class="columns medium-6 small-12 draft-box" data-toggler data-animate="hinge-in-from-top spin-out">
+		<h5 class="text-center">Prospects</h5>
+
+		<!-- Position dropdown for watch list -->
+		<div class="row align-center">
+			<div class='columns small-12 medium-4'>
+				<select id="watch-list-pos" data-for="watch-list" class="player-list-position-select">
+						<option value="0">All</option>
+					<?php foreach ($pos as $p): ?>
+						<option value="<?=$p->id?>"><?=$p->text_id?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+		<div>
+			<table class="table-condensed">
+				<thead>
+
+				</thead>
+				<tbody id="watch-list" data-url="<?=site_url('player_search/ajax_get_draft_watch_list')?>">
+				</tbody>
+			</table>
+		</div>
+
+		<div class="row align-center">
+			<div class="columns text-right">
+				<ul class="pagination" role="navigation" aria-label="Pagination">
+					<li class="pagination-previous"><a href="#" class="player-list-prev" data-for="watch-list">Previous</a></li>
+				</ul>
+			</div>
+			<div class="columns small-12 medium-3 text-center small-order-3 medium-order-2">
+				<div class="player-list-total" data-for="watch-list"></div>
+				<br class="show-for-small-only">
+			</div>
+			<div class="columns text-left small-order-2 medium-order-3">
+				<ul class="pagination" role="navigation" aria-label="Pagination">
+					<li class="pagination-next"><a href="#" class="player-list-next" data-for="watch-list">Next</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="search-panel" class="columns medium-6 small-12 draft-box" data-toggler data-animate="hinge-in-from-top spin-out">
+		<div class="row">
+			<div class="text-center columns">
+				<h5>Player Search</h5>
+			</div>
+		</div>
+
+		<!-- Search options -->
+		<div class="row align-center">
+			<div class="search-group columns small-12 medium-8">
+				<input type="text" class="player-list-text-input" data-for="draft-list" placeholder="Search">
+			</div>
+
+			<div class='sort-group columns small-12 medium-4'>
+				<select data-for="draft-list" class="player-list-position-select">
+						<option value="0">All</option>
+					<?php foreach ($pos as $p): ?>
+						<option value="<?=$p->id?>"><?=$p->text_id?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="row">
+		    <div class="columns">
+		        <table class="table-condensed">
+		            <thead>
+						<tr>
+						<th>
+							<a href="#" data-order="asc" data-for="draft-list" data-by="last_name" class="player-list-a-sort">Name</a> /
+							<a href="#" data-order="asc" data-for="draft-list" data-by="club_id" class="player-list-a-sort">Team</a> /
+							<a href="#" data-order="asc" data-for="draft-list" data-by="position" class="player-list-a-sort">Pos</a>
+						</th>
+						<th></th>
+						<th></th>
+						</tr>
+		            </thead>
+		            <tbody id="draft-list" data-by="last_name" data-order="desc" data-url="<?=site_url('player_search/ajax_draft_list')?>">
+		            </tbody>
+		        </table>
+		    </div>
+		</div>
+
+		<div class="row align-center">
+		    <div class="columns text-right">
+		        <ul class="pagination" role="navigation" aria-label="Pagination">
+		            <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="draft-list">Previous</a></li>
+		        </ul>
+		    </div>
+		    <div class="columns small-12 medium-3 text-center small-order-3 medium-order-2">
+		        <div class="player-list-total" data-for="draft-list"></div>
+		        <br class="show-for-small-only">
+		    </div>
+		    <div class="columns text-left small-order-2 medium-order-3">
+		        <ul class="pagination" role="navigation" aria-label="Pagination">
+		            <li class="pagination-next"><a href="#" class="player-list-next" data-for="draft-list">Next</a></li>
+		        </ul>
+		    </div>
+		</div>
+	</div>
+</div>
+
+<div id="myteam-panel" class="row callout" data-toggler data-animate="hinge-in-from-top spin-out">
+	<div class="columns draft-box">
+		<div class="d-myteam-heading text-center"><h5>My Team</h5></div>
+		<table class="text-center table-condensed">
+			<thead>
+				<th class="text-center">Player Name</th><th class="text-center">Team/Pos</th><th class="text-center">Pick</th><th class="text-center hide-for-small-only">Round</th>
+			</thead>
+			<tbody id="myteam-list">
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
 <div id="debug" class="text-center hidden"></div>
 
 <script>
 $(document).ready(function(){
 
 	$.post("<?=site_url('season/draft/ajax_get_update_key')?>"); // in case of stale key, force update on load
-	loadPlayerList(1,'0','a','');
+	$(updatePlayerList("draft-list"));
+	//$(updatePlayerList("watch-list"));
 	loadWatchList();
 	updateBlock();
 	loadMyTeam();
@@ -150,8 +198,10 @@ $(document).ready(function(){
 		if($("#debug").text() != e.data)
 		{
 
-			loadPlayerList(getpage(),getpos(),getsort(),getsearch());
+			//loadPlayerList(getpage(),getpos(),getsort(),getsearch());
+			$(updatePlayerList("draft-list"));
 			loadWatchList();
+			//$(updatePlayerList("watch-list"));
 			updateRecentPicks();
 			updateBlock();
 			$("#debug").text(e.data);
@@ -205,48 +255,49 @@ function updateTimer()
 
 }
 
-// Name search event
-var timer;
-$("#search-name").on("input",function(event){
-	clearTimeout(timer);
-	var delay = 500;
-	timer = setTimeout(function(){
-		loadPlayerList(1,getpos(),getsort(),getsearch());
-	},delay);
-});
+// // Name search event
+// var timer;
+// $("#search-name").on("input",function(event){
+// 	clearTimeout(timer);
+// 	var delay = 500;
+// 	timer = setTimeout(function(){
+// 		loadPlayerList(1,getpos(),getsort(),getsearch());
+// 	},delay);
+// });
 
 // Position & sort event
-$('.sort-group').on('change', function(){ loadPlayerList(1,getpos(),getsort(),getsearch()); });
-
-// Prev/Next button events
-$("#next").click(function(){
-	var page = getpage();
-	var next = page+2;
-	var prev = page;
-	if ((page)*<?=$per_page?> <= gettotal())
-	{
-		loadPlayerList(page+1,getpos(),getsort(),getsearch());
-		$("#next").val(next.toString());
-		$("#prev").val(prev.toString());
-	}
-
-});
-$("#prev").click(function(){
-	var next = parseInt($('#next').val())-1;
-	var prev = parseInt($('#prev').val())-1;
-	var page = getpage();
-	if (page > 1)
-	{
-		loadPlayerList(page-1,getpos(),getsort(),getsearch());
-		$("#next").val(next);
-		$("#prev").val(prev);
-	}
-});
+// $('.sort-group').on('change', function(){ loadPlayerList(1,getpos(),getsort(),getsearch()); });
+//
+// // Prev/Next button events
+// $("#next").click(function(){
+// 	var page = getpage();
+// 	var next = page+2;
+// 	var prev = page;
+// 	if ((page)*<?=$per_page?> <= gettotal())
+// 	{
+// 		loadPlayerList(page+1,getpos(),getsort(),getsearch());
+// 		$("#next").val(next.toString());
+// 		$("#prev").val(prev.toString());
+// 	}
+//
+// });
+// $("#prev").click(function(){
+// 	var next = parseInt($('#next').val())-1;
+// 	var prev = parseInt($('#prev').val())-1;
+// 	var page = getpage();
+// 	if (page > 1)
+// 	{
+// 		loadPlayerList(page-1,getpos(),getsort(),getsearch());
+// 		$("#next").val(next);
+// 		$("#prev").val(prev);
+// 	}
+// });
 
 // Watch and draft button events also addded Up and Down
-$("#available-players, #watch-list").on("click",".btn-draft",function(event){
+$("#draft-list, #watch-list").on("click",".btn-draft",function(event){
 	event.preventDefault();
 	//var vals = $(this).val().split("_");
+	if($("#admin-picks").data('on')){var admin_pick = true;}
 	var vals = $(this).data('value').split("_");
 	if(vals[0] == "watch")
 	{url="<?=site_url('season/draft/toggle_watch_player')?>";}
@@ -256,22 +307,33 @@ $("#available-players, #watch-list").on("click",".btn-draft",function(event){
 	{url="<?=site_url('season/draft/watch_player_up')?>";}
 	if(vals[0] == "down")
 	{url="<?=site_url('season/draft/watch_player_down')?>";}
-	$.post(url,{'player_id':vals[1]},function(data){
 
+	$.post(url,{'player_id':vals[1], 'admin_pick' : admin_pick}, function(data){
+		console.log(data);
 		if (vals[0] == "up" || vals[0] == "down")
 		{
 			//var e = "a[data-value='"+vals[0]+"_"+vals[1]+"']";
 			e = "."+vals[0]+"-"+vals[1];
 			loadWatchList(e);
+			//$(updatePlayerList("watch-list"));
 			return;
 		}
 		loadWatchList();
-		loadPlayerList(getpage(),getpos(),getsort(),getsearch(),true);
+
+		//loadPlayerList(getpage(),getpos(),getsort(),getsearch(),true);
+		$(updatePlayerList("draft-list"));
 		if(vals[0] == "draft"){loadMyTeam();}
 	});
 })
 
+// $("#watch-list-pos").on('change',function(){
+// 	//loadWatchList();
+// });
 
+function loadWatchList()
+{
+	$(updatePlayerList("watch-list"));
+}
 
 function getUpdateKey()
 {
@@ -289,7 +351,7 @@ function updateBlock()
 		$("#countdown").css('color','');
 		$("#on-the-block").html(data);
 		//flash($("#on-the-block"))
-		<?php if ($this->is_admin)
+		<?php if ($this->is_league_admin)
 		{
 			echo "updateAdminButtons();";
 		}
@@ -322,38 +384,38 @@ function flash(element, fadetime)
 	},fadetime);
 }
 
-function loadPlayerList(page, pos, sort, search, dontreset)
-{
-		url = "<?=site_url('season/draft/ajax_get_draft_table')?>";
-		$.post(url,{'page':page-1, 'sel_pos':pos, 'sel_sort':sort, 'search' : search }, function(data){
-			$("#available-players").html(data);
+// function loadPlayerList(page, pos, sort, search, dontreset)
+// {
+// 		url = "<?=site_url('season/draft/ajax_get_draft_table')?>";
+// 		$.post(url,{'page':page-1, 'sel_pos':pos, 'sel_sort':sort, 'search' : search }, function(data){
+// 			$("#available-players").html(data);
+//
+// 			<?php if($this->is_admin)
+// 			{
+// 				echo 'if($("#admin-picks").data("on")) {$(".btn-draft:contains(\"Draft\")").attr("disabled",false);}';
+// 			}
+// 			?>
+//
+// 		});
+// 		if (dontreset == false)
+// 		{
+// 			$("#next").val(2);
+// 			$("#prev").val(0);
+// 		}
+// }
 
-			<?php if($this->is_admin)
-			{
-				echo 'if($("#admin-picks").data("on")) {$(".btn-draft:contains(\"Draft\")").attr("disabled",false);}';
-			}
-			?>
-
-		});
-		if (dontreset == false)
-		{
-			$("#next").val(2);
-			$("#prev").val(0);
-		}
-}
-
-function loadWatchList(selector_text)
-{
-
-	url ="<?=site_url('season/draft/ajax_get_watch_list')?>";
-	$.post(url,{},function(data){
-		$("#watch-list").html(data);
-		if (typeof(selector_text) != "undefined")
-		{
-			flash($(selector_text),100);
-		}
-	});
-}
+// function loadWatchList(selector_text)
+// {
+// 	var pos = $('#watch-list-pos').val();
+// 	url ="<?=site_url('season/draft/ajax_get_watch_list')?>";
+// 	$.post(url,{'pos':pos},function(data){
+// 		$("#watch-list").html(data);
+// 		if (typeof(selector_text) != "undefined")
+// 		{
+// 			flash($(selector_text),100);
+// 		}
+// 	});
+// }
 
 function loadMyTeam()
 {
@@ -365,11 +427,11 @@ function loadMyTeam()
 
 
 
-function getpage(){return parseInt($('#next').val())-1;} // Which page are we on?
-function gettotal(){return parseInt($('#count-total').text());}
-function getpos(){return $("#search-pos").val();}
-function getsort(){return $("#search-sort").val();}
-function getsearch(){return $("#search-name").val();}
+// function getpage(){return parseInt($('#next').val())-1;} // Which page are we on?
+// function gettotal(){return parseInt($('#count-total').text());}
+// function getpos(){return $("#search-pos").val();}
+// function getsort(){return $("#search-sort").val();}
+// function getsearch(){return $("#search-name").val();}
 
 function pad(n) {
     return (n < 10) ? ("0" + n) : n;
@@ -377,7 +439,7 @@ function pad(n) {
 
 </script>
 
-<?php if($this->is_admin): // All the admin javascript?>
+<?php if($this->is_league_admin): // All the admin javascript?>
 	<script>
 
 	$("#admin-picks").on('click',function(){

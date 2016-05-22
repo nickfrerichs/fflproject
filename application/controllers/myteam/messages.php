@@ -2,7 +2,7 @@
 
 class Messages extends MY_Controller{
 
-    function __construct() 
+    function __construct()
     {
         parent::__construct();
         $this->load->model('myteam/messages_model');
@@ -50,9 +50,13 @@ class Messages extends MY_Controller{
 
     function delete_message()
     {
-        $this->messages_model->delete_message($this->input->post('id'));
+        $response = array('success' => false, 'msg' => '');
+        $response['msg'] = $this->messages_model->delete_message($this->input->post('id'));
+        $response['success'] = true;
         //$this->messages_model->delete_message(9);
-        
+
+        echo json_encode($response);
+
     }
 
     function ajax_message_list()

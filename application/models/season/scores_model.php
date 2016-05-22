@@ -348,7 +348,7 @@ class Scores_model extends MY_Model{
         if ($year == 0)
             $year = $this->current_year;
         return $this->db->select('distinct(week) as week')->from('schedule')->where('league_id',$this->leagueid)
-            ->where('year',$year)->get()->result();
+            ->where('year',$year)->order_by('week','asc')->get()->result();
     }
 
     // Old stats methods

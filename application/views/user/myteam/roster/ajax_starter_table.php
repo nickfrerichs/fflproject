@@ -2,8 +2,8 @@
 <?php foreach($starting_pos['players'] as $p): ?>
 <?php if($p != null): ?>
     <tr>
-        <td class="vert">
-            <h4><?=$starting_pos['pos']?></h4>
+        <td>
+            <?=$starting_pos['pos']?>
         </td>
         <td>
         <div>
@@ -25,14 +25,14 @@
                 <?php endif; ?>
             <?php endif;?>
         </td>
-        <td class="hidden-xxs vert">
+        <td class="hide-for-extra-small">
             <?=$p->points?>
         </td>
 
-        <td class="vert">
-            <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == '' || $this->session->userdata('league_id') == '5'): ?>
-                <button class="btn btn-default roster-sit-btn" value="<?=$p->player_id?>">
-                    <div class="">
+        <td>
+            <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == '' || 1==1): ?>
+                <button class="button small roster-sit-btn" value="<?=$p->player_id?>">
+                    <div>
                         Sit
                     </div>
                 </button>
@@ -42,15 +42,15 @@
     </tr>
 <?php else: ?>
     <tr>
-        <td class="vert">
-            <h4><?=$starting_pos['pos']?></h4>
+        <td>
+            <?=$starting_pos['pos']?>
         </td>
         <td>
         <div>
             <i>Vacant</i>
         </div>
         </td>
-        <td class="hidden-xxs">-</td><td>-</td><td>-</td>
+        <td class="hide-for-extra-small">-</td><td>-</td><td>-</td>
     </tr>
 <?php endif; ?>
 <?php endforeach; ?>

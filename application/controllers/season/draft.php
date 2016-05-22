@@ -112,7 +112,7 @@ class Draft extends MY_Controller{
 
     function pause()
     {
-        if($this->is_admin)
+        if($this->is_league_admin)
         {
             $this->draft_model->pause();
         }
@@ -121,19 +121,19 @@ class Draft extends MY_Controller{
 
     function unpause()
     {
-        if($this->is_admin)
+        if($this->is_league_admin)
             $this->draft_model->unpause();
     }
 
     function start()
     {
-        if($this->is_admin)
+        if($this->is_league_admin)
             $this->draft_model->start();
     }
 
     function undo_last_pick()
     {
-        if($this->is_admin)
+        if($this->is_league_admin)
             $this->draft_model->undo_last_pick();
     }
 
@@ -163,15 +163,16 @@ class Draft extends MY_Controller{
         }
     }
 
-    function ajax_get_watch_list()
-    {
-        $data = array();
-        $data['draft_team_id'] = $this->draft_model->get_draft_team_id();
-        $data['team_id'] = $this->teamid;
-        $data['players'] = $this->draft_model->get_watch_list();
-        $data['paused'] = $this->draft_model->draft_paused();
-        $this->load->view('user/season/draft/ajax_get_watch_list', $data);
-    }
+    // function ajax_get_watch_list()
+    // {
+    //     $pos = $this->input->post('pos');
+    //     $data = array();
+    //     $data['draft_team_id'] = $this->draft_model->get_draft_team_id();
+    //     $data['team_id'] = $this->teamid;
+    //     $data['players'] = $this->draft_model->get_watch_list($pos);
+    //     $data['paused'] = $this->draft_model->draft_paused();
+    //     $this->load->view('user/season/draft/ajax_get_watch_list', $data);
+    // }
 
     function ajax_get_myteam()
     {
@@ -245,12 +246,13 @@ class Draft extends MY_Controller{
     {
 
         $player_id = $this->input->post('player_id');
+        $admin_pick = $this->input->post('admin_pick');
         if ($this->draft_model->player_available($player_id) && $this->draft_model->is_teams_pick() && !$this->draft_model->draft_paused())
         {
             $this->draft_model->draft_player($player_id);
             $this->draft_model->order_watch_list();
         }
-        elseif ($this->is_admin && $this->draft_model->player_available($player_id))
+        elseif ($this->is_league_admin && $admin_pick == true && $this->draft_model->player_available($player_id))
         {
             $this->draft_model->draft_player($player_id,true);
             $this->draft_model->order_watch_list();

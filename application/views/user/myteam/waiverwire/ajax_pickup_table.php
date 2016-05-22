@@ -20,18 +20,20 @@
 
 		        </div>
 		    </td>
-			<td class="text-xxs">
-				<div><?=$matchups[$p->club_id]['opp']?></div>
+			<td class="hide-for-small-only">
+				<div><?=$matchups[$p->club_id]['opp']?> (
 				<?php if($matchups[$p->club_id]['time'] != ""): ?>
 					<?php if(date("D",$matchups[$p->club_id]['time']) == "Sun"): ?>
-						<div><?=date("D g:i",$matchups[$p->club_id]['time'])?></div>
+						<?=date("D g:i",$matchups[$p->club_id]['time'])?>
 					<?php else: ?>
-						<div><?=date("D g:i",$matchups[$p->club_id]['time'])?></div>
+						<?=date("D g:i",$matchups[$p->club_id]['time'])?>
 					<?php endif; ?>
 				<?php endif;?>
+				)</div>
 			</td>
 			<td><?=$p->points?></td>
 			<td>
+
 				<?php if ($p->clear_time)
 				{
 					$remaining = $p->clear_time - time();
@@ -43,8 +45,9 @@
 				<?php if($p->clear_time): ?>
 					Waivers clear in <?=$hr?>h:<?=$min?>m:<?=$sec?>s
 				<?php else: ?>
-					<button class="player-pickup btn btn-small btn-default" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup</button>
+					<button class="player-pickup button tiny" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup</button>
 				<?php endif;?>
+
 			</td>
 
 
@@ -55,6 +58,6 @@
 <?php $high = (($page+1)*$per_page); ?>
 <?php $low = $high-($per_page-1); ?>
 <?php if($high > $total_players){$high = $total_players;}?>
-<span id="count-current"><?=$low?> - <?=$high?> of </span><span id="count-total"><?=$total_players?></span>
+<span id="count-current" class="hide"><?=$low?> - <?=$high?> of </span><span id="count-total" class="hide"><?=$total_players?></span>
 </td>
 </tr>

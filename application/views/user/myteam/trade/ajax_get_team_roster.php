@@ -14,7 +14,7 @@
 		    </div>
 		</td>
 		<td>
-			<button class="btn btn-default request-btn btn-sm" type="button" value="<?=$r->player_id?>" data-name="<?=$name?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+			<button class="button request-btn small" type="button" value="<?=$r->player_id?>" data-name="<?=$name?>">Select</button>
 		</td>
 
 

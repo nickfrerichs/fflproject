@@ -1,104 +1,108 @@
 <?php $this->load->view('template/modals/stat_popup'); ?>
-<div class="container">
-
-<h3>Propose Trade</h3>
 
 <!-- Choose team modal -->
-<div class="modal fade" id="choose-team-modal" aria-hidden="true" style="z-index:1060; top:25%">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-body text-center">
-				<form class="navbar-form text-center">
-					<div><h5>Trade with</h5></div>
-					<div class="form-group text-center">
-						<?=form_dropdown('',$team_options,'0','id="team-dropdown" class="form-control"')?>
-					</div>
-				</form>
-			</div>
+<div class="reveal" id="choose-team-modal" data-reveal data-overlay="true">
+
+	<form class="navbar-form text-center">
+		<div><h5>Trade with</h5></div>
+		<div class="form-group text-center">
+			<?=form_dropdown('',$team_options,'0','id="team-dropdown" class="form-control"')?>
 		</div>
-	</div>
+	</form>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+	  <span aria-hidden="true">&times;</span>
+	</button>
 </div>
 
 <!-- Request players modal -->
-<div class="modal fade" id="request-players-modal" aria-hidden="true" style="z-index:1060; top:0%">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-body text-center">
-				<div id="trade-with-team">
-				</div>
-				<div><button class="btn btn-default done-button">Done</button></div>
-			</div>
-		</div>
+<div class="reveal" id="request-players-modal" data-reveal data-overlay="true">
+	<div id="trade-with-team">
 	</div>
+	<div><button class="button done-button">Done</button></div>
+
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+	  <span aria-hidden="true">&times;</span>
+	</button>
 </div>
 
 <!-- Trade players modal -->
-<div class="modal fade" id="trade-players-modal" aria-hidden="true" style="z-index:1060; top:0%">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-body text-center">
-				<table class="table text-center table-border table-condensed table-striped">
-						<thead>
-							<th class="text-center">Pos</th><th class="text-center">Player</th><th></th>
-						</thead>
-						<tbody>
-					<?php foreach ($roster as $r): ?>
-					<tr>
-						<td><?=$r->pos?></td>
-						<td>
-				        <div>
-				                <?php if(strlen($r->first_name.$r->last_name) > 12){$name = $r->short_name; }
-				                      else{$name = $r->first_name." ".$r->last_name;} ?>
-				            <a href="#" class="stat-popup" data-type="player" data-id="<?=$r->player_id?>"><?=$name?></a> - <?=$r->club_id?>
-				        </div>
-		        		</td>
-		        		<td>
-		        			<button class="btn btn-default offer-btn btn-sm" value="<?=$r->player_id?>" data-name="<?=$name?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-						</td>
-					</tr>
-					<?php endforeach; ?>
-						</tbody>
-				</table>
-				<div><button class="btn btn-default done-button">Done</button></div>
-			</div>
-		</div>
+<div class="reveal" id="trade-players-modal" data-reveal data-overlay="true">
+	<table class="text-center table-condensed">
+			<thead>
+				<th class="text-center">Pos</th><th class="text-center">Player</th><th></th>
+			</thead>
+			<tbody>
+				<?php foreach ($roster as $r): ?>
+				<tr>
+					<td><?=$r->pos?></td>
+					<td>
+			        <div>
+			                <?php if(strlen($r->first_name.$r->last_name) > 12){$name = $r->short_name; }
+			                      else{$name = $r->first_name." ".$r->last_name;} ?>
+			            <a href="#" class="stat-popup" data-type="player" data-id="<?=$r->player_id?>"><?=$name?></a> - <?=$r->club_id?>
+			        </div>
+		    		</td>
+		    		<td>
+
+		    					<button class="button offer-btn small" value="<?=$r->player_id?>" data-name="<?=$name?>">Select</button>
+<!--
+								<span class="switch">
+									<input class="switch-input" id="<?=$r->player_id?>-switch" type="checkbox">
+									<label class="switch-paddle" for="<?=$r->player_id?>-switch">
+									</label>
+								</span>
+-->
+
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+	</table>
+	<div><button class="button done-button">Done</button></div>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+	  <span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
+<div class="row">
+	<div class="column">
+		<h5>Propose Trade</h5>
 	</div>
 </div>
 
-	<div class="hide trade-form row">
-		<div class="col-sm-6">
 
-			<table class="table table-striped table-condensed table-border">
-				<thead>
-					<th>
-						<div class="text-center"><h4><?=$team_name?></h4></div>
-						<div class="text-center"><h4><a href="#" id="trade-players"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Add/Remove</a></h4></div>
-					</th>
-				</thead>
-				<tbody id="trade-offer-text" class="text-center">
+<div class="hide trade-form row">
+	<div class="small-12 medium-6">
+		<table class="table-condensed">
+			<thead>
+				<th>
+					<div class="text-center"><h4><?=$team_name?></h4></div>
+					<div class="text-center"><h4><a href="#" id="trade-players">Add/Remove</a></h4></div>
+				</th>
+			</thead>
+			<tbody id="trade-offer-text" class="text-center">
 
-				</tbody>
-			</table>
-		</div>
-
-		<div class="col-sm-6">
-
-
-			<table class="table table-striped table-condensed table-border">
-				<thead>
-					<th class="text-center">
-						<h4><span class="text-center" id="request-team-name"></span> <a href="#" id="trade-title"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></h4>
-						<div class="text-center"><h4><a id="request-players" href="#"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Add/Remove</a></h4></div>
-					</th>
-				</thead>
-				<tbody id="trade-request-text" class="text-center">
-
-				</tbody>
-			</table>
-
-		</div>
+			</tbody>
+		</table>
 	</div>
-	<div class="row">
+
+	<div class="small-12 medium-6">
+		<table class="table-condensed">
+			<thead>
+				<th class="text-center">
+					<h4><span class="text-center" id="request-team-name"></span> <a href="#" id="trade-title">Blah</a></h4>
+					<div class="text-center"><h4><a id="request-players" href="#">Add/Remove</a></h4></div>
+				</th>
+			</thead>
+			<tbody id="trade-request-text" class="text-center">
+
+			</tbody>
+		</table>
+
+	</div>
+</div>
+<div class="row">
+	<div class="column">
 		<form class="navbar-form text-center hide trade-form">
 			<div class="form-group">
 				<select id="trade-expire" class="form-control">
@@ -109,36 +113,37 @@
 				</select>
 			</div>
 
-			<button id="send-trade-offer" class="btn btn-default" type="button">
+			<button id="send-trade-offer" class="button" type="button">
 			Send Trade offer
 			</button>
 		</form>
 	</div>
-
 </div>
+
+
 
 <script>
 $(document).ready(function(){
 
-$("#choose-team-modal").modal('show');
+$("#choose-team-modal").foundation('open');
 
 $("#request-players").click(function(){
-	$("#request-players-modal").modal("show");
+	$("#request-players-modal").foundation("open");
 	event.stopPropagation();
 });
 
 $("#trade-players").click(function(){
-	$("#trade-players-modal").modal("show");
+	$("#trade-players-modal").foundation("open");
 	event.stopPropagation();
 });
 
 $("#trade-title").click(function(){
-	$("#choose-team-modal").modal('show');
+	$("#choose-team-modal").foundation('open');
 })
 
 $(".done-button").click(function(){
-	$("#request-players-modal").modal("hide");
-	$("#trade-players-modal").modal("hide");
+	$("#request-players-modal").foundation("close");
+	$("#trade-players-modal").foundation("close");
 });
 
 $("#team-dropdown").on("change",function(){
@@ -148,46 +153,55 @@ $("#team-dropdown").on("change",function(){
 		$(this).removeClass('hide');
 	});
 	// Reset a bunch of stuff.
-	$("#choose-team-modal").modal('hide');
+	$("#choose-team-modal").foundation('close');
 	$("#request-team-name").text($("#team-dropdown option:selected").text())
 	$("#trade-offer-text").html('');
 	$("#trade-request-text").html('');
 	$(".trade-form").removeClass('hide');
-	$("button.offer-btn").removeClass("active");
-	$("button.request-btn").removeClass("active");
+	$("button.offer-btn").removeClass("secondary");
+	$("button.request-btn").removeClass("secondary");
+	$("button.offer-btn").text("Select");
+	$("button.request-btn").text("Select");
 
 })
 
 // Update list of offered players
 $("button.offer-btn").on("click",function(){
-	$(this).toggleClass("active");
+	toggleSelected($(this));
 	updateList("offer");
 });
 
 // Update list of requested players
 $("#trade-with-team").on("click","button.request-btn",function(){
-	$(this).toggleClass("active");
+	toggleSelected($(this));
 	updateList("request");
 });
 
+function toggleSelected(element)
+{
+	element.toggleClass("secondary");
+	if (element.text() == "Select"){element.text("Remove");}
+	else {element.text("Select");}
+}
 
 $("#send-trade-offer").click(function(){
 	var myteam = [];
 	$("input:checkbox[name=myteam-checkbox]:checked").each(function(i){ myteam[i] = $(this).val(); });
 	var request = [];
 	$("input:checkbox[name=request-checkbox]:checked").each(function(i){ request[i] = $(this).val(); });
-	$(".offer-btn.active").each(function(i){myteam[i] = $(this).val(); });
-	$(".request-btn.active").each(function(i){request[i] = $(this).val(); });
+	$(".offer-btn.secondary").each(function(i){myteam[i] = $(this).val(); });
+	$(".request-btn.secondary").each(function(i){request[i] = $(this).val(); });
 	var other_team = "";
 	other_team = ($("#team-dropdown").val());
 	var trade_expire = $("#trade-expire").val();
 
 	url = "<?=site_url('myteam/trade/submit_trade_offer')?>";
 	$.post(url,{'offer' : myteam, 'request' : request, 'other_team' : other_team, 'trade_expire': trade_expire}, function(){
-		showMessage("Trade request sent.",'alert-success');
+		$("#send-trade-offer").addClass("disabled");
+		notice("Trade request sent.",'success');
 		setTimeout(function(){
 			window.location.replace("<?=site_url('myteam/trade')?>");
-		}, 3000);
+		}, 2000);
 
 	});
 });
@@ -196,10 +210,9 @@ $("#send-trade-offer").click(function(){
 
 function updateList(classname)
 {
-
 	var html = ""
 	$("button."+classname+"-btn").each(function(){
-		if($(this).hasClass("active"))
+		if($(this).hasClass("secondary"))
 		{
 			html = html +'<tr><td>'+$(this).data("name")+"</td></tr>";
 		}

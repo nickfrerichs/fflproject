@@ -1,7 +1,7 @@
 <?php
 
 class Messages_model extends MY_Model{
-    
+
     function __construct(){
         parent::__construct();
         $this->teamid = $this->session->userdata('team_id');
@@ -80,8 +80,14 @@ class Messages_model extends MY_Model{
     {
         $message = $this->db->select('folder_id')->from('message')->where('id',$id)->get()->row();
         if ($message->folder_id == 2)
-          $this->db->delete('message', array('id' => $id));
+        {
+            $this->db->delete('message', array('id' => $id));
+            return "Message deleted forever.";
+        }
         else
-          $this->trash_message($id);
+        {
+            $this->trash_message($id);
+            return "Message moved to trash.";
+        }
     }
 }

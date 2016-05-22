@@ -15,7 +15,7 @@
 	        <?=$p->position?> - <?=$p->club_id?>
 		</td>
 		<td>
-			<button class="drop-player btn btn-default" data-drop-id="<?=$p->id?>" data-drop-name="<?=$p->first_name.' '.$p->last_name?>">Drop</button>
+			<button class="drop-player button small" data-drop-id="<?=$p->id?>" data-drop-name="<?=$p->first_name.' '.$p->last_name?>">Drop</button>
     	</td>
 	</tr>
 <?php endforeach; ?>
@@ -32,7 +32,7 @@
         No One
 	</td>
 	<td>
-	<button class="drop-player btn btn-default" data-drop-id="0" data-drop-name="No One">Drop no one</button>
+	<button class="drop-player button small" data-drop-id="0" data-drop-name="No One">Drop no one</button>
     </td>
 </tr>
 <?php endif;?>

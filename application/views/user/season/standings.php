@@ -1,19 +1,23 @@
-<div class='container'>
-	<?php //print_r($teams);?>
-	<h3><span id="year"><?=$year?></span> Standings</h3>
-	<br>
-	<div id="standings-table">
+
+<div class="row">
+	<div class="columns">
+		<h5><span id="year"><?=$year?></span> Standings</h5>
 	</div>
-	<form class="form-inline text-center" style="padding-top: 10px;">
-		<div class="form-group">
-			<select id="year-select" class="form-control">
-				<?php foreach($years as $y): ?>
-					<option value="<?=$y->year?>"><?=$y->year?></option>
-				<?php endforeach; ?>
-			</select>
-		</div>
-	</form>
 </div>
+<div class="row">
+	<div id="standings-table" class="columns">
+	</div>
+</div>
+<div class="row align-center">
+	<div class="columns medium-2 small-8">
+		<select id="year-select">
+			<?php foreach($years as $y): ?>
+				<option value="<?=$y->year?>"><?=$y->year?></option>
+			<?php endforeach; ?>
+		</select>
+	</div>
+</div>
+
 
 <script>
 $( document ).ready(function() {

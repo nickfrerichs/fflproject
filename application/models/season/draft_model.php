@@ -30,7 +30,7 @@ class Draft_model extends MY_Model{
 
     function draft_paused()
     {
-        $val = $this->db->select('draft_paused')->from('league_settings')->where('league_id',$this->leagueid)
+        $val = $this->db->select('draft_paused')->from('league_settings')->where('league_settings.league_id',$this->leagueid)
             ->get()->row()->draft_paused;
         if ($val > 0)
             return $val;
@@ -209,8 +209,7 @@ class Draft_model extends MY_Model{
 
     function get_available_players_data($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='')
     {
-
-        $pos_list = $this->common->league_nfl_position_id_array();
+        $pos_list = $this->common_model->league_nfl_position_id_array();
         if (count($pos_list) < 1)
             $pos_list = array(-1);
         $owned_list = $this->get_owned_players_array();
@@ -225,8 +224,8 @@ class Draft_model extends MY_Model{
                 ->from('player')
                 ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
-                ->join('roster','player.id = roster.player_id','left')
-                ->join('team','team.id = roster.team_id and team.league_id = roster.league_id','left')
+                ->join('roster','player.id = roster.player_id and roster.league_id = '.$this->leagueid,'left')
+                ->join('team','team.id = roster.team_id and team.league_id = '.$this->leagueid,'left')
                 ->join('draft_watch','draft_watch.player_id = player.id and draft_watch.team_id = '.$this->teamid,'left')
                 ->where_in('nfl_position_id', $pos_list)
                 ->where('player.active', 1);
@@ -359,9 +358,10 @@ class Draft_model extends MY_Model{
 
     }
 
-    function get_watch_list()
+    function get_watch_list($limit = 100000, $start = 0, $pos = 0)
     {
-        return $this->db->select('player.id, player.first_name, player.last_name')
+        $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
+        $this->db->select('player.id, player.first_name, player.last_name')
                 ->select('nfl_position.text_id as position')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('draft_watch.order')
@@ -369,9 +369,17 @@ class Draft_model extends MY_Model{
                 ->join('player', 'player.id = draft_watch.player_id')
                 ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
-                ->where('draft_watch.team_id',$this->teamid)
-                ->order_by('draft_watch.order','asc')
-                ->get()->result();
+                ->where('draft_watch.team_id',$this->teamid);
+        if (($pos != 0) && (is_numeric($pos)))
+            $this->db->where('nfl_position.id', $pos);
+        $data = $this->db->limit($limit, $start)->order_by('draft_watch.order','asc')->get();
+
+        $returndata['count'] = $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;
+        $returndata['result'] = $data->result();
+
+        return $returndata;
+
+
     }
 
     function get_myteam()

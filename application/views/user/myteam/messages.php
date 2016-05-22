@@ -1,41 +1,61 @@
 <?php //print_r($inbox); ?>
-<div class="container">
-	<div>
-		<h3>Messages</h3>
-	</div>
-	<div class="col-md-2">
-	<div><a href="<?=site_url('myteam/messages/compose')?>"><h4>New Message</a></h4></div>
-	<div id="folder_0" class="folder"><a href="#"><h5>Inbox</h5></a></div>
-	<div id="folder_1" class="folder"><a href="#"><h5>Sent Items</h5></a></div>
-	<div id="folder_2" class="folder"><a href="#"><h5>Trash</h5></a></div>
-	</div>
-	<div class="col-md-10">
-		<table id="message-table" class="table table-striped table-border">
-				<h4><div id="current_0" class="folder-name">Current Folder</div></h4>
-			<tbody id="message-list">
-			</tbody>
-		</table>
-		<div id="message-display">
-		</div>
+
+<style>
+	.activemessage{color:blue}
+</style>
+
+<div class="row">
+	<div class="columns">
+		<h4>Messages</h4>
+		<hr>
 	</div>
 </div>
+<div class="row">
+	<div class=" columns medium-2 small-12">
+		<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>New Message</a></h6></div>
+		<div id="folder_0" class="folder"><a href="#"><h6>Inbox</h6></a></div>
+		<div id="folder_1" class="folder"><a href="#"><h6>Sent Items</h6></a></div>
+		<div id="folder_2" class="folder"><a href="#"><h6>Trash</h6></a></div>
+	</div>
+	<div class="columns medium-10 small-12">
+		<h4><div id="current_0" class="folder-name">Current Folder</div></h4>
+		<div style="overflow-x: scroll;max-height:200px;">
+			<table id="message-table" class="table">
+				<tbody id="message-list">
+				</tbody>
+			</table>
+		</div>
+		<hr>
+		<div id="message-display" style="max-height:300px; overflow-x:scroll">
+		</div>
+		<div id="message-buttons" class="hide">
+			<button id="message-reply" class="button">Reply</button>
+			<button id="message-delete" class="button">Delete</button>
+			<button id="message-close" class="button">Close</button>
+		</div>
+	</div>
+
 
 <script>
 $(document).ready(function(){
 
 	load_messages(0);
+
 	$("#message-list").on("click","tr",function(){
 		if (this.id == "") {return}
-		if (this.id == $("#message-buttons").data("message-id"))
+		if (this.id == $("#displayed-message").data("message-id"))
 		{
-			$("#message-display").text("");
+			$("#message-close").click();
 		}
 		else
 		{
 			url = "<?=site_url('myteam/messages/ajax_get_message')?>";
 			$.post(url,{'id' : this.id }, function(data){
 				$("#message-display").html(data);
+				show_controls();
 			});
+			$("#message-list tr").removeClass("activemessage")
+			$(this).addClass("activemessage");
 		}
 	});
 
@@ -45,19 +65,29 @@ $(document).ready(function(){
 	});
 
 	// Reply button click
-	$("#message-display").on("click","#message-reply",function(){
+	$("#message-reply").on("click",function(){
 		url = "<?=site_url('myteam/messages/')?>";
 		window.location.replace("<?=site_url('myteam/messages/compose/reply')?>"+"/"+this.name);
-		
+
 	});
 	// Delete button click
-	$("#message-display").on("click","#message-delete",function(){
+	$("#message-delete").on("click",function(){
 		url = "<?=site_url('myteam/messages/delete_message')?>";
-		$.post(url,{'id' : this.name},function(){ load_messages(current_folderid)});
+		var id = $("#displayed-message").data("message-id");
+		$.post(url,{'id' : id},function(data){
+			result = $.parseJSON(data);
+			if (result.success == true)
+			{
+				notice(result.msg);
+			}
+			load_messages(current_folderid());
+
+		});
 	});
 	// Close button click
-	$("#message-display").on("click","#message-close",function(){
+	$("#message-close").on("click",function(){
 		$("#message-display").text("");
+		hide_controls();
 	});
 
 	function current_folderid() {return $(".folder-name").attr('id').replace("current_","");}
@@ -72,7 +102,13 @@ $(document).ready(function(){
 			$(".folder-name").text($("#folder_"+folder).text());
 			console.log($(".folder-name").text());
 		});
+		hide_controls()
 	}
+
+	function hide_controls()
+	{$("#message-buttons").addClass("hide");}
+	function show_controls()
+	{$("#message-buttons").removeClass("hide");}
 
 });
 

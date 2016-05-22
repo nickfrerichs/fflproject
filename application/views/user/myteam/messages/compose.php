@@ -1,10 +1,10 @@
 <?php //print_r($owners); ?>
 
-<div class="container">
-	<div class="page-heading">
-		<h3>Messages</h3>
-	</div>
-	<form class="form-inline">
+<div class="row">
+	<div class="columns">
+		<h5>Compose Message</h5>
+
+
 		<select id="message-to" class="form-control">
 			<option value="0">To:</option>
 			<?php foreach($owners as $o): ?>
@@ -22,10 +22,12 @@
 		<?php else: ?>
 		<input id="message-subject" type="text" class="form-control" placeholder="Subject">
 		<?php endif; ?>
-	</form>
-	<textarea id="message-body" class="form-control" rows="10"></textarea>
-	<button id="send-message" class="btn btn-default">Send Message</button>
+
+		<textarea id="message-body" class="form-control" rows="10"></textarea>
+		<button id="send-message" class="button">Send Message</button>
+	</div>
 </div>
+
 
 <script>
 $(document).ready(function(){

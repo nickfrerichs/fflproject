@@ -370,6 +370,7 @@ class Waiverwire_model extends MY_Model{
                 ->order_by('draft_order.pick','desc')
                 ->get()->result();
 
+        $data['priority'] = array();
         if(count($standings) == 0)
         {
             $data['type'] = 'draft_order';

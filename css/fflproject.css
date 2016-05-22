@@ -2,41 +2,54 @@
 /* MAIN SITE STYLING */
 /* --------------------- */
 
-body{background-color:#FFFFFF;}
+body{background-color:#FFFFFF; font-size:.9rem}
 
 /* wraps around the header, footer, and view */
 #body-wrap{
-	max-width: 1024px;
 	/* background-color:#F0F0F0; */
 
 	margin: auto;
 	display:block;
 }
 
+
 /* Just the view, not the header and footer bars */
-#view-wrap{padding:25px;}
+#view-wrap{}
 
 /* Color for glyph icons */
 i{color:#2199e8;}
 
 /* footer bar */
 #footer-bar a{color:#FFF;}
-#footer-bar{height:40px;}
+#footer-bar{height:40px; margin-top:15px;}
 
+table{font-size:1em;}
 
+/* */
+/* --------------------- */
+.button{margin-bottom:1px; margin-top:1px;}
+.table-condensed td, .table-condensed th{
+	padding-top:2px;
+	padding-bottom:2px;
+	padding-left:5px;
+	padding-right:5px;
 
+}
+
+.row {max-width: 1200px;}
 /* --------------------- */
 /* MENU BAR STYLING      */
 /* --------------------- */
 
-/* both mobile and desktop menu bars */
-#title-bar-row, .top-bar, .top-bar ul, .top-bar li, .title-bar, .small-top-bar, #footer-bar{background-color: #444;}
+/* both mobile and desktop menu bars, I set 1rem to maintain this size in case I adjust the font size for the entire body*/
+#title-bar-row, .top-bar, .top-bar ul, .top-bar li, .title-bar, .small-top-bar, #footer-bar{background-color: #444; font-size:1rem; border-radius:3px;}
 .top-bar a{color: #fff;}
-.top-bar-row{height:80px;}
+
+#title-bar-row{margin-bottom:30px;}
 
 .live-scores{
 	color: #FFF;
-	font-size:.7em;
+	font-size:.7rem;
 	text-shadow: 1px 1px 0px red;
 }
 
@@ -51,29 +64,62 @@ i{color:#2199e8;}
 
 /* regular desktop menu bar */
 .site-title{
-	font-size: 1.2em;
+	font-size: 1.4em;
 	padding-bottom:0px;
 	padding-top:0px;
 	color:#2199e8;
 }
 .league-name-title{
 	color:#FFF;
-	font-size: .7em;
+	font-size: 1em;
 }
 .league-name-title-small{
 	color:#2199e8;
 	font-size:.8em;
 }
 
+/* Added a custom media query to hide the site/league titles for smaller screens */
+@media screen and (min-width: 0px) and (max-width: 699px) {
+  .hide-for-small-custom { display: none; }  /* show it on small screens */
+}
+
+/* Added a custom media query to hide things for very small screens */
+@media screen and (min-width: 0px) and (max-width: 400px) {
+  .hide-for-extra-small { display: none; }  /* show it on small screens */
+}
 
 /* --------------------- */
 /* CHAT BOX STYLING      */
 /* --------------------- */
+#chat-title-bar{
+	background-color:#2199e8;
+	color:#FFF;
+	cursor:move;
+	font-size:1.5em;
+	padding-top:2px;
+	height:40px;
+}
+#chat-close-button{
+	color:#FFF;
+	float:right;
+	padding-right:5px;
+	cursor:pointer;
+	font-size: 1.3em;
+}
+
+#chat-modal{
+	padding:0px;
+}
+
+@media screen and (min-width: 600px){
+	#chat-modal{
+		width:300px;
+	}
+}
 
 .chat-history-table{
     overflow:scroll;
     height:300px;
-    width:300px;
 }
 #chat-history-table{
     font-size:.8em;
@@ -86,8 +132,25 @@ i{color:#2199e8;}
     height: 290px;
 
 }
-.chat-window{width:320px;}
+.chat-window{width:320px; padding:0px;}
 #chat-window-small{}
 .chat-message{font-size: .8em;}
-#chat-button-small{height:42px;}
-#chat-button{margin-right:10px;}
+#chat-button-small{height:40px;}
+#chat-button{}
+
+
+/* BELOW ARE EXCEPTIONS TO THE DEFAULT STYLES */
+
+/* ----------------------- */
+/* Myteam page
+/* ----------------------- */
+
+.mt-r-schedule-style{
+	font-size:.9em;
+}
+.mt-r-schedule-style td{
+	padding:2px;
+}
+.mt-ww-page-btn-style{
+	width:100px;
+}

@@ -33,15 +33,23 @@ class Settings extends MY_Controller{
     {
         $type = $this->input->post('type');
         $value = $this->input->post('value');
+        $response = array("success" => false, "msg" =>'');
         if($type == "teamname")
-            $result = $this->myteam_settings_model->change_team_name($value);
+        {
+            $response['msg'] = $this->myteam_settings_model->change_team_name($value);
+            $response['success'] = true;
+        }
         if($type == 'phone')
-            $result = $this->myteam_settings_model->change_owner_phone($value);
+        {
+            $response['msg'] = $this->myteam_settings_model->change_owner_phone($value);
+            $response['success'] = true;
+        }
 
         $this->load->model('security_model');
         $this->security_model->set_session_variables();
 
-        echo $result;
+
+        echo json_encode($response);
 
     }
 

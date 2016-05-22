@@ -1,6 +1,6 @@
-<div class="container">
 <div class="row">
-<h3><?=$content->title?></h3>
+<div class="columns">
+<h5><?=$content->title?></h5>
 <?=$content->data?>
 </div>
 </div>

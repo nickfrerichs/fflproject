@@ -1,35 +1,40 @@
 <?php //print_r($open_trades); ?>
 <?php $this->load->view('template/modals/stat_popup'); ?>
-<div class="container">
 
-	<div><h3>Trades</h3></div>
+<div class="row">
+	<div class="column"><h4>Trades</h4></div>
+</div>
 
 
+<div class="row align-justify">
+	<div class="column small-12"><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></div>
+	<div class="column small-12"><a href="#">Trade log</a></div>
+</div>
 
-	<div><h4><a href="<?=site_url('myteam/trade/propose')?>"><button class="btn btn-default">Propose Trade</button></a></h4></div>
-
-	<!--
-	<table class="table"><tbody><tr><td>
-	<div class="text-center"><h4>No Current Offers</h4></div>
-	</td></tr></tbody></table>
+<!--
+<table class="table"><tbody><tr><td>
+<div class="text-center"><h4>No Current Offers</h4></div>
+</td></tr></tbody></table>
 -->
 
-
-	<div class="text-center">
-	<h4>Outstanding Trades</h4>
+<div class="row">
+	<div class="column text-center">
+		<h5>Outstanding Trades</h5>
 	</div>
-	<table class="table table-striped">
-		<thead>
-			<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
-		</thead>
-		<tbody id="open-trades-tbody">
-
-	</tbody>
-	</table>
-
-
-
 </div>
+<div class="row">
+	<div class="column">
+		<table class="table table-striped">
+			<thead>
+				<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
+			</thead>
+			<tbody id="open-trades-tbody">
+		</tbody>
+		</table>
+	</div>
+</div>
+
+
 
 <script>
 $(document).ready(function(){
@@ -41,10 +46,30 @@ $(document).ready(function(){
 		console.log(tradeid);
 		var url="<?=site_url('myteam/trade/ajax_accept')?>";
 		$.post(url,{'tradeid':tradeid}, function(data){
-			if (data != "success")
-			{showMessage(data);}
+			console.log(data)
+			result = $.parseJSON(data);
+			console.log(result);
+			if (result.success != true)
+			{notice(result.msg);}
+			else
+			{notice(result.msg,'success');}
 			load_open_trades();
         });
+	});
+
+	$("#open-trades-tbody").on('click','.decline-button',function(){
+		var tradeid = $(this).val();
+		console.log(tradeid);
+		var url="<?=site_url('myteam/trade/ajax_decline')?>";
+		$.post(url,{'tradeid':tradeid}, function(data){
+			result = $.parseJSON(data);
+			if (result.success != true)
+			{notice(data.msg);}
+			else {
+				notice("Trade declined.","success");
+			}
+			load_open_trades();
+		});
 	});
 
 	function load_open_trades()

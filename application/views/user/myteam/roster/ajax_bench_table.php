@@ -1,4 +1,4 @@
-<?php //print_r($weeks); ?>
+<?php //print_r($bench); ?>
 <?php foreach($bench as $b): ?>
     <tr>
         <td>
@@ -22,24 +22,25 @@
                  <?php endif; ?>
             <?php endif;?>
          </td>
-        <td class="hidden-xxs">
+        <td class="hide-for-extra-small">
             <?=$b['data']->points?>
         </td>
         <td>
-        <?php if ($matchups[$b['data']->club_id]['time'] > time() || $matchups[$b['data']->club_id]['time'] == '' || $this->session->userdata('league_id') == '5'): ?>
-            <?php if (isset($b['can_start'])): ?>
-                <?php foreach ($b['can_start'] as $pos_id => $can_pos): ?>
-                    <button class="btn btn-default roster-start-btn" value="<?=$b['data']->player_id?>_<?=$pos_id?>">
-
-                        <div class="">
-                            <?=$can_pos?>
-                        </div>
-                    </button>
-                <?php endforeach; ?>
-            <?php else: ?>
-                Full
-            <?php endif; ?>
-        <?php endif;?>
+            <div class="row align-center">
+                <div class="columns text-center">
+                    <?php if ($matchups[$b['data']->club_id]['time'] > time() || $matchups[$b['data']->club_id]['time'] == '' || 1==1): ?>
+                        <?php if (isset($b['can_start'])): ?>
+                            <?php foreach ($b['can_start'] as $pos_id => $can_pos): ?>
+                                        <button class="button small roster-start-btn" value="<?=$b['data']->player_id?>_<?=$pos_id?>">
+                                            <?=$can_pos?>
+                                        </button>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            Full
+                        <?php endif; ?>
+                    <?php endif;?>
+                </div>
+            </div>
         </td>
     </tr>
 

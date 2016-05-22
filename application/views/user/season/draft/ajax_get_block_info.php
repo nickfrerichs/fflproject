@@ -1,4 +1,4 @@
-<div class="table-heading text-center"><h4>
+<div class="text-center"><h5>
     <?php if(($scheduled_start_time > $current_time) && ($start_time > $current_time)): ?>
     Draft Begins
     <?php elseif (empty($current_pick)): ?>
@@ -6,9 +6,8 @@
     <?php else: ?>
     Now Picking
     <?php endif;?>
-</h4></div>
-<div style="border-top: 1px solid #bbb">
-</div>
+</h5></div>
+
 
 <?php //print_r($current_pick);?>
 <?php if(($scheduled_start_time > $current_time) && empty($current_pick)): // Draft is in the future?>
@@ -22,14 +21,14 @@
 <?php else: ?>
     <div class="d-block-team-name"><?=$current_pick->team_name?></div>
     <?php if($current_pick->logo): ?>
-        <div>
-            <img id="d-block-team-logo" src="<?=$logo_url?>">
-        </div>
+        <?php $temp_logo_url = $logo_url; ?>
     <?php else: ?>
-        <div>
-            <img id="d-block-team-logo" src="<?=$default_logo_url?>">
-        </div>
-    <?php endif; ?>
+        <?php $temp_logo_url = $default_logo_url; ?>
+    <?php endif;?>
+    <div>
+        <img id="d-block-team-logo" class="hide-for-small-only" src="<?=$temp_logo_url?>">
+    </div>
+
     <div class="d-block-round">Round <?=$current_pick->round?>
 
     Pick <?=$current_pick->pick?></div>

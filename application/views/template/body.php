@@ -1,4 +1,4 @@
-<body style="visibility: hidden;" onload="js_Load()">
+<body style="visibility: hidden;z-index:5" onload="js_Load()">
 
         <?php $this->load->view('template/body_js.php'); ?>
 

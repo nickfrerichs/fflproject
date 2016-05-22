@@ -3,12 +3,14 @@
 class Chat_model extends MY_Model{
 
     function __construct(){
+
         parent::__construct();
         $this->teamid = $this->session->userdata('team_id');
         //$this->current_year = $this->session->userdata('current_year');
         //$this->current_week = $this->session->userdata('current_week');
         $this->ownerid = $this->session->userdata('owner_id');
         $this->leagueid = $this->session->userdata('league_id');
+
     }
 
     function save_message($message)
@@ -104,10 +106,12 @@ class Chat_model extends MY_Model{
 
     function get_firstnames()
     {
+
         $owners = $this->db->select('owner.first_name')->from('team')
             ->join('owner','owner.id = team.owner_id')
             ->where('team.league_id',$this->leagueid)->get()->result();
         $firstnames = array();
+
         foreach($owners as $o)
         {
             if(array_key_exists(strtolower($o->first_name), $firstnames))

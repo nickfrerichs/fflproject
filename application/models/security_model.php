@@ -29,8 +29,10 @@ class Security_model extends MY_Model
             $this->session->set_userdata('is_league_admin', False);
 
         $this->load->model('league/chat_model');
-        $names = $this->chat_model->get_firstnames;
-        if ($names[$owner->first_name] > 1)
+
+        $names = $this->chat_model->get_firstnames();
+
+        if ($names[strtolower($owner->first_name)] > 1)
             $chatname = $owner->first_name+' '+$owner->last_name[0];
         else
             $chatname = $owner->first_name;
@@ -53,6 +55,7 @@ class Security_model extends MY_Model
         $week_year = $this->get_current_week();
         $this->session->set_userdata('current_year', $week_year->year);
         $this->session->set_userdata('current_week', $week_year->week);
+        $this->session->set_userdata('current_week',1);
         $this->session->set_userdata('expire_dynamic_vars',time()+20); // Make sure to check dynamic vars every 5 mins.
         $this->session->set_userdata('live_scores',$this->live_scores_on());
     }

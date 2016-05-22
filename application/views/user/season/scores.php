@@ -21,12 +21,10 @@
 
 </style>
 
-<div class="container">
-    <br>
     <div class="row">
-        <div class="center-block" style="max-width:600px;">
+        <div class="columns">
             <h4 class='text-center'>Week <?=$selected_week?> Scores</h4>
-            <table class="table table-responsive table-condensed text-center" style="table-layout:fixed">
+            <table class="text-center">
                 <tr>
                 <?php foreach($weeks as $num => $w): ?>
                     <?php if($selected_week == $w->week):?>
@@ -51,8 +49,8 @@
     </div>
     <div class="row">
         <?php foreach($matchups as $m): ?>
-            <div class="col-sm-6">
-                <table class="table table-condensed table-striped table-border">
+            <div class="columns medium-6 small-12">
+                <table>
                     <thead style="font-size:1.1em" >
                         <th height="55px"><?=$m['home_team']['points']?></th>
                         <th class="text-right" style="width:40%"><?=$m['home_team']['team']->team_name?></th>
@@ -92,7 +90,4 @@
                 <hr>
             </div>
         <?php endforeach;?>
-
-
     </div>
-</div>
