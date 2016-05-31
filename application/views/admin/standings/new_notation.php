@@ -1,6 +1,10 @@
-<div class="container">
-    <div class="row">
-        <h4>New standings notation</h4>
+<div class="row">
+    <div class="columns">
+        <h5>New standings notation</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="columns">
         <br>
         <form method="post">
         <table class="table" style="max-width:400px;">
@@ -21,7 +25,7 @@
                 </td>
             </tr>
         </table>
-        <button type="submit" class="btn btn-default">Add</button>
+        <button type="submit" class="button">Add</button>
         </form>
     </div>
 </div>

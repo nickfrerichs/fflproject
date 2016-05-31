@@ -62,11 +62,12 @@ class MY_Controller extends CI_Controller{
 
     }
 
-    function user_view($viewname, $d=null)
+    function user_view($viewname, $d=null, $bc=null)
     {
         $this->load->model('menu_model');
         $d['menu_items'] = $this->menu_model->get_menu_items_data();
         $d['v'] = $viewname;
+        $d['bc'] = $bc;
         $this->load->view('template/user_init', $d);
     }
 }
@@ -106,11 +107,12 @@ class MY_Admin_Controller extends CI_Controller{
         }
     }
 
-    function admin_view($viewname, $d=null)
+    function admin_view($viewname, $d=null, $bc=null)
     {
         $this->load->model('menu_model');
         $d['menu_items'] = $this->menu_model->get_menu_items_data(true);
         $d['v'] = $viewname;
+        $d['bc'] = $bc;
         $this->load->view('template/admin_init', $d);
     }
 }

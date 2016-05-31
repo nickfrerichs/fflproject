@@ -1,35 +1,39 @@
-<div class="container">
-    <div class="row">
-        <h4>Standings</h4>
+<div class="row">
+    <div class="columns">
+        <h5>Standings</h5>
     </div>
-    <?php //print_r($teams); ?>
-    <table class="table table-striped table condensed">
-        <thead>
-            <th>Team Name</th>
-            <th>Owner</th>
-            <th>Notation</th>
-        </thead>
-        <tbody>
-            <?php foreach ($teams as $t): ?>
-                <tr>
-                    <td><?=$t->team_name?></td>
-                    <td><?=$t->first_name.' '.$t->last_name?></td>
-                    <td>
-                        <select class="team-notation" data-teamid="<?=$t->team_id?>">
-                            <option value='0'>None</option>
-                            <?php foreach($notations as $n): ?>
-                                <option value="<?=$n->id?>"><?=$n->symbol.' ('.$n->text.')'?></option>
-                            <?php endforeach;?>
-                        </select>
-                    </td>
-                </tr>
-            <?php endforeach;?>
-        </tbody>
-    </table>
-    <br><br>
+</div>
+<div class="row">
+    <div class="columns">
+        <?php //print_r($teams); ?>
+        <table class="table table-striped table condensed">
+            <thead>
+                <th>Team Name</th>
+                <th>Owner</th>
+                <th>Notation</th>
+            </thead>
+            <tbody>
+                <?php foreach ($teams as $t): ?>
+                    <tr>
+                        <td><?=$t->team_name?></td>
+                        <td><?=$t->first_name.' '.$t->last_name?></td>
+                        <td>
+                            <select class="team-notation" data-teamid="<?=$t->team_id?>">
+                                <option value='0'>None</option>
+                                <?php foreach($notations as $n): ?>
+                                    <option value="<?=$n->id?>"><?=$n->symbol.' ('.$n->text.')'?></option>
+                                <?php endforeach;?>
+                            </select>
+                        </td>
+                    </tr>
+                <?php endforeach;?>
+            </tbody>
+        </table>
+        <br><br>
 
-    <a href="<?=site_url('admin/standings/notations')?>">View/Edit Notations</a>
+        <a href="<?=site_url('admin/standings/notations')?>">View/Edit Notations</a>
 
+    </div>
 </div>
 
 <script>

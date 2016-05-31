@@ -12,7 +12,7 @@
 
 <div class="row">
     <div class="columns">
-        <table class="table table-striped">
+        <table>
             <thead>
 
             </thead>

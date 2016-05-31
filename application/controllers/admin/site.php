@@ -44,6 +44,8 @@ class Site extends MY_Admin_Controller{
         $leagueid = $this->input->post('leagueid');
         $data['admins'] = $this->site_model->get_league_admins_array($leagueid);
         $data['owners'] = $this->site_model->get_league_owners_array($leagueid);
+        //print_r($data['owners']);
+
         // print out the tbody
         ?>
             <?php foreach($data['owners'] as $id => $o): ?>
@@ -51,18 +53,39 @@ class Site extends MY_Admin_Controller{
                 <tr>
                     <td class="text-left"><?=$o->first_name.' '.$o->last_name?></td>
                     <td>
+                        <div class="switch small">
+                            <input  class="switch-input toggle-control" data-item="<?=$id?>" data-item2="<?=$leagueid?>" data-url="<?=site_url('admin/site/ajax_toggle_league_admin')?>"
+                                id="admin-<?=$id?>" type="checkbox" name="adminSwitch" <?php if(array_key_exists($id, $data['admins'])){echo "checked";}?>>
+                            <label class="switch-paddle" for="admin-<?=$id?>">
+                            </label>
 
-                        <?php if(!array_key_exists($id, $data['admins'])): ?>
-                            <?php $class="btn btn-default admin-button"; $action="add";?>
-                        <?php else: ?>
-                            <?php $class="btn btn-default admin-button active"; $action="remove";?>
-                        <?php endif;?>
-                        <button class="<?=$class?>" data-id="<?=$o->user_id?>" data-leagueid="<?=$leagueid?>" data-action="<?=$action?>">
-                        Admin</button>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
         <?php
+    }
+
+    public function ajax_toggle_league_admin()
+    {
+        $response = array("success" => false);
+        $userid = $this->input->post('item');
+        $leagueid = $this->input->post('item2');
+        $action = $this->input->post('action');
+
+        $response['currentValue'] = $this->site_model->toggle_league_admin($userid, $leagueid);
+
+        echo json_encode($response);
+
+        // if ($action == "remove")
+        //     $this->site_model->remove_league_admin($userid, $leagueid);
+        // if ($action == "add")
+        // {
+        //     if ($this->site_model->ok_to_add_admin($userid, $leagueid))
+        //         $this->site_model->set_league_admin($userid, $leagueid);
+        //
+        // }
+
     }
 
     public function ajax_change_item()

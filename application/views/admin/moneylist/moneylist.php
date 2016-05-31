@@ -1,9 +1,13 @@
-<?php print_r($types); ?>
+<?php //print_r($types); ?>
 <?php //echo $weeks; ?>
-<div class="container">
-    <div class="row">
-        <h4>Money List</h4>
-        <table class="table" style="max-width:600px;">
+<div class="row">
+    <div class="columns">
+        <h5>Money List</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="columns">
+        <table>
             <tr><td>
         <select id="team">
             <?php foreach($teams as $t): ?>
@@ -21,7 +25,7 @@
             </select>
         </td>
         <td>
-            <input id="amount" type="textbox" placeholder="0.00"></input>
+            <input id="amount" type="text" placeholder="0.00"></input>
         </td>
         <td>
             <select id="type">
@@ -31,11 +35,33 @@
             </select>
         </td>
         <td>
-            <input id="text" type="textbox" placeholder="Description"></input>
+            <input id="text" type="text" placeholder="Description"></input>
         </td>
     </tr>
         </table>
-        <button id="add" class="btn btn-default">Add</button>
+        <button id="add" class="button small">Add</button>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="columns">
+        <table>
+            <thead>
+                <th>Week</th><th>Amount</th><th>Score</th><th></th><th>Team</th><th>Owner</th>
+            </thead>
+            <tbody>
+                <?php foreach($list as $l): ?>
+                    <tr>
+                        <td><?=$l->week?></td>
+                        <td>$<?=number_format($l->amount,2)?></td>
+                        <td><?=$l->team_score?></td>
+                        <td><?=$l->short_text?></td>
+                        <td><?=$l->team_name?></td>
+                        <td style="font-size:.9em;"><?=$l->first_name.' '.$l->last_name?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -48,8 +74,7 @@ $('#add').on('click', function(){
     var text = $('#text').val();
     var typeid = $('#type').val();
     $.post(url,{'teamid':teamid, 'week':week, 'amount':amount, 'text':text, 'typeid':typeid}, function(data){
-        console.log(data);
-        //location.reload();
+        location.reload();
     });
 });
 </script>

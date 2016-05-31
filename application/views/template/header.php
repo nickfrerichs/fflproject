@@ -382,10 +382,10 @@ function chatScrollBottom(set)
 // It only checks if the Chat window is not visible
 function updateNewChatIcon()
 {
-        console.log("here again");
+
     if(!$('#chat-modal').is(':visible'))
     {
-            console.log("here");
+
         var url = "<?=site_url('league/chat/unread')?>";
         $.post(url,{}, function(data){
             var count = parseInt(data);

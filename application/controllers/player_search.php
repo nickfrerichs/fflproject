@@ -36,6 +36,45 @@ class Player_search extends MY_Controller{
         $this->order_by = array($this->data['by'],$this->data['order']);
 
     }
+
+    function ajax_admin_get_player_list()
+    {
+        if ($this->session->userdata('is_league_admin'))
+        {
+            $nfl_players = $this->player_search_model->get_nfl_players($this->per_page, $this->data['page']*$this->per_page, $this->data['sel_pos'], $this->order_by, $this->data['search'], true);
+            $this->load->model('myteam/myteam_roster_model');
+            $this->data['total'] = $nfl_players['count'];
+            $this->data['players'] = $nfl_players['result'];
+            $this->data['per_page'] = $this->per_page;
+            $this->data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+
+            //$this->load->view('player_search/ajax_full_player_list',$this->data);
+
+            // **************************************
+            // BEGIN VIEW
+            ?>
+
+            <?php foreach($this->data['players'] as $p):?>
+                <tr>
+                    <td><a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a></td>
+                    <td><?=$p->position?></td>
+                    <td><?=$p->club_id?></td>
+                    <?php if($p->team_name): ?>
+                    <td><?=$p->team_name?></td>
+                    <?php else: ?>
+                        <td><button class="button tiny add-button" data-id="<?=$p->id?>" data-name = "<?=$p->first_name.' '.$p->last_name?>">add</button></td>
+                    <?php endif;?>
+                </tr>
+            <?php endforeach; ?>
+            <tr id="main-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$this->data['total']?>">
+            </tr>
+
+            <?php
+            // END VIEW
+            // **************************************
+        }
+    }
+
     // for season/draft/live
     function ajax_draft_list()
     {
@@ -60,7 +99,6 @@ class Player_search extends MY_Controller{
     {
         $this->load->model('season/draft_model');
 
-        echo $this->per_page;
 
         $this->data['draft_team_id'] = $this->draft_model->get_draft_team_id();
         $this->data['team_id'] = $this->teamid;

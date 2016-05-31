@@ -35,4 +35,21 @@ class Moneylist_model extends MY_Model
         $this->db->insert('money_list',$data);
     }
 
+    function get_moneylist()
+    {
+        return $this->db->select('money_list.week, money_list.amount, money_list_type.short_text')
+            ->select('team_name, owner.first_name, owner.last_name')
+            ->select('schedule_result.team_score')
+            ->from('money_list')
+            ->join('money_list_type','money_list_type.id = money_list.type_id')
+            ->join('team','team.id = money_list.team_id')
+            ->join('owner','owner.id = team.owner_id')
+            ->join('schedule_result','schedule_result.team_id = money_list.team_id and schedule_result.year = money_list.year '
+                    .'and schedule_result.week = money_list.week','left')
+            ->where('money_list.league_id',$this->leagueid)
+            ->where('money_list.year',$this->current_year)
+            ->order_by('week','asc')
+            ->get()->result();
+    }
+
 }

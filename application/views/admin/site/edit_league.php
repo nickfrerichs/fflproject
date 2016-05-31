@@ -1,33 +1,26 @@
 
+<div class="reveal" id="set-admins-modal" data-reveal data-overlay="true">
+    <h4>Set League Admins</h4>
+    <table class="table">
+        <tbody id="league-owners-list">
 
-<div class="modal" id="set-admins-modal" aria-hidden="true" style="z-index:1060; top:25%">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <div class="container" style="width:550px;">
-                    <div class="row">
-                        <h4>Set League Admins</h4>
-                        <table class="table">
-                            <tbody id="league-owners-list">
-
-                            </tbody>
-                        </table>
-                        <button class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        </tbody>
+    </table>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
-<div class="container">
-    <div class="row">
+<div class="row">
+    <div class="columns">
         <h4><?=$info->league_name?></h4>
         <h5>Settings</h5>
     </div>
-    <div class="row">
-        <div class="form-group">
-            <table class="table" style="width:600px">
+</div>
+<div class="row">
+    <div class="columns">
+        <div>
+            <table>
                 <tr>
                     <td><b>Join Password</b></td>
                     <td id="joinpassword-field" class="text-center">
@@ -58,7 +51,7 @@
                 </tr>
                 <tr>
                     <?php $inviteurl = site_url('joinleague/invite/'.$info->mask_id.'/'.$settings->join_password); ?>
-                    <td class="text-center"><b>Invite URL</b></td><td colspan=2><a href="<?=$inviteurl?>"><?=$inviteurl?></a></td>
+                    <td><b>Invite URL</b></td><td colspan=2><a href="<?=$inviteurl?>"><?=$inviteurl?></a></td>
                 </tr>
 
             </table>
@@ -78,21 +71,22 @@
 
     $("#set-admins-button").on('click',function(){
         load_admins_and_owners();
-        $("#set-admins-modal").modal('show');
-
-    $("tbody").on('click','.admin-button',function(){
-        var url = "<?=site_url('admin/site/ajax_toggle_admin')?>";
-        var userid = $(this).data('id');
-        var leagueid = $(this).data('leagueid');
-        var action = $(this).data('action');
-        $.post(url,{'userid':userid,'leagueid':leagueid, 'action':action},function(){
-            load_admins_and_owners();
-        });
+        $("#set-admins-modal").foundation('open');
     });
+
+    // $("tbody").on('click','.admin-button',function(){
+    //     var url = "<?=site_url('admin/site/ajax_toggle_admin')?>";
+    //     var userid = $(this).data('id');
+    //     var leagueid = $(this).data('leagueid');
+    //     var action = $(this).data('action');
+    //     $.post(url,{'userid':userid,'leagueid':leagueid, 'action':action},function(){
+    //         load_admins_and_owners();
+    //     });
+    // });
 
     $('#set-admins-modal').on('hidden.bs.modal', function (e) {
         location.reload();
     });
 
-});
+
 </script>

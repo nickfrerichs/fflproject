@@ -141,10 +141,12 @@ class Myteam_roster_model extends MY_Model{
 
     function get_league_positions_data()
     {
+        $pos_year = $this->common_model->league_position_year();
         $data = $this->db->select('position.id, position.nfl_position_id_list, position.text_id')
                 ->select('position.max_roster, position.min_roster, position.max_start, position.min_start')
                 ->from('position')
                 ->where('league_id',$this->leagueid)
+                ->where('year',$pos_year)
                 ->order_by('display_order', 'asc')
                 ->get();
 

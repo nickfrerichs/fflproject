@@ -37,6 +37,12 @@ table{font-size:1em;}
 }
 
 .row {max-width: 1200px;}
+
+div.switch{margin:0px;}
+
+td input{margin-bottom:0px !important;}
+td select{margin-bottom:0px !important;}
+
 /* --------------------- */
 /* MENU BAR STYLING      */
 /* --------------------- */

@@ -99,4 +99,21 @@ class Site_model extends MY_Model
         $this->db->delete('league_admin');
     }
 
+    function toggle_league_admin($user_id, $leagueid)
+    {
+        $num = $this->db->from('league_admin')->where('league_id',$leagueid)->where('league_admin_id',$user_id)->get()->num_rows();
+        if ($num > 0)
+        {
+            $this->db->where('league_id',$leagueid)->where('league_admin_id',$user_id);
+            $this->db->delete('league_admin');
+            return 0;
+        }
+        else
+        {
+            $data = array('league_id' => $leagueid, 'league_admin_id' => $user_id);
+            $this->db->insert('league_admin', $data);
+            return 1;
+        }
+    }
+
 }

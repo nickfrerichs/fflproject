@@ -48,8 +48,9 @@ class Teams_model extends MY_Model
         return $data->row()->league_name;
     }
 
-    function set_active_flag($teamid, $active)
+    function toggle_active_flag($teamid)
     {
+        $active = !$this->db->select('active')->from('team')->where('id',$teamid)->get()->row()->active;
         $data = array('active' => $active);
         $this->db->where('id',$teamid);
         $this->db->update('team',$data);
@@ -66,7 +67,6 @@ class Teams_model extends MY_Model
             }
             else
                 $activeid = 0;
-            print_r($teams);
         }
         if ($active_league == 0 && $active == 1)
             $activeid = $this->leagueid;
@@ -77,6 +77,8 @@ class Teams_model extends MY_Model
             $this->db->where('id',$ownerid);
             $this->db->update('owner',$data);
         }
+
+        return $active;
 
     }
 }

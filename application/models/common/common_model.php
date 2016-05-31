@@ -89,13 +89,19 @@ class Common_model extends CI_Model{
 
     function league_position_year($year = 0)
     {
-        if ($year == 0)
+        if ($year == 0) // If none passed, assume they want to know for the current year
             $year = $this->current_year;
         return $this->db->select('max(year) as y')->from('position')->where('position.league_id',$this->leagueid)
                 ->where('year <=',$year)->get()->row()->y;
     }
 
-
+    function scoring_def_year($year = 0)
+    {
+        if ($year == 0) // If none passed, assume they want to know for the current year
+            $year = $this->current_year;
+        return $this->db->select('max(year) as y')->from('scoring_def')->where('scoring_def.league_id',$this->leagueid)
+                ->where('year <=',$year)->get()->row()->y;
+    }
 
 
     function twitter_post($text)

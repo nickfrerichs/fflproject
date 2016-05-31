@@ -38,26 +38,27 @@ function showMessage(text, type)
 }
 
 // A control to toggle some boolean option stored in the database
-$(".toggle-control").on('click', function(e){
+//$(".toggle-control").on('click', function(e){
+// url: the ajax url, item: use it to specify an option to the ajax call (ex: what to toggle)
+$(document).on('click','.toggle-control',function(e){
+	var element = $(this);
 	var url = $(this).data('url');
-	var newvalue = $(this).data('toggle');
-	var item = $(this).attr('id').replace('-toggle','');
-	$.post(url,{"item":item},function(data){
+	var item = $(this).data('item');
+	var item2 = $(this).data('item2');
+	$.post(url,{"item":item,"item2":item2},function(data){
 		var d = $.parseJSON(data);
 		if(d.success)
 		{
-			var oldvalue = $("#"+item+"-field").text();
-			$("#"+item+"-field").text(newvalue);
-			$("#"+item+"-toggle").data("toggle",oldvalue);
+			if ((d.currentValue == 1 && element.is(':checked')) || (d.currentValue == 0 && !element.is(':checked')))
+			{return}
+			location.reload();
 		}
-
 	});
-	e.preventDefault();
 });
 
 // A control to update a setting stored in the database using a text value
 // .change-control and .cancel-control classes for editing a single setting/database value at a time.
-$(".change-control").on('click', function(e){
+$(document).on('click',".change-control", function(e){
     // An early attempt to make some resusable javascript
     // Classes change-control and cancel-control with a *-field *-control *-cancel
     // change-control element needs data-url, value, optional data-var1, data-var2, data-var3
@@ -90,9 +91,9 @@ $(".change-control").on('click', function(e){
             if(data)
             {
                 var d = $.parseJSON(data);
-                if(d.success){field.html(newvalue.val());console.log(d);}
+                if(d.success){field.html(newvalue.val());}
 				else
-				{field.html(newvalue.attr('placeholder'));console.log(d);}
+				{field.html(newvalue.attr('placeholder'));}
             }
         });
         //field.text(control.data('current'));
@@ -104,7 +105,7 @@ $(".change-control").on('click', function(e){
 
 });
 
-$(".cancel-control").on('click', function(e){
+$(document).on('click', '.cancel-control', function(e){
     var name = $(this).attr('id').replace('-cancel','');
     var control = $("#"+name+"-control");
     var field = $("#"+name+"-field");
@@ -131,14 +132,14 @@ $(".cancel-control").on('click', function(e){
 //		class="player-list-prev" data-for="your-tbody-id"
 //		class="player-list-next" data-for="your-tbody-id"
 
-$(".player-list-next, .player-list-prev").on('click',function(e){
+$(document).on("click",".player-list-next, .player-list-prev",function(e){
 
 	e.preventDefault();
 	if($(this).hasClass('disabled') || $(this).attr('disabled'))
 	{
 		return;
 	}
-	
+
 	tbody = $(this).data('for');
 	if($(this).hasClass('player-list-next'))
 	{$("#"+tbody+"-data").data('page',$("#"+tbody+"-data").data('page')+1);}
@@ -147,7 +148,7 @@ $(".player-list-next, .player-list-prev").on('click',function(e){
 	updatePlayerList(tbody);
 });
 
-$(".player-list-text-input").on("input",function(event){
+$(document).on("input",".player-list-text-input",function(event){
 	var playerSearchTimer;
 	clearTimeout(playerSearchTimer);
 	var delay = 500;
@@ -158,31 +159,31 @@ $(".player-list-text-input").on("input",function(event){
 	},delay);
 });
 
-$(".player-list-position-select").on("change",function(){
+$(document).on("change",".player-list-position-select",function(){
 	var tbody = $(this).data('for');
 	resetPlayerSearch(tbody,1,0);
 	resetPlayerSort(tbody);
 	updatePlayerList(tbody);
 });
 
-$(".player-list-year-select").on("change",function(){
+$(document).on("change",".player-list-year-select",function(){
 	var tbody = $(this).data('for');
 	updatePlayerList(tbody);
 
 });
 
-$(".player-list-starter-select").on("change",function(){
+$(document).on("change",".player-list-starter-select",function(){
 	var tbody = $(this).data('for');
 	updatePlayerList(tbody);
 });
 
-$(".player-list-custom-select").on("change",function(){
+$(document).on("change",".player-list-custom-select",function(){
 	var tbody = $(this).data('for');
 	updatePlayerList(tbody);
 });
 
 // player sort using links: by, order  -- stored in tbody-player-list.data('by') and ('order')
-$(".player-list-a-sort").on('click', function(e){
+$(document).on('click',".player-list-a-sort", function(e){
 	var tbody = $(this).data('for');
 	// If we've already sorted on this "by", toggle the order
 	if ($("#"+tbody).data('by') == $(this).data('by'))

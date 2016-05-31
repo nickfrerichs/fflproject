@@ -1,20 +1,20 @@
 <?php //print_r($schedule); ?>
 
-<div class="container">
+
 	<div class="row">
-		<div class="col-xs-12" style="padding:25px;">
+		<div class="columns small-12">
 			<a href="<?=site_url('admin/schedule/edit')?>">Edit schedule</a> <br>
 			<a href="<?=site_url('admin/schedule/create')?>">Create schedule</a> <br>
 			<a href="<?=site_url('admin/schedule/template')?>">Manage templates</a> <br>
 			<a href="<?=site_url('admin/schedule/gametypes')?>">Manage Game Types</a> <br>
 		</div>
 	</div>
-
+	<br>
 	<div class="row">
 		<?php foreach ($schedule as $week_num => $week): ?>
-		<div class="col-md-6">
+		<div class="columns medium-6 small-12">
 			<div><strong>Week <?=$week_num?></strong></div>
-			<table class="table table-condensed">
+			<table class="">
 			    <th>Home</th><th></th><th>Away</th><th>Game Type</th>
 			    <?php foreach ($week as $game):?>
 
@@ -29,6 +29,3 @@
 		</div>
 		<?php endforeach; ?>
 	</div>
-
-</div>
-   

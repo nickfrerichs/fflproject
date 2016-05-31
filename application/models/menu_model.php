@@ -33,7 +33,9 @@ class Menu_model extends CI_Model
         if ($noleague || ($admin && !$this->session->userdata('is_league_admin')))
             $this->db->where('menu_item.show_noleague',1);
         $this->db->where('menu_bar.hide',0)->where('menu_item.hide',0)
-		      ->order_by('menu_bar.order', 'asc')->order_by('menu_item.order','asc');
+              ->order_by('menu_bar.super_admin','desc')
+		      ->order_by('menu_bar.order', 'asc')
+              ->order_by('menu_item.order','asc');
 		$data = $this->db->get()->result();
 		$data_array = array();
 		foreach ($data as $row)

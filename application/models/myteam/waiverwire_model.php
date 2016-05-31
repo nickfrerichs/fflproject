@@ -179,8 +179,9 @@ class Waiverwire_model extends MY_Model{
         }
 
         // Check position limit, this is a tad complicated
+        $pos_year = $this->common_model->league_position_year();
         $positions = $this->db->select('nfl_position_id_list, max_roster')->from('position')->where('league_id',$this->leagueid)
-            ->get()->result();
+            ->where('position.year',$pos_year)->get()->result();
         $pickup_nfl_pos = $this->db->select('nfl_position_id')->from('player')->where('id',$pickup_id)->get()->row()->nfl_position_id;
         $temp = $this->db->select('nfl_position_id')->from('player')->where('id',$drop_id)->get()->row();
         if (count($temp) == 1)

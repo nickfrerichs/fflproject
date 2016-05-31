@@ -6,6 +6,7 @@ class Moneylist extends MY_Admin_Controller
     {
         parent::__construct();
         $this->load->model('admin/moneylist_model');
+
     }
 
     function index()
@@ -14,6 +15,7 @@ class Moneylist extends MY_Admin_Controller
         $data['teams'] = $this->moneylist_model->get_league_teams_data();
         $data['weeks'] = $this->moneylist_model->get_num_weeks();
         $data['types'] = $this->moneylist_model->get_types();
+        $data['list'] = $this->moneylist_model->get_moneylist();
         $this->admin_view('admin/moneylist/moneylist',$data);
     }
 
@@ -24,7 +26,6 @@ class Moneylist extends MY_Admin_Controller
         $amount = $this->input->post('amount');
         $text = $this->input->post('text');
         $typeid = $this->input->post('typeid');
-        echo $week.' '.$teamid.' '.$amount;
         $this->moneylist_model->add_entry($teamid, $week, $amount, $typeid, $text);
     }
 }
