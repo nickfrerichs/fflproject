@@ -7,6 +7,8 @@ class Standings extends MY_Admin_Controller
         parent::__construct();
         $this->load->model('admin/security_model');
         $this->load->model('admin/standings_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc["Standings"] = "";
     }
 
     function index()
@@ -28,6 +30,9 @@ class Standings extends MY_Admin_Controller
                 $this->standings_model->add_notation_def($text,$symbol);
                 redirect('admin/standings/notations');
             }
+            $this->bc['Standings'] = site_url('admin/standings');
+            $this->bc['Notations'] = site_url('admin/standings/notations');
+            $this->bc['Add'] = "";
             $this->admin_view('admin/standings/new_notation');
         }
         elseif($action == "delete" && $id!=0)
@@ -42,6 +47,8 @@ class Standings extends MY_Admin_Controller
         else
         {
             $data['defs'] = $this->standings_model->standings_notation_defs();
+            $this->bc['Standings'] = site_url('admin/standings');
+            $this->bc['Notations'] = "";
             $this->admin_view('admin/standings/notations',$data);
         }
     }

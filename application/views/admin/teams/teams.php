@@ -1,8 +1,5 @@
-<div class="row">
-    <div class="columns">
-        <h4><?php echo $leaguename; ?></h4>
-    </div>
-</div>
+
+
 <div class="row">
     <div class="columns">
         <table class="table table-condensed">

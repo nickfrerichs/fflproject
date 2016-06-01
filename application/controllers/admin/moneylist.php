@@ -6,6 +6,8 @@ class Moneylist extends MY_Admin_Controller
     {
         parent::__construct();
         $this->load->model('admin/moneylist_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc["Money List"] = "";
 
     }
 

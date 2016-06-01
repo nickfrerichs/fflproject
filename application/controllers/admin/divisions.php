@@ -1,15 +1,17 @@
 <?php
 
 class Divisions extends MY_Admin_Controller{
-    
-    function __construct() 
+
+    function __construct()
     {
         parent::__construct();
         $this->load->model('admin/divisions_model');
         $this->load->model('admin/security_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc["Divisions"] = "";
     }
-    
-    
+
+
     function index()
     {
 
@@ -33,7 +35,7 @@ class Divisions extends MY_Admin_Controller{
         }
         $this->admin_view('admin/divisions/divisions', array('division_array' => $divisions_array, 'divisions' => $divisions));
     }
-    
+
     function save()
     {
         if($this->input->post('save'))
@@ -48,7 +50,7 @@ class Divisions extends MY_Admin_Controller{
         }
         redirect('admin/divisions');
     }
-    
+
     function manage()
     {
         if ($this->input->post('add'))
@@ -59,14 +61,16 @@ class Divisions extends MY_Admin_Controller{
         }
         $divisions = $this->divisions_model->get_league_divisions();
         $this->load->helper('form');
+        $this->bc['Divisions'] = site_url('admin/divisions');
+        $this->bc['Manage'] = "";
         $this->admin_view('admin/divisions/manage', array('divisions' => $divisions));
     }
-    
+
     function delete($id)
     {
         $this->divisions_model->delete_division($id);
         redirect('admin/divisions');
     }
-    
-    
+
+
 }

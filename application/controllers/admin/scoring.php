@@ -7,6 +7,8 @@ class Scoring extends MY_Admin_Controller
         parent::__construct();
         $this->load->model('admin/security_model');
         $this->load->model('admin/scoring_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc["Scoring"] = "";
     }
 
     function index()
@@ -44,6 +46,9 @@ class Scoring extends MY_Admin_Controller
 
         $nfl_positions = $this->scoring_model->get_nfl_positions_data();
 
+        $this->bc['Scoring'] = site_url('admin/scoring');
+        $this->bc['Add Definitions'] = "";
+
         $this->admin_view('admin/scoring/add.php', array('cats'=>$categories,
                                                         'nfl_positions' => $nfl_positions,
                                                         'selected_pos' => $position_id));
@@ -74,6 +79,10 @@ class Scoring extends MY_Admin_Controller
 
         $this->load->helper('form');
         $values = $this->scoring_model->get_values_data();
+
+        $this->bc['Scoring'] = site_url('admin/scoring');
+        $this->bc['Edit Values'] = "";
+
         $this->admin_view('admin/scoring/edit.php', array('values' => $values));
     }
 

@@ -6,7 +6,7 @@ function SetStatID(stat_id) {
 
 <div class="row">
     <div class="columns">
-        <h5>Add Scoring Definition</h5>
+        <h5><?=$this->session->userdata('current_year')?> Season</h5>
     </div>
 </div>
 <div class="row">

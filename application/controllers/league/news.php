@@ -6,6 +6,7 @@ class News extends MY_Controller{
     function __construct()
     {
         parent::__construct();
+        $this->bc["League News"] = "";
     }
 
 

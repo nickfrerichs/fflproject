@@ -1,8 +1,4 @@
-<div class="row">
-    <div class="columns">
-        <h5>Standings</h5>
-    </div>
-</div>
+
 <div class="row">
     <div class="columns">
 

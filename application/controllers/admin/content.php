@@ -7,6 +7,8 @@ class Content extends MY_Admin_Controller
         parent::__construct();
         $this->load->model('admin/content_model');
         $this->load->model('admin/security_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc["Content"] = "";
     }
 
     function index()
@@ -19,6 +21,9 @@ class Content extends MY_Admin_Controller
     {
         $data = array();
         $data['content'] = $this->content_model->get_page_data($text_id);
+        $this->bc['Content'] = site_url('admin/content');
+        $this->bc[$text_id] = site_url('admin/content/view/'.$text_id);
+        $this->bc["Edit"] = "";
         $this->admin_view('admin/content/edit',$data);
     }
 
@@ -27,6 +32,8 @@ class Content extends MY_Admin_Controller
         $data = array();
         $data['content'] = $this->content_model->get_page_data($text_id);
         $data['text_id'] = $text_id;
+        $this->bc['Content'] = site_url('admin/content');
+        $this->bc[$text_id] = "";
         $this->admin_view('admin/content/view',$data);
     }
 

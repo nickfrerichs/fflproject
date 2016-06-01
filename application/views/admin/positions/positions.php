@@ -37,7 +37,7 @@
 
 <div class="row">
     <div class="columns">
-        <h5>League Positions - <?=$this->session->userdata('current_year')?> Season</h5>
+        <h5><?=$this->session->userdata('current_year')?> Season</h5>
     </div>
 </div>
 <div class="row">

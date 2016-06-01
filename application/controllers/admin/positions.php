@@ -8,6 +8,8 @@ class Positions extends MY_Admin_Controller{
 
         $this->load->model('admin/security_model');
         $this->load->model('admin/positions_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc["Positions"] = "";
     }
 
     function index()

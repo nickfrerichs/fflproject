@@ -20,6 +20,7 @@ class Leaguesettings_model extends MY_Model{
             ->get()->row()->{$lookup[$item]};
         $this->db->where('league_id',$leagueid);
         $this->db->update('league_settings',array($lookup[$item] => $val));
+        return $val;
     }
 
     function change_setting($leagueid, $type, $value)

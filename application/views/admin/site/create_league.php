@@ -1,18 +1,17 @@
-<div class="container">
-    <div class="row">
-        <h4>Create New League</h4>
-        <div class="form-group">
-            <table class="table" style="width:300px;">
-                <tr>
-                    <td>League Name</td>
-                    <td><input type="text" id="league-name"></input></td>
-                </tr>
-                <tr>
-                    <td colspan=2>
-                        <button class="btn btn-default" id="create-league">Create</button>
-                    </td>
-            </table>
-        </div>
+<div class="row">
+    <div class="columns">
+
+        <table>
+            <tr>
+                <td>League Name</td>
+                <td><input type="text" id="league-name"></input></td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    <button class="button small" id="create-league">Create</button>
+                </td>
+        </table>
+
     </div>
 </div>
 

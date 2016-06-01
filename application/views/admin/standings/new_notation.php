@@ -1,8 +1,4 @@
-<div class="row">
-    <div class="columns">
-        <h5>New standings notation</h5>
-    </div>
-</div>
+
 <div class="row">
     <div class="columns">
         <br>

@@ -7,6 +7,8 @@ class Rosters extends MY_Admin_Controller{
         parent::__construct();
         $this->load->model('admin/security_model');
         $this->load->model('admin/rosters_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc["Teams"] = site_url('admin/teams');
     }
 
 
@@ -26,11 +28,9 @@ class Rosters extends MY_Admin_Controller{
             $data['positions'] = $this->player_search_model->get_nfl_positions_data();
             $data['teamid'] = $teamid;
 
-            $bc = array("Admin" => site_url('admin'),
-                        "Teams" => site_url('admin/teams'),
-                        $data['team_name']." Roster" => "");
+            $this->bc[$data['team_name']] = "";
 
-            $this->admin_view('admin/rosters/rosters', $data,$bc);
+            $this->admin_view('admin/rosters/rosters', $data,$this->bc);
         }
     }
 

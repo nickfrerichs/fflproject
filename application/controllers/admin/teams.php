@@ -7,6 +7,9 @@ class Teams extends MY_Admin_Controller
         parent::__construct();
         $this->load->model('admin/security_model');
         $this->load->model('admin/teams_model');
+        $this->load->model('admin/rosters_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc['Teams'] = "";
     }
 
     function index()
@@ -16,6 +19,7 @@ class Teams extends MY_Admin_Controller
             $teams = $this->teams_model->get_league_teams_data(false);
             $league_name = $this->teams_model->get_league_name();
             $this->load->helper('form');
+
             $this->admin_view('admin/teams/teams', array('leaguename' => $league_name));
         }
         else
@@ -29,6 +33,9 @@ class Teams extends MY_Admin_Controller
         if ($this->security_model->is_team_in_league($var))
         {
             $team = $this->teams_model->get_team_data($var);
+
+            $this->bc['Teams'] = site_url('admin/teams');
+            $this->bc[$team->team_name] = "";
             $this->admin_view('admin/teams/show', array('team' => $team));
         }
     }
@@ -43,7 +50,7 @@ class Teams extends MY_Admin_Controller
             <?php foreach ($teams as $team): ?>
             <tr>
                 <td><a href="<?=site_url('admin/teams/show/'.$team->id)?>"><?=$team->team_name?></a></td>
-                <td><a href="<?=site_url('admin/rosters/view/'.$team->id)?>">Edit Roster</td>
+                <td><a href="<?=site_url('admin/rosters/view/'.$team->id)?>">Roster</td>
                 <td>Division</td>
                 <td><?=$team->first_name.' '.$team->last_name; ?></td>
                 <td class="text-center">
@@ -71,7 +78,5 @@ class Teams extends MY_Admin_Controller
         $response['currentValue'] = $active;
         echo json_encode($response);
     }
-
-
 
 }

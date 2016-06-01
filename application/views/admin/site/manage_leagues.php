@@ -1,10 +1,5 @@
-<div class="container">
-    <div class="row">
-        <h4>Manage Leagues</h4>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
+<div class="row">
+    <div class="columns">
         <div>
             <a href="<?=site_url('admin/site/create_league')?>">Create new league</a>
         </div>

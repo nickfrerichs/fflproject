@@ -1,10 +1,6 @@
 <?php //print_r($types); ?>
 <?php //echo $weeks; ?>
-<div class="row">
-    <div class="columns">
-        <h5>Money List</h5>
-    </div>
-</div>
+
 <div class="row">
     <div class="columns">
         <table>

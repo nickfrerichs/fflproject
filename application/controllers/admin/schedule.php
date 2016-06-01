@@ -7,6 +7,8 @@ class Schedule extends MY_Admin_Controller{
         parent::__construct();
         $this->load->model('admin/security_model');
         $this->load->model('admin/schedule_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc['Schedule'] = "";
     }
     
     
@@ -74,6 +76,9 @@ class Schedule extends MY_Admin_Controller{
         
         $this->load->helper('form');
         
+        $this->bc['Schedule'] = site_url('admin/schedule');
+        $this->bc['Edit'] = "";
+
         $this->admin_view('admin/schedule/schedule_edit', array('schedule' => $schedule_array,
                                                            'game_types' => $game_types,
                                                            'team_list' => $team_list));
@@ -113,6 +118,10 @@ class Schedule extends MY_Admin_Controller{
         }
 
         $this->load->helper('form');
+
+        $this->bc['Schedule'] = site_url('admin/schedule');
+        $this->bc['Create'] = "";
+
         $this->admin_view('admin/schedule/schedule_create', array('teams' => $teams,
                                                                 'divisions' => $divisions,
                                                                 'templates' => $templates,
@@ -137,7 +146,8 @@ class Schedule extends MY_Admin_Controller{
         }
         
         $templates = $this->schedule_model->get_templates_data();
-        
+        $this->bc['Schedule'] = site_url('admin/schedule');
+        $this->bc['Templates'] = "";
         $this->admin_view('admin/schedule/schedule_template', array('templates' => $templates));
         
     }
@@ -197,6 +207,10 @@ class Schedule extends MY_Admin_Controller{
      
         $this->load->helper('form');
         
+        $this->bc['Schedule'] = site_url('admin/schedule');
+        $this->bc['Templates'] = site_url('admin/schedule/template');
+        $this->bc[$template->name] = "";
+
         $this->admin_view('admin/schedule/schedule_edit_template',
                 array('template' => $template, 'matchups' => $matchups));
     }
@@ -231,7 +245,8 @@ class Schedule extends MY_Admin_Controller{
         $gametypes = $this->schedule_model->get_gametypes_data();
         
         $this->load->helper('form');
-        
+        $this->bc['Schedule'] = site_url('admin/schedule');
+        $this->bc['Game Types'] = "";
         $this->admin_view('admin/schedule/schedule_gametypes', array('types' => $gametypes));
     }
 }

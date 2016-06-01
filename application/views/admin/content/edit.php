@@ -6,14 +6,21 @@
     table_styles: 'Default=table'
 });</script>
 
-<div class="container">
-    <div class="row">
-        <h3><?=$content->title?></h3>
+<div class="row">
+    <div class="columns">
+        <h5><?=$content->title?></h5>
     </div>
-    <div id="content">
+</div>
+<div class="row">
+    <div class="columns">
+        <div id="content">
+        </div>
     </div>
-
-    <button id="submit" class="btn btn-default">Save</button>
+</div>
+<div class="row">
+    <div class="columns">
+        <button id="submit" class="button small">Save</button>
+    </div>
 </div>
 
 <script>

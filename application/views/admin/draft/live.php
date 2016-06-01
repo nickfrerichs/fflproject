@@ -1,60 +1,47 @@
-<div class="container">
-
-<div class="page-heading"><?=$year?> Live Draft options</div>
-
-<table class="table">
-	<tr>
-		<td><div>Draft Date & Time<div><div>( m / d - h : m )</td>
-		<td>
-			<strong>
-			<form class="form-inline">
-				<select id="mon" class="form-control">
-				<?php for($m=1; $m<=12; $m++): ?>
-					<option value="<?=$m?>"><?=$m?></option>
-				<?php endfor;?>
-				</select> /
-				<select id="day" class="form-control">
-				<?php for($m=1; $m<=31; $m++): ?>
-					<option value="<?=$m?>"><?=$m?></option>
-				<?php endfor;?>
-				</select> - 
-				<select id="hour" class="form-control">
-				<?php for($m=1; $m<=12; $m++): ?>
-					<option value="<?=$m?>"><?=$m?></option>
-				<?php endfor;?>
-				</select> : 
-				<select id="min" class="form-control">
-				<?php for($m=0; $m<=59; $m=$m+5): ?>
-					<option value="<?=$m?>"><?=$m?></option>
-				<?php endfor;?>
-				</select>
-				<select id="ampm" class="form-control">
-					<option value="am">am</option>
-					<option value="pm">pm</option>
-				</select>
-			</form>
-			</strong>
-		</td>
-	</tr>
-	<tr>
-		<td>Seconds per pick</td>
-		<td>
-			<form class="form-inline">
-			<input id="pick-time" class="form-control">
-		</form>
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td>
-			<button id="save" class="btn btn-default">Save</button>
-		</td>
-	</tr>
-</table>
-
-Admin Live Options
-
+<script src="<?=site_url('js/foundation-datepicker.min.js')?>"></script>
+<link href="<?=site_url('/css/foundation-datepicker.min.css')?>" rel="stylesheet">
+<div class="row">
+	<div class="columns">
+		<h5><?=$year?> Live Draft options</h5>
+	</div>
 </div>
+<div class="row">
+	<div class="columns">
+		<table>
+			<tr>
+				<td><div>Draft Date & Time<div><div>( m / d - h : m )</td>
+				<td>
+
+
+					<input id="draft-date" type="text">
+
+
+				</td>
+			</tr>
+			<tr>
+				<td>Seconds per pick</td>
+				<td>
+					<input id="pick-time" type="text">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<button id="save" class="button small">Save</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="row">
+	<div class="columns">
+		<h5>Admin Live Options</h5>
+	</div>
+</div>
+
+
+
 
 
 <script type="text/javascript">
@@ -62,17 +49,18 @@ Admin Live Options
 $(document).ready(function(){
 
 
-
+	$("#draft-date").fdatepicker({
+			format: 'yyyy-mm-dd hh:ii',
+			pickTime: true
+	})
 
 	$('#save').on('click', function(){
-		var mon = $("#mon").val();
-		var day = $("#day").val();
-		var hour = $("#hour").val();
-		var min = $("#min").val();
-		var ampm = $("#ampm").val();
+		var date = $("#draft-date").val()
+		console.log(date);
+
 		var pick = $("#pick-time").val();
 		url ="<?=site_url('admin/draft/save_draft_settings')?>";
-		$.post(url, {'mon':mon,'day':day,'hour':hour,'min':min,'ampm':ampm,'pick':pick}, function(data){
+		$.post(url, {'date':date,'pick':pick}, function(data){
 			window.location.replace("<?=site_url('admin/draft')?>");
 		});
 	});

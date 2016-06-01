@@ -42,8 +42,11 @@ class MY_Controller extends CI_Controller{
         $this->current_year = $this->session->userdata('current_year');
         $this->current_week = $this->session->userdata('current_week');
         $this->week_type = $this->session->userdata('week_type');
+        $this->league_name = $this->session->userdata('league_name');
         $this->is_admin = $this->flexi_auth->is_admin();
         $this->is_league_admin = $this->session->userdata('is_league_admin');
+
+        $this->bc = array();
 
         // This is to make sure the user session gets these vars if so much time has passed
         // since they were first set.
@@ -62,12 +65,12 @@ class MY_Controller extends CI_Controller{
 
     }
 
-    function user_view($viewname, $d=null, $bc=null)
+    function user_view($viewname, $d=null)
     {
         $this->load->model('menu_model');
         $d['menu_items'] = $this->menu_model->get_menu_items_data();
         $d['v'] = $viewname;
-        $d['bc'] = $bc;
+        $d['bc'] = $this->bc;
         $this->load->view('template/user_init', $d);
     }
 }
@@ -98,7 +101,9 @@ class MY_Admin_Controller extends CI_Controller{
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->is_admin = $this->flexi_auth->is_admin();
+        $this->league_name = $this->session->userdata('league_name');
         $this->is_league_admin = $this->session->userdata('is_league_admin');
+        $this->bc = array();
 
         // If not logged in redirect to login page
         if (!$this->flexi_auth->is_logged_in() || !($this->is_admin || $this->is_league_admin))
@@ -107,12 +112,12 @@ class MY_Admin_Controller extends CI_Controller{
         }
     }
 
-    function admin_view($viewname, $d=null, $bc=null)
+    function admin_view($viewname, $d=null)
     {
         $this->load->model('menu_model');
         $d['menu_items'] = $this->menu_model->get_menu_items_data(true);
         $d['v'] = $viewname;
-        $d['bc'] = $bc;
+        $d['bc'] = $this->bc;
         $this->load->view('template/admin_init', $d);
     }
 }

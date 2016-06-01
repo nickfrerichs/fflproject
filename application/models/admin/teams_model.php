@@ -26,7 +26,7 @@ class Teams_model extends MY_Model
                 ->where('team.league_id', $this->leagueid)
                 ->where('team.id', $teamid)
                 ->get();
-        return $data->result();
+        return $data->row();
     }
 
 

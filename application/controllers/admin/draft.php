@@ -7,6 +7,8 @@ class Draft extends MY_Admin_Controller
         parent::__construct();
         $this->load->model('admin/draft_model');
         $this->load->model('admin/security_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc['Draft'] = "";
     }
 
     function index()
@@ -22,6 +24,8 @@ class Draft extends MY_Admin_Controller
         $data['teams'] = $this->draft_model->get_league_teams_data();
         $data['draft_exists'] = $this->draft_model->get_draft_order_count();
         $data['year'] = $this->current_year;
+        $this->bc["Draft"] = site_url('admin/draft');
+        $this->bc["Create Order"] = "";
         $this->admin_view('admin/draft/create',$data);
     }
 
@@ -50,22 +54,17 @@ class Draft extends MY_Admin_Controller
     {
         $data = array();
         $data['year'] = $this->current_year;
+        $this->bc["Draft"] = site_url('admin/draft');
+        $this->bc["Settings"] = "";
         $this->admin_view('admin/draft/live',$data);
     }
 
     function save_draft_settings()
     {
-        $mon = $this->input->post('mon');
-        $day = $this->input->post('day');
-        $min = $this->input->post('min');
-        $ampm = $this->input->post('ampm');
-        if ($ampm == 'pm')
-            $hour = $this->input->post('hour') + 12;
-        else
-            $hour = $this->input->post('hour');
+        $draft_time = $this->input->post('date');
 
         $pick = $this->input->post('pick');
-        $draft_time = $this->current_year.'-'.$mon.'-'.$day.' '.$hour.':'.$min.':00';
+        //$draft_time = $this->current_year.'-'.$mon.'-'.$day.' '.$hour.':'.$min.':00';
 
         $this->draft_model->save_draft_options($draft_time, $pick);
         $this->draft_model->set_draft_deadlines();

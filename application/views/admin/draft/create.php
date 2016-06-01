@@ -1,52 +1,55 @@
-<div class="container">
-	<div class="page-heading">
-		Create Draft Order
+<div class="row">
+	<div class="columns">
+		<h5>Create Draft Order</h5>
 	</div>
-	<?php if ($draft_exists > 0): ?>
-	<div class="col-xs-12 text-center table-heading">Warning: This will wipe out existing <?=$year?> draft data!!</div>
-	<?php endif; ?>
-	<div class="col-xs-2"></div>
-	<div class="col-xs-8">
-		<table class="table">
-		<?php for ($i=1; $i <= count($teams); $i++): ?>
-		<tr>
-			<td class="vert text-right">Pick <?=$i?></td>
-			<td>
-			<select id="pick_<?=$i?>"class="form-control choose-team">
-				<option value="0"></option>
-				<?php foreach ($teams as $t): ?>
-				<option value="<?=$t->team_id?>"><?=$t->team_name?></option>
-				<?php endforeach; ?>
-			</select>
-			</td>
-		</tr>
-		<?php endfor; ?>
-		<tr>
-			<td class="vert text-right"># of Rounds</td>
-			<td>
-				<select id="rounds" class="form-control">
-					<?php for ($i=1; $i<=40; $i++): ?>
-					<option value="<?=$i?>"><?=$i?></option>
-					<?php endfor; ?>
+</div>
+
+<div class="row">
+	<div class="columns">
+		<?php if ($draft_exists > 0): ?>
+		<div class="text-center"><strong>Warning: This will wipe out existing <?=$year?> draft data!!</strong></div>
+		<?php endif; ?>
+
+			<table>
+			<?php for ($i=1; $i <= count($teams); $i++): ?>
+			<tr>
+				<td class="text-right">Pick <?=$i?></td>
+				<td>
+				<select id="pick_<?=$i?>"class="choose-team">
+					<option value="0"></option>
+					<?php foreach ($teams as $t): ?>
+					<option value="<?=$t->team_id?>"><?=$t->team_name?></option>
+					<?php endforeach; ?>
 				</select>
-			</td>
-		</tr>
-		<tr>
-			<td></td><td>			
-		    <label>
-		      <input id="reverse" type="checkbox"> Reverse every other round
-		    </label>
-			</td>
-		</tr>  	
-	  	<tr>
-		  	<td></td><td>
-			<button id="reset-button" class="btn btn-default">Reset</button>
-			<button id="create-button" class="btn btn-default">Create</button>
-			</td>
-		</tr>
-		</table>
+				</td>
+			</tr>
+			<?php endfor; ?>
+			<tr>
+				<td class="text-right"># of Rounds</td>
+				<td>
+					<select id="rounds">
+						<?php for ($i=1; $i<=40; $i++): ?>
+						<option value="<?=$i?>"><?=$i?></option>
+						<?php endfor; ?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td></td><td>
+			    <label>
+			      <input id="reverse" type="checkbox"> Reverse every other round
+			    </label>
+				</td>
+			</tr>
+		  	<tr>
+			  	<td></td><td>
+				<button id="reset-button" class="button small">Reset</button>
+				<button id="create-button" class="button small">Create</button>
+				</td>
+			</tr>
+			</table>
+
 	</div>
-	<div class="col-xs-2"></div>
 </div>
 
 <script>
@@ -75,7 +78,7 @@ $(document).ready(function(){
 			//order[$(this).attr('id').replace("pick_","")] = $(this).val();
 			order.push($(this).val());
 		});
-	
+
 		return order;
 
 	}

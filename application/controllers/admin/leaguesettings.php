@@ -6,6 +6,8 @@ class Leaguesettings extends MY_Admin_Controller
     {
         parent::__construct();
         $this->load->model('admin/leaguesettings_model');
+        $this->bc[$this->league_name] = "";
+        $this->bc['Settings'] = "";
     }
 
     function index()
@@ -20,7 +22,7 @@ class Leaguesettings extends MY_Admin_Controller
         $return = array();
         $item = $this->input->post('item');
 
-        $this->leaguesettings_model->toggle_setting($this->session->userdata('league_id'),$item);
+        $return['currentValue'] = $this->leaguesettings_model->toggle_setting($this->session->userdata('league_id'),$item);
         $return['success'] = true;
 
         echo json_encode($return);

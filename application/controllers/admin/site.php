@@ -8,6 +8,8 @@ class Site extends MY_Admin_Controller{
         $this->load->model('admin/site_model');
         if (!$this->is_admin)
             die();
+        $this->bc["Super Admin"] = "";
+        $this->bc["Leagues"] = "";
     }
 
     public function manage_leagues()
@@ -20,6 +22,8 @@ class Site extends MY_Admin_Controller{
     public function create_league()
     {
         $data = array();
+        $this->bc["Leagues"] = site_url("admin/site/manage_leagues");
+        $this->bc["New"] = "";
         $this->admin_view('admin/site/create_league',$data);
     }
 
@@ -35,6 +39,8 @@ class Site extends MY_Admin_Controller{
         $data['info'] = $this->site_model->get_league_info($id);
         $data['settings'] = $this->site_model->get_league_settings($id);
         $data['admins'] = $this->site_model->get_league_admins_array($id);
+        $this->bc["Leagues"] = site_url("admin/site/manage_leagues");
+        $this->bc["Edit"] = "";
         $this->admin_view('admin/site/edit_league',$data);
     }
 
