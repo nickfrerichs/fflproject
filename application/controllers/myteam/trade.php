@@ -76,52 +76,58 @@ class Trade extends MY_Controller{
 
     function ajax_accept()
     {
-        $tradeid = $this->input->post('tradeid');
-        $response = array('success' => False);
-        // Need checks to make sure team is team2 in the trade table
-        if ($this->trade_model->valid_trade_action($tradeid,'accept'))
+        if (!$this->offseason)
         {
-            $limit_teamid = $this->trade_model->trade_roster_over_limit($tradeid);
+            $tradeid = $this->input->post('tradeid');
+            $response = array('success' => False);
+            // Need checks to make sure team is team2 in the trade table
+            if ($this->trade_model->valid_trade_action($tradeid,'accept'))
+            {
+                $limit_teamid = $this->trade_model->trade_roster_over_limit($tradeid);
 
-            // My team is over the limit, need to drop players
-            if($limit_teamid == $this->session->userdata('team_id'))
-            {
-                $response['msg'] = "You have too many players on your roster to accept the trade.  You must drop some players first.";
-            }
-            elseif($limit_teamid > 0) // The other team who made the offer must be over the limit, swich offer and send back.
-            {
-                $this->trade_model->reverse_offer($tradeid);
-                $response['msg'] = "The offer has been accepted, pending the offering team having room on their roster to complete the trade.";
-            }
-            elseif($limit_teamid == false) // No one is over the limit, process the transaction
-            {
-                //if (!$this->trade_model->trade_roster_over_limit($tradeid))
-                if ($this->trade_model->player_ownership_ok($tradeid))
+                // My team is over the limit, need to drop players
+                if($limit_teamid == $this->session->userdata('team_id'))
                 {
-                    $this->trade_model->accept_trade_offer($tradeid);
-                    $response['success'] = true;
-                    $response['msg'] = "Trade successfully processed!";
+                    $response['msg'] = "You have too many players on your roster to accept the trade.  You must drop some players first.";
                 }
-                else
+                elseif($limit_teamid > 0) // The other team who made the offer must be over the limit, swich offer and send back.
                 {
-                    $response['msg'] = "Oops, someone dropped a player invovled in this trade, it's no longer valid.";
+                    $this->trade_model->reverse_offer($tradeid);
+                    $response['msg'] = "The offer has been accepted, pending the offering team having room on their roster to complete the trade.";
                 }
+                elseif($limit_teamid == false) // No one is over the limit, process the transaction
+                {
+                    //if (!$this->trade_model->trade_roster_over_limit($tradeid))
+                    if ($this->trade_model->player_ownership_ok($tradeid))
+                    {
+                        $this->trade_model->accept_trade_offer($tradeid);
+                        $response['success'] = true;
+                        $response['msg'] = "Trade successfully processed!";
+                    }
+                    else
+                    {
+                        $response['msg'] = "Oops, someone dropped a player invovled in this trade, it's no longer valid.";
+                    }
+                }
+                echo json_encode($response);
             }
-            echo json_encode($response);
         }
 
     }
 
     function ajax_decline()
     {
-        $response = array('success' => false, 'msg' => '');
-        $tradeid = $this->input->post('tradeid');
-        if($this->trade_model->valid_trade_action($tradeid,'decline'))
+        if (!$this->offseason)
         {
-            $this->trade_model->decline_trade_offer($tradeid);
-            $response['success'] = true;
+            $response = array('success' => false, 'msg' => '');
+            $tradeid = $this->input->post('tradeid');
+            if($this->trade_model->valid_trade_action($tradeid,'decline'))
+            {
+                $this->trade_model->decline_trade_offer($tradeid);
+                $response['success'] = true;
+            }
+            echo json_encode($response);
         }
-        echo json_encode($response);
     }
 
     function load_open_trades()

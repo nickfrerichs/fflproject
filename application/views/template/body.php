@@ -14,7 +14,8 @@
 <script>
 function js_Load(){
     document.body.style.visibility='visible';
-    $(document).foundation();
+    
 }
+$(document).foundation();
 </script>
 </body>

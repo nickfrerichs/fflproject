@@ -1,11 +1,4 @@
 
-
-<?php if($this->session->userdata('team_id') == 11)
-{
-    //xprint_r($schedule);
-}
-?>
-
 <?php $this->load->view('template/modals/stat_popup');?>
 
 <div class="row">
@@ -83,6 +76,13 @@
     </div>
 </div>
 <hr>
+<?php if($this->session->userdata('offseason')): ?>
+    <div class="row">
+        <div class="columns">
+            <h5 class="text-center">It's the offseason.</h5>
+        </div>
+    </div>
+<?php else: ?>
 <div class="row">
     <div class="columns medium-2">
         <select id="selected-week">
@@ -127,7 +127,7 @@
         </table>
     </div>
 </div>
-
+<?php endif; ?>
 
 <script>
 $(document).ready(function(){

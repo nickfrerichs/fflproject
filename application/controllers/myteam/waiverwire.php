@@ -68,29 +68,32 @@ class Waiverwire extends MY_Controller{
 
     function transaction($action = "")
     {
-        $pickup = $this->input->post('pickup_id');
-        $drop = $this->input->post('drop_id');
-
-        $data = array();
-        $data['drop_id'] = $drop;
-        $data['pickup_id'] = $pickup;
-        if ($this->waiverwire_model->ok_to_process_transaction($pickup, $drop, $error))
+        if (!$this->offseason)
         {
-            if ($action == "execute") // Yes go ahead and update the database, log it.
+            $pickup = $this->input->post('pickup_id');
+            $drop = $this->input->post('drop_id');
+
+            $data = array();
+            $data['drop_id'] = $drop;
+            $data['pickup_id'] = $pickup;
+            if ($this->waiverwire_model->ok_to_process_transaction($pickup, $drop, $error))
             {
-                if ($drop != "0")
-                    $this->waiverwire_model->drop_player($drop);
-                if ($pickup != "0")
-                    $this->waiverwire_model->pickup_player($pickup);
-                $this->waiverwire_model->log_transaction($pickup, $drop);
+                if ($action == "execute") // Yes go ahead and update the database, log it.
+                {
+                    if ($drop != "0")
+                        $this->waiverwire_model->drop_player($drop);
+                    if ($pickup != "0")
+                        $this->waiverwire_model->pickup_player($pickup);
+                    $this->waiverwire_model->log_transaction($pickup, $drop);
+                }
+                $data['success'] = True;
             }
-            $data['success'] = True;
+            else {
+                $data['success'] = False;
+                $data['error'] = $error;
+            }
+            echo json_encode($data);
         }
-        else {
-            $data['success'] = False;
-            $data['error'] = $error;
-        }
-        echo json_encode($data);
 
     }
 

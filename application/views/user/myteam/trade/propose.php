@@ -125,6 +125,7 @@
 <script>
 $(document).ready(function(){
 
+
 $("#choose-team-modal").foundation('open');
 
 $("#request-players").click(function(){

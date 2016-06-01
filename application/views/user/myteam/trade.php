@@ -7,7 +7,9 @@
 
 
 <div class="row align-justify">
-	<div class="column small-12"><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></div>
+	<?php if(!$this->session->userdata('offseason')): ?>
+		<div class="column small-12"><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></div>
+	<?php endif;?>
 	<div class="column small-12"><a href="#">Trade log</a></div>
 </div>
 
@@ -17,6 +19,13 @@
 </td></tr></tbody></table>
 -->
 
+<?php if($this->session->userdata('offseason')): ?>
+	<div class="row">
+	<div class="column">
+		<h5 class="text-center">It's the offseason.</h5>
+	</div>
+</div>
+<?php else:?>
 <div class="row">
 	<div class="column text-center">
 		<h5>Outstanding Trades</h5>
@@ -33,6 +42,7 @@
 		</table>
 	</div>
 </div>
+<?php endif; ?>
 
 
 

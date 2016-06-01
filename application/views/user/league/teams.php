@@ -8,7 +8,7 @@
 
     <div class="row callout">
         <?php foreach($teams as $t): ?>
-            <div class="columns medium-6">
+            <div class="columns medium-6 small-12">
                 <div class="text-center">
                     <h4><a href="<?=site_url('league/teams/view/'.$t->team_id)?>"><?=$t->long_name?></a></h4>
                 </div>

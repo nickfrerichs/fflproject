@@ -27,8 +27,3 @@
 
 <!-- My custom JS, things that aren't imbedded in the page go here -->
 <script src="<?=site_url('js/fflproject.js')?>"></script>
-
-<script>
-//$(document).ready(function() {$.getScript("<?=site_url('js/fflproject.js')?>");});
-$(document).foundation();
-</script>

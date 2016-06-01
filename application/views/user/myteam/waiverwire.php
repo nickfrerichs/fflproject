@@ -46,13 +46,22 @@
     </div>
     <div class="columns small-12 medium-8 text-center">
         <a href="<?=site_url('myteam/waiverwire/priority')?>">Waiver Wire Priority</a> |
-        <a href="<?=site_url('myteam/waiverwire/log')?>">Waiver Wire Log</a> |
-        <a href="#" id="drop-only">Drop Player</a>
+        <a href="<?=site_url('myteam/waiverwire/log')?>">Waiver Wire Log</a> 
+        <?php if(!$this->session->userdata('offseason')): ?>
+            | <a href="#" id="drop-only">Drop Player</a>
+        <?php endif;?>
 
     </div>
 </div>
 <hr>
 
+<?php if($this->session->userdata('offseason')): ?>
+    <div class="row">
+        <div class="columns">
+            <h5 class="text-center">It's the offseason</h5>
+        </div>
+    </div>
+<?php else: ?>
 
 <!-- Search options -->
 <div class="row align-center">
@@ -104,7 +113,7 @@
     </div>
 </div>
 
-
+<?php endif;?>
 <script>
     reloadPage();
 
