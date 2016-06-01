@@ -99,6 +99,18 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td><span data-tooltip class="has-tip top" title="Offseason disables ability for owners to make changes.  Historical stats are still available.">Offseason enabled</span></td>
+                    <td></td>
+                    <td class="text-center">
+                        <div class="switch tiny">
+                        <input  class="switch-input toggle-control" data-item="offseason" data-url="<?=site_url('admin/leaguesettings/ajax_toggle_item')?>"
+                            id="offseason" type="checkbox" <?php if($settings->offseason == "1"){echo "checked";}?>>
+                        <label class="switch-paddle" for="offseason">
+                        </label>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 

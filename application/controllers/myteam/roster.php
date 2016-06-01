@@ -28,20 +28,17 @@ class Roster extends MY_Controller{
 
     }
 
-    function test()
-    {
-        $data = $this->myteam_roster_model->ok_to_start(10,74);
-        print_r($data);
-    }
-
     function start()
     {
-        $player_id = $this->input->post('player_id');
-        $lea_pos = $this->input->post('pos_id');
-        $week = $this->input->post('week');
-        if( $this->myteam_roster_model->ok_to_start($lea_pos,$player_id,$week))
+        if (!$this->offseason)
         {
-            $this->myteam_roster_model->start_player($player_id, $lea_pos,$week);
+            $player_id = $this->input->post('player_id');
+            $lea_pos = $this->input->post('pos_id');
+            $week = $this->input->post('week');
+            if( $this->myteam_roster_model->ok_to_start($lea_pos,$player_id,$week))
+            {
+                $this->myteam_roster_model->start_player($player_id, $lea_pos,$week);
+            }
         }
 
     }
@@ -49,8 +46,11 @@ class Roster extends MY_Controller{
 
     function sit()
     {
-        $player_id = $this->input->post('player_id');
-        $this->start($player_id,0);
+        if (!$this->offseason)
+        {
+            $player_id = $this->input->post('player_id');
+            $this->start($player_id,0);
+        }
     }
 
     function ajax_starter_table()

@@ -14,7 +14,7 @@ class MY_Controller extends CI_Controller{
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->load->model('common/common_model');
         // To load the CI benchmark and memory usage profiler - set 1==1.
-        if ((1==0) && (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
+        if ((1==1) && (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
@@ -45,6 +45,7 @@ class MY_Controller extends CI_Controller{
         $this->league_name = $this->session->userdata('league_name');
         $this->is_admin = $this->flexi_auth->is_admin();
         $this->is_league_admin = $this->session->userdata('is_league_admin');
+        $this->offseason = $this->session->userdata('offseason');
 
         $this->bc = array();
 

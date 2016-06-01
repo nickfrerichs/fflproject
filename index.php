@@ -1,5 +1,4 @@
 <?php
-// I'm developing
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT

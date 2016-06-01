@@ -7,9 +7,11 @@ class Security_model extends MY_Model
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
                 ->select('team.id as team_id, team_name, owner.active_league, team.active, league.league_name')
+                ->select('league_settings.offseason')
                 ->from('owner')
                 ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1')
                 ->join('league','league.id = owner.active_league')
+                ->join('league_settings','league_settings.league_id = owner.active_league')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
 
         $site_name = $this->db->select('name')->from('site_settings')->get()->row()->name;
@@ -22,6 +24,7 @@ class Security_model extends MY_Model
         $this->session->set_userdata('last_name', $owner->last_name);
         $this->session->set_userdata('site_name', $site_name);
         $this->session->set_userdata('league_name', $owner->league_name);
+        $this->session->set_userdata('offseason', $owner->offseason);
 
         if ($this->db->from('league_admin')->where('league_id',$owner->active_league)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)
             $this->session->set_userdata('is_league_admin', True);
@@ -55,7 +58,6 @@ class Security_model extends MY_Model
         $week_year = $this->get_current_week();
         $this->session->set_userdata('current_year', $week_year->year);
         $this->session->set_userdata('current_week', $week_year->week);
-        $this->session->set_userdata('current_week',1);
         $this->session->set_userdata('expire_dynamic_vars',time()+20); // Make sure to check dynamic vars every 5 mins.
         $this->session->set_userdata('live_scores',$this->live_scores_on());
     }
