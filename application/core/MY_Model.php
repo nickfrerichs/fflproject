@@ -12,6 +12,10 @@ class MY_Model extends CI_Model
     {
         parent::__construct();
 
+        // Initialize flexi auth (lite)
+        $this->auth = new stdClass;
+        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+
         $this->userid = $this->session->userdata('user_id'); // Add this to session like league_id
         $this->leagueid = $this->session->userdata('league_id');
         $this->teamid = $this->session->userdata('team_id');

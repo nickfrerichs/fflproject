@@ -9,12 +9,13 @@ class MY_Controller extends CI_Controller{
     function __construct()
     {
         parent::__construct();
-
+        // Initialize flexi auth (lite)
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->load->model('common/common_model');
-        // To load the CI benchmark and memory usage profiler - set 1==1.
-        if ((1==1) && (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
+
+        // Turn debugging on, if enabled.
+        if ($this->debug() && !$this->input->is_ajax_request())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
@@ -24,9 +25,6 @@ class MY_Controller extends CI_Controller{
                 $this->output->set_profiler_sections($sections);
                 $this->output->enable_profiler(TRUE);
         }
-
-        // Initialize flexi auth (lite)
-
 
         // If not logged in redirect to login page
         if (!$this->flexi_auth->is_logged_in() && !$this->input->is_ajax_request())
@@ -43,7 +41,7 @@ class MY_Controller extends CI_Controller{
         $this->current_week = $this->session->userdata('current_week');
         $this->week_type = $this->session->userdata('week_type');
         $this->league_name = $this->session->userdata('league_name');
-        $this->is_admin = $this->flexi_auth->is_admin();
+        $this->is_site_admin = $this->session->userdata('is_site_admin');
         $this->is_league_admin = $this->session->userdata('is_league_admin');
         $this->offseason = $this->session->userdata('offseason');
 
@@ -58,12 +56,6 @@ class MY_Controller extends CI_Controller{
             $this->security_model->set_dynamic_session_variables();
         }
 
-
-        // Somehow determine if games are currently being played
-        //$this->live = true;
-
-
-
     }
 
     function user_view($viewname, $d=null)
@@ -74,6 +66,15 @@ class MY_Controller extends CI_Controller{
         $d['bc'] = $this->bc;
         $this->load->view('template/user_init', $d);
     }
+
+    function debug()
+    {
+        if ($this->session->userdata('debug_user'))
+            return True;
+        if ($this->session->userdata('debug_admin') && $this->flexi_auth->is_admin())
+            return True;
+        return False;
+    }
 }
 
 
@@ -82,18 +83,6 @@ class MY_Admin_Controller extends CI_Controller{
     function __construct()
     {
         parent::__construct();
-
-        // To load the CI benchmark and memory usage profiler - set 1==1.
-        if (1==0 && (!$this->input->is_ajax_request()))
-        {
-                $sections = array(
-                        'benchmarks' => TRUE, 'memory_usage' => TRUE,
-                        'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
-                );
-                $this->output->set_profiler_sections($sections);
-                $this->output->enable_profiler(TRUE);
-        }
 
         $this->current_year = $this->session->userdata('current_year');
         $this->current_week = $this->session->userdata('current_week');
@@ -105,6 +94,18 @@ class MY_Admin_Controller extends CI_Controller{
         $this->league_name = $this->session->userdata('league_name');
         $this->is_league_admin = $this->session->userdata('is_league_admin');
         $this->bc = array();
+
+        // Turn debugging on, if enabled.
+        if ($this->debug() && !$this->input->is_ajax_request())
+        {
+                $sections = array(
+                        'benchmarks' => TRUE, 'memory_usage' => TRUE,
+                        'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
+                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
+                );
+                $this->output->set_profiler_sections($sections);
+                $this->output->enable_profiler(TRUE);
+        }
 
         // If not logged in redirect to login page
         if (!$this->flexi_auth->is_logged_in() || !($this->is_admin || $this->is_league_admin))
@@ -120,5 +121,14 @@ class MY_Admin_Controller extends CI_Controller{
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
         $this->load->view('template/admin_init', $d);
+    }
+
+    function debug()
+    {
+        if ($this->session->userdata('debug_user'))
+            return True;
+        if ($this->session->userdata('debug_admin') && $this->flexi_auth->is_admin())
+            return True;
+        return False;
     }
 }

@@ -42,11 +42,23 @@ class Site_model extends MY_Model
             ->get()->row();
     }
 
+    function get_site_settings()
+    {
+        return $this->db->select('name, debug_user, debug_admin')->from('site_settings')->get()->row();
+    }
+
     function set_joinpassword($id, $value)
     {
         $data = array('join_password' => $value);
         $this->db->where('league_id',$id);
         $this->db->update('league_settings',$data);
+    }
+
+    function set_sitename($name)
+    {
+        $data = array('name' => $name);
+        $this->db->update('site_settings',$data);
+
     }
 
     function get_league_admins_array($id)
@@ -114,6 +126,13 @@ class Site_model extends MY_Model
             $this->db->insert('league_admin', $data);
             return 1;
         }
+    }
+
+    function toggle_site_setting($field)
+    {
+        $val = !$this->db->select($field)->from('site_settings')->get()->row()->{$field};
+        $this->db->update('site_settings',array($field => $val));
+        return $val;
     }
 
 }

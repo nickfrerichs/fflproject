@@ -14,7 +14,9 @@ class Security_model extends MY_Model
                 ->join('league_settings','league_settings.league_id = owner.active_league')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
 
-        $site_name = $this->db->select('name')->from('site_settings')->get()->row()->name;
+        $site_settings = $this->db->select('name, debug_user, debug_admin')->from('site_settings')->get()->row();
+        $site_name = $site_settings->name;
+
 
         $this->session->set_userdata('owner_id', $owner->owner_id);
         $this->session->set_userdata('league_id', $owner->active_league);
@@ -25,11 +27,17 @@ class Security_model extends MY_Model
         $this->session->set_userdata('site_name', $site_name);
         $this->session->set_userdata('league_name', $owner->league_name);
         $this->session->set_userdata('offseason', $owner->offseason);
+        $this->session->set_userdata('debug_user',$site_settings->debug_user);
+        $this->session->set_userdata('debug_admin',$site_settings->debug_admin);
+        $this->session->set_userdata('is_site_admin',$this->flexi_auth->is_admin());
+
 
         if ($this->db->from('league_admin')->where('league_id',$owner->active_league)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)
             $this->session->set_userdata('is_league_admin', True);
         else
             $this->session->set_userdata('is_league_admin', False);
+
+
 
         $this->load->model('league/chat_model');
 

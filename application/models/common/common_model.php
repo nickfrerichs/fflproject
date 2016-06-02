@@ -70,6 +70,14 @@ class Common_model extends CI_Model{
         return 0;
     }
 
+    function num_weeks_in_schedule()
+    {
+        $row = $this->db->select('max(week) as w')->from('schedule')->where('league_id',$this->leagueid)->where('year',$this->current_year)->get()->row();
+        if ($row->w == "")
+            return 0;
+        return $row->w;
+    }
+
     function league_nfl_position_id_array($year = 0)
     {
         if ($year == 0)

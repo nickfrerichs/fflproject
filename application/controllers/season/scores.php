@@ -20,8 +20,9 @@ class Scores extends MY_Controller{
     function week($week = 0)
     {
         if ($week == 0)
-            $week = $this->current_week;
+            $week = min($this->current_week,$this->common_model->num_weeks_in_schedule());
         $data = array();
+
 
         //if ($this->input->post('week'))
         //    $week = $this->input->post('week');

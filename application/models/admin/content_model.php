@@ -2,11 +2,31 @@
 
 class Content_model extends MY_Model
 {
-    function get_page_data($text_id)
+    function get_page_data($text_id,$id = null)
     {
-        $row = $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
-            ->where('text_id',$text_id)->where('year',$this->current_year)->get()->row();
+        if ($text_id)
+        {
+            $row = $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
+                ->where('text_id',$text_id)->where('year',$this->current_year)->get()->row();
+        }
+        elseif($id)
+        {
+            $row = $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
+                ->where('id',$id)->get()->row();
+        }
         return $row;
+    }
+
+    function get_news_data()
+    {
+        return $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
+            ->where('text_id','news')->order_by('date_posted','desc')->get()->result();
+    }
+
+    function get_news_page_data($id)
+    {
+        return $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
+            ->where('id',$id)->get()->row();
     }
 
     function save_content($content_id, $text_id='',$content='',$title='', $date_posted = 0)

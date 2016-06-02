@@ -1,14 +1,13 @@
-<script src="<?=site_url('js/tinymce/tinymce.min.js')?>"></script>
-<script> tinymce.init({
-    mode: 'textareas',
-    selector:'#content',
-    plugins: 'table colorpicker',
-    table_styles: 'Default=table'
-});</script>
+<?php //print_r($content);?>
+
 
 <div class="row">
     <div class="columns">
-        <h5><?=$content->title?></h5>
+        <?php if($content->text_id == "news"):?>
+            <input type="text" placeholder="<?=$content->title?>">
+        <?php else:?>
+            <h5><?=$content->title?></h5>
+        <?php endif;?>
     </div>
 </div>
 <div class="row">
@@ -22,12 +21,17 @@
         <button id="submit" class="button small">Save</button>
     </div>
 </div>
-
+<script src="<?=site_url('js/tinymce/tinymce.min.js')?>"></script>
 <script>
 
 $(document).ready(function(){
 
-    loadcontent();
+    tinymce.init({
+        mode: 'textareas',
+        selector:'#content',
+        plugins: 'table colorpicker',
+        table_styles: 'Default=table',
+        init_instance_callback: "loadcontent"});
 })
 
 $("#submit").on('click',function(){
@@ -38,7 +42,8 @@ $("#submit").on('click',function(){
 function loadcontent()
 {
     var url = "<?=site_url('admin/content/loadcontent')?>";
-    $.post(url,{'text_id' : "<?php if (!isset($content->text_id)){echo '0';}else{echo $content->text_id;} ?>"}, function(data){
+    $.post(url,{'id' : "<?php if (!isset($content->id)){echo '0';}else{echo $content->id;} ?>"}, function(data){
+        console.log(data);
         tinymce.activeEditor.setContent(data);
     });
 }

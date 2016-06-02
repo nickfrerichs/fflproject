@@ -9,7 +9,6 @@ class Site extends MY_Admin_Controller{
         if (!$this->is_admin)
             die();
         $this->bc["Super Admin"] = "";
-        $this->bc["Leagues"] = "";
     }
 
     public function manage_leagues()
@@ -42,6 +41,16 @@ class Site extends MY_Admin_Controller{
         $this->bc["Leagues"] = site_url("admin/site/manage_leagues");
         $this->bc["Edit"] = "";
         $this->admin_view('admin/site/edit_league',$data);
+    }
+
+    public function settings()
+    {
+        $data = array();
+
+        $data['settings'] = $this->site_model->get_site_settings();
+
+        $this->bc["Settings"] = "";
+        $this->admin_view('admin/site/site_settings',$data); 
     }
 
     public function ajax_get_owners()
@@ -106,6 +115,12 @@ class Site extends MY_Admin_Controller{
             $return['success'] = True;
             $return['value'] = $value;
         }
+        if($type == "sitename")
+        {
+            $this->site_model->set_sitename($value);
+            $return['success'] = True;
+            $return['value'] = $value;
+        }
         echo json_encode($return);
     }
 
@@ -123,6 +138,19 @@ class Site extends MY_Admin_Controller{
 
         }
 
+    }
+
+    public function ajax_toggle_site_setting()
+    {
+        $response = array("success" => false);
+        $field = $this->input->post('item');
+
+        $response['currentValue'] = $this->site_model->toggle_site_setting($field);
+
+        $this->load->model('security_model');
+        $this->security_model->set_session_variables();
+
+        echo json_encode($response);
     }
 
 }
