@@ -8,6 +8,8 @@ class Scores extends MY_Controller{
         parent::__construct();
         $this->load->model('season/scores_model');
         $this->live = $this->session->userdata('live_scores');
+        $this->bc[$this->current_year." Season"] = "";
+        $this->bc['Weekly Scores'] = "";
     }
 
 
@@ -31,6 +33,8 @@ class Scores extends MY_Controller{
         $data['weeks'] = $this->scores_model->get_weeks();
         $data['selected_week'] = $week;
         $data['selected_year'] = $this->session->userdata['current_year'];
+        $this->bc['Weekly Scores'] = site_url('season/scores');
+        $this->bc['Week '.$week] = "";
         $this->user_view('user/season/scores',$data);
 
 

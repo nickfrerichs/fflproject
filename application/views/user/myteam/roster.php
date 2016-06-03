@@ -1,7 +1,7 @@
 
 <?php $this->load->view('template/modals/stat_popup');?>
 
-<div class="row">
+<div class="row callout">
     <div class="columns medium-3 text-center small-12">
         <div><h4><?=$teamname?></h4></div>
         <?php if ($info->logo): ?>
@@ -84,49 +84,54 @@
     </div>
 <?php else: ?>
 <div class="row">
-    <div class="columns medium-2">
-        <select id="selected-week">
-            <?php foreach($weeks as $w): ?>
-                <?php if($w->week == $this->session->userdata('current_week')): ?>
-                    <option selected value="<?=$w->week?>">Week <?=$w->week?></option>
-                <?php else: ?>
-                <option value="<?=$w->week?>">Week <?=$w->week?></option>
-                <?php endif;?>
-            <?php endforeach; ?>
-        </select>
+    <div class="columns callout">
+        <div class="row">
+            <div class="columns medium-2">
+                <select id="selected-week">
+                    <?php foreach($weeks as $w): ?>
+                        <?php if($w->week == $this->session->userdata('current_week')): ?>
+                            <option selected value="<?=$w->week?>">Week <?=$w->week?></option>
+                        <?php else: ?>
+                        <option value="<?=$w->week?>">Week <?=$w->week?></option>
+                        <?php endif;?>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <!--
+        <div class="row text-center">
+            <div class="checkbox">
+              <label>
+                <input id="future-weeks" type="checkbox"> Set Future Weeks
+              </label>
+            </div>
+        </div>
+        -->
+        <div class="row">
+            <div class="medium-6 columns small-12">
+                <div><h5>Starting Lineup</h5></div>
+                <table>
+                    <thead>
+                        <th class="text-center">Pos</th><th class="text-center">Player</th><th class="text-center">Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Sit</th>
+                    </thead>
+                    <tbody id ="starter-tbody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="medium-6 columns small-12">
+                <div><h5>Bench</h5></div>
+                <table>
+                    <thead>
+                        <th class="text-center">Player</th><th class="text-center">Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Start as</th>
+                    </thead>
+                    <tbody id="bench-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-<!--
-<div class="row text-center">
-    <div class="checkbox">
-      <label>
-        <input id="future-weeks" type="checkbox"> Set Future Weeks
-      </label>
-    </div>
-</div>
--->
-<div class="row">
-    <div class="medium-6 columns small-12">
-        <div><h5>Starting Lineup</h5></div>
-        <table>
-            <thead>
-                <th class="text-center">Pos</th><th class="text-center">Player</th><th class="text-center">Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Sit</th>
-            </thead>
-            <tbody id ="starter-tbody">
-            </tbody>
-        </table>
-    </div>
-    <div class="medium-6 columns small-12">
-        <div><h5>Bench</h5></div>
-        <table>
-            <thead>
-                <th class="text-center">Player</th><th class="text-center">Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Start as</th>
-            </thead>
-            <tbody id="bench-tbody">
-            </tbody>
-        </table>
-    </div>
-</div>
+
 <?php endif; ?>
 
 <script>

@@ -9,6 +9,8 @@ class Waiverwire extends MY_Controller{
         $this->load->model('myteam/waiverwire_model');
         $this->load->model('player_search_model');
         $this->load->model('myteam/myteam_roster_model');
+        $this->bc['My Team'] = "";
+        $this->bc['Waiver Wire'] = "";
     }
 
 

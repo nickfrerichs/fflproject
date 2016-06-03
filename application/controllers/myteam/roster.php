@@ -8,6 +8,8 @@ class Roster extends MY_Controller{
         $this->load->model('myteam/myteam_roster_model');
         $this->load->model('myteam/myteam_settings_model');
         $this->load->model('myteam/schedule_model');
+        $this->bc['My Team'] = "";
+        $this->bc['Roster'] = "";
     }
 
     function index()

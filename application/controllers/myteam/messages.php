@@ -6,6 +6,8 @@ class Messages extends MY_Controller{
     {
         parent::__construct();
         $this->load->model('myteam/messages_model');
+        $this->bc['My Team'] = "";
+        $this->bc['Messages'] = "";
     }
 
     function index()
@@ -29,6 +31,8 @@ class Messages extends MY_Controller{
         }
         $data['owners'] = $this->messages_model->get_league_owners_data();
         $data['teamid'] = $this->teamid;
+        $this->bc['Messages'] = site_url('myteam/messages');
+        $this->bc['New Message'] = "";
         $this->user_view('user/myteam/messages/compose', $data);
     }
 

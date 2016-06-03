@@ -7,6 +7,8 @@ class Postseason extends MY_Controller{
     {
         parent::__construct();
         $this->load->model('content_model');
+        $this->bc[$this->current_year." Season"] = "";
+        $this->bc['Post Season'] = "";
     }
 
 

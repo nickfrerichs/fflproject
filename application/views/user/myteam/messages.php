@@ -7,10 +7,10 @@
 <div class="row">
 	<div class="columns">
 		<h4>Messages</h4>
-		<hr>
 	</div>
 </div>
-<div class="row">
+
+<div class="row callout">
 	<div class=" columns medium-2 small-12">
 		<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>New Message</a></h6></div>
 		<div id="folder_0" class="folder"><a href="#"><h6>Inbox</h6></a></div>
@@ -34,7 +34,7 @@
 			<button id="message-close" class="button">Close</button>
 		</div>
 	</div>
-
+</div>
 
 <script>
 $(document).ready(function(){

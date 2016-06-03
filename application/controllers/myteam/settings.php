@@ -6,6 +6,8 @@ class Settings extends MY_Controller{
         parent::__construct();
         $this->load->model('myteam/myteam_settings_model');
         $this->load->library('flexi_auth', FALSE, 'flexi_auth_full');
+        $this->bc['My Team'] = "";
+        $this->bc['Settings'] = "";
     }
 
     function index()

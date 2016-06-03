@@ -7,6 +7,8 @@ class Schedule extends MY_Controller{
     {
         parent::__construct();
         $this->load->model('myteam/schedule_model');
+        $this->bc[$this->current_year." Season"] = "";
+        $this->bc['Schedule'] = "";
     }
 
     function index()

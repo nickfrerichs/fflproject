@@ -6,6 +6,8 @@ class Trade extends MY_Controller{
     {
         parent::__construct();
         $this->load->model('myteam/trade_model');
+        $this->bc['My Team'] = "";
+        $this->bc['Trade'] = "";
     }
 
     function test()
@@ -52,6 +54,10 @@ class Trade extends MY_Controller{
                 $data['team_options'][$t->id] = $t->team_name;
         }
         $this->load->helper('form');
+
+        $this->bc['Trade'] = site_url('myteam/trade');
+        $this->bc['Propose'] = "";
+
         $this->user_view('user/myteam/trade/propose.php', $data);
 
     }

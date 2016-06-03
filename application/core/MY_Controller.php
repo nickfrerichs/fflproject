@@ -15,7 +15,7 @@ class MY_Controller extends CI_Controller{
         $this->load->model('common/common_model');
 
         // Turn debugging on, if enabled.
-        if ($this->debug() && !$this->input->is_ajax_request())
+        if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
@@ -44,6 +44,7 @@ class MY_Controller extends CI_Controller{
         $this->is_site_admin = $this->session->userdata('is_site_admin');
         $this->is_league_admin = $this->session->userdata('is_league_admin');
         $this->offseason = $this->session->userdata('offseason');
+        $this->debug = $this->session->userdata('debug');
 
         $this->bc = array();
 
@@ -67,14 +68,6 @@ class MY_Controller extends CI_Controller{
         $this->load->view('template/user_init', $d);
     }
 
-    function debug()
-    {
-        if ($this->session->userdata('debug_user'))
-            return True;
-        if ($this->session->userdata('debug_admin') && $this->flexi_auth->is_admin())
-            return True;
-        return False;
-    }
 }
 
 
@@ -96,7 +89,7 @@ class MY_Admin_Controller extends CI_Controller{
         $this->bc = array();
 
         // Turn debugging on, if enabled.
-        if ($this->debug() && !$this->input->is_ajax_request())
+        if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
@@ -121,14 +114,5 @@ class MY_Admin_Controller extends CI_Controller{
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
         $this->load->view('template/admin_init', $d);
-    }
-
-    function debug()
-    {
-        if ($this->session->userdata('debug_user'))
-            return True;
-        if ($this->session->userdata('debug_admin') && $this->flexi_auth->is_admin())
-            return True;
-        return False;
     }
 }

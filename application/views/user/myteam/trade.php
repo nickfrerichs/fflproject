@@ -1,12 +1,10 @@
 <?php //print_r($open_trades); ?>
 <?php $this->load->view('template/modals/stat_popup'); ?>
 
-<div class="row">
-	<div class="column"><h4>Trades</h4></div>
-</div>
-
-
-<div class="row align-justify">
+<div class="row callout">
+	<div class="column">
+		<h5>Trades</h5>
+	</div>
 	<?php if(!$this->session->userdata('offseason')): ?>
 		<div class="column small-12"><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></div>
 	<?php endif;?>
@@ -26,20 +24,24 @@
 	</div>
 </div>
 <?php else:?>
-<div class="row">
-	<div class="column text-center">
-		<h5>Outstanding Trades</h5>
-	</div>
-</div>
-<div class="row">
-	<div class="column">
-		<table class="table table-striped">
-			<thead>
-				<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
-			</thead>
-			<tbody id="open-trades-tbody">
-		</tbody>
-		</table>
+<div class="row callout">
+	<div class="columns">
+		<div class="row">
+			<div class="column text-center">
+				<h5>Outstanding Trades</h5>
+			</div>
+		</div>
+		<div class="row">
+			<div class="column">
+				<table class="table table-striped">
+					<thead>
+						<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
+					</thead>
+					<tbody id="open-trades-tbody">
+				</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>
 <?php endif; ?>

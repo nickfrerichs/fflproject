@@ -60,3 +60,15 @@ function gmail_send($to,$subject,$body)
         echo('<p>Message successfully sent!</p>');
     }
 }
+
+function debug($var,$debug)
+{
+
+    if ($debug)
+    {
+        if (is_array($var))
+            print_r($var);
+        else
+            echo $var;
+    }
+}

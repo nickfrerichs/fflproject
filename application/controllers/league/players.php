@@ -7,6 +7,8 @@ class Players extends MY_Controller{
         parent::__construct();
         $this->load->model('league/player_statistics_model');
         $this->load->model('player_search_model');
+        $this->bc['League'] = "";
+        $this->bc['NFL Players'] = "";
     }
 
     function index()

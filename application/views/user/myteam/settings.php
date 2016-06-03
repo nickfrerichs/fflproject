@@ -36,85 +36,91 @@
     </div>
 </div>
 
-    <hr>
 
-<div class="row">
+<div class="row callout">
     <div class="columns">
-        <h4>Team Settings</h4>
-    </div>
-</div>
-<div class="row">
-    <div class="columns">
-        <table class="table-condensed">
-            <thead>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><b>Team Name</b></td>
+        <div class="row">
+            <div class="columns">
+                <h4>Team Settings</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns">
+                <table class="table-condensed">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Team Name</b></td>
 
-                    <td id="teamname-field"><?=$team_info->long_name?></td>
-                    <td>
-                        <a href="#" id="teamname-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
-                        <a href="#" id="teamname-cancel" class="cancel-control"></a>
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>Team Logo</b></td>
-                    <td id="team-logo">
-                        <?php if($team_info->logo): ?>
-                        <img src="<?=$team_thumb_logo_url?>">
-                        <?php else: ?>
-                        None
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <a href="#" id="logo-change">Upload</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            <td id="teamname-field"><?=$team_info->long_name?></td>
+                            <td>
+                                <a href="#" id="teamname-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
+                                <a href="#" id="teamname-cancel" class="cancel-control"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Team Logo</b></td>
+                            <td id="team-logo">
+                                <?php if($team_info->logo): ?>
+                                <img src="<?=$team_thumb_logo_url?>">
+                                <?php else: ?>
+                                None
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href="#" id="logo-change">Upload</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-<hr>
-<div class="row">
+<div class="row callout">
     <div class="columns">
-        <h4>Owner Settings</h4>
-    </div>
-</div>
-    <br>
-<div class="row">
-<div class="columns">
-        <table class="table-condensed">
-            <thead>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><b>First Name</b></td>
-                    <td><?=$owner_info->first_name?></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><b>Last Name</b></td>
-                    <td><?=$owner_info->last_name?></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><b>Phone Number</b></td>
-                    <td id="phone-field"><?=$owner_info->phone_number?></td>
-                    <td>
-                        <a href="#" id="phone-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
-                        <a href="#" id="phone-cancel" class="cancel-control"></a>
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>Password</b></td>
-                    <td id="password-field">********************</td>
-                    <td class="text-left"><a href="#" id="password-control" data-command="edit">Change</a>
-                                        <a href="#" id="password-cancel"></a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="row">
+            <div class="columns">
+                <h4>Owner Settings</h4>
+            </div>
+        </div>
+            <br>
+        <div class="row">
+        <div class="columns">
+                <table class="table-condensed">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>First Name</b></td>
+                            <td><?=$owner_info->first_name?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Name</b></td>
+                            <td><?=$owner_info->last_name?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Phone Number</b></td>
+                            <td id="phone-field"><?=$owner_info->phone_number?></td>
+                            <td>
+                                <a href="#" id="phone-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
+                                <a href="#" id="phone-cancel" class="cancel-control"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Password</b></td>
+                            <td id="password-field">********************</td>
+                            <td class="text-left"><a href="#" id="password-control" data-command="edit">Change</a>
+                                                <a href="#" id="password-cancel"></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 

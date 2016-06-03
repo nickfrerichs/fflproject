@@ -43,6 +43,8 @@ div.switch{margin:0px;}
 td input{margin-bottom:0px !important;}
 td select{margin-bottom:0px !important;}
 
+.callout{border-color:#eaeaea; border-radius:5px}
+
 /* --------------------- */
 /* MENU BAR STYLING      */
 /* --------------------- */

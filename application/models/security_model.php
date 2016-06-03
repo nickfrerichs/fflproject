@@ -17,6 +17,13 @@ class Security_model extends MY_Model
         $site_settings = $this->db->select('name, debug_user, debug_admin')->from('site_settings')->get()->row();
         $site_name = $site_settings->name;
 
+        // Set debug session variable
+        if ($site_settings->debug_user)
+            $this->session->set_userdata('debug',True);
+        elseif($site_settings->debug_admin && $this->flexi_auth->is_admin())
+            $this->session->set_userdata('debug',True);
+        else
+            $this->session->set_userdata('debug',False);
 
         $this->session->set_userdata('owner_id', $owner->owner_id);
         $this->session->set_userdata('league_id', $owner->active_league);
@@ -27,8 +34,6 @@ class Security_model extends MY_Model
         $this->session->set_userdata('site_name', $site_name);
         $this->session->set_userdata('league_name', $owner->league_name);
         $this->session->set_userdata('offseason', $owner->offseason);
-        $this->session->set_userdata('debug_user',$site_settings->debug_user);
-        $this->session->set_userdata('debug_admin',$site_settings->debug_admin);
         $this->session->set_userdata('is_site_admin',$this->flexi_auth->is_admin());
 
 

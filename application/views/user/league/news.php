@@ -1,55 +1,48 @@
 <style>
-.section{padding-left:20px; padding-right:20px; margin-bottom:40px;}
-.section-title{margin-left:20px; padding-right:20px; background-color:#eee}
+.section{padding-left:20px; padding-right:20px; margin-bottom:20px;}
+.section-title{margin-left:20px; padding-right:20px; background-color:#eee; }
 .date{font-size:.8em; color:#888;}
+.title{margin-bottom:0px;}
+table tr:nth-of-type(even) {
+    background-color: transparent !important;
+}
+.right-bar{padding-left:40px; padding-right:40px}
+.callout{border-color:#eaeaea; border-radius:5px}
+hr{border: 1px solid #eaeaea;}
 </style>
 
 <div class='row'>
-    <div class="columns small-12 medium-order-1 small-order-2 medium-7 large-8 section">
-            <div class="date">Sun 9/23 - 12:12pm</div>
-            <h5>
-                Welcome back!
-            </h5>
+    <div class="columns small-12 medium-order-1 small-order-2 medium-7 large-8">
+            <?php //debug($news,$this->session->userdata('debug'));?>
+            <?php foreach($news as $n): ?>
+            <div class="section callout">
 
-            As you can see, the website has been redesigned.  I'm using a new and better stat source that should allow for much more real-time and detailed updates for live scoring.
-            I'm hoping the draft experience is much better, though I haven't had a whole lot of time to test it yet.<br>
-            Please leave all comments about why we don't just use Yahoo to yourself.  Oh yeah, most importantly, I was able to completely migrate the league's historic stats which
-            is probably the biggest reason.<br>
-            <br>
-
-            The draft has not scheduled yet, my first goal is getting everyone signed up, apparently you made it that far.
-            <br><br>
-            <div class="date">Tue 7/15 - 4:56pm</div>
-            <h5>
-                Draft Complete!
-            </h5>
-
-            This is some filler content.  As you can see, the website has been redesigned.  I'm using a new and better stat source that should allow for much more real-time and detailed updates for live scoring.
-            I'm hoping the draft experience is much better, though I haven't had a whole lot of time to test it yet.<br>
-            Please leave all comments about why we don't just use Yahoo to yourself.  Oh yeah, most importantly, I was able to completely migrate the league's historic stats which
-            is probably the biggest reason.<br>
-            <br>
-
-            The draft has not scheduled yet, my first goal is getting everyone signed up, apparently you made it that far.
-            <br>
+              <h5 class="title">
+                  <?=$n->title?>
+              </h5>
+              <div class="date"><?=$n->date_posted?></div>
+              <hr>
+              <div>
+                <?=$n->data?>
+              </div>
+            </div>
+            <?php endforeach; ?>
     </div>
-    <div class="columns small-order-1 medium-order-2 small-12 medium-5 large-4">
+    <div class="columns small-order-1 medium-order-2 small-12 medium-5 large-4 callout right-bar">
         <h5>Waiver Wire Activity</h5>
-        <table>
-            <tbody>
-                <tr><td>
+            <div>
                 <span>Nick's Team</span> <span class="date">(9/22 8:03pm)</span><br>
                      <span><strong>Add:</strong> A. Petersen - RB MIN</span><br>
                      <span><strong>Drop:</strong> J. Cutler - RB CHI</span>
-                 </td></tr>
-                 <tr><td>
+            </div>
+            <br>
+            <div>
                  <span>Matt's Team</span> <span class="date">(9/21 4:23pm)</span><br>
                       <span><strong>Add:</strong> J. Feely - K JAX</span><br>
                       <span><strong>Drop:</strong> E. Manning - QB NYG</span>
-                  </td></tr>
-            </tbody>
-         </table>
-         <br><br>
+
+            </div>
+         <br><hr>
          <h5>Money List</h5>
     </div>
 </div>

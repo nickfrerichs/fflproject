@@ -6,6 +6,8 @@ class Standings extends MY_Controller{
     {
         parent::__construct();
         $this->load->model('season/standings_model');
+        $this->bc[$this->current_year." Season"] = "";
+        $this->bc['Standings'] = "";
     }
 
     function index()

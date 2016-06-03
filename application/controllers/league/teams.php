@@ -8,6 +8,8 @@ class Teams extends MY_Controller{
         parent::__construct();
         $this->load->model('league/teams_model');
         $this->load->model('myteam/myteam_settings_model');
+        $this->bc['League'] = "";
+        $this->bc['Teams'] = "";
     }
 
 
@@ -45,6 +47,8 @@ class Teams extends MY_Controller{
             $data['logo'] = $this->myteam_settings_model->get_logo_url($data['team']->team_id,'med');
         else
             $data['logo'] = $this->myteam_settings_model->get_default_logo_url('med');
+        $this->bc['Teams'] = site_url('league/teams');
+        $this->bc[$data['team']->team_name] = "";
         $this->user_view('user/league/teams/view_team',$data);
     }
 }

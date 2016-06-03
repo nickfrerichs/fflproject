@@ -8,6 +8,8 @@ class Draft extends MY_Controller{
         parent::__construct();
         $this->load->model('season/draft_model');
         $this->load->model('player_search_model');
+        $this->bc[$this->current_year." Season"] = "";
+        $this->bc['Draft'] = "";
     }
 
     function index()
@@ -21,10 +23,10 @@ class Draft extends MY_Controller{
 
         $data['years'] = $this->draft_model->get_draft_years();
 
-        if ($data['start_time'] < time())
+        //if ($data['start_time'] < time())
             $this->user_view('user/season/draft',$data);
-        else
-            $this->user_view('user/season/draft/live',$data);
+        //else
+        //    $this->user_view('user/season/draft/live',$data);
     }
 
     function ajax_get_draft_results()
@@ -58,7 +60,8 @@ class Draft extends MY_Controller{
         $data['per_page'] = $this->per_page;
         $data['sort'] = array('a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');
         $data['pos'] = $this->player_search_model->get_nfl_positions_data();
-
+        $this->bc['Draft'] = site_url('season/draft');
+        $this->bc[$this->current_year.' Live'] = "";
         $this->user_view('user/season/draft/live',$data);
     }
 

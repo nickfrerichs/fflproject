@@ -7,6 +7,8 @@ class Moneylist extends MY_Controller{
     {
         parent::__construct();
         $this->load->model('season/moneylist_model');
+        $this->bc[$this->current_year." Season"] = "";
+        $this->bc['Money List'] = "";
     }
 
 

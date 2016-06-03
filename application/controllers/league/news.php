@@ -6,14 +6,17 @@ class News extends MY_Controller{
     function __construct()
     {
         parent::__construct();
-        $this->bc["League News"] = "";
+        $this->load->model('league/news_model');
+
+        $this->bc["League"] = "";
+        $this->bc["News"] = "";
     }
 
 
     public function index()
     {
-        $this->load->model('security_model');
-        $this->security_model->get_current_week();
-        $this->user_view('user/league/news');
+        $data = array();
+        $data['news'] = $this->news_model->get_news_data();
+        $this->user_view('user/league/news',$data);
     }
 }
