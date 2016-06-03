@@ -12,7 +12,7 @@ To get up and running:
 	$db['default']['password'] = '';
 	$db['default']['database'] = '';
 
-3. Change password salt for flexi auth
+3. Change password salt for flexi auth, mailserver setup, recaptcha
 
 4. Set up a super admin user
 

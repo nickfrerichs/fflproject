@@ -6,6 +6,8 @@
 		<div class="row align-center">
 			<div class="columns medium-6">
 			<?php if (!$admin_exists): ?>
+				<h5> Installation </h5>
+				<br>
 				<a href="<?=site_url('accounts/register')?>">Create Admin Account</a>
 			<?php else: ?>
 
