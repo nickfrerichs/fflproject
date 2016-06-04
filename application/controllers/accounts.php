@@ -8,6 +8,7 @@ class Accounts extends CI_Controller{
         $this->auth = new stdClass;
         $this->load->library('flexi_auth', FALSE);
         $this->load->model('account_model');
+        $this->load->model('common/common_noauth_model');
         if ($this->flexi_auth->is_logged_in())
         {
                 redirect('auth');
@@ -33,6 +34,7 @@ class Accounts extends CI_Controller{
 
     function register($maskid="", $code = "")
     {
+        $data = array();
         if (!$this->account_model->admin_account_exists())
             $league_id = 0;
         else
@@ -76,8 +78,11 @@ class Accounts extends CI_Controller{
                 if ($response)
                     redirect(site_url());
             }
+            
             $this->load->helper('form');
-            $data = array('admin_exists' => $this->account_model->admin_account_exists(), 'v' => 'guest_register');
+            $data['admin_exists'] = $this->account_model->admin_account_exists();
+            $data['v'] = 'guest_register';
+            $data['site_name'] = $this->common_noauth_model->get_site_name();
             $this->load->view("template/simple",$data);
         }
         else

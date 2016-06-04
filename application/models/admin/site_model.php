@@ -6,7 +6,8 @@ class Site_model extends MY_Model
     function get_leagues()
     {
         $data=array();
-        $leagues = $this->db->select('id, league_name')->from('league')->get()->result();
+        $leagues = $this->db->select('league.id, league.mask_id, league.league_name, league_settings.join_password')->from('league')
+            ->join('league_settings','league_settings.league_id = league.id')->get()->result();
         foreach ($leagues as $l)
         {
             $data[$l->id] = array();
@@ -14,6 +15,8 @@ class Site_model extends MY_Model
             $data[$l->id]['admins'] = $this->db->select('uacc_username as username, league_admin_id as id')->from('league_admin')
                 ->join('user_accounts','user_accounts.uacc_id = league_admin.league_admin_id')
                 ->where('league_admin.league_id',$l->id)->get()->result();
+            $data[$l->id]['active_teams'] = $this->db->select('id, team_name')->from('team')->where('active',1)->where('league_id',$l->id)->get()->result();
+            $data[$l->id]['teams'] = $this->db->select('id, team_name')->from('team')->where('league_id',$l->id)->get()->result();
         }
         return $data;
     }
@@ -27,7 +30,7 @@ class Site_model extends MY_Model
         $id = $this->db->insert_id();
 
         // Insert into league_settings table
-        $data = array('league_id' => $id);
+        $data = array('league_id' => $id, 'offseason' => 1);
         $this->db->insert('league_settings',$data);
     }
 
@@ -133,6 +136,14 @@ class Site_model extends MY_Model
         $val = !$this->db->select($field)->from('site_settings')->get()->row()->{$field};
         $this->db->update('site_settings',array($field => $val));
         return $val;
+    }
+
+    function has_leagues()
+    {
+        if ($this->db->from('league')->count_all_results() > 0)
+            return True;
+        return False;
+
     }
 
 }

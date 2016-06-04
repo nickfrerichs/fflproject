@@ -163,6 +163,7 @@ $(document).ready(function(){
     function loadTables(){
         //alert('loadtables');
         var week = $("#selected-week").val();
+
         url = "<?=site_url('myteam/roster/ajax_starter_table')?>";
         $.post(url,{'week':week}, function(data){
             $("#starter-tbody").html(data);

@@ -1,4 +1,4 @@
-<?php //print_r($bench); ?>
+<?php debug($bench,$this->session->userdata('debug')); ?>
 <?php foreach($bench as $b): ?>
     <tr>
         <td>

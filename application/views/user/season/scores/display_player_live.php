@@ -5,7 +5,7 @@
 
     <td class="player-profile">
         <div style="float:left;">
-            <img src="<?=site_url('images/players/'.$p['player']->photo)?>" style="width:40px;">
+            <img src="<?=site_url('images/'.$p['player']->photo)?>" style="width:40px;">
         </div>
         <div style="float:left;">
             <div>
@@ -25,7 +25,7 @@
 <?php else: ?>
     <tr <?php if($view == 'live'){echo 'class="livescore-hide-player"';}?>><td colspan=3 class="player-profile">
         <div style="float:left;">
-            <img src="<?=site_url('images/players/JAC.png')?>" style="width:40px;">
+            <img src="<?=site_url('images/nfl/JAC.png')?>" style="width:40px;">
         </div>
     </td></tr>
 <?php endif;?>

@@ -67,4 +67,9 @@ class Account_model extends CI_Model{
             return False;
         return True;
     }
+
+    function get_site_name()
+    {
+        return $this->db->select('name')->from('site_settings')->get()->row()->name;
+    }
 }

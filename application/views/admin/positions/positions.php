@@ -1,6 +1,6 @@
 <?php //print_r($nfl_positions)?>
 
-<!-- Confirm modal -->
+<!-- Add positions modal -->
 <div class="reveal tiny" id="position-form-modal" data-reveal data-overlay="true">
     <div class="row">
         <div class="columns">
@@ -48,13 +48,13 @@
 
 <div class="row">
     <div class="columns">
-        <table>
-            <tr><th>Name</th><th>Position</th><th>NFL Pos</th><th>Roster Max</th><th>Roster Min</th>
+        <table class="text-center">
+            <tr><th class="text-left">Name</th><th>Position</th><th>NFL Pos</th><th>Roster Max</th><th>Roster Min</th>
                 <th>Start Max</th><th>Start Min</th><th></th></tr>
         <?php foreach($league_positions as $lp): ?>
 
-            <tr>
-                <td><?php echo $lp->long_text; ?></td>
+            <tr> 
+                <td class="text-left"><?php echo $lp->long_text; ?></td>
                 <td><?php echo $lp->text_id;?></td>
                 <td>
                     <?php foreach(explode(",",$lp->nfl_position_id_list) as $nfl_id){
@@ -76,7 +76,8 @@
     </div>
 </div>
 
-<script LANGUAGE="JScript">
+<script>
+
 
 $("#save-button").on("click",function(){
     var url = "<?=site_url('admin/positions/save')?>";

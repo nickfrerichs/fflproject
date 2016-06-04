@@ -115,5 +115,5 @@
         </table>
 
     </div>
-    <?php print_r($settings) ?>
+    <?=debug($settings,$this->session->userdata('debug'))?>
 </div>

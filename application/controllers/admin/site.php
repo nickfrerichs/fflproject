@@ -32,15 +32,15 @@ class Site extends MY_Admin_Controller{
         $this->site_model->create_league($name);
     }
 
-    public function edit_league($id)
+    public function manage_league($id)
     {
         $data = array();
         $data['info'] = $this->site_model->get_league_info($id);
         $data['settings'] = $this->site_model->get_league_settings($id);
         $data['admins'] = $this->site_model->get_league_admins_array($id);
         $this->bc["Leagues"] = site_url("admin/site/manage_leagues");
-        $this->bc["Edit"] = "";
-        $this->admin_view('admin/site/edit_league',$data);
+        $this->bc["Manage"] = "";
+        $this->admin_view('admin/site/manage_league',$data);
     }
 
     public function settings()

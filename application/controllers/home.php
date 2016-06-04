@@ -39,6 +39,7 @@ class Home extends CI_Controller{
         {
             $this->load->model('account_model');
             $data['admin_exists'] = $this->account_model->admin_account_exists();
+            $data['site_name'] = $this->account_model->get_site_name();
             // Display login form
             $this->load->view('guest_view', $data);
         }

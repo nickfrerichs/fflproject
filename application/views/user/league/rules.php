@@ -1,4 +1,5 @@
-<div class="container">
-<h3>Rules</h3>
-(coming soon)
+<div class="row">
+	<div class="columns">
+		<h5>Rules</h5>
+	</div>
 </div>

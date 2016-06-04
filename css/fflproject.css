@@ -50,7 +50,7 @@ td select{margin-bottom:0px !important;}
 /* --------------------- */
 
 /* both mobile and desktop menu bars, I set 1rem to maintain this size in case I adjust the font size for the entire body*/
-#title-bar-row, .top-bar, .top-bar ul, .top-bar li, .title-bar, .small-top-bar, #footer-bar{background-color: #444; font-size:1rem; border-radius:3px;}
+#title-bar-row, .top-bar, .top-bar ul, .top-bar li, .title-bar, .small-top-bar, #footer-bar{background-color: #444; font-size:1rem; border-radius:1px;}
 .top-bar a{color: #fff;}
 
 #title-bar-row{margin-bottom:30px;}

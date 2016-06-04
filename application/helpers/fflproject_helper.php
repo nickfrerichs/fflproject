@@ -69,6 +69,6 @@ function debug($var,$debug)
         if (is_array($var))
             print_r($var);
         else
-            echo $var;
+            print_r($var);
     }
 }

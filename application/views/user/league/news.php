@@ -30,7 +30,7 @@ hr{border: 1px solid #eaeaea;}
     </div>
     <div class="columns small-order-1 medium-order-2 small-12 medium-5 large-4 callout right-bar">
         <h5>Waiver Wire Activity</h5>
-            <div>
+<!--             <div>
                 <span>Nick's Team</span> <span class="date">(9/22 8:03pm)</span><br>
                      <span><strong>Add:</strong> A. Petersen - RB MIN</span><br>
                      <span><strong>Drop:</strong> J. Cutler - RB CHI</span>
@@ -41,7 +41,7 @@ hr{border: 1px solid #eaeaea;}
                       <span><strong>Add:</strong> J. Feely - K JAX</span><br>
                       <span><strong>Drop:</strong> E. Manning - QB NYG</span>
 
-            </div>
+            </div> -->
          <br><hr>
          <h5>Money List</h5>
     </div>

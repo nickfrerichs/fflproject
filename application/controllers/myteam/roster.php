@@ -92,6 +92,8 @@ class Roster extends MY_Controller{
     function ajax_bench_table()
     {
         $week = $this->input->post('week');
+        if ($week == "")
+            $week = 0;
         $lea_pos = $this->myteam_roster_model->get_league_positions_data();
         $bench_data = $this->myteam_roster_model->get_bench_data($week);
         $bench = array();
@@ -100,8 +102,8 @@ class Roster extends MY_Controller{
             $bench[$b->player_id]['data'] = $b;
             foreach ($lea_pos as $pos)
             {
-                // OK to start this position if these ar true.
-                if(in_array($b->nfl_position_id,explode(',',$pos->nfl_position_id_list)) && $this->myteam_roster_model->num_starters($pos->id,$this->teamid,$week) < $pos->max_start)
+                // OK to start this position if these are true.
+                if($week>0 && in_array($b->nfl_position_id,explode(',',$pos->nfl_position_id_list)) && $this->myteam_roster_model->num_starters($pos->id,$this->teamid,$week) < $pos->max_start)
                 {
                     $bench[$b->player_id]['can_start'][$pos->id] = $pos->text_id;
                 }

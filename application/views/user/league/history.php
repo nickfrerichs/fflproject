@@ -1,4 +1,5 @@
-<div class="container">
-<h3>League History</h3>
-(coming soon)
+<div class="row">
+	<div class="columns">
+		<h5>League History</h5>
+	</div>
 </div>

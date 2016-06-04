@@ -1,3 +1,6 @@
+#
+# Front end installation
+#
 To get up and running:
 (Assuming LAMP environment)
 
@@ -14,5 +17,31 @@ To get up and running:
 
 3. Change password salt for flexi auth, mailserver setup, recaptcha
 
-4. Set up a super admin user
+4. Make sure .htaccess is correct
 
+5. Permissions to images/team_logos
+
+6. Set up a super admin user
+
+#
+# Prepare the first league.
+#
+
+7. Create a League
+
+8. Join the league (either with the super admin account or using the invite URL of the newly
+	created league).
+
+9. Assign league admin (either the super admin user or the newly created user).
+
+10. As league admin, set max teams and max roster, then define positions and scoring.
+    ** PLAYERS WONT SHOW UP UNTIL YOUR LEAGUE HAS POSITIONS DEFINED **
+
+
+
+#
+# Back end installation (python):
+#
+argparse
+nflgame
+DB config

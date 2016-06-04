@@ -299,12 +299,13 @@ class Waiverwire_model extends MY_Model{
         }
     }
 
-    function get_log_data($year = 0)
+    function get_log_data($year = 0, $oldest = 0)
     {
         if ($year == 0)
             $year = $this->current_year;
 
-        return $this->db->select('d.first_name as drop_first, d.last_name as drop_last, dt.club_id as drop_club_id')
+
+        $this->db->select('d.first_name as drop_first, d.last_name as drop_last, dt.club_id as drop_club_id')
             ->select('dp.short_text as drop_pos, p.first_name as pickup_first, p.last_name as pickup_last')
             ->select('pt.club_id as pickup_club_id, pp.short_text as pickup_pos')
             ->select('UNIX_TIMESTAMP(waiver_wire_log.request_date) as request_date')
@@ -321,8 +322,10 @@ class Waiverwire_model extends MY_Model{
             ->join('team','team.id = waiver_wire_log.team_id')
             ->join('owner','owner.id = team.owner_id')
             ->where('waiver_wire_log.league_id',$this->leagueid)
-            ->where('waiver_wire_log.transaction_date !=','00-00-00 00:00:00')
-            ->order_by('transaction_date','desc')
+            ->where('waiver_wire_log.transaction_date !=','00-00-00 00:00:00');
+         if ($oldest > 0)
+             $this->db->where('waiver_wire_log.transaction_date > ',t_mysql($oldest));
+        return $this->db->order_by('transaction_date','desc')
             ->get()->result();
     }
 

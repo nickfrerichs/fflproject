@@ -29,6 +29,7 @@ class Positions extends MY_Admin_Controller{
         }
         $roster_max = $this->positions_model->get_league_roster_max();
 
+
         $nfl_positions = $this->positions_model->get_nfl_positions_array();
         ?>
         <tr><td>Short Name</td><td><input id="short-text" type="text" value="<?php if($editid){echo $position->text_id;}?>"></td></tr>

@@ -1,4 +1,8 @@
+
 <?php foreach($starters as $lea_pos_id => $starting_pos): ?>
+    <?php if(!array_key_exists('players',$starting_pos)): ?>
+        <?php continue; ?>
+    <?php endif;?>
 <?php foreach($starting_pos['players'] as $p): ?>
 <?php if($p != null): ?>
     <tr>

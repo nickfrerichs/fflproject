@@ -7,24 +7,25 @@
         <table class="table table-striped">
             <thead>
                 <th>League Name</th>
-                <th>Teams</th>
-                <th>Active Teams</th>
-                <th>Admins</th>
+                <th class="text-center">Teams</th>
+                <th class="text-center">Active Teams</th>
+                <th class="text-center">Admins</th>
                 <th></th>
             </thead>
             <tbody>
                 <?php foreach($leagues as $l):?>
                     <tr>
                         <td><?=$l['league']->league_name?></td>
-                        <td></td>
-                        <td></td>
+                        <td class="text-center"><?=count($l['teams']);?></td>
+                        <td class="text-center"><?=count($l['active_teams']);?></td>
+                        <td class="text-center"><?=count($l['admins']);?></td>
                         <td>
-                            <?php foreach($l['admins'] as $a): ?>
-                                <?=$a->username?>
-                            <?php endforeach; ?>
+                            <a href="<?=site_url('admin/site/manage_league/'.$l['league']->id)?>">Manage League</a>
                         </td>
-                        <td>
-                            <a href="<?=site_url('admin/site/edit_league/'.$l['league']->id)?>">Edit League</a>
+                    </tr>
+                    <tr>
+                        <td colspan=5>
+                            
                         </td>
                     </tr>
                 <?php endforeach;?>
@@ -32,6 +33,7 @@
         </table>
         <?php endif;?>
 
+        <?=debug($leagues,$this->session->userdata('debug'))?>
     </div>
 </div>
 

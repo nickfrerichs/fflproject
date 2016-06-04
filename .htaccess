@@ -1,6 +1,11 @@
 RewriteEngine on
 RewriteCond $1 !^(index\.php|images|css|js|robots\.txt)
-RewriteRule ^(.*)$ /index.php/$1 [L]
+
+#
+# The following rule works as long as your site is hosted at the root level. (www.example.com/)
+# If there is a subdirectory (www.example.com/fflproject/) you'll need to add that into the rewrite rule below.
+#
+RewriteRule ^(.*)$ /fftest/index.php/$1 [L]
 
 # Prevent user access to the CI system folder.
 RewriteCond %{REQUEST_URI} ^system.*

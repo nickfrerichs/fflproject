@@ -1,3 +1,5 @@
-<div class="container">
-<h3>Trades Closed</h3>
+<div class="row">
+	<div class="columns">
+		<h5>Trades are closed.</h5>
+	</div>
 </div>
