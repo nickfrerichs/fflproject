@@ -602,7 +602,7 @@
 	$config['email']['site_title'] = "FFL";
 
 	// Reply email shown as 'from' header on emails.
-	$config['email']['reply_email'] = "ffl@mylanparty.net";
+	$config['email']['reply_email'] = "ffl@mydomain.net";
 
 	/**
 	 * Type of email to send, options: 'html', 'text'.
