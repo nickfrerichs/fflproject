@@ -14,12 +14,12 @@ class Divisions extends MY_Admin_Controller{
 
     function index()
     {
-
         $divisions_array = array();
         $divisions = $this->divisions_model->get_league_divisions();
         $teams = $this->divisions_model->get_teams_data();
         $this->load->helper('form');
         // Create array of divisions that include team members.
+
         foreach ($teams as $team)
         {
             if($team->division_id == null)
@@ -69,7 +69,7 @@ class Divisions extends MY_Admin_Controller{
     function delete($id)
     {
         $this->divisions_model->delete_division($id);
-        redirect('admin/divisions');
+        //redirect('admin/divisions');
     }
 
 
