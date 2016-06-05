@@ -5,6 +5,7 @@
 </div>
 <div class="row">
     <div class="columns">
+        <a href="<?=site_url('admin/schedule_templates/gametypes')?>">Manage Game Types</a> <br>
         <table>
             <th>Name</th>
             <th>Teams</th>
@@ -23,8 +24,8 @@
                 <td><?=$t->weeks?></td>
                 <td><?=$t->per_week?></td>
                 <td><?=$t->description?></td>
-                <td><a href="<?=site_url('admin/schedule/edit_template/'.$t->id)?>">edit</a></td>
-                <td><a href="<?=site_url('admin/schedule/delete_template/'.$t->id)?>">delete</a></td>
+                <td><a href="<?=site_url('admin/schedule_templates/edit/'.$t->id)?>">edit</a></td>
+                <td><a href="<?=site_url('admin/schedule_templates/delete/'.$t->id)?>">delete</a></td>
 
             </tr>
         <?php endforeach; ?>

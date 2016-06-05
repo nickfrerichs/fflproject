@@ -3,10 +3,8 @@
 
 	<div class="row">
 		<div class="columns small-12">
-			<a href="<?=site_url('admin/schedule/edit')?>">Edit schedule</a> <br>
-			<a href="<?=site_url('admin/schedule/create')?>">Create schedule</a> <br>
-			<a href="<?=site_url('admin/schedule/template')?>">Manage templates</a> <br>
-			<a href="<?=site_url('admin/schedule/gametypes')?>">Manage Game Types</a> <br>
+			<a href="<?=site_url('admin/schedule/edit')?>">Manage schedule</a> <br>
+			<a href="<?=site_url('admin/schedule/create')?>">Create schedule from template</a> <br>
 		</div>
 	</div>
 	<br>

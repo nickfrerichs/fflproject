@@ -18,9 +18,9 @@
         <?=form_open(current_url())?>
         <table>
             <tr>
-                <td><?=form_label('Number', 'num')?></td>
+                <td><?=form_label('# of Games to Add', 'num')?></td>
                 <td><?=form_input('num')?></td>
-                <td><?=form_label('Week', 'week')?></td>
+                <td><?=form_label('Add to week', 'week')?></td>
                 <td><?=form_input('week')?></td>
             </tr>
         </table>
