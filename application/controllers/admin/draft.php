@@ -7,7 +7,7 @@ class Draft extends MY_Admin_Controller
         parent::__construct();
         $this->load->model('admin/draft_model');
         $this->load->model('admin/security_model');
-        $this->bc[$this->league_name] = "";
+        $this->bc["League Admin"] = "";
         $this->bc['Draft'] = "";
     }
 

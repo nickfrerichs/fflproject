@@ -1,11 +1,11 @@
 <?php
 
-class Test_ extends MY_Controller{
+class Test_ extends CI_Controller{
 
     function __construct()
     {
         parent::__construct();
-        $this->load->model('common/common_model');
+        //$this->load->model('common/common_model');
     }
 
     function mail()
@@ -28,6 +28,22 @@ class Test_ extends MY_Controller{
     {
         $this->load->model('security_model');
         $this->security_model->live_scores_on();
+    }
+
+    function email()
+    {
+        # To test sending email using codeigniter email helper
+        $this->load->library('email');
+        $this->email->clear();
+        $this->email->initialize();
+        $this->email->set_newline("\r\n");
+        $this->email->from("noreply@mylanparty.net", "FFL");
+        $this->email->to("frerichs@gmail.com");
+        $this->email->subject("Test Email");
+        $this->email->message("Test Email Body");
+        print_r($this->email);
+
+        echo $this->email->send();
     }
 }
 ?>

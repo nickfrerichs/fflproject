@@ -255,3 +255,13 @@ function resetPlayerPage(tbody) // This is not being used right now
 //
 // END PLAYER SEARCH FUNCTIONS
 //
+
+//
+// MESSAGES: used site wide to present outstanding warnings/info to user/admin
+//
+$(document).on('click',"._message-close",function(){
+	console.log($(this));
+	var ackurl = $(this).data('ackurl');
+	console.log(ackurl);
+	$.post(ackurl);
+});

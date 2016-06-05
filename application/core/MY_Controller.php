@@ -65,6 +65,7 @@ class MY_Controller extends CI_Controller{
         $d['menu_items'] = $this->menu_model->get_menu_items_data();
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
+        $d['_messages'] = array();
         $this->load->view('template/user_init', $d);
     }
 
@@ -110,6 +111,8 @@ class MY_Admin_Controller extends CI_Controller{
     function admin_view($viewname, $d=null)
     {
         $this->load->model('menu_model');
+        $this->load->model('admin/security_model');
+        $d['_messages'] = $this->security_model->get_admin_messages();
         $d['menu_items'] = $this->menu_model->get_menu_items_data(true);
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;

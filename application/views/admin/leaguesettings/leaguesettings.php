@@ -111,6 +111,10 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td>Invite URL </td>
+                    <td colspan=2 class="text-right"><a href="<?=$invite_url?>"><?=$invite_url?></a></small></td>
+                </tr>
             </tbody>
         </table>
 

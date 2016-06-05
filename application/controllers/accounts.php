@@ -32,13 +32,14 @@ class Accounts extends CI_Controller{
         redirect(site_url(''));
     }
 
-    function register($maskid="", $code = "")
+    function register($maskid="")
     {
         $data = array();
         if (!$this->account_model->admin_account_exists())
             $league_id = 0;
         else
-            $league_id = $this->account_model->get_league_id($maskid, $code);
+            $league_id = $this->account_model->get_league_id($maskid);
+        $code_required = $this->common_noauth_model->join_code_required($maskid);
 
         if ($league_id >= 0)
         {
@@ -53,36 +54,45 @@ class Accounts extends CI_Controller{
                 $username = $this->input->post('username');
                 $password = $this->input->post('password');
                 $team_name = $this->input->post('team_name');
+                $code = $this->input->post('league_password');
                 $instant_activate = TRUE;
 
-                $profile_data = array(
-    				'upro_first_name' => $this->input->post('first_name'),
-    				'upro_last_name' => $this->input->post('last_name')
-    			);
-                # If leage_id is 0, no admin exists, make this account an admin
-                if ($league_id == 0)
-                    $group_id = 1;
-                else
-                    $group_id = 2;
-
-                $response = $this->flexi_auth->insert_user($email, $username, $password, $profile_data, $group_id, $instant_activate);
-
-
-                # If league_id is 0, this is the first user and there are no leagues yet.
-                if ($response && $league_id > 0 && $this->account_model->ok_to_join_league($response,$league_id))
+                if ($this->account_model->join_code_ok($league_id,$code) == false)
                 {
-                    $this->account_model->add_owner($response, $first_name, $last_name);
-                    $this->account_model->add_team($response, $team_name, $league_id);
-                    $this->account_model->set_active_league($response, $league_id);
+                    $data['error'] = "Incorrect League Password";
                 }
-                if ($response)
-                    redirect(site_url());
+                else
+                {
+                    $profile_data = array(
+        				'upro_first_name' => $this->input->post('first_name'),
+        				'upro_last_name' => $this->input->post('last_name')
+        			);
+                    # If leage_id is 0, no admin exists, make this account an admin
+                    if ($league_id == 0)
+                        $group_id = 1;
+                    else
+                        $group_id = 2;
+
+                    $response = $this->flexi_auth->insert_user($email, $username, $password, $profile_data, $group_id, $instant_activate);
+
+
+                    # If league_id is 0, this is the first user and there are no leagues yet.
+                    if ($response && $league_id > 0 && $this->account_model->ok_to_join_league($response,$league_id))
+                    {
+                        $this->account_model->add_owner($response, $first_name, $last_name);
+                        $this->account_model->add_team($response, $team_name, $league_id);
+                        $this->account_model->set_active_league($response, $league_id);
+                    }
+                    if ($response)
+                        redirect(site_url());
+                }
             }
-            
+
             $this->load->helper('form');
             $data['admin_exists'] = $this->account_model->admin_account_exists();
             $data['v'] = 'guest_register';
             $data['site_name'] = $this->common_noauth_model->get_site_name();
+            $data['code_required'] = $code_required;
             $this->load->view("template/simple",$data);
         }
         else
@@ -102,6 +112,7 @@ class Accounts extends CI_Controller{
             //$this->flexi_auth->auto_reset_forgotten_password($this->input->post('email_address'));
 
         }
+        $data['site_name'] = $this->common_noauth_model->get_site_name();
         $this->load->helper('form');
         $this->load->view('guest_forgot',$data);
     }

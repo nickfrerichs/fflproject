@@ -94,13 +94,14 @@ class Positions_model extends MY_Model
          */
     }
 
-    function position_exists($text_id)
+    function position_exists($id)
     {
         $data = $this->db->select('id')
                 ->from('position')
-                ->where('text_id', $text_id)
+                ->where('id', $id)
                 ->where('league_id', $this->leagueid)
                 ->get();
+
         if ($data->num_rows != 0)
             return true;
         return false;

@@ -50,7 +50,7 @@
                     <td class="text-center"><a href="#" id="set-admins-button">Assign</a></td>
                 </tr>
                 <tr>
-                    <?php $inviteurl = site_url('joinleague/invite/'.$info->mask_id.'/'.$settings->join_password); ?>
+                    <?php $inviteurl = site_url('joinleague/invite/'.$info->mask_id); ?>
                     <td><b>Invite URL</b></td><td colspan=2><a href="<?=$inviteurl?>"><?=$inviteurl?></a></td>
                 </tr>
 

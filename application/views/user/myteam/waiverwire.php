@@ -56,11 +56,7 @@
 
 
 <?php if($this->session->userdata('offseason')): ?>
-    <div class="row">
-        <div class="columns">
-            <h5 class="text-center">It's the offseason</h5>
-        </div>
-    </div>
+    <?php $this->load->view('user/offseason'); ?>
 <?php else: ?>
 
 <!-- Search options -->

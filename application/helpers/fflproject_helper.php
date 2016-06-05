@@ -33,33 +33,34 @@ function t_mysql($unixtimestamp = null)
     return date("Y-m-d H:i:s", $unixtimestamp);
 }
 
-function gmail_send($to,$subject,$body)
-{
-    $from = "ffl@mylanparty.net";
-    require_once "Mail.php";
-
-    $headers = array(
-        'From' => $from,
-        'To' => $to,
-        'Subject' => $subject
-    );
-
-    $smtp = Mail::factory('smtp', array(
-            'host' => 'ssl://smtp.gmail.com',
-            'port' => '465',
-            'auth' => true,
-            'username' => 'ffl@mylanparty.net',
-            'password' => 'wolf spider political search'
-        ));
-
-    $mail = $smtp->send($to, $headers, $body);
-
-    if (PEAR::isError($mail)) {
-        echo('<p>' . $mail->getMessage() . '</p>');
-    } else {
-        echo('<p>Message successfully sent!</p>');
-    }
-}
+// // Ended up not using this, but leaving it commented out just in case.
+// function gmail_send($to,$subject,$body)
+// {
+//     $from = "";
+//     require_once "Mail.php";
+//
+//     $headers = array(
+//         'From' => $from,
+//         'To' => $to,
+//         'Subject' => $subject
+//     );
+//
+//     $smtp = Mail::factory('smtp', array(
+//             'host' => 'ssl://smtp.gmail.com',
+//             'port' => '465',
+//             'auth' => true,
+//             'username' => '',
+//             'password' => ''
+//         ));
+//
+//     $mail = $smtp->send($to, $headers, $body);
+//
+//     if (PEAR::isError($mail)) {
+//         echo('<p>' . $mail->getMessage() . '</p>');
+//     } else {
+//         echo('<p>Message successfully sent!</p>');
+//     }
+// }
 
 function debug($var,$debug)
 {

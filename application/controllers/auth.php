@@ -71,8 +71,8 @@ class Auth extends CI_Controller{
         $this->flexi_auth->logout(TRUE);
 
         // Set a message to the CI flashdata so that it is available after the page redirect.
-        $this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-
+        $this->session->sess_destroy();
+        
         redirect(site_url());
     }
 }

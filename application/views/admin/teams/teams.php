@@ -2,6 +2,11 @@
 
 <div class="row">
     <div class="columns">
+        <div class="row">
+            <div class="columns">
+                <small>Invite URL: <a href="<?=$invite_url?>"><?=$invite_url?></a></small>
+            </div>
+        </div>
         <table class="table table-condensed">
             <thead>
                 <th>Team</th><th>Roster</th><th>Division</th><th>Owner</th><th class="text-center" style="width:200px">Active</th>

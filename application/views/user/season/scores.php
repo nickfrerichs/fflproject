@@ -21,6 +21,13 @@
 
 </style>
 
+<?php if ($selected_week == 0): ?>
+    <div class="row">
+        <div class="columns">
+            <h6 class='text-center'></h6>
+        </div>
+    </div>
+<?php else:?>
     <div class="row">
         <div class="columns">
             <h4 class='text-center'>Week <?=$selected_week?> Scores</h4>
@@ -45,8 +52,8 @@
                 <tr><td colspan=<?=count($weeks)?>></td></tr>
             </table>
         </div>
-
     </div>
+<?php endif; // If selected week is > 0?>
     <div class="row">
         <?php foreach($matchups as $m): ?>
             <div class="columns medium-6 small-12">

@@ -7,4 +7,3 @@
 	<b>From:</b> <?=$message->first_name.' '.$message->last_name?><br><br>
 <?=nl2br($message->body)?>
 </p>
-<hr>

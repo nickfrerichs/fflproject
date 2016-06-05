@@ -37,7 +37,9 @@ To get up and running:
 10. As league admin, set max teams and max roster, then define positions and scoring.
     ** PLAYERS WONT SHOW UP UNTIL YOUR LEAGUE HAS POSITIONS DEFINED **
 
-
+11. - Email templates here: application/views/includes/email
+    - Email settings: application/config/flexi_auth.php (email_reply, site_title)
+    - Email server settings: application/config/email.php
 
 #
 # Back end installation (python):

@@ -6,6 +6,7 @@
         <?php $this->load->view('template/header.php'); ?>
      	<div id="view-wrap">
             <?php $this->load->view('template/breadcrumbs.php'); ?>
+            <?php $this->load->view('template/messages.php'); ?>
         	<?php $this->load->view($v); ?>
     	</div>
         <?php $this->load->view('template/footer.php'); ?>
@@ -14,7 +15,7 @@
 <script>
 function js_Load(){
     document.body.style.visibility='visible';
-    
+
 }
 $(document).foundation();
 </script>

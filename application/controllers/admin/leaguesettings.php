@@ -6,7 +6,7 @@ class Leaguesettings extends MY_Admin_Controller
     {
         parent::__construct();
         $this->load->model('admin/leaguesettings_model');
-        $this->bc[$this->league_name] = "";
+        $this->bc["League Admin"] = "";
         $this->bc['Settings'] = "";
     }
 
@@ -14,6 +14,7 @@ class Leaguesettings extends MY_Admin_Controller
     {
         $data = array();
         $data['settings'] = $this->leaguesettings_model->get_league_settings_data($this->session->userdata('league_id'));
+        $data['invite_url'] = $this->common_model->get_league_invite_url();
         $this->admin_view('admin/leaguesettings/leaguesettings',$data);
     }
 

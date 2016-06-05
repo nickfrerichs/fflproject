@@ -7,7 +7,7 @@ class Divisions extends MY_Admin_Controller{
         parent::__construct();
         $this->load->model('admin/divisions_model');
         $this->load->model('admin/security_model');
-        $this->bc[$this->league_name] = "";
+        $this->bc["League Admin"] = "";
         $this->bc["Divisions"] = "";
     }
 

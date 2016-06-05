@@ -8,7 +8,7 @@ class Positions extends MY_Admin_Controller{
 
         $this->load->model('admin/security_model');
         $this->load->model('admin/positions_model');
-        $this->bc[$this->league_name] = "";
+        $this->bc["League Admin"] = "";
         $this->bc["Positions"] = "";
     }
 
@@ -134,7 +134,7 @@ class Positions extends MY_Admin_Controller{
 
         $posid = $this->input->post('posid');
         $edit = false;
-        if($posid != "" && $this->positions_model->position_exists($this->input->post('text_id')))
+        if($posid != "" && $this->positions_model->position_exists($posid))
             $edit = true;
 
         $values = array('text_id' => $this->input->post('text_id'),
@@ -147,6 +147,7 @@ class Positions extends MY_Admin_Controller{
             'year' => $pos_year);
         if($edit)
             $values['id'] = $posid;
+
         $this->positions_model->save_position($values);
 
     }

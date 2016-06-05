@@ -17,21 +17,23 @@
 		<div id="folder_1" class="folder"><a href="#"><h6>Sent Items</h6></a></div>
 		<div id="folder_2" class="folder"><a href="#"><h6>Trash</h6></a></div>
 	</div>
-	<div class="columns medium-10 small-12">
+	<div class="columns medium-10 small-12 callout">
 		<h4><div id="current_0" class="folder-name">Current Folder</div></h4>
-		<div style="overflow-x: scroll;max-height:200px;">
-			<table id="message-table" class="table">
+		<div style="overflow: auto;max-height:200px; background-color:#FFF">
+			<table id="message-table" style="border-color:#fff;">
 				<tbody id="message-list">
 				</tbody>
 			</table>
 		</div>
-		<hr>
-		<div id="message-display" style="max-height:300px; overflow-x:scroll">
-		</div>
-		<div id="message-buttons" class="hide">
-			<button id="message-reply" class="button">Reply</button>
-			<button id="message-delete" class="button">Delete</button>
-			<button id="message-close" class="button">Close</button>
+		<br>
+		<div id="message-callout" class="callout hide">
+			<div id="message-display" style="max-height:300px; overflow-x:scroll margin-bottom:0px">
+			</div>
+			<div id="message-buttons" class="hide">
+				<button id="message-reply" class="button">Reply</button>
+				<button id="message-delete" class="button">Delete</button>
+				<button id="message-close" class="button">Close</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -46,6 +48,7 @@ $(document).ready(function(){
 		if (this.id == $("#displayed-message").data("message-id"))
 		{
 			$("#message-close").click();
+			$("#message-callout").addClass("hide");
 		}
 		else
 		{
@@ -56,6 +59,7 @@ $(document).ready(function(){
 			});
 			$("#message-list tr").removeClass("activemessage")
 			$(this).addClass("activemessage");
+			$("#message-callout").removeClass("hide");
 		}
 	});
 

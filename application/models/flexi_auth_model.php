@@ -2304,10 +2304,12 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 		}
 
 		$message = $this->load->view($template, $data, TRUE);
-
+		$email_to = "nick.frerichs@uni.edu";
 		$this->load->library('email');
 		$this->email->clear();
 		$this->email->initialize(array('mailtype' => $this->auth->email_settings['email_type']));
+		print_r($this->email);
+		die();
 		$this->email->set_newline("\r\n");
 		$this->email->from($this->auth->email_settings['reply_email'], $this->auth->email_settings['site_title']);
 		$this->email->to($email_to);

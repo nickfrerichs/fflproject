@@ -42,10 +42,10 @@
 </div>
 <div class="row">
     <div class="columns">
-        <a id="show-add-button">Add Position</a>
+        <h6><a id="show-add-button">Add Position</a></h6>
     </div>
 </div>
-
+<br>
 <div class="row">
     <div class="columns">
         <table class="text-center">
@@ -53,7 +53,7 @@
                 <th>Start Max</th><th>Start Min</th><th></th></tr>
         <?php foreach($league_positions as $lp): ?>
 
-            <tr> 
+            <tr>
                 <td class="text-left"><?php echo $lp->long_text; ?></td>
                 <td><?php echo $lp->text_id;?></td>
                 <td>

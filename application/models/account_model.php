@@ -33,10 +33,13 @@ class Account_model extends CI_Model{
         return $this->db->select('uacc_email')->from('user_accounts')->where('uacc_id',$id)->get()->row()->uacc_email;
     }
 
-    function get_league_id($maskid, $code)
+    function get_league_id($maskid, $code=false)
     {
-        $result = $this->db->select('league.id')->from('league')->join('league_settings','league_settings.league_id = league.id')
-            ->where('league.mask_id',$maskid)->where('league_settings.join_password',$code)->get()->row();
+        $this->db->select('league.id')->from('league')->join('league_settings','league_settings.league_id = league.id')
+            ->where('league.mask_id',$maskid);
+        if ($code)
+            $this->db->where('league_settings.join_password',$code);
+        $result = $this->db->get()->row();
         if(count($result) > 0)
             return $result->id;
         return -1;
@@ -71,5 +74,15 @@ class Account_model extends CI_Model{
     function get_site_name()
     {
         return $this->db->select('name')->from('site_settings')->get()->row()->name;
+    }
+
+    function join_code_ok($leagueid, $code)
+    {
+        $actual_code = $this->db->select('join_password')->from('league_settings')->where('league_id',$leagueid)
+            ->get()->row()->join_password;
+
+        if ($actual_code == $code)
+            return True;
+        return False;
     }
 }

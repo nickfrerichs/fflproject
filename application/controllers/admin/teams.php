@@ -8,7 +8,7 @@ class Teams extends MY_Admin_Controller
         $this->load->model('admin/security_model');
         $this->load->model('admin/teams_model');
         $this->load->model('admin/rosters_model');
-        $this->bc[$this->league_name] = "";
+        $this->bc["League Admin"] = "";
         $this->bc['Teams'] = "";
     }
 
@@ -16,11 +16,13 @@ class Teams extends MY_Admin_Controller
     {
         if ($this->security_model->is_league_admin())
         {
+            $data = array();
             $teams = $this->teams_model->get_league_teams_data(false);
-            $league_name = $this->teams_model->get_league_name();
+            $data['leaguename'] = $this->teams_model->get_league_name();
+            $data['invite_url'] = $this->common_model->get_league_invite_url();
             $this->load->helper('form');
 
-            $this->admin_view('admin/teams/teams', array('leaguename' => $league_name));
+            $this->admin_view('admin/teams/teams', $data);
         }
         else
         {

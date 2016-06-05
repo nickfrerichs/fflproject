@@ -8,6 +8,9 @@ line-height: 60px;
 }
 </style>
 
+<?php if ($this->session->userdata('offseason')): ?>
+	<?php $this->load->view('user/offseason');?>
+<?php else: ?>
 
 <?php if($this->is_league_admin):?>
 <div class="row callout">
@@ -16,9 +19,9 @@ line-height: 60px;
 	</div>
 	<div class="columns">
 
-		<a data-toggle="myteam-panel">My Team</a>
+		<!-- <a data-toggle="myteam-panel">My Team</a>
 		<a data-toggle="watch-panel">Prospects</a>
-		<a data-toggle="search-panel">Player Search</a>
+		<a data-toggle="search-panel">Player Search</a> -->
 
 	</div>
 	<div class="columns">
@@ -178,6 +181,8 @@ line-height: 60px;
 
 
 <div id="debug" class="text-center hidden"></div>
+
+<?php endif; ?>
 
 <script>
 $(document).ready(function(){

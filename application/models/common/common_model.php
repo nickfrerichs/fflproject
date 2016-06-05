@@ -150,6 +150,13 @@ class Common_model extends CI_Model{
         return $this->db->select('roster_max')->from('league_settings')->where('league_id',$this->leagueid)
             ->get()->row()->roster_max;
     }
+
+    function get_league_invite_url()
+    {
+        $mask = $this->db->select('mask_id')->from('league')->where('id',$this->leagueid)->get()->row()->mask_id;
+        return site_url('joinleague/invite/'.$mask);
+    }
+
 }
 
 ?>

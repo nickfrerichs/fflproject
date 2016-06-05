@@ -18,11 +18,7 @@
 -->
 
 <?php if($this->session->userdata('offseason')): ?>
-	<div class="row">
-	<div class="column">
-		<h5 class="text-center">It's the offseason.</h5>
-	</div>
-</div>
+	<?php $this->load->view('user/offseason'); ?>
 <?php else:?>
 <div class="row callout">
 	<div class="columns">

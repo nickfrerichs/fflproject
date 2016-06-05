@@ -34,7 +34,8 @@ class Scores extends MY_Controller{
         $data['selected_week'] = $week;
         $data['selected_year'] = $this->session->userdata['current_year'];
         $this->bc['Weekly Scores'] = site_url('season/scores');
-        $this->bc['Week '.$week] = "";
+        if ($week > 0)
+            $this->bc['Week '.$week] = "";
         $this->user_view('user/season/scores',$data);
 
 

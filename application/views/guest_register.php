@@ -15,11 +15,23 @@
 					<h3><?=$site_name?></h3>
 					<h5>Create new account</h5>
 				<?php endif;?>
-
+				<?php if(isset($error)): ?>
+					<div class="row callout alert">
+						<div class="columns">
+							<?=$error?>
+						</div>
+					</div>
+				<?php endif;?>
 					<table class="table">
 						<tbody class="text-left">
 					    <?=form_open(current_url())?>
 					    <?php if($admin_exists): ?>
+							<?php if($code_required): ?>
+							<tr>
+								<td><?=form_label('League Password','league_password')?></td>
+								<td><?=form_input('league_password')?></td>
+							</tr>
+							<?php endif;?>
 					        <tr>
 								<td><?=form_label('First Name','first_name')?></td>
 					            <td><?=form_input('first_name')?></td>

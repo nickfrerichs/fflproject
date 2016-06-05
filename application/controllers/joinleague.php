@@ -25,7 +25,7 @@ class Joinleague extends CI_Controller{
 
     }
 
-    function invite($mask_id="", $code="")
+    function invite($mask_id="")
     {
         if (!$this->flexi_auth->is_logged_in())
         {
@@ -33,11 +33,12 @@ class Joinleague extends CI_Controller{
             //redirect('accounts/register/'.$mask_id.'/'.$code);
             $league_name = $this->common_noauth_model->league_name_from_mask_id($mask_id);
             $site_name = $this->common_noauth_model->get_site_name();
+            $code_required = $this->common_noauth_model->join_code_required($mask_id);
             $data = array('v' => 'guest_invite',
                           'mask_id' => $mask_id,
-                          'code' => $code,
                           'league_name' => $league_name,
-                          'site_name' => $site_name);
+                          'site_name' => $site_name,
+                          'code_required' => $code_required);
             $this->load->view('template/simple',$data);
             //echo "Not logged in";
             //redirect('/?redirect=joinleague/invite/'.$mask_id.'/'.$code);

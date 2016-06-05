@@ -5,7 +5,7 @@ class Owners extends MY_Admin_Controller
     function __construct()
     {
         parent::__construct();
-        $this->bc[$this->league_name] = "";
+        $this->bc["League Admin"] = "";
         $this->bc["owners"] = "";
     }
 
