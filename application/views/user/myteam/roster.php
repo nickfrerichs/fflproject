@@ -75,7 +75,7 @@
         </div>
     </div>
 </div>
-<hr>
+
 <?php if($this->session->userdata('offseason')): ?>
     <?php $this->load->view('user/offseason');?>
 <?php else: ?>
@@ -136,8 +136,8 @@ $(document).ready(function(){
 
     $('#starter-tbody').on('click','.roster-sit-btn',function(){
         var week = $("#selected-week").val();
-        url = "<?=site_url('myteam/roster/sit')?>";
-        $.post(url,{'player_id' : $(this).val(),'week' : week}, function(data){
+        url = "<?=site_url('myteam/roster/start')?>";
+        $.post(url,{'player_id' : $(this).val(),'week' : week, 'pos_id':0}, function(data){
             console.log(data);
             loadTables();
         });
@@ -147,7 +147,8 @@ $(document).ready(function(){
         var week = $("#selected-week").val();
         url = "<?=site_url('myteam/roster/start')?>";
         var data = $(this).val().split("_")
-        $.post(url,{'player_id' : data[0], 'pos_id' : data[1], 'week':week},function(){
+        $.post(url,{'player_id' : data[0], 'pos_id' : data[1], 'week':week},function(data){
+            console.log(data);
             loadTables();
         });
     });

@@ -33,7 +33,11 @@
 */
 
 // Load the flexi auth Lite library to allow it to be extended.
-load_class('Flexi_auth_lite', 'libraries', FALSE);
+//load_class('Flexi_auth_lite', 'libraries', FALSE);
+
+$CI =& get_instance();
+$CI->load->library('Flexi_auth_lite');
+
 
 class Flexi_auth extends Flexi_auth_lite
 {
@@ -309,7 +313,7 @@ class Flexi_auth extends Flexi_auth_lite
 	 */
 	public function change_password($identity, $current_password, $new_password)
 	{
-		
+
 		if ($this->CI->flexi_auth_model->change_password($identity, $current_password, $new_password))
 		{
 			$this->CI->flexi_auth_model->set_status_message('password_change_successful', 'config');
