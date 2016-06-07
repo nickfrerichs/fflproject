@@ -152,7 +152,6 @@ $(".chat-button").on('click', function(){
 
     if (typeof(evtSource) == "undefined")
     {
-
         //evtSource.close();console.log("closing evtsource")
         $("#chat-history-ajax").html("<i>Loading...</i>");
         // Update unread count on chat-button.
@@ -298,7 +297,6 @@ function updateChatNew(new_chat_key)
         // Else If chat-key != chat_key, get all messages newer than current chat-key and append
         $.post(url,{'chat_key':chat_key}, function(data){
             bottom = chatScrollBottomnew();
-            //console.log(bottom)
             $(".chat-history-ajax").append(data)
             if(bottom){chatScrollBottomnew(true);} // If we're at the bottom, snap back to the bottom
         });
@@ -382,7 +380,6 @@ function chatScrollBottom(set)
 // It only checks if the Chat window is not visible
 function updateNewChatIcon()
 {
-
     if(!$('#chat-modal').is(':visible'))
     {
 

@@ -56,6 +56,7 @@ class MY_Controller extends CI_Controller{
             $this->load->model('security_model');
             $this->security_model->set_dynamic_session_variables();
         }
+        session_write_close();
 
     }
 
@@ -106,6 +107,7 @@ class MY_Admin_Controller extends CI_Controller{
         {
              redirect('guest');
         }
+        session_write_close();
     }
 
     function admin_view($viewname, $d=null)

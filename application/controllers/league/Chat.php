@@ -19,6 +19,7 @@ class Chat extends MY_Controller{
     public function get_messages()
     {
         $data = array();
+
         // get chats newer than this key
         if($this->input->post('chat_key'))
         {
@@ -49,7 +50,7 @@ class Chat extends MY_Controller{
 
     public function stream_get_chat_key()
     {
-        $count = 10;
+        //$count = 10;
         header("Content-Type: text/event-stream\n\n");
         header("Cache-Control: no-cache\n\n");
         while(1)
@@ -58,7 +59,7 @@ class Chat extends MY_Controller{
             ob_flush(); // Needed to add this after moving to centos, no idea why.
             flush();
             usleep(500000); //half a second
-            $count--;
+            //$count--;
         }
     }
 

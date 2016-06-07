@@ -11,12 +11,12 @@ class Security_model extends MY_Model
     function set_session_variables()
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
-                ->select('team.id as team_id, team_name, owner.active_league, team.active, league.league_name')
+                ->select('team.id as team_id, team_name, owner.active_league, team.active, league.league_name, league.season_year')
                 ->select('league_settings.offseason')
                 ->from('owner')
-                ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1')
-                ->join('league','league.id = owner.active_league')
-                ->join('league_settings','league_settings.league_id = owner.active_league')
+                ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1','left')
+                ->join('league','league.id = owner.active_league','left')
+                ->join('league_settings','league_settings.league_id = owner.active_league','left')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
 
         // Set debug session variable
@@ -27,15 +27,18 @@ class Security_model extends MY_Model
         else
             $this->session->set_userdata('debug',False);
 
-        $this->session->set_userdata('owner_id', $owner->owner_id);
-        $this->session->set_userdata('league_id', $owner->active_league);
-        $this->session->set_userdata('team_id', $owner->team_id);
-        $this->session->set_userdata('team_name', $owner->team_name);
-        $this->session->set_userdata('first_name', $owner->first_name);
-        $this->session->set_userdata('last_name', $owner->last_name);
+        if (isset($owner))
+        {
+            $this->session->set_userdata('owner_id', $owner->owner_id);
+            $this->session->set_userdata('league_id', $owner->active_league);
+            $this->session->set_userdata('team_id', $owner->team_id);
+            $this->session->set_userdata('team_name', $owner->team_name);
+            $this->session->set_userdata('first_name', $owner->first_name);
+            $this->session->set_userdata('last_name', $owner->last_name);
+            $this->session->set_userdata('league_name', $owner->league_name);
+            $this->session->set_userdata('offseason', $owner->offseason);
+        }
         $this->session->set_userdata('site_name', $this->site_settings->name);
-        $this->session->set_userdata('league_name', $owner->league_name);
-        $this->session->set_userdata('offseason', $owner->offseason);
         $this->session->set_userdata('is_site_admin',$this->flexi_auth->is_admin());
         $this->session->set_userdata('CI_VERSION',CI_VERSION);
 
@@ -64,6 +67,7 @@ class Security_model extends MY_Model
 
         // can this go away?
         // $this->load->model('myteam/myteam_settings_model');
+
     }
 
     // The idea is that these will be checked every 5 mins and stored as session variables.
@@ -86,8 +90,9 @@ class Security_model extends MY_Model
             $this->session->set_userdata('debug_year', True);
         }
 
-        $this->session->set_userdata('expire_dynamic_vars',time()+20); // Make sure to check dynamic vars every 5 mins.
+        $this->session->set_userdata('expire_dynamic_vars',time()+60); // Make sure to check dynamic vars every 1 mins.
         $this->session->set_userdata('live_scores',$this->live_scores_on());
+
     }
 
     function live_scores_on()
@@ -104,16 +109,24 @@ class Security_model extends MY_Model
 
     function get_current_week()
     {
+        $row = $this->db->select('season_year')->from('league')->where('id',$this->session->userdata('league_id'))->get()->row();
+        if (count($row) > 0)
+            $season_year = $row->season_year;
         // Get the most recently past game start time.
         // If it's start time is more than 12 hours ago
         // Then get the next game is the current week.
         $current_time = time();
-        $most_recent = $this->db->select('eid, week, year, UNIX_TIMESTAMP(start_time) as start')->from('nfl_schedule')
-            ->where('start_time <',t_mysql($current_time))->order_by('start_time','desc')
-            ->limit(1)->get()->row();
-        $next_game = $this->db->select('eid, week, year, UNIX_TIMESTAMP(start_time) as start')->from('nfl_schedule')
-            ->where('start_time >',t_mysql($current_time))->order_by('start_time','asc')
-            ->limit(1)->get()->row();
+        $this->db->select('eid, week, year, UNIX_TIMESTAMP(start_time) as start')->from('nfl_schedule')
+            ->where('start_time <',t_mysql($current_time));
+        if (isset($season_year))
+            $this->db->where('year',$season_year);
+        $most_recent=$this->db->order_by('start_time','desc')->limit(1)->get()->row();
+
+        $this->db->select('eid, week, year, UNIX_TIMESTAMP(start_time) as start')->from('nfl_schedule')
+            ->where('start_time >',t_mysql($current_time));
+        if(isset($season_year))
+            $this->db->where('year',$season_year);
+        $next_game = $this->db->order_by('start_time','asc')->limit(1)->get()->row();
 
         if (count($next_game) == 0)
             return $most_recent;

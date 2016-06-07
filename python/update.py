@@ -3,6 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import nflgame
 import nflgame.update_players
+import nflgame.update_sched
 import argparse
 import collections
 import stat_functions as f
@@ -180,10 +181,9 @@ def update_players(year, week, weektype):
         return photo
 
 
-
-    #print "Running nflgame update...."
-    #if not args.photos:
-    #    subprocess.call('/usr/bin/nflgame-update-players --year '+str(year)+' --week '+str(week)+' --phase '+weektype.upper(), shell=True)
+    # First, update nflgame
+    if not args.photos:
+        subprocess.call('/usr/bin/nflgame-update-players --year '+str(year)+' --week '+str(week)+' --phase '+weektype.upper(), shell=True)
 
 
     photodir = "./"
@@ -333,7 +333,7 @@ def update_statistic_summaries(year, week, weektype, all):
             db.commit()
 
 
-def update_schedule(year, week, weektype):
+def update_schedule(season_year, week, weektype="REG"):
 
   if week == 'all' and weektype == "REG":
     weeks = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
@@ -350,7 +350,7 @@ def update_schedule(year, week, weektype):
     # Should probably change this to use nflgame somehow, otherwise the timezone stuff without am/pm is tricky.
     updated = 0
     added = 0
-    sched_url = 'http://www.nfl.com/ajax/scorestrip?season=%s&seasonType=%s&week=%s' % (year, weektype, str(int(week)))
+    sched_url = 'http://www.nfl.com/ajax/scorestrip?season=%s&seasonType=%s&week=%s' % (season_year, weektype, str(int(week)))
 
     try:
       dom = xml.parse(urllib2.urlopen(sched_url))
@@ -380,7 +380,8 @@ def update_schedule(year, week, weektype):
       ga = g.getAttribute('ga')
       (hour, minute) = time.split(":");
 
-      # Ugh, this timezone stuff is ugly.
+      # Ugh, this timezone stuff is ugly since it's in 12-hour with no AM/PM and there are games
+      # in London before noon.  Just sort of guessing for now.
       hour = int(hour)
       if hour != 12 and hour != 9:
           hour = hour+12
@@ -403,13 +404,13 @@ def update_schedule(year, week, weektype):
 
       cur.execute("Select id from nfl_schedule where gsis = "+gsis)
       if cur.rowcount > 0:
-        query = (('update nfl_schedule set eid=%s,d=%s,t="%s",q="%s",k="%s",h="%s",hnn="%s",v="%s",vnn="%s",hs="%s",vs="%s",p="%s",rz="%s",ga="%s", start_time="%s" where id = %s') %
-            (eid,day,time,quarter,k,home,home_long,away,away_long,home_score,away_score,p,rz,ga,str(start_time)[:-6],cur.fetchone()['id']))
+        query = (('update nfl_schedule set eid=%s,d=%s,t="%s",q="%s",k="%s",h="%s",hnn="%s",v="%s",vnn="%s",hs="%s",vs="%s",p="%s",rz="%s",ga="%s", start_time="%s", year="%s" where id = %s') %
+            (eid,day,time,quarter,k,home,home_long,away,away_long,home_score,away_score,p,rz,ga,str(start_time)[:-6],str(season_year),cur.fetchone()['id']))
         updated += 1
       else:
-        query = ("Insert into nfl_schedule (eid, gsis, d, t, q, k, h, hnn, hs, v, vnn, vs, p, rz, ga, gt, week, year) "+
-			   "Values(%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" %
-	       (eid, gsis, day, time, quarter, k, home, home_long, home_score, away, away_long, away_score, p, rz, ga, weektype, week, year))
+        query = ("Insert into nfl_schedule (eid, gsis, d, t, q, k, h, hnn, hs, v, vnn, vs, p, rz, ga, gt, week, year, start_time) "+
+			   "Values(%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" %
+	       (eid, gsis, day, time, quarter, k, home, home_long, home_score, away, away_long, away_score, p, rz, ga, weektype, week, season_year, start_time))
         added += 1
       cur.execute(query)
 
