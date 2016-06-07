@@ -130,3 +130,4 @@ class Schedule extends MY_Admin_Controller{
                                                                 'template' => $template));
     }
 }
+?>

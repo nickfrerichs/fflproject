@@ -73,3 +73,5 @@ function debug($var,$debug)
             print_r($var);
     }
 }
+
+?>

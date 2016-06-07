@@ -74,3 +74,4 @@ class Draft extends MY_Admin_Controller
 
 
 }
+?>

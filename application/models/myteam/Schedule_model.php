@@ -26,6 +26,7 @@ class Schedule_model extends MY_Model{
                 ->join('schedule_result as away_result','away_result.schedule_id = schedule.id and away_result.team_id = schedule.away_team_id','left')
                 ->where('schedule.year', $this->current_year)
                 ->where('(`schedule`.`home_team_id` = '.$team_id.' or `schedule`.`away_team_id` = '.$team_id.')')
+                ->order_by('schedule.week','asc')
                 ->get()->result();
     }
 

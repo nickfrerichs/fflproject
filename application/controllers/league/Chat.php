@@ -78,3 +78,4 @@ class Chat extends MY_Controller{
         echo $this->chat_model->get_last_read_key();
     }
 }
+?>

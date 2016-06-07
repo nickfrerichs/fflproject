@@ -93,3 +93,4 @@ class Scoring extends MY_Admin_Controller
         redirect(site_url('admin/scoring'));
     }
 }
+?>

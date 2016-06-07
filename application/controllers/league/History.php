@@ -16,3 +16,4 @@ class History extends MY_Controller{
         $this->user_view('user/league/history');
     }
 }
+?>

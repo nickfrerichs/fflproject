@@ -21,3 +21,4 @@ class Owners extends MY_Admin_Controller
         }
     }
 }
+?>

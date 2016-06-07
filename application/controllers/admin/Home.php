@@ -19,3 +19,4 @@ class Home extends MY_Admin_Controller
         $this->admin_view('admin/home',$data);
     }
 }
+?>

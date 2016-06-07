@@ -31,3 +31,4 @@ class Moneylist extends MY_Admin_Controller
         $this->moneylist_model->add_entry($teamid, $week, $amount, $typeid, $text);
     }
 }
+?>
