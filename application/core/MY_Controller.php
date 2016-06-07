@@ -105,7 +105,7 @@ class MY_Admin_Controller extends CI_Controller{
         // If not logged in redirect to login page
         if (!$this->flexi_auth->is_logged_in() || !($this->is_admin || $this->is_league_admin))
         {
-             redirect('guest');
+             redirect('');
         }
         session_write_close();
     }

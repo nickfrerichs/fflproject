@@ -23,9 +23,12 @@ class Site_model extends MY_Model
 
     function create_league($name)
     {
+        $this->load->model('admin/end_season_model');
+        $year = $this->end_season_model->get_real_year();
         // Insert into league table
         $data = array('league_name' => $name,
-                      'mask_id' => strtoupper(substr(md5(uniqid()),0,5)));
+                      'mask_id' => strtoupper(substr(md5(uniqid()),0,5)),
+                      'season_year' => $year);
         $this->db->insert('league',$data);
         $id = $this->db->insert_id();
 

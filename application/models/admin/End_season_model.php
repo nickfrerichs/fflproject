@@ -4,7 +4,10 @@ class End_season_model extends MY_Model
 {
 	function get_real_year()
 	{
-		return $this->db->select('max(year) as y')->from('nfl_schedule')->where('gt',$this->session->userdata('week_type'))->get()->row()->y;
+		$this->db->select('max(year) as y')->from('nfl_schedule');
+		if($this->session->userdata('week_type'))
+			$this->db->where('gt',$this->session->userdata('week_type'));
+		return $this->db->get()->row()->y;
 	}
 
 	function is_finished()
