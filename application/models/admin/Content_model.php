@@ -50,7 +50,7 @@ class Content_model extends MY_Model
         }
         else
         {
-            $data = array('data' => $content, 'last_updated' => t_mysql(time()));
+            $data = array('data' => $content, 'last_updated' => t_mysql(time()), 'title' => $title);
             if ($date_posted != 0)
                 $data['date_posted'] = t_mysql($date_posted);
             $this->db->where('id',$content_id);

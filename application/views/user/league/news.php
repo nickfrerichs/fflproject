@@ -20,7 +20,7 @@ hr{border: 1px solid #eaeaea;}
               <h5 class="title">
                   <?=$n->title?>
               </h5>
-              <div class="date"><?=$n->date_posted?></div>
+              <div class="date"><?=date("M j g:i a",$n->date_posted)?></div>
               <hr>
               <div>
                 <?=$n->data?>
@@ -29,7 +29,26 @@ hr{border: 1px solid #eaeaea;}
             <?php endforeach; ?>
     </div>
     <div class="columns small-order-1 medium-order-2 small-12 medium-5 large-4 callout right-bar">
-        <h5>Waiver Wire Activity</h5>
+      <div class="row">
+        <div class="columns">
+
+                <h6 class="text-center">Recent Waiver Wire Activity</h6>
+
+        <?php if (count($waiverwire_log) > 0): ?>
+            <br>
+            <?php foreach($waiverwire_log as $i=>$w): ?>
+              <div>
+                  <span><?=$w->team_name?></span> <span class="date"><?=date("M j g:i a",$w->transaction_date)?></span><br>
+                  <span><strong>Add: </strong><?=$w->pickup_short_name?> <?=$w->pickup_pos?> <?=$w->pickup_club_id?></span><br>
+                  <span><strong>Drop: </strong><?=$w->drop_short_name?> <?=$w->drop_pos?> <?=$w->drop_club_id?></span>
+              </div>
+              <?php if($i+1 < count($waiverwire_log)): ?>
+                  <hr>
+            <?php endif;?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="text-center" style="font-style:italic">Nothing to report</div>
+        <?php endif;?>
 <!--             <div>
                 <span>Nick's Team</span> <span class="date">(9/22 8:03pm)</span><br>
                      <span><strong>Add:</strong> A. Petersen - RB MIN</span><br>
@@ -42,7 +61,25 @@ hr{border: 1px solid #eaeaea;}
                       <span><strong>Drop:</strong> E. Manning - QB NYG</span>
 
             </div> -->
+        </div>
+      </div>
+      <?php if(1==0): ?>
+      <div class="row">
+        <div class="columns">
          <br><hr>
-         <h5>Money List</h5>
+         <h6>Trade Activity</h6>
+        </div>
+      </div>
+      <?php endif;?>
+
+      <?php if(1==0): ?>
+      <div class="row">
+        <div class="columns">
+         <br><hr>
+         <h6>Money List</h6>
+        </div>
+      </div>
+      <?php endif;?>
+      <?php //debug($waiverwire_log,$this->session->userdata('debug'))?>
     </div>
 </div>

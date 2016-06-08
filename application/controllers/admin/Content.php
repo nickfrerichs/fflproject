@@ -77,9 +77,11 @@ class Content extends MY_Admin_Controller
 
     function savecontent()
     {
+        // save_content($content_id, $text_id='',$content='',$title='', $date_posted = 0)
         $content_id = $this->input->post('content_id');
         $content = $this->input->post('content');
-        $this->content_model->save_content($content_id,null,$content);
+        $title = $this->input->post('title');
+        $this->content_model->save_content($content_id,null,$content,$title);
         echo 'done';
     }
 }

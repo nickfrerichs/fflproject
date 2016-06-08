@@ -24,7 +24,7 @@ class Teams_model extends MY_Model{
             ->join('owner','team.owner_id = owner.id')
             ->join('team_division','team_division.team_id = team.id and team_division.year = '.$this->current_year,'left')
             ->join('division','team_division.division_id = division.id','left')
-            ->join('schedule_result','schedule_result.team_id = team.id','left')
+            ->join('schedule_result','schedule_result.team_id = team.id and schedule_result.year='.$this->current_year,'left')
             ->join('schedule','schedule.id = schedule_result.schedule_id and schedule.year='.$this->current_year,'left')
             ->where('team.league_id',$this->leagueid)
             ->where('team.active',true)

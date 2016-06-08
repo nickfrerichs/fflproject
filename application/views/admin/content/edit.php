@@ -4,7 +4,7 @@
 <div class="row">
     <div class="columns">
         <?php if($content->text_id == "news"):?>
-            <input type="text" placeholder="<?=$content->title?>">
+            <input id="title" type="text" value="<?=$content->title?>">
         <?php else:?>
             <h5><?=$content->title?></h5>
         <?php endif;?>
@@ -52,7 +52,8 @@ function savecontent()
 {
     var url = "<?=site_url('admin/content/savecontent')?>";
     var content = tinymce.activeEditor.getContent({format:'raw'});
-    $.post(url,{'content_id' : "<?=$content->id?>",'content' : content}, function(data){
+    var title = $("#title").val();
+    $.post(url,{'content_id' : "<?=$content->id?>",'content' : content, 'title' : title}, function(data){
         window.location.replace("<?=site_url('admin/content/view/'.$content->text_id)?>");
     });
 }

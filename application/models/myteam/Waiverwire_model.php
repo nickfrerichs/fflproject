@@ -305,8 +305,8 @@ class Waiverwire_model extends MY_Model{
             $year = $this->current_year;
 
 
-        $this->db->select('d.first_name as drop_first, d.last_name as drop_last, dt.club_id as drop_club_id')
-            ->select('dp.short_text as drop_pos, p.first_name as pickup_first, p.last_name as pickup_last')
+        $this->db->select('d.first_name as drop_first, d.last_name as drop_last, d.short_name as drop_short_name, dt.club_id as drop_club_id')
+            ->select('dp.short_text as drop_pos, p.first_name as pickup_first, p.last_name as pickup_last, p.short_name as pickup_short_name')
             ->select('pt.club_id as pickup_club_id, pp.short_text as pickup_pos')
             ->select('UNIX_TIMESTAMP(waiver_wire_log.request_date) as request_date')
             ->select('UNIX_TIMESTAMP(waiver_wire_log.transaction_date) as transaction_date')
