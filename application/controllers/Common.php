@@ -31,7 +31,22 @@ class Common extends CI_Controller{
         $acks = $this->session->userdata("message_acks");
         $acks[] = $id;
         $this->session->set_userdata('message_acks',$acks);
-        session_write_close();
+    }
+
+    function liveElements()
+    {
+        
+        $response = array("S" => "0");
+        if ($this->session->userdata('live_scores'))
+            $response["ls"] = "1";
+        else
+            $response["ls"] = "0";
+
+        $this->load->model('league/chat_model');
+        $response["ur"] = $this->chat_model->get_unread_count();
+
+        $response["S"] = "1";
+        echo json_encode($response);
     }
 }
 ?>

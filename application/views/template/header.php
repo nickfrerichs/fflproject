@@ -133,10 +133,13 @@
 //
 $(function() {
     // Check every 10s to see if new chat messages were added.
-    setInterval(function(){updateNewChatIcon();}, 10000);
-    setInterval(function(){updateLiveIcon();}, 10000);
-    updateNewChatIcon();
-    updateLiveIcon();
+    //setInterval(function(){updateNewChatIcon();}, 10000);
+    //setInterval(function(){updateLiveIcon();}, 10000);
+    setInterval(function(){updateLiveElements();}, 10000);
+    //updateNewChatIcon();
+    //updateLiveIcon();
+    updateLiveElements();
+
 });
 
 // This makes the escape key hide the chat box.
@@ -378,34 +381,53 @@ function chatScrollBottom(set)
 
 // Function to update the new chat count on the chat button.
 // It only checks if the Chat window is not visible
-function updateNewChatIcon()
+function updateLiveElements()
 {
-    if(!$('#chat-modal').is(':visible'))
-    {
-
-        var url = "<?=site_url('league/chat/unread')?>";
-        $.post(url,{}, function(data){
-            var count = parseInt(data);
-            if (count > 0)
-            {
-                $(".unread-count").text(" ("+count+")");
-            }
-        });
-    }
-}
-
-function updateLiveIcon()
-{
-    var url = "<?=site_url('season/scores/live_scores')?>"
+    var url = "<?=site_url('common/liveElements')?>";
     $.post(url,{},function(data){
-        if(data == "1")
+        d = $.parseJSON(data);
+        console.log(d);
+        if (d.S == "1")
         {
-            $(".live-scores").removeClass('hide');
-        }
-        else {
-            $(".live-scores").addClass('hide');
+            if (parseInt(d.ur) > 0)
+                {$(".unread-count").text(" ("+d.ur+")");}
+        
+            if (d.ls == "1")
+                {$(".live-scores").removeClass('hide');}
+            else
+                {$(".live-scores").addClass('hide');}
         }
     });
 }
+
+// function updateNewChatIcon()
+// {
+//     if(!$('#chat-modal').is(':visible'))
+//     {
+
+//         var url = "<?=site_url('league/chat/unread')?>";
+//         $.post(url,{}, function(data){
+//             var count = parseInt(data);
+//             if (count > 0)
+//             {
+//                 $(".unread-count").text(" ("+count+")");
+//             }
+//         });
+//     }
+// }
+
+// function updateLiveIcon()
+// {
+//     var url = "<?=site_url('season/scores/live_scores')?>"
+//     $.post(url,{},function(data){
+//         if(data == "1")
+//         {
+//             $(".live-scores").removeClass('hide');
+//         }
+//         else {
+//             $(".live-scores").addClass('hide');
+//         }
+//     });
+// }
 
 </script>
