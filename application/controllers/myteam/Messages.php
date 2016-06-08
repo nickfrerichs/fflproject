@@ -32,7 +32,7 @@ class Messages extends MY_Controller{
         $data['owners'] = $this->messages_model->get_league_owners_data();
         $data['teamid'] = $this->teamid;
         $this->bc['Messages'] = site_url('myteam/messages');
-        $this->bc['New Message'] = "";
+        $this->bc['Compose Message'] = "";
         $this->user_view('user/myteam/messages/compose', $data);
     }
 
@@ -41,7 +41,6 @@ class Messages extends MY_Controller{
         $to = $this->input->post('to');
         $subject = $this->input->post('subject');
         $body = $this->input->post('body');
-
         $this->messages_model->insert_new_message($to, $subject, $body);
     }
 
@@ -49,6 +48,10 @@ class Messages extends MY_Controller{
     {
         $id = $this->input->post('id');
         $data['message'] = $this->messages_model->get_message($id);
+
+        $this->load->model('security_model');
+        $this->security_model->set_user_messages();
+        
         $this->load->view('user/myteam/messages/ajax_display_message',$data);
     }
 

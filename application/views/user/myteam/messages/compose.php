@@ -8,7 +8,7 @@
 		<select id="message-to" class="form-control">
 			<option value="0">To:</option>
 			<?php foreach($owners as $o): ?>
-			<?php if ($team != $o->team_id): ?>
+			<?php if ($teamid != $o->team_id): ?>
 				<?php if (isset($reply_teamid) && $reply_teamid == $o->team_id): ?>
 				<option value="<?=$o->team_id?>" selected><?=$o->first_name.' '.$o->last_name?></option>
 				<?php else: ?>

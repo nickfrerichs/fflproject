@@ -157,6 +157,24 @@ class Common_model extends CI_Model{
         return site_url('joinleague/invite/'.$mask);
     }
 
+    function get_user_messages()
+    {
+        // Actual messages get set in the security_model with session variables.
+        if (is_array($this->session->userdata('user_messages')))
+            return $this->session->userdata('user_messages');
+        return array();
+    }
+
+    function clear_user_message($text="")
+    {
+        $messages = $this->session->userdata('user_messages');
+        foreach($messages as $key => $m)
+        {
+            if( strpos($m['id'], $text) !== false )
+                unset($messages[$key]);
+        }
+        $this->session->set_userdata('user_messages',$messages);
+    }
 }
 
 ?>

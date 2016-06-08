@@ -70,7 +70,8 @@ class Security_model extends MY_Model
 
     }
 
-    // The idea is that these will be checked every 5 mins and stored as session variables.
+    // The idea is that these will be checked every X mins as an in between for at login and
+    // every page load.
     function set_dynamic_session_variables()
     {
         $week_year = $this->get_current_week();
@@ -93,6 +94,31 @@ class Security_model extends MY_Model
         $this->session->set_userdata('expire_dynamic_vars',time()+60); // Make sure to check dynamic vars every 1 mins.
         $this->session->set_userdata('live_scores',$this->live_scores_on());
 
+        $this->set_user_messages();
+
+    }
+
+    function set_user_messages()
+    {
+
+        $messages = array();
+
+        // Check for unread messages.
+        $msgs = $this->db->from('message')->where('team_id',$this->teamid)->where('read',0)->count_all_results();
+        if ( $msgs > 0)
+        {
+            if ($msgs == 1)
+                $note = "You have a new message.";
+            else
+                $note = "You have ".$msgs." new messages.";
+            $date = $this->db->select('unix_timestamp(max(message_date)) as message_date')->from('message')
+                ->where('team_id',$this->teamid)->where('read',0)->get()->row()->message_date;
+            $messages[] = array('class'=>'primary',
+                                'message'=> $note.
+                                            '<br><a href="'.site_url('myteam/messages').'">Go to your Inbox</a>',
+                                'id'=>'msg_new_messages'.$date);
+        }
+        $this->session->set_userdata('user_messages',$messages);
     }
 
     function live_scores_on()

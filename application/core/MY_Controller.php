@@ -52,11 +52,9 @@ class MY_Controller extends CI_Controller{
         // since they were first set.
         if ($this->session->userdata('expire_dynamic_vars') < time())
         {
-
             $this->load->model('security_model');
             $this->security_model->set_dynamic_session_variables();
         }
-        session_write_close();
 
     }
 
@@ -66,7 +64,7 @@ class MY_Controller extends CI_Controller{
         $d['menu_items'] = $this->menu_model->get_menu_items_data();
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
-        $d['_messages'] = array();
+        $d['_messages'] = $this->common_model->get_user_messages();
         $this->load->view('template/user_init', $d);
     }
 
@@ -107,7 +105,6 @@ class MY_Admin_Controller extends CI_Controller{
         {
              redirect('');
         }
-        session_write_close();
     }
 
     function admin_view($viewname, $d=null)

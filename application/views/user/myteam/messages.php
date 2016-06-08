@@ -12,7 +12,7 @@
 
 <div class="row callout">
 	<div class=" columns medium-2 small-12">
-		<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>New Message</a></h6></div>
+		<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>Compose</a></h6></div>
 		<div id="folder_0" class="folder"><a href="#"><h6>Inbox</h6></a></div>
 		<div id="folder_1" class="folder"><a href="#"><h6>Sent Items</h6></a></div>
 		<div id="folder_2" class="folder"><a href="#"><h6>Trash</h6></a></div>

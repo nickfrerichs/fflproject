@@ -16,6 +16,7 @@ class Messages_model extends MY_Model{
     		->where('league_id',$this->leagueid)
     		->where('active',1)
     		->where_not('id',$this->teamid)
+            ->order_by('team_name','asc')
     		->get()->result();
     }
 
@@ -24,6 +25,7 @@ class Messages_model extends MY_Model{
     	return $this->db->select('owner.id as owner_id, team.id as team_id, owner.first_name, owner.last_name')
     		->from('team')->join('owner', 'owner.id = team.owner_id')
     		->where('team.active',1)->where('team.league_id',$this->leagueid)
+            ->order_by('owner.last_name','asc')
     		->get()->result();
     }
 
@@ -64,6 +66,9 @@ class Messages_model extends MY_Model{
 
     function get_message($id)
     {
+        $data = array('read' => 1);
+        $this->db->where('id',$id);
+        $this->db->update('message',$data);
         return $this->db->select('from_team_id, subject, UNIX_TIMESTAMP(message_date) as unix_date, body')
             ->select('message.id, read, team.team_name as from_team_name, owner.first_name, owner.last_name')
             ->from('message')->join('team','team.id = message.from_team_id')
