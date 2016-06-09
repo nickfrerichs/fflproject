@@ -124,7 +124,7 @@
 
 <?php endif;?>
 
-<div id="messages">
+<div id="livedata" class="hide">
 </div>
 
 <script>
@@ -383,19 +383,29 @@ function chatScrollBottom(set)
 // It only checks if the Chat window is not visible
 function updateLiveElements()
 {
+    var last_check_in = $("#livedata").data("last_check_in");
     var url = "<?=site_url('common/liveElements')?>";
+    if (last_check_in !== undefined){url +=("/"+last_check_in);}
+
     $.post(url,{},function(data){
+        console.log(data);
         d = $.parseJSON(data);
-        console.log(d);
-        if (d.S == "1")
+
+        if (parseInt(d.T) > 1)
         {
+            $("#livedata").data("last_check_in",d.T);
             if (parseInt(d.ur) > 0)
                 {$(".unread-count").text(" ("+d.ur+")");}
-        
+
             if (d.ls == "1")
                 {$(".live-scores").removeClass('hide');}
             else
                 {$(".live-scores").addClass('hide');}
+
+            if (typeof(d.cm) !== 'undefined' && d.cm.length > 0)
+            {
+                console.log("New chat messages found.");
+            }
         }
     });
 }

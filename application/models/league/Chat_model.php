@@ -79,7 +79,7 @@ class Chat_model extends MY_Model{
             return $row->chat_read;
     }
 
-    function get_messages($key = '')
+    function get_messages($key = '', $limit=100)
     {
         $firstnames = $this->get_firstnames();
 
@@ -92,7 +92,7 @@ class Chat_model extends MY_Model{
         $this->db->join('owner','chat_message.owner_id = owner.id')
             ->order_by('message_date','desc');
         if($key == '')
-            $this->db->limit(100);
+            $this->db->limit($limit);
 
         $data = $this->db->get()->result();
 
@@ -121,5 +121,6 @@ class Chat_model extends MY_Model{
         }
         return $firstnames;
     }
+
 }
 ?>
