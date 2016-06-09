@@ -104,6 +104,29 @@ class Chat_model extends MY_Model{
         return array_reverse($data);
     }
 
+    function get_messages_from_timestamp($last_check = 0, $limit=100)
+    {
+        $firstnames = $this->get_firstnames();
+
+        $this->db->select('message_text, unix_timestamp(message_date) as date, owner_id')
+            ->select('owner.first_name, owner.last_name, owner.first_name as chat_name')
+            ->from('chat_message')
+            ->where('league_id',$this->leagueid);
+            ->where('chat_message.message_date >',t_mysql($last_check))
+            ->join('owner','chat_message.owner_id = owner.id')
+            ->order_by('message_date','desc');
+            ->limit($limit);
+
+        $data = $this->db->get()->result();
+
+        foreach($data as $d)
+        {
+            if($firstnames[strtolower($d->first_name)] > 1)
+                $d->chat_name = $d->first_name.' '.$d->last_name[0];
+        }
+        return array_reverse($data);
+    }
+
     function get_firstnames()
     {
 

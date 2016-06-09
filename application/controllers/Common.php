@@ -48,7 +48,7 @@ class Common extends CI_Controller{
         // Check for new chat messages since last_checked_in, add them to this array so they can
         // Be popped up to the user
         if ($last_check_in > time()-20)
-            $response["cm"] = $this->chat_model->get_messages($last_check_in,5);
+            $response["cm"] = $this->chat_model->get_messages_from_timestamp($last_check_in,5);
 
         echo json_encode($response);
     }
