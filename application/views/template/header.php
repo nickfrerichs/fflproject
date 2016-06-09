@@ -384,28 +384,48 @@ function chatScrollBottom(set)
 function updateLiveElements()
 {
     var last_check_in = $("#livedata").data("last_check_in");
+    var chat_key = $("#livedata").data("chat_key");
     var url = "<?=site_url('common/liveElements')?>";
     if (last_check_in !== undefined){url +=("/"+last_check_in);}
-
-    $.post(url,{},function(data){
+    console.log(chat_key);
+    $.post(url,{'last_chat_key':chat_key},function(data){
         console.log(data);
         d = $.parseJSON(data);
 
         if (parseInt(d.T) > 1)
         {
             $("#livedata").data("last_check_in",d.T);
+
+            // Update unread message count
             if (parseInt(d.ur) > 0)
                 {$(".unread-count").text(" ("+d.ur+")");}
-
+            else{$(".unread-count").text("");}
+            // Update live scores (this might go away)
             if (d.ls == "1")
                 {$(".live-scores").removeClass('hide');}
             else
                 {$(".live-scores").addClass('hide');}
 
-            if (typeof(d.cm) !== 'undefined' && d.cm.length > 0)
+            if ($("#livedata").data("chat_key") == undefined)
+                {$("#livedata").data("chat_key",d.ck);}
+
+            if (d.cm !== undefined && d.cm.length > 0)
             {
+                var new_chat_key = parseInt(chat_key);
+                $.each(d.cm,function(i, msg){
+                    new_chat_key = Math.max(new_chat_key, parseInt(msg.message_id));
+                    if ($("#chat-modal").data('chat-on') != true)
+                    {
+                        var text = msg.chat_name+"<br>"+msg.message_text;
+                        notice(text,'success');
+                    }
+                });
+
                 console.log("New chat messages found.");
+                $("#livedata").data("chat_key",new_chat_key);
             }
+
+
         }
     });
 }

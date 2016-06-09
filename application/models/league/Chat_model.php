@@ -26,6 +26,8 @@ class Chat_model extends MY_Model{
         $this->db->where('league_settings.league_id',$this->leagueid);
         $this->db->update('league_settings',array('chat_key' => $chat_key));
 
+        $this->set_last_read_key($chat_key);
+
         $twitteron = $this->db->select('twitter_chat_updates')->from('league_settings')
             ->where('league_id',$this->leagueid)->get()->row()->twitter_chat_updates;
 
@@ -79,14 +81,16 @@ class Chat_model extends MY_Model{
             return $row->chat_read;
     }
 
-    function get_messages($key = '', $limit=100)
+    function get_messages($key = '', $limit=100, $show_owner=True)
     {
         $firstnames = $this->get_firstnames();
 
-        $this->db->select('message_text, unix_timestamp(message_date) as date, owner_id')
+        $this->db->select('chat_message.id as message_id, message_text, unix_timestamp(message_date) as date, owner_id')
             ->select('owner.first_name, owner.last_name, owner.first_name as chat_name')
             ->from('chat_message')
             ->where('league_id',$this->leagueid);
+        if($show_owner == False)
+            $this->db->where('chat_message.owner_id !=',$this->ownerid);
         if($key != '')
             $this->db->where('chat_message.id >',$key);
         $this->db->join('owner','chat_message.owner_id = owner.id')
@@ -104,28 +108,6 @@ class Chat_model extends MY_Model{
         return array_reverse($data);
     }
 
-    function get_messages_from_timestamp($last_check = 0, $limit=100)
-    {
-        $firstnames = $this->get_firstnames();
-
-        $this->db->select('message_text, unix_timestamp(message_date) as date, owner_id')
-            ->select('owner.first_name, owner.last_name, owner.first_name as chat_name')
-            ->from('chat_message')
-            ->where('league_id',$this->leagueid);
-            ->where('chat_message.message_date >',t_mysql($last_check))
-            ->join('owner','chat_message.owner_id = owner.id')
-            ->order_by('message_date','desc');
-            ->limit($limit);
-
-        $data = $this->db->get()->result();
-
-        foreach($data as $d)
-        {
-            if($firstnames[strtolower($d->first_name)] > 1)
-                $d->chat_name = $d->first_name.' '.$d->last_name[0];
-        }
-        return array_reverse($data);
-    }
 
     function get_firstnames()
     {
