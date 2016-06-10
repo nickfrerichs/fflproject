@@ -13,6 +13,17 @@ function notice(text, noticetype)
 			break;
 		case "warning":
 			setcolor = "yellow";
+		case "chat":
+			$("#chat-button").jBox('Notice', {
+				content: text,
+				target: $("#chat-button"),
+				position: {x:60, y:50},
+				outside: 'x',
+				color: 'blue',
+				width: 200
+			});
+
+			return
 		default:
 	}
 	new jBox('Notice', {

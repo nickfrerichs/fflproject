@@ -135,7 +135,7 @@ $(function() {
     // Check every 10s to see if new chat messages were added.
     //setInterval(function(){updateNewChatIcon();}, 10000);
     //setInterval(function(){updateLiveIcon();}, 10000);
-    setInterval(function(){updateLiveElements();}, 10000);
+    setInterval(function(){updateLiveElements();}, 3000);
     //updateNewChatIcon();
     //updateLiveIcon();
     updateLiveElements();
@@ -387,9 +387,9 @@ function updateLiveElements()
     var chat_key = $("#livedata").data("chat_key");
     var url = "<?=site_url('common/liveElements')?>";
     if (last_check_in !== undefined){url +=("/"+last_check_in);}
-    console.log(chat_key);
+
     $.post(url,{'last_chat_key':chat_key},function(data){
-        console.log(data);
+
         d = $.parseJSON(data);
 
         if (parseInt(d.T) > 1)
@@ -417,7 +417,7 @@ function updateLiveElements()
                     if ($("#chat-modal").data('chat-on') != true)
                     {
                         var text = msg.chat_name+"<br>"+msg.message_text;
-                        notice(text,'success');
+                        notice(text,'chat');
                     }
                 });
 
