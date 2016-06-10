@@ -176,6 +176,7 @@ $(".chat-button").on('click', function(){
         }
         $("#chat-modal").foundation("open");
         // Added so you can still use the scroll wheen on the body.
+        $("#chat-message").focus();
         document.body.style.overflow = "visible";
         $("#chat-modal").draggable();
         //$("#chat-modal").resizable();
