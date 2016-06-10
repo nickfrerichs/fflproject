@@ -14,14 +14,14 @@ function notice(text, noticetype)
 		case "warning":
 			setcolor = "yellow";
 		case "chat":
-			$("#chat-button").jBox('Notice', {
+			var chat_jbox = new jBox('Tooltip', {
 				content: text,
 				target: $("#chat-button"),
-				position: {x:60, y:50},
-				outside: 'x',
-				color: 'blue',
-				width: 200
+				width: 200,
+				color: "yellow"
 			});
+			chat_jbox.open();
+			setTimeout(function(){chat_jbox.close(); console.log('closed');},3000);
 
 			return
 		default:

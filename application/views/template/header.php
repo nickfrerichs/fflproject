@@ -414,7 +414,7 @@ function updateLiveElements()
                 var new_chat_key = parseInt(chat_key);
                 $.each(d.cm,function(i, msg){
                     new_chat_key = Math.max(new_chat_key, parseInt(msg.message_id));
-                    if ($("#chat-modal").data('chat-on') != true)
+                    if ($("#chat-modal").data('chat-on') != true && $("#chat-button").is(":visible"))
                     {
                         var text = msg.chat_name+"<br>"+msg.message_text;
                         notice(text,'chat');
