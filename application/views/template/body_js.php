@@ -19,11 +19,11 @@
 <script src="<?=site_url('js/vendor/jquery.visible.min.js')?>"></script>
 <script src="<?=site_url('js/cropper.min.js')?>"></script>
 
-<!-- Using jbox for alerts/notices/error popups -->
+<!-- Using jbox for chat/alerts/notices/error popups -->
 <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
 
 <!-- jquery-ui, only using draggable and maybe resizable, my not need such a large file -->
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
 
 <!-- My custom JS, things that aren't imbedded in the page go here -->
 <script src="<?=site_url('js/fflproject.js')?>"></script>

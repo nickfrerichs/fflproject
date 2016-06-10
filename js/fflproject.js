@@ -13,17 +13,6 @@ function notice(text, noticetype)
 			break;
 		case "warning":
 			setcolor = "yellow";
-		case "chat":
-			var chat_jbox = new jBox('Tooltip', {
-				content: text,
-				target: $("#chat-button"),
-				width: 200,
-				color: "yellow"
-			});
-			chat_jbox.open();
-			setTimeout(function(){chat_jbox.close(); console.log('closed');},3000);
-
-			return
 		default:
 	}
 	new jBox('Notice', {

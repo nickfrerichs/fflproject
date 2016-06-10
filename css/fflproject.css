@@ -125,26 +125,27 @@ td select{margin-bottom:0px !important;}
 	}
 }
 
-.chat-history-table{
-    overflow:scroll;
-    height:300px;
-}
 #chat-history-table{
-    font-size:.8em;
-    height: 300px;
+	overflow:scroll;
+    font-size:.9em;
+    height: 250px;
 
 }
-#chat-history-table-small{
-    font-size:.7em;
-    width:250px;
-    height: 290px;
 
-}
-.chat-window{width:320px; padding:0px;}
-#chat-window-small{}
-.chat-message{font-size: .8em;}
+#chat-modal{min-width:320px; padding:0px;}
+
+#chat-message{}
 #chat-button-small{height:40px;}
-#chat-button{}
+
+.jBox-chat .jBox-content{padding-top:0px !important; padding-left:5px !important; padding-right:5px !important;}
+.jBox-chat .jBox-title{text-align: center; font-size:1.2em; background-color: #2199e8; color:#EEE; text-shadow: 0 0 0 ; padding:0;}
+
+.Tooltip-chat{}
+/*.Tooltip-chat .jBox-content{background-color:#2199e8; color:#EEE;}
+.Tooltip-chat .jBox-pointer:after{background-color:#2199e8;}*/
+
+.Tooltip-chat .jBox-content{border: 2px solid #2199e8;}
+.Tooltip-chat .jBox-pointer:after{border: 2px solid #2199e8;}
 
 
 /* BELOW ARE EXCEPTIONS TO THE DEFAULT STYLES */

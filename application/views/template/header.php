@@ -14,7 +14,6 @@
     </div>
     <div class="small-3 columns text-right">
       <?php if($this->session->userdata('league_id')): ?>
-        <!-- <button id="chat-button-small-new" class="button chat-button" type="button" data-toggle="chat-window-small">chat</button> -->
          <button id="chat-button-small" class="button chat-button">chat</button>
       <?php endif;?>
 
@@ -25,7 +24,7 @@
 <div id="title-bar-row" class="row align-spaced align-middle">
     <div class="columns">
         <div class="row align-left align-middle">
-            <!--
+            <!-- At one point, I was going to put in a logo, this is where it was.
             <div id="site-logo" class="columns show-for-medium shrink">
 
             </div>
@@ -64,7 +63,6 @@
     </div>
     <div class="align-right columns shrink">
         <?php if($this->session->userdata('league_id')): ?>
-                <!-- <button id="chat-button" class="button chat-button show-for-medium" type="button" data-toggle="chat-window">chat</button> -->
                 <button id="chat-button" class="button chat-button show-for-medium">chat<span class="unread-count"></span></button>
         <?php endif;?>
     </div>
@@ -73,22 +71,9 @@
 
 
 <?php if($this->session->userdata('league_id')): ?>
-<!-- <div id="chat-window-small" class="dropdown-pane show-for-small-only chat-window" data-dropdown>
-    <div class="text-center">League Chat</div>
-    <div id="chat-history-table-small" class="chat-history-table">
-        <table>
-            <tbody id="chat-history-ajax-small" class="chat-history-ajax">
-            </tbody>
-        </table>
-    </div>
-    <div>
-        <textarea id="chat-message-small" class="chat-message" rows="3" placeholder="You put your trash talk in here..."></textarea>
-    </div>
-</div>
 
-<div id="chat-window" class="dropdown-pane hide-for-small-only chat-window" data-dropdown>
-    <div class="text-center">League Chat</div>
-    <hr>
+<div id="chat-modal" hidden>
+
     <div id="chat-history-table" class="chat-history-table">
         <table>
             <tbody id="chat-history-ajax" class="chat-history-ajax">
@@ -96,31 +81,12 @@
         </table>
     </div>
     <div>
-        <textarea id="chat-message" class="chat-message" rows="3" placeholder="You put your trash talk in here..."></textarea>
-    </div>
-</div> -->
-
-
-
-
-<div class="reveal" id="chat-modal" data-reveal data-overlay="false" data-v-offset="0" data-h-offset="0" data-close-on-click="false">
-    <div id="chat-title-bar" class="text-center column">League Chat
-        <button class="close-button" data-close aria-label="Close modal" type="button" style="margin-top:-14px;color:#BBB">
-          <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div id="chat-history-table-new" class="chat-history-table">
-        <table>
-            <tbody id="chat-history-ajax" class="chat-history-ajax">
-            </tbody>
-        </table>
-    </div>
-    <div>
-        <textarea id="chat-message" class="chat-message" rows="3" placeholder="You put your trash talk in here..."></textarea>
+        <textarea id="chat-message" rows="1" placeholder="You put your trash talk in here..."></textarea>
     </div>
 
 </button>
 </div>
+
 
 <?php endif;?>
 
@@ -132,126 +98,55 @@
 // CHAT BOX STUFF
 //
 $(function() {
-    // Check every 10s to see if new chat messages were added.
-    //setInterval(function(){updateNewChatIcon();}, 10000);
-    //setInterval(function(){updateLiveIcon();}, 10000);
-    setInterval(function(){updateLiveElements();}, 3000);
-    //updateNewChatIcon();
-    //updateLiveIcon();
+    // Check every Xs to see some things were updated.
+    setInterval(function(){updateLiveElements();}, 7000);
     updateLiveElements();
-
 });
-
-// This makes the escape key hide the chat box.
-// $(document).keyup(function(event){
-//     if((event.keyCode == 27) && $('#chat-window').css('visibility') != "hidden")
-//     {
-//         $( "#chat-button" ).trigger( "click" );
-//         event.preventDefault();
-//     }
-// });
 
 $(".chat-button").on('click', function(){
 
     if (typeof(evtSource) == "undefined")
     {
-        //evtSource.close();console.log("closing evtsource")
         $("#chat-history-ajax").html("<i>Loading...</i>");
-        // Update unread count on chat-button.
+        // Erase unread count on chat-button...we just read them.
         $(".unread-count").text("");
-        evtSource = new EventSource("<?=site_url('league/chat/stream_get_chat_key')?>");
 
+        // Start getting a stream of data so we can know if new chats came in.
+        evtSource = new EventSource("<?=site_url('league/chat/stream_get_chat_key')?>");
         evtSource.onmessage = function(e)
         {
+            // Check every heartbeat, if the stored chat key does not equal the new one, we need to update
             if(($("#chat-modal").data('chat-key') != e.data) || ($("#chat-modal").data('chat-on') != true))
-            {updateChatNew(e.data);}
-
-            //If medium and chat-window is not open. or small and chat-window-small not open. close evtsource and all chat windows
-            // if (whichChatIsActive() == "none")
-            // {
-            //     closechat()
-            //     $("#chat-window").removeClass("is-open");
-            //     $("#chat-window-small").removeClass("is-open");
-            // }
+            {updateChat(e.data);}
         }
-        $("#chat-modal").foundation("open");
-        // Added so you can still use the scroll wheen on the body.
-        $("#chat-message").focus();
-        document.body.style.overflow = "visible";
-        $("#chat-modal").draggable();
-        //$("#chat-modal").resizable();
-        $("#chat-modal").on('closed.zf.reveal',function(){
-            closechatnew()
+
+        // Create the jBox from the chat-modal element, then open it.
+        // onClose, run the closechat() function
+        cb = new jBox('Modal',{
+            content: $("#chat-modal"),
+            blockScroll: false,
+            draggable: 'title',
+            overlay: false,
+            title: "League Chat",
+            addClass: 'jBox-chat',
+            position: {x: 'right', y:'bottom'},
+            onClose: function() {
+                closechat();
+            }
         });
+        cb.open();
+
+        // Set the focus to the textarea.. may change to only do this on large displays.
+        $("#chat-message").focus();
     }
     else
     {
-        $("#chat-modal").foundation("close");
+        // Chat button was clicked and the evtSource was already active..close the jBox
+        cb.close();
     }
 });
 
-$("#chat-close-button").on('click',function(){
-    $("#chat-modal").foundation("close");
-});
-
-
-// Open stream of chat-key so we know when to update/append chats.
-// $("#chat-button, #chat-button-small").on('click', function(){
-//
-//     var suffix = $(this).attr('id').replace('chat-button','');
-//     var chatwindow = $("#chat-window"+suffix);
-//     var chathistory = $("#chat-history-ajax"+suffix);
-//     //$("#chat-window").toggle();
-//     if(chatwindow.css('visibility') == "hidden")
-//     {
-//         if (typeof(evtSource) == "undefined")
-//         {
-//             //evtSource.close();console.log("closing evtsource")
-//             $(".chat-history-ajax").html("<i>Loading...</i>");
-//             // Update unread count on chat-button.
-//             $("#unread_count").text("");
-//             evtSource = new EventSource("<?=site_url('league/chat/stream_get_chat_key')?>");
-//         }
-//
-//     	evtSource.onmessage = function(e)
-//         {
-//             console.log("Chat alive.")
-//     		if(($("#chat-window").data('chat-key') != e.data) || ($("#chat-window").data('chat-on') != true))
-//     		{updateChat(e.data);}
-//
-//             //If medium and chat-window is not open. or small and chat-window-small not open. close evtsource and all chat windows
-//             if (whichChatIsActive() == "none")
-//             {
-//                 closechat()
-//                 $("#chat-window").removeClass("is-open");
-//                 $("#chat-window-small").removeClass("is-open");
-//             }
-//         }
-//     }
-//     else
-//     {
-//         // Close chat stream
-//         closechat()
-//     }
-// });
-
-function whichChatIsActive()
-{
-    if (Foundation.MediaQuery.atLeast('medium') && $("#chat-window").hasClass("is-open") == true)
-        {return "medium";}
-    if (Foundation.MediaQuery.current == "small" && $("#chat-window-small").hasClass("is-open") == true)
-        {return "small";}
-    return "none";
-}
-
 function closechat()
-{
-    evtSource.close();
-    delete evtSource;
-    $("#chat-window").data('chat-on',false);
-}
-
-function closechatnew()
 {
     if (typeof(evtSource) != "undefined")
     {
@@ -259,19 +154,17 @@ function closechatnew()
         delete evtSource;
         $("#chat-modal").data('chat-on',false);
     }
+    if (Foundation.MediaQuery.current == 'small')
+    {$(window).scrollTop(0);}
 }
 
-
-// Post a new message to chat as long as there is
-// non-whitespace in the textarea and you didn't press
-// shift+enter
-$('.chat-message').keypress(function(event){
+// Post a new message to chat as long as there is non-whitespace in the textarea and you didn't press shift+enter
+$('#chat-message').keypress(function(event){
     if(event.keyCode == 13 && !event.shiftKey){
         if ($(this).val().trim() == "") {event.preventDefault(); return}
         var url = "<?=site_url('league/chat/post')?>";
         $.post(url,{'message' : $(this).val()}, function(){
-            $(".chat-message").val('');
-            //updateChat();
+            $("#chat-message").val('');
             chatScrollBottom(true);
         });
         event.preventDefault();
@@ -279,8 +172,7 @@ $('.chat-message').keypress(function(event){
 
 });
 
-
-function updateChatNew(new_chat_key)
+function updateChat(new_chat_key)
 {
     //var chatwindow = $("#chat-window"+$(this).attr('id').replace('chat-button',''));
     //var chathistory = $("#chat-history-ajax"+$(this).attr('id').replace('chat-button',''));
@@ -300,73 +192,23 @@ function updateChatNew(new_chat_key)
     {
         // Else If chat-key != chat_key, get all messages newer than current chat-key and append
         $.post(url,{'chat_key':chat_key}, function(data){
-            bottom = chatScrollBottomnew();
+            bottom = chatScrollBottom();
             $(".chat-history-ajax").append(data)
-            if(bottom){chatScrollBottomnew(true);} // If we're at the bottom, snap back to the bottom
+            if(bottom){chatScrollBottom(true);} // If we're at the bottom, snap back to the bottom
         });
     }
     $("#chat-modal").data('chat-key',new_chat_key);
 
 }
 
-function updateChat(new_chat_key)
-{
-    //var chatwindow = $("#chat-window"+$(this).attr('id').replace('chat-button',''));
-    //var chathistory = $("#chat-history-ajax"+$(this).attr('id').replace('chat-button',''));
-    chat_key = $("#chat-window").data('chat-key');
-
-    var url = "<?=site_url('league/chat/get_messages')?>";
-    // If chat-on != true, get all messages, set chat-on = true, update stored chat-key
-    if ($("#chat-window").data('chat-on') != true)
-    {
-        $.post(url,{}, function(data){
-            $("#chat-window").data('chat-on',true);
-            $(".chat-history-ajax").html(data);
-            $(".chat-history-table").each(function(){$(this).scrollTop($(this).prop('scrollHeight'));});
-
-        });
-    }
-    else if (chat_key != new_chat_key)
-    {
-        // Else If chat-key != chat_key, get all messages newer than current chat-key and append
-        $.post(url,{'chat_key':chat_key}, function(data){
-            bottom = chatScrollBottom();
-            $(".chat-history-ajax").append(data)
-            if(bottom){chatScrollBottom(true);} // If we're at the bottom, snap back to the bottom
-        });
-    }
-    $("#chat-window").data('chat-key',new_chat_key);
-
-}
-
 // return true if scrolled to bottom, false if not
 // if true passed in, set scroll to bottom
-
-function chatScrollBottomnew(set)
-{
-    // Return true if the currently active chat is near the bottom, false if not.
-    if(set == undefined)
-    {
-        var chat_history_table_id = "#chat-history-table-new";
-        var h = $(chat_history_table_id).height()+$(chat_history_table_id).scrollTop();
-        if (h > $(chat_history_table_id).prop('scrollHeight')-25)
-        {return true;}
-        return false;
-    }
-    else
-    {
-        $("#chat-history-table-new").scrollTop($("#chat-history-table-new").prop('scrollHeight'));
-    }
-}
-
 function chatScrollBottom(set)
 {
     // Return true if the currently active chat is near the bottom, false if not.
     if(set == undefined)
     {
         var chat_history_table_id = "#chat-history-table";
-        if (whichChatIsActive() == "small"){chat_history_table_id = "#chat-history-table-small";}
-
         var h = $(chat_history_table_id).height()+$(chat_history_table_id).scrollTop();
         if (h > $(chat_history_table_id).prop('scrollHeight')-25)
         {return true;}
@@ -374,9 +216,7 @@ function chatScrollBottom(set)
     }
     else
     {
-        $(".chat-history-table").each(function(){
-            $(this).scrollTop($(this).prop('scrollHeight'));
-        });
+        $("#chat-history-table").scrollTop($("#chat-history-table").prop('scrollHeight'));
     }
 }
 
@@ -410,19 +250,30 @@ function updateLiveElements()
             if ($("#livedata").data("chat_key") == undefined)
                 {$("#livedata").data("chat_key",d.ck);}
 
+            // chat message
             if (d.cm !== undefined && d.cm.length > 0)
             {
                 var new_chat_key = parseInt(chat_key);
                 $.each(d.cm,function(i, msg){
                     new_chat_key = Math.max(new_chat_key, parseInt(msg.message_id));
+                    // Don't show these for mobile view.
                     if ($("#chat-modal").data('chat-on') != true && $("#chat-button").is(":visible"))
                     {
-                        var text = msg.chat_name+"<br>"+msg.message_text;
-                        notice(text,'chat');
+                        var text = "<b>"+msg.chat_name+"</b><br><i>"+msg.message_text+"</i>";
+
+                        var chat_jbox = new jBox('Tooltip', {
+                            content: text,
+                            target: $("#chat-button"),
+                            width: 200,
+                            addClass: 'Tooltip-chat',
+                            stack: false
+                        });
+                        chat_jbox.open();
+                        setTimeout(function(){chat_jbox.close(); console.log('closed');},4000);
+
+                        return
                     }
                 });
-
-                console.log("New chat messages found.");
                 $("#livedata").data("chat_key",new_chat_key);
             }
 
@@ -430,35 +281,5 @@ function updateLiveElements()
         }
     });
 }
-
-// function updateNewChatIcon()
-// {
-//     if(!$('#chat-modal').is(':visible'))
-//     {
-
-//         var url = "<?=site_url('league/chat/unread')?>";
-//         $.post(url,{}, function(data){
-//             var count = parseInt(data);
-//             if (count > 0)
-//             {
-//                 $(".unread-count").text(" ("+count+")");
-//             }
-//         });
-//     }
-// }
-
-// function updateLiveIcon()
-// {
-//     var url = "<?=site_url('season/scores/live_scores')?>"
-//     $.post(url,{},function(data){
-//         if(data == "1")
-//         {
-//             $(".live-scores").removeClass('hide');
-//         }
-//         else {
-//             $(".live-scores").addClass('hide');
-//         }
-//     });
-// }
 
 </script>
