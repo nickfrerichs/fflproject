@@ -1,7 +1,6 @@
 
 <div class="row">
     <div class="columns">
-        <?php //print_r($teams); ?>
         <table class="table table-striped table condensed">
             <thead>
                 <th>Team Name</th>
@@ -17,7 +16,11 @@
                             <select class="team-notation" data-teamid="<?=$t->team_id?>">
                                 <option value='0'>None</option>
                                 <?php foreach($notations as $n): ?>
-                                    <option value="<?=$n->id?>"><?=$n->symbol.' ('.$n->text.')'?></option>
+                                    <option value="<?=$n->id?>"
+                                    <?php if($t->notation_id==$n->id): ?>
+                                        selected
+                                    <?php endif;?>
+                                    ><?=$n->symbol.' ('.$n->text.')' ?></option>
                                 <?php endforeach;?>
                             </select>
                         </td>
@@ -39,6 +42,7 @@ $(".team-notation").on('change',function(){
 
     var url = "<?=site_url('admin/standings/set_team_notation')?>";
     $.post(url,{'teamid':teamid, 'notationid':notationid}, function(data){
+        notice('Setting saved.','success')
         console.log('updated teamid '+teamid+' with '+notationid);
     });
 

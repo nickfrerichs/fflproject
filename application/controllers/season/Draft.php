@@ -142,7 +142,7 @@ class Draft extends MY_Controller{
 
     function ajax_get_update_key()
     {
-        echo $this->draft_model->get_update_key();
+        $this->draft_model->get_update_key();
     }
 
     function test()
@@ -152,6 +152,7 @@ class Draft extends MY_Controller{
 
     function stream_get_update_key()
     {
+        session_write_close();
         $count = 10;
         header("Content-Type: text/event-stream\n\n");
         header("Cache-Control: no-cache\n\n");

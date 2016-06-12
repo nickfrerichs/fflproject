@@ -3,12 +3,8 @@
 
 <div class="row">
     <div class="columns">
+        <div class="callout">
         <h5><?=$template->teams.' teams - '.$template->divisions.' divisions'?></h5>
-    </div>
-</div>
-
-<div class="row">
-    <div class="columns">
         <?=form_open(current_url())?>
         <table>
             <tr>
@@ -37,10 +33,13 @@
             </tr>
 
         </table>
-        <?=form_submit('update', 'Update info')?>
+        <input class="button small" type="submit" name="update" value="Update info"  />
         <?=form_close()?>
-
+        </div>
+        <div class="callout">
         <h5>Edit Matchups</h5>
+        <small>Use numbers to denote teams (Ex: 1, 2, 3, 4)</small>
+        <br><br>
         <?=form_open(current_url())?>
         <?php $count=0; ?>
         <div class="row">
@@ -74,7 +73,8 @@
             </div>
         <?php endfor; ?>
         </div>
-        <?=form_submit('save','Save matchups')?>
+        <input class="button small" type="submit" name="save" value="Save matchups"  />
         <?=form_close()?>
+        </div>
     </div>
 </div>

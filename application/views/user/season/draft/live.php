@@ -41,7 +41,7 @@ line-height: 60px;
 		</div>
 	</div>
 	<div class="columns medium-9 hide-for-small-only">
-		<div class="text-center"><h5><a href="<?=site_url('season/draft')?>">Recent Picks (make this open a modal)</a></h5></div>
+		<div class="text-center"><h5><a href="<?=site_url('season/draft')?>" target="_blank">Recent Picks</a></h5></div>
 
 			<table class="table-condensed">
 				<thead>
@@ -215,12 +215,6 @@ $(document).ready(function(){
 
 		$("#debug").text(e.data);
 	}
-	//setInterval(function(){
-	//	getUpdateKey();
-	//	console.log("getUpdateKey every 2000 ms");
-	//	updateBlock();
-	//}, 2000);
-
 });
 
 
@@ -340,14 +334,6 @@ function loadWatchList()
 	$(updatePlayerList("watch-list"));
 }
 
-function getUpdateKey()
-{
-	url ="<?=site_url('season/draft/ajax_get_update_key')?>";
-	$.post(url,{},function(data){
-		$("#debug").html(data);
-	});
-}
-
 function updateBlock()
 {
 	url = "<?=site_url('season/draft/ajax_get_block_info')?>";
@@ -395,7 +381,7 @@ function flash(element, fadetime)
 // 		$.post(url,{'page':page-1, 'sel_pos':pos, 'sel_sort':sort, 'search' : search }, function(data){
 // 			$("#available-players").html(data);
 //
-// 			<?php if($this->is_admin)
+// 			<?php //if($this->is_admin)
 // 			{
 // 				echo 'if($("#admin-picks").data("on")) {$(".btn-draft:contains(\"Draft\")").attr("disabled",false);}';
 // 			}

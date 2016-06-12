@@ -28,9 +28,7 @@
 		<?php endif; ?>
 	</tr>
 <?php endforeach; ?>
-<?php $high = (($page+1)*$per_page); ?>
-<?php $low = $high-($per_page-1); ?>
-<?php if($high > $total_players){$high = $total_players;}?>
+
 
 
 <tr id="draft-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$total_players?>">

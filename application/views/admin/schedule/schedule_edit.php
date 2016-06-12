@@ -8,13 +8,11 @@
 <?php //print_r($team_list);?>
 <?php //print_r($schedule); ?>
 
+
 <div class="row">
     <div class="columns">
+        <div class="callout">
         <h5> Add Games </h5>
-    </div>
-</div>
-<div class="row">
-    <div class="columns">
         <?=form_open(current_url())?>
         <table>
             <tr>
@@ -24,10 +22,15 @@
                 <td><?=form_input('week')?></td>
             </tr>
         </table>
-        <?=form_submit('add', 'Add Games')?>
+        <input class="button small" type="submit" name="add" value="Add Games"  />
         <?=form_close()?>
+    </div>
+    </div>
+</div>
 
 
+<div class="row">
+    <div class="columns">
 
         <?php // Fill arrays for dropdown options
             $team_options = array(0 => "None");
@@ -40,6 +43,7 @@
         <div class="row">
         <?php foreach ($schedule as $week_num => $week): ?>
             <div class="columns medium-12 large-6">
+                <div class="callout">
                 <table>
 
                     <strong>Week <?=$week_num?></strong>
@@ -54,11 +58,13 @@
                     </tr>
                     <?php endforeach; ?>
                 </table>
+                </div>
             </div>
 
         <?php endforeach; ?>
         </div>
-        <div><?=form_submit('save_schedule', 'Save Schedule')?></div>
+        <div><input class="button small" type="submit" name="save_schedule" value="Save Schedule"  /></div>
+
         <?=form_close()?>
     </div>
 </div>

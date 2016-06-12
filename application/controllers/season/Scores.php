@@ -85,6 +85,7 @@ class Scores extends MY_Controller{
 
     function stream_live_scores_key()
     {
+        session_write_close();
         header("Content-Type: text/event-stream\n\n");
         header("Cache-Control: no-cache\n\n");
         while(1)

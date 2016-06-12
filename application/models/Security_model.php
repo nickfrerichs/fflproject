@@ -1,14 +1,49 @@
 <?php
 
-class Security_model extends MY_Model
+class Security_model extends CI_Model
 {
-    function __construct(){
+    protected $is_owner = False;
+    protected $userid;
+    function __construct()
+    {
         parent::__construct();
+
+        // Initialize flexi auth (lite)
+        $this->auth = new stdClass;
+        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+
         $this->site_settings = $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id')
             ->from('site_settings')->get()->row();
+        $this->userid = $this->flexi_auth->get_user_id();
+        if ($this->db->from('owner')->where('user_accounts_id',$this->userid)->count_all_results() > 0)
+            $this->is_owner = True;
     }
 
     function set_session_variables()
+    {
+        // Set owner session variables (accounts that are in a league)
+        $this->session->set_userdata('is_owner',$this->is_owner);
+        if ($this->is_owner)
+        {
+            $this->set_owner_session_variables();
+            $this->set_dynamic_session_variables();
+        }
+
+        // Set debug session variable
+        if ($this->site_settings->debug_user)
+            $this->session->set_userdata('debug',True);
+        elseif($this->site_settings->debug_admin && $this->flexi_auth->is_admin())
+            $this->session->set_userdata('debug',True);
+        else
+            $this->session->set_userdata('debug',False);
+
+        $this->session->set_userdata('site_name', $this->site_settings->name);
+        $this->session->set_userdata('is_site_admin',$this->flexi_auth->is_admin());
+
+        $this->session->set_userdata('CI_VERSION',CI_VERSION);
+    }
+
+    function set_owner_session_variables()
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
                 ->select('team.id as team_id, team_name, owner.active_league, team.active, league.league_name, league.season_year')
@@ -19,34 +54,22 @@ class Security_model extends MY_Model
                 ->join('league_settings','league_settings.league_id = owner.active_league','left')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
 
-        // Set debug session variable
-        if ($this->site_settings->debug_user)
-            $this->session->set_userdata('debug',True);
-        elseif($this->site_settings->debug_admin && $this->flexi_auth->is_admin())
-            $this->session->set_userdata('debug',True);
-        else
-            $this->session->set_userdata('debug',False);
-
-        if (isset($owner))
-        {
-            $this->session->set_userdata('owner_id', $owner->owner_id);
-            $this->session->set_userdata('league_id', $owner->active_league);
-            $this->session->set_userdata('team_id', $owner->team_id);
-            $this->session->set_userdata('team_name', $owner->team_name);
-            $this->session->set_userdata('first_name', $owner->first_name);
-            $this->session->set_userdata('last_name', $owner->last_name);
-            $this->session->set_userdata('league_name', $owner->league_name);
-            $this->session->set_userdata('offseason', $owner->offseason);
-        }
-        $this->session->set_userdata('site_name', $this->site_settings->name);
-        $this->session->set_userdata('is_site_admin',$this->flexi_auth->is_admin());
-        $this->session->set_userdata('CI_VERSION',CI_VERSION);
+        $this->session->set_userdata('owner_id', $owner->owner_id);
+        $this->session->set_userdata('league_id', $owner->active_league);
+        $this->session->set_userdata('team_id', $owner->team_id);
+        $this->session->set_userdata('team_name', $owner->team_name);
+        $this->session->set_userdata('first_name', $owner->first_name);
+        $this->session->set_userdata('last_name', $owner->last_name);
+        $this->session->set_userdata('league_name', $owner->league_name);
+        $this->session->set_userdata('offseason', $owner->offseason);
 
         if ($this->db->from('league_admin')->where('league_id',$owner->active_league)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)
             $this->session->set_userdata('is_league_admin', True);
         else
             $this->session->set_userdata('is_league_admin', False);
 
+        $week_type = $this->db->select('nfl_season')->from('league_settings')->where('league_id',$this->session->userdata('league_id'))->get()->row()->nfl_season;
+        $this->session->set_userdata('week_type', $week_type);
 
         $this->load->model('league/chat_model');
 
@@ -58,15 +81,7 @@ class Security_model extends MY_Model
             $chatname = $owner->first_name;
         $this->session->set_userdata('chat_name',$chatname);
 
-        $week_type = $this->db->select('nfl_season')->from('league_settings')->where('league_id',$this->session->userdata('league_id'))->get()->row()->nfl_season;
-        $this->session->set_userdata('week_type', $week_type);
-
         $this->load_leagues($this->session->userdata('owner_id'));
-
-        $this->set_dynamic_session_variables();
-
-        // can this go away?
-        // $this->load->model('myteam/myteam_settings_model');
 
     }
 
@@ -74,28 +89,30 @@ class Security_model extends MY_Model
     // every page load.
     function set_dynamic_session_variables()
     {
-        $week_year = $this->get_current_week();
-        if ($this->site_settings->debug_week == -1)
-            $this->session->set_userdata('current_week', $week_year->week);
-        else
+        if($this->session->userdata('is_owner'))
         {
-            $this->session->set_userdata('current_week', $this->site_settings->debug_week);
-            $this->session->set_userdata('debug_week', True);
+            $week_year = $this->get_current_week();
+            if ($this->site_settings->debug_week == -1)
+                $this->session->set_userdata('current_week', $week_year->week);
+            else
+            {
+                $this->session->set_userdata('current_week', $this->site_settings->debug_week);
+                $this->session->set_userdata('debug_week', True);
+            }
+
+            if ($this->site_settings->debug_year == -1)
+                $this->session->set_userdata('current_year', $week_year->year);
+            else
+            {
+                $this->session->set_userdata('current_year', $this->site_settings->debug_year);
+                $this->session->set_userdata('debug_year', True);
+            }
+
+            $this->session->set_userdata('expire_dynamic_vars',time()+60); // Make sure to check dynamic vars every 1 mins.
+            $this->session->set_userdata('live_scores',$this->live_scores_on());
+
+            $this->set_user_messages();
         }
-
-        if ($this->site_settings->debug_year == -1)
-            $this->session->set_userdata('current_year', $week_year->year);
-        else
-        {
-            $this->session->set_userdata('current_year', $this->site_settings->debug_year);
-            $this->session->set_userdata('debug_year', True);
-        }
-
-        $this->session->set_userdata('expire_dynamic_vars',time()+60); // Make sure to check dynamic vars every 1 mins.
-        $this->session->set_userdata('live_scores',$this->live_scores_on());
-
-        $this->set_user_messages();
-
     }
 
     function set_user_messages()
@@ -104,7 +121,7 @@ class Security_model extends MY_Model
         $messages = array();
 
         // Check for unread messages.
-        $msgs = $this->db->from('message')->where('team_id',$this->teamid)->where('read',0)->count_all_results();
+        $msgs = $this->db->from('message')->where('team_id',$this->session->userdata('teamid'))->where('read',0)->count_all_results();
         if ( $msgs > 0)
         {
             if ($msgs == 1)
@@ -112,7 +129,7 @@ class Security_model extends MY_Model
             else
                 $note = "You have ".$msgs." new messages.";
             $date = $this->db->select('unix_timestamp(max(message_date)) as message_date')->from('message')
-                ->where('team_id',$this->teamid)->where('read',0)->get()->row()->message_date;
+                ->where('team_id',$this->session->userdata('teamid'))->where('read',0)->get()->row()->message_date;
             $messages[] = array('class'=>'primary',
                                 'message'=> $note.
                                             '<br><a href="'.site_url('myteam/messages').'">Go to your Inbox</a>',
@@ -125,8 +142,8 @@ class Security_model extends MY_Model
     {
         $num = $this->db->from('nfl_live_game')->join('nfl_week_type','nfl_week_type.id = nfl_live_game.nfl_week_type_id')
             ->where('nfl_week_type.text_id',$this->session->userdata('week_type'))
-            ->where('year',$this->current_year)->where('week',$this->current_week)->not_like('quarter','final')
-            ->count_all_results();
+            ->where('year',$this->session->userdata('current_year'))->where('week',$this->session->userdata('current_week'))
+            ->not_like('quarter','final')->count_all_results();
 
         if ($num > 0)
             return True;

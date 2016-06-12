@@ -81,39 +81,44 @@ class Security_model extends MY_Model
         # id: can be whatever you want, but it should be unique site-wide vs all css classes
 
         $messages = array();
-        if (!$this->max_teams_set() && $this->leagueid != 0)
+        // Messages for league admin (is_owner)
+        if ($this->session->userdata('is_owner'))
         {
-            $messages[] = array('class'=>'warning',
-                                'message'=>'Max active teams is set to 0. '.
-                                            '<br><a href="'.site_url('admin/leaguesettings').'">Manage League Settings</a>',
-                                'id'=>'msg_admin_no_max_teams');
-        }
+            if (!$this->max_teams_set() && $this->leagueid != 0)
+            {
+                $messages[] = array('class'=>'warning',
+                                    'message'=>'Max active teams is set to 0. '.
+                                                '<br><a href="'.site_url('admin/leaguesettings').'">Manage League Settings</a>',
+                                    'id'=>'msg_admin_no_max_teams');
+            }
 
-        if (!$this->max_roster_set() && $this->leagueid != 0)
-        {
-            $messages[] = array('class'=>'warning',
-                                'message'=>'Roster max is set to 0. '.
-                                            '<br><a href="'.site_url('admin/leaguesettings').'">Manage League Settings</a>',
-                                'id'=>'msg_admin_no_max_roster');
-        }
+            if (!$this->max_roster_set() && $this->leagueid != 0)
+            {
+                $messages[] = array('class'=>'warning',
+                                    'message'=>'Roster max is set to 0. '.
+                                                '<br><a href="'.site_url('admin/leaguesettings').'">Manage League Settings</a>',
+                                    'id'=>'msg_admin_no_max_roster');
+            }
 
-        if (!$this->positions_defined() && $this->leagueid != 0)
-        {
-            $messages[] = array('class'=>'warning',
-                                'message'=>'You have no positions defined for your league. '.
-                                            '<br><a href="'.site_url('admin/positions').'">Manage League Positions</a>',
-                                'id'=>'msg_admin_no_pos');
-        }
+            if (!$this->positions_defined() && $this->leagueid != 0)
+            {
+                $messages[] = array('class'=>'warning',
+                                    'message'=>'You have no positions defined for your league. '.
+                                                '<br><a href="'.site_url('admin/positions').'">Manage League Positions</a>',
+                                    'id'=>'msg_admin_no_pos');
+            }
 
-        if (!$this->scoring_defs_defined() && $this->leagueid != 0)
-        {
-            $id = "msg_admin_no_scoring_defs";
-            $messages[] = array('class'=>'warning',
-                                'message'=>'You have no scoring definitions defined for your league.'.
-                                            '<br><a href="'.site_url('admin/scoring').'" data-ackurl="'.
-                                            site_url('common/message_ack/'.$id).'" class="_message-close">Manage Scoring Definitions</a>',
-                                'id' => $id);
-        }
+            if (!$this->scoring_defs_defined() && $this->leagueid != 0)
+            {
+                $id = "msg_admin_no_scoring_defs";
+                $messages[] = array('class'=>'warning',
+                                    'message'=>'You have no scoring definitions defined for your league.'.
+                                                '<br><a href="'.site_url('admin/scoring').'" data-ackurl="'.
+                                                site_url('common/message_ack/'.$id).'" class="_message-close">Manage Scoring Definitions</a>',
+                                    'id' => $id);
+            }
+
+            }
         return $messages;
 
     }

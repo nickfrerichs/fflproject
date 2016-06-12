@@ -10,7 +10,7 @@ class Joinleague extends CI_Controller{
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->load->model('common/common_noauth_model');
 
-        if ((1==0) && (!$this->input->is_ajax_request()) && $this->flexi_auth->is_admin())
+        if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
@@ -45,7 +45,7 @@ class Joinleague extends CI_Controller{
         }
         else
         {
-            redirect('user/joinleague/'.$mask_id.'/'.$code);
+            redirect('user/joinleague/'.$mask_id);
         }
     }
 }

@@ -1571,7 +1571,7 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 					return FALSE;
 				}
 			}
-
+//Tried here
 			// Check whether account has been activated.
 			if ($user->{$this->auth->database_config['user_acc']['columns']['active']} == 0)
 			{
@@ -1598,6 +1598,7 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 				// Set user login sessions.
 				if ($this->set_login_sessions($user, TRUE))
 				{
+
 					// Set 'Remember me' cookie and database record if checked by user.
 					if ($remember_user)
 					{
@@ -1692,6 +1693,7 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 				// Extend 'Remember me' if defined by config file.
 				if ($this->auth->auth_security['extend_cookies_on_login'])
 				{
+
 					$this->remember_user($user->{$this->auth->database_config['user_acc']['columns']['id']});
 				}
 				return TRUE;
@@ -2330,7 +2332,7 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 	{
 		// This is targeting a native CodeIgniter cookie, not a flexi_auth cookie.
 		$ci_session = array(
-			'name'   => $this->config->item('sess_cookie_name'),
+			'name'   => $this->config->item('sess_save_path'),
 			'value'  => '',
 			'expire' => ''
 		);

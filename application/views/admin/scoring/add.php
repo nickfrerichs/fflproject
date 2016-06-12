@@ -9,9 +9,9 @@ function SetStatID(stat_id) {
         <h5><?=$this->session->userdata('current_year')?> Season</h5>
     </div>
 </div>
-<div class="row">
-    <div class="columns">
-        <a href="<?=site_url('admin/scoring')?>">Done</a>
+<div class="row align-center">
+    <div class="columns" style="max-width: 800px;">
+        <h5><a href="<?=site_url('admin/scoring')?>">Done</a></h5>
         <table class="table table-condensed table-striped">
             <tr>
                 <td>
@@ -43,7 +43,7 @@ function SetStatID(stat_id) {
             <?php endif; ?>
                 <tr>
                     <td><?=$cat->long_text?></td>
-                    <td><?=form_submit($cat->id,"Add",'onClick="SetStatID('.$cat->id.');"')?></td>
+                    <td><input class="button small" type="submit" name="1" value="Add"  onClick="SetStatID(<?=$cat->id?>);" /></td>
                 </tr>
             <?php endforeach; ?>
         </table>

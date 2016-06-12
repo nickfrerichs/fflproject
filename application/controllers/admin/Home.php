@@ -8,7 +8,8 @@ class Home extends MY_Admin_Controller
         parent::__construct();
         $this->load->model('admin/site_model');
 
-        $this->bc["Admin"] = "";    }
+        $this->bc["Admin"] = "";
+	}
 
     function index()
     {

@@ -57,7 +57,7 @@ class Divisions extends MY_Admin_Controller{
         {
             $div_name = $this->input->post('name');
             $this->divisions_model->add_division($div_name);
-            redirect(site_url('admin/divisions'));
+            redirect(site_url('admin/divisions/manage'));
         }
         $divisions = $this->divisions_model->get_league_divisions();
         $this->load->helper('form');
@@ -69,7 +69,7 @@ class Divisions extends MY_Admin_Controller{
     function delete($id)
     {
         $this->divisions_model->delete_division($id);
-        //redirect('admin/divisions');
+        redirect('admin/divisions/manage');
     }
 
 

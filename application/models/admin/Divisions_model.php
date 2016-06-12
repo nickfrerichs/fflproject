@@ -43,8 +43,7 @@ class Divisions_model extends MY_Model{
     function delete_division($id)
     {
         $this->db->where('league_id', $this->leagueid)
-                ->where('division_id', $id)
-                ->update('team', array('division_id' => 0));
+                ->where('division_id', $id)->delete('team_division');
 
         $this->db->where('id',$id)->delete('division');
     }

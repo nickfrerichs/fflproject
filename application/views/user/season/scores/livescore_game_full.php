@@ -1,6 +1,6 @@
-<div class="row table-border">
-    <div class="col-sm-6">
-    <table class='table table-striped table-condensed'>
+<div class="row align-center">
+    <div class="small-6">
+    <table class=''>
         <thead>
             <th colspan=2 style="font-size:1.5em;">
                 <?php if($g['home_team']['team']->id == 0):?>
@@ -18,8 +18,8 @@
         </tbody>
     </table>
     </div>
-    <div class="col-sm-6">
-        <table class='table table-striped table-condensed'>
+    <div class="small-6">
+        <table class=''>
             <thead>
                 <th colspan=2 style="font-size:1.5em;">
                     <?php if($g['away_team']['team']->id == 0):?>

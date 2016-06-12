@@ -39,7 +39,7 @@
     <div class="columns">
         <table>
             <thead>
-                <th>Week</th><th>Amount</th><th>Score</th><th></th><th>Team</th><th>Owner</th>
+                <th>Week</th><th>Amount</th><th>Score</th><th></th><th>Desc.</th><th>Team</th><th>Owner</th>
             </thead>
             <tbody>
                 <?php foreach($list as $l): ?>
@@ -47,7 +47,12 @@
                         <td><?=$l->week?></td>
                         <td>$<?=number_format($l->amount,2)?></td>
                         <td><?=$l->team_score?></td>
-                        <td><?=$l->short_text?></td>
+                        <td><?=$l->team_score?></td>
+                        <?php if($l->text != ""):?>
+                            <td><span data-tooltip class="has-tip top" title="<?=$l->text?>"><?=$l->short_text?></span></td>
+                        <?php else: ?>
+                            <td><?=$l->short_text?></td>
+                        <?php endif;?>
                         <td><?=$l->team_name?></td>
                         <td style="font-size:.9em;"><?=$l->first_name.' '.$l->last_name?></td>
                     </tr>

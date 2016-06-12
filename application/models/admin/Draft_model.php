@@ -75,30 +75,33 @@ class Draft_model extends MY_Model
     		->get()->result();
     }
 
-    function save_draft_options($draft_time, $pick)
+    function save_draft_options($draft_time, $limit)
     {
+        $data = array();
+        if ($draft_time != false)
+        {
+            $data['draft_start_time'] = $draft_time;
+            $data['scheduled_draft_start_time'] = $draft_time;
+        }
+
+        if ($limit != false)
+            $data['draft_time_limit'] = $limit;
+
+        $data['draft_paused'] = 0;
+        $data['draft_update_key'] = 0;
+        $data['draft_team_id'] = 0;
+        $data['draft_pick_id'] = 0;
+
         if($this->db->select('id')->from('league_settings')->where('league_id',$this->leagueid)->get()->num_rows() > 0)
         {
             $this->db->where('league_id',$this->leagueid);
-            $this->db->update('league_settings',array('draft_time_limit' => $pick,
-                                                      'draft_start_time' => $draft_time,
-                                                      'scheduled_draft_start_time' => $draft_time,
-                                                      'draft_paused' => 0,
-                                                      'draft_update_key' => 0,
-                                                      'draft_team_id' => 0,
-                                                      'draft_pick_id' => 0));
+            $this->db->update('league_settings',$data);
 
         }
         else
         {
-            $this->db->insert('league_settings', array('draft_time_limit' => $pick,
-                                                       'draft_start_time' => $draft_time,
-                                                       'scheduled_draft_start_time' => $draft_time,
-                                                       'draft_paused' => 0,
-                                                       'league_id' => $this->leagueid,
-                                                       'draft_update_key' => 0,
-                                                       'draft_team_id' => 0,
-                                                       'draft_pick_id' => 0));
+            $data['league_id'] = $this->leagueid;
+            $this->db->insert('league_settings', $data());
         }
     }
 
@@ -128,7 +131,11 @@ class Draft_model extends MY_Model
     }
 
 
-
+    function get_draft_settings()
+    {
+        return $this->db->select('draft_time_limit, draft_start_time, scheduled_draft_start_time')->from('league_settings')
+            ->where('league_id',$this->leagueid)->get()->row();
+    }
 
 
 

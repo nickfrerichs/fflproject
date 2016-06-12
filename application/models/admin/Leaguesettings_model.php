@@ -2,11 +2,14 @@
 
 class Leaguesettings_model extends MY_Model{
 
-    function get_league_settings_data($leagueid)
+    function get_league_settings_data($leagueid=0)
     {
+        if ($leagueid == 0)
+            $leagueid = $this->leagueid;
         return $this->db->select('s.max_teams, s.roster_max, s.shared_player_pool, s.join_password, s.nfl_season,')
             ->select('s.twitter_consumer_token, s.twitter_consumer_secret, s.twitter_access_token, s.twitter_access_secret')
-            ->select('s.twitter_player_moves, s.twitter_chat_updates, league.league_name, s.offseason')
+            ->select('s.twitter_player_moves, s.twitter_chat_updates, league.league_name, s.offseason, s.waiver_wire_deadline')
+            ->select('s.trade_deadline, s.waiver_wire_clear_time')
             ->from('league')->join('league_settings as s','s.league_id = league.id')
             ->where('league.id',$leagueid)
             ->get()->row();
@@ -24,15 +27,20 @@ class Leaguesettings_model extends MY_Model{
         return $val;
     }
 
-    function change_setting($leagueid, $type, $value)
+    function change_setting($leagueid=0, $type, $value)
     {
+        if ($leagueid == 0 || !$leagueid)
+            $leagueid = $this->leagueid;
         $lookup = array('maxteams' => 'max_teams',
               'rostermax' => 'roster_max',
               'joinpassword' => 'join_password',
               'consumertoken' => 'twitter_consumer_token',
               'consumersecret' => 'twitter_consumer_secret',
               'accesstoken' => 'twitter_access_token',
-              'accesssecret' => 'twitter_access_secret');
+              'accesssecret' => 'twitter_access_secret',
+              'wwdeadline' => 'waiver_wire_deadline',
+              'wwcleartime' => 'waiver_wire_clear_time',
+              'tdeadline' => 'trade_deadline');
 
         $this->db->where('league_id',$leagueid);
         $this->db->update('league_settings', array($lookup[$type] => $value));

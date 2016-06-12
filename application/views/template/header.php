@@ -59,6 +59,9 @@
                   </ul>
               </li>
             <?php endforeach; ?>
+            <li class="show-for-small-only">
+                <a href="<?=site_url('auth/logout')?>">Logoff</a>
+            </li>
         </ul>
     </div>
     <div class="align-right columns shrink">
@@ -66,14 +69,14 @@
                 <button id="chat-button" class="button chat-button show-for-medium">chat<span class="unread-count"></span></button>
         <?php endif;?>
     </div>
+    <div class="hide-for-small-only">
+        <a href="<?=site_url('auth/logout')?>"><i class="fi-power columns"></i></a>
     </div>
 </div>
-
 
 <?php if($this->session->userdata('league_id')): ?>
 
 <div id="chat-modal" hidden>
-
     <div id="chat-history-table" class="chat-history-table">
         <table>
             <tbody id="chat-history-ajax" class="chat-history-ajax">
@@ -83,19 +86,17 @@
     <div>
         <textarea id="chat-message" rows="1" placeholder="You put your trash talk in here..."></textarea>
     </div>
-
-</button>
 </div>
-
-
 <?php endif;?>
 
 <div id="livedata" class="hide">
 </div>
 
 <script>
+
+<?php if($this->session->userdata('league_id')): ?>
 //
-// CHAT BOX STUFF
+// CHAT BOX STUFF, only load if league_id is set
 //
 $(function() {
     // Check every Xs to see some things were updated.
@@ -230,7 +231,9 @@ function updateLiveElements()
     if (last_check_in !== undefined){url +=("/"+last_check_in);}
 
     $.post(url,{'last_chat_key':chat_key},function(data){
-
+        <?php if($this->session->userdata('debug')): ?>
+            console.log(data);
+        <?php endif; ?>
         d = $.parseJSON(data);
 
         if (parseInt(d.T) > 1)
@@ -281,5 +284,6 @@ function updateLiveElements()
         }
     });
 }
+<?php endif;?>
 
 </script>

@@ -18,6 +18,6 @@
 		    </tr>
 		    <?php endforeach; ?>
 		</table>
-		<?=form_submit('save','Save')?>
+		<input class="button small" type="submit" name="save" value="Save"  />
 	</div>
 </div>

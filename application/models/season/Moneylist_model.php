@@ -22,11 +22,11 @@ class Moneylist_model extends MY_Model{
 
     function get_moneylist()
     {
-        return $this->db->select('money_list.week, money_list.amount, money_list_type.short_text')
-            ->select('team_name, owner.first_name, owner.last_name')
+        return $this->db->select('money_list.week, money_list.amount, IFNULL(money_list_type.short_text,"Misc") as short_text')
+            ->select('team_name, owner.first_name, owner.last_name, money_list.text')
             ->select('schedule_result.team_score')
             ->from('money_list')
-            ->join('money_list_type','money_list_type.id = money_list.type_id')
+            ->join('money_list_type','money_list_type.id = money_list.type_id','left')
             ->join('team','team.id = money_list.team_id')
             ->join('owner','owner.id = team.owner_id')
             ->join('schedule_result','schedule_result.team_id = money_list.team_id and schedule_result.year = money_list.year '

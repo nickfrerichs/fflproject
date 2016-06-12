@@ -1,1 +1,1 @@
-<?php print_r($team); ?>
+<?php //print_r($team); ?>

@@ -33,19 +33,29 @@ class MY_Controller extends CI_Controller{
         }
         //Load session variables
         $this->userid = $this->session->userdata('user_id');
-        $this->leagueid = $this->session->userdata('league_id');
-        $this->teamid = $this->session->userdata('team_id');
-        $this->ownerid = $this->session->userdata('owner_id');
-        $this->team_name = $this->session->userdata('team_name');
-        $this->current_year = $this->session->userdata('current_year');
-        $this->current_week = $this->session->userdata('current_week');
-        $this->week_type = $this->session->userdata('week_type');
-        $this->league_name = $this->session->userdata('league_name');
         $this->is_site_admin = $this->session->userdata('is_site_admin');
         $this->is_league_admin = $this->session->userdata('is_league_admin');
-        $this->offseason = $this->session->userdata('offseason');
         $this->debug = $this->session->userdata('debug');
 
+        // Owner specific session variables
+        if ($this->session->userdata('is_owner'))
+        {
+            $this->leagueid = $this->session->userdata('league_id');
+            $this->teamid = $this->session->userdata('team_id');
+            $this->ownerid = $this->session->userdata('owner_id');
+            $this->team_name = $this->session->userdata('team_name');
+            $this->current_year = $this->session->userdata('current_year');
+            $this->current_week = $this->session->userdata('current_week');
+            $this->week_type = $this->session->userdata('week_type');
+            $this->league_name = $this->session->userdata('league_name');
+            $this->offseason = $this->session->userdata('offseason');
+        }
+        elseif ($this->is_site_admin)
+        {
+            redirect('admin');
+        }
+
+        // Breadcrumbs
         $this->bc = array();
 
         // This is to make sure the user session gets these vars if so much time has passed
@@ -61,9 +71,12 @@ class MY_Controller extends CI_Controller{
     function user_view($viewname, $d=null)
     {
         $this->load->model('menu_model');
+
         $d['menu_items'] = $this->menu_model->get_menu_items_data();
+
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
+
         $d['_messages'] = $this->common_model->get_user_messages();
         $this->load->view('template/user_init', $d);
     }
@@ -77,15 +90,18 @@ class MY_Admin_Controller extends CI_Controller{
     {
         parent::__construct();
 
-        $this->current_year = $this->session->userdata('current_year');
-        $this->current_week = $this->session->userdata('current_week');
-
+        if ($this->session->userdata('is_owner'))
+        {
+            $this->current_year = $this->session->userdata('current_year');
+            $this->current_week = $this->session->userdata('current_week');
+            $this->league_name = $this->session->userdata('league_name');
+        }
+        $this->is_league_admin = $this->session->userdata('is_league_admin');
         // Initialize flexi auth (lite)
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->is_admin = $this->flexi_auth->is_admin();
-        $this->league_name = $this->session->userdata('league_name');
-        $this->is_league_admin = $this->session->userdata('is_league_admin');
+
         $this->bc = array();
 
         // Turn debugging on, if enabled.

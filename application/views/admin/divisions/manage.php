@@ -13,7 +13,7 @@
             </tr>
             <tr>
                 <td colspan=2>
-                    <?=form_submit('add','Add')?>
+                    <input class="button small" type="submit" name="add" value="Add"  />
                 </td>
             </tr>
 

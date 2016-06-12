@@ -3,11 +3,14 @@ class Common_model extends CI_Model{
 
     function __construct(){
         parent::__construct();
-        $this->teamid = $this->session->userdata('team_id');
-        $this->current_year = $this->session->userdata('current_year');
-        $this->current_week = $this->session->userdata('current_week');
-        $this->current_weektype = $this->session->userdata('week_type');
-        $this->leagueid = $this->session->userdata('league_id');
+        if ($this->session->userdata('is_owner'))
+        {
+            $this->teamid = $this->session->userdata('team_id');
+            $this->current_year = $this->session->userdata('current_year');
+            $this->current_week = $this->session->userdata('current_week');
+            $this->current_weektype = $this->session->userdata('week_type');
+            $this->leagueid = $this->session->userdata('league_id');
+        }
     }
 
     function player_game_start_time($playerid)

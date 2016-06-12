@@ -1,16 +1,12 @@
 <?php
 
 class Player_search_model extends CI_Model{
+    function __construct(){
+        parent::__construct();
+        $this->leagueid = $this->session->userdata('league_id');
+    }
 
     protected $leagueid;
-
-    // Methods for admin functions
-    function __construct()
-    {
-        $this->leagueid = $this->session->userdata('league_id');
-        $this->current_year = $this->session->userdata['current_year'];
-        $this->load->model('common/common_model');
-    }
 
     // This is the swiss army knife method for getting a list of league players, works for various needs
     function get_nfl_players($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',
@@ -35,7 +31,7 @@ class Player_search_model extends CI_Model{
                 ->select('nfl_team.club_id')
                 ->select('team.team_name')
                 ->from('player')
-                ->join('fantasy_statistic','fantasy_statistic.player_id = player.id and fantasy_statistic.year = '.$this->current_year.
+                ->join('fantasy_statistic','fantasy_statistic.player_id = player.id and fantasy_statistic.year = '.$this->session->userdata('current_year').
                         ' and fantasy_statistic.league_id = '.$this->leagueid,'left')
                 ->join('nfl_team', 'nfl_team.id = player.nfl_team_id')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id')

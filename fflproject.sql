@@ -382,7 +382,7 @@ CREATE TABLE `menu_item` (
   `hide` tinyint(1) NOT NULL,
   `show_noleague` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -391,7 +391,7 @@ CREATE TABLE `menu_item` (
 
 LOCK TABLES `menu_item` WRITE;
 /*!40000 ALTER TABLE `menu_item` DISABLE KEYS */;
-INSERT INTO `menu_item` VALUES (1,1,'Roster','myteam/roster',0,0,0),(2,2,'Weekly Scores','season/scores',0,0,0),(3,1,'Logout','auth/logout',7,0,1),(4,2,'Standings','season/standings',2,0,0),(5,3,'News','league/news',0,0,0),(6,4,'Teams','admin/teams',1,0,0),(7,5,'Owners','admin/owners',1,0,0),(8,5,'Positions','admin/positions',2,0,0),(9,5,'Scoring','admin/scoring',3,0,0),(10,4,'Schedule','admin/schedule',4,0,0),(11,5,'Divisions','admin/divisions',5,0,0),(12,1,'Waiver Wire','myteam/waiverwire',1,0,0),(13,2,'Schedule','season/schedule',1,0,0),(14,1,'Trade','myteam/trade',3,0,0),(15,1,'Messages','myteam/messages',5,0,0),(16,3,'Players','league/players',1,0,0),(17,3,'History','league/history',3,0,0),(18,2,'Post Season','season/postseason',4,0,0),(19,2,'Money List','season/moneylist',3,0,0),(20,3,'Rules','league/rules',4,0,0),(21,2,'Draft','season/draft',5,0,0),(22,4,'Draft','admin/draft',5,0,0),(23,1,'Settings','myteam/settings',6,0,0),(24,3,'Teams','league/teams',2,0,0),(25,7,'Playoffs','admin/content/view/playoffs',1,0,0),(26,4,'Standings Notation','admin/standings',2,0,0),(27,4,'Money List','admin/moneylist',3,0,0),(28,8,'Manage Leagues','admin/site/manage_leagues',1,0,1),(29,5,'Settings','admin/leaguesettings',7,0,0),(30,7,'News','admin/content/view/news',2,0,0),(31,8,'Settings','admin/site/settings',2,0,1),(32,5,'Schedule Templates','admin/schedule_templates',6,0,0),(33,4,'End *season_year* Season','admin/end_season',6,0,0);
+INSERT INTO `menu_item` VALUES (1,1,'Roster','myteam/roster',0,0,0),(2,2,'Weekly Scores','season/scores',0,0,0),(3,1,'Logout','auth/logout',5,0,1),(4,2,'Standings','season/standings',2,0,0),(5,3,'News','league/news',0,0,0),(6,4,'Teams','admin/teams',1,0,0),(7,5,'Owners','admin/owners',1,0,0),(8,5,'Positions','admin/positions',2,0,0),(9,5,'Scoring','admin/scoring',3,0,0),(10,4,'Schedule','admin/schedule',4,0,0),(11,5,'Divisions','admin/divisions',4,0,0),(12,1,'Waiver Wire','myteam/waiverwire',1,0,0),(13,2,'Schedule','season/schedule',1,0,0),(14,1,'Trade','myteam/trade',2,0,0),(15,1,'Messages','myteam/messages',3,0,0),(16,3,'Players','league/players',1,0,0),(17,3,'History','league/history',3,0,0),(18,2,'Post Season','season/postseason',4,0,0),(19,2,'Money List','season/moneylist',3,0,0),(20,3,'Rules','league/rules',4,0,0),(21,2,'Draft','season/draft',5,0,0),(22,4,'Draft','admin/draft',6,0,0),(23,1,'Settings','myteam/settings',4,0,0),(24,3,'Teams','league/teams',2,0,0),(25,7,'Playoffs','admin/content/view/playoffs',1,0,0),(26,4,'Standings Notation','admin/standings',2,0,0),(27,4,'Money List','admin/moneylist',3,0,0),(28,8,'Manage Leagues','admin/site/manage_leagues',1,0,1),(29,5,'Settings','admin/leaguesettings',6,0,0),(30,7,'News','admin/content/view/news',2,0,0),(31,8,'Settings','admin/site/settings',2,0,1),(32,5,'Schedule Templates','admin/schedule_templates',5,0,0),(33,4,'End *season_year* Season','admin/end_season',7,0,0),(34,4,'Waiver Wire / Trades','admin/transactions',5,0,0);
 /*!40000 ALTER TABLE `menu_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -464,7 +464,7 @@ DROP TABLE IF EXISTS `money_list_type`;
 CREATE TABLE `money_list_type` (
   `id` int(11) NOT NULL,
   `short_text` varchar(100) NOT NULL,
-  `desription` varchar(500) NOT NULL,
+  `description` varchar(500) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1612,4 +1612,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-06-06 23:07:55
+-- Dump completed on 2016-06-12 16:06:56

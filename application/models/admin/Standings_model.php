@@ -44,7 +44,7 @@ class Standings_model extends MY_Model{
     function get_league_team_data()
     {
         return $this->db->select('team.team_name,owner.first_name,owner.last_name, team.id as team_id')
-            ->select('standings_notation_team.id as notation_id, ifnull(standings_notation_def.symbol,"none") as notation_symbol',false)
+            ->select('standings_notation_team.standings_notation_def_id as notation_id, ifnull(standings_notation_def.symbol,"none") as notation_symbol',false)
             ->select('standings_notation_def.text as notation_text')
             ->from('team')->join('owner','owner.id = team.owner_id')
             ->join('standings_notation_team','standings_notation_team.team_id = team.id and standings_notation_team.year = '.$this->current_year,'left')

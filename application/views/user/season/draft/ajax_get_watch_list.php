@@ -2,12 +2,15 @@
 	<tr><td class="text-center" style="padding-top:160px; padding-bottom:160px;">You aren't watching any players</td></tr>
 <?php else: ?>
 <?php foreach ($players as $key => $p): ?>
-	<?php if($key == 0): ?>
-		<tr class="aup-<?=$p->id?> adown-<?=$players[$key+1]->id?>">
-	<?php elseif($key+1 == count($players)): ?>
-		<tr class="adown-<?=$p->id?> aup-<?=$players[$key-1]->id?>">
+	<?php if (array_key_exists($key+1, $players)){$dn_id = $players[$key+1]->id;}else{$dn_id = "";} ?>
+	<?php if (array_key_exists($key-1, $players)){$up_id = $players[$key-1]->id;}else{$up_id = "";} ?>
+
+	<?php if($key == 0 && array_key_exists($key+1, $players)): ?>
+		<tr class="aup-<?=$p->id?> adown-<?=$dn_id?>">
+	<?php elseif(array_key_exists($key+1, $players) && $key+1 == count($players)): ?>
+		<tr class="adown-<?=$p->id?> aup-<?=$up_id?>">
 	<?php else:?>
-		<tr class="aup-<?=$p->id?> adown-<?=$p->id?> aup-<?=$players[$key-1]->id?> adown-<?=$players[$key+1]->id?>">
+		<tr class="aup-<?=$p->id?> adown-<?=$p->id?> aup-<?=$up_id?> adown-<?=$dn_id?>">
 	<?php endif;?>
 		<td class="text-center">
 			<?=$p->order?>

@@ -10,10 +10,11 @@
 	<br>
 	<div class="row">
 		<?php foreach ($schedule as $week_num => $week): ?>
-		<div class="columns medium-6 small-12">
-			<div><strong>Week <?=$week_num?></strong></div>
+		<div class="columns large-6 medium-12 small-12">
+			<div class="callout">
+			<h5 class="text-center">Week <?=$week_num?></h5>
 			<table class="">
-			    <th>Home</th><th></th><th>Away</th><th>Game Type</th>
+			    <th width=34%>Home</th><th width=10%></th><th width=34%>Away</th><th width=20%>Game Type</th>
 			    <?php foreach ($week as $game):?>
 
 			    <tr>
@@ -24,6 +25,7 @@
 			    </tr>
 			    <?php endforeach; ?>
 			</table>
+		</div>
 		</div>
 		<?php endforeach; ?>
 	</div>

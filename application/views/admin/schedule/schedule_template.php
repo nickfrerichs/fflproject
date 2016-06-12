@@ -60,7 +60,7 @@
             </tr>
 
         </table>
-        <?=form_submit('create', 'Create')?>
+        <input class="button small" type="submit" name="create" value="Create"  />
         <?=form_close()?>
 </div>
 </div>

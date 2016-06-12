@@ -25,5 +25,12 @@ class Common_noauth_model extends CI_Model{
             return true;
         return false;
     }
+
+    function valid_mask($maskid)
+    {
+        if ($this->db->from('league')->where('mask_id',$maskid)->count_all_results() > 0)
+            return True;
+        return False;
+    }
 }
 ?>

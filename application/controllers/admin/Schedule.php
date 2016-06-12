@@ -107,7 +107,6 @@ class Schedule extends MY_Admin_Controller{
         }
 
         $teams = $this->schedule_model->get_teams_data();
-        print_r($teams);
         $divisions = $this->schedule_model->get_divisions_data();
         $templates = $this->schedule_model->get_templates_data();
         $matchups = array();

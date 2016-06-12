@@ -1,39 +1,46 @@
-<?php if ($this->flexi_auth->is_admin()): ?>
-    <?php //print_r($matchups); ?>
-<?php endif;?>
 
 <?php $this->load->view('template/modals/stat_popup.php');?>
 <?php $all_live_players = true; ?>
 <?php $view = $this->input->get('view');?>
 <link href="<?=site_url('css/livescore.css')?>" type ="text/css" rel="stylesheet" />
 
-<div class="container">
-        <?php if ($view == "all" || $view==""){$viewurl = site_url('season/scores/live?view=live');}
-              else{$viewurl = site_url('season/scores/live');}?>
-        <div class="text-right"><a id="view" href="<?=$viewurl?>" class="text-right">Toggle view</a><div>
-        <!-- Currently selected game -->
-    <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $selected_game, 'view' => $view)); ?>
+<div class="row">
+    <div class="columns">
+            <div class="row">
+                <div class="columns">
+                <?php if ($view == "all" || $view==""){$viewurl = site_url('season/scores/live?view=live'); $vtext = "Show All Live Players";}
+                      else{$viewurl = site_url('season/scores/live'); $vtext = "Show My Game";}?>
+                <div class="text-right"><a id="view" href="<?=$viewurl?>" class="text-right"><?=$vtext?></a></div>
+                </div>
+            </div>
+            <div class="row callout">
+                <div class="columns">
+                        <!-- Currently selected game -->
+                    <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $selected_game, 'view' => $view)); ?>
 
-    <?php if ($view == 'live'): ?>
+                    <?php if ($view == 'live'): ?>
 
-        <?php foreach($matchups as $m): ?>
-            <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $m, 'view' => $view)); ?>
+                        <?php foreach($matchups as $m): ?>
+                            <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $m, 'view' => $view)); ?>
 
-        <?php endforeach;?>
+                        <?php endforeach;?>
 
-    <?php elseif($view == 'all' || $view == ""): ?>
-    <hr>
-    <h4 class="text-center">Other games</h4>
-    <div class="row">
-        <?php foreach($matchups as $m): ?>
-            <?php $this->load->view('user/season/scores/livescore_game_min', array('g' => $m)); ?>
-        <?php endforeach;?>
+                    <?php elseif($view == 'all' || $view == ""): ?>
+
+                    <h4 class="text-center">Other games</h4>
+                    <div class="row callout">
+                        <?php foreach($matchups as $m): ?>
+                            <?php $this->load->view('user/season/scores/livescore_game_min', array('g' => $m)); ?>
+                        <?php endforeach;?>
+                    </div>
+
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div id="key"></div>
+
     </div>
-
-    <?php endif; ?>
-
-<div id="key"></div>
-
 </div>
 
 

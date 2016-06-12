@@ -11,7 +11,7 @@ class Test_ extends CI_Controller{
     function mail()
     {
         echo "Sending a test message.";
-        gmail_send('frerichs@gmail.com','Test Subject','Test Body');
+        gmail_send('','Test Subject','Test Body');
     }
 
     function editor()
@@ -37,13 +37,21 @@ class Test_ extends CI_Controller{
         $this->email->clear();
         $this->email->initialize();
         $this->email->set_newline("\r\n");
-        $this->email->from("noreply@mylanparty.net", "FFL");
-        $this->email->to("frerichs@gmail.com");
+        $this->email->from("", "FFL");
+        $this->email->to("");
         $this->email->subject("Test Email");
         $this->email->message("Test Email Body");
         print_r($this->email);
 
         echo $this->email->send();
+    }
+
+    function grrr()
+    {
+        $this->auth = new stdClass;
+        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+        $this->load->model('security_model');
+        $this->security_model->set_dynamic_session_variables();
     }
 }
 ?>

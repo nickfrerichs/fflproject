@@ -1,9 +1,5 @@
-Live
-
-<?php if ($this->flexi_auth->is_admin()):?>
-	<?php //print_r($gsis);?>
-<?php endif;?>
-<div class="container">
+<div class="row">
+	<div class="columns">
 	<?php if ($week_type != "POST"):?>
 	<?php $this->load->view('user/season/scores/nav', array('years' => $years, 'year' =>$year, 'week' => $week));?>
 	<h3> Week <?=$week?></h3>
@@ -77,6 +73,7 @@ Live
 		<?php endif; ?>
 		</div>
 	<?php endforeach; ?>
+	</div>
 </div>
 
 <script type="text/javascript">

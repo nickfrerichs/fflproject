@@ -5,7 +5,9 @@
 
     <td class="player-profile">
         <div style="float:left;">
-            <img src="<?=site_url('images/'.$p['player']->photo)?>" style="width:40px;">
+            <?php if($p['player']->photo): ?>
+                <img src="<?=site_url('images/'.$p['player']->photo)?>" style="width:40px;">
+            <?php endif;?>
         </div>
         <div style="float:left;">
             <div>

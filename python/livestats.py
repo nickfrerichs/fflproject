@@ -9,6 +9,40 @@ import time
 import datetime
 import subprocess
 import os
+import config as c
+
+
+db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
+cur = db.cursor()
+query = 'select current_timestamp'
+cur.execute(query)
+sql_now = cur.fetchone()['current_timestamp']
+
+def main():
+
+    cur_year, cur_week = nflgame.live.current_year_and_week()
+    cur_weektype = nflgame.live._cur_season_phase
+
+    now = datetime.datetime.now()
+
+    if args.year == "0": year = str(cur_year)
+    else: year = args.year
+    if args.week == "0": week = str(cur_week)
+    else: week = args.week
+    if args.weektype == "none": weektype = str(cur_weektype)
+    else: weektype = args.weektype.upper()
+
+    if weektype not in ("REG","PRE","POST"):
+        print
+        sys.exit("Invalid weektype: "+weektype)
+
+    if args.hello:
+        print
+        print "Year: "+str(year)+", Week: "+str(week)+", Weektype: "+str(weektype)
+        print
+        sys.exit()
+
+    update_games(year, week, weektype, args.all)
 
 def update_games(year, week, weektype, update_all = False):
   global sql_now
@@ -315,13 +349,11 @@ def update_fantasy_statistics(year, week, weektype):
   last_updated = sql_now
 
 
-
-
-
   # Get all leagues of current weektype
   query = ('select league.id from league join league_settings on league.id = league_settings.league_id where nfl_season = "%s"' % weektype)
   cur.execute(query)
   leagues = cur.fetchall()
+
 
   # Get nfl_statistic stats for this week to be used to calculate fantasy stats for all leagues
   query = ('select nfl_statistic.player_id, nfl_statistic.id, nfl_scoring_cat_id, value, nfl_position.id as pos_id from nfl_statistic '+
@@ -346,9 +378,11 @@ def update_fantasy_statistics(year, week, weektype):
   print
   nfl_stat_rows = cur.fetchall()
   # for each league, get_scoring_def_dict
+
   for l in leagues:
       leagueid = l['id']
       scoring_def = get_scoring_def_dict(leagueid)
+
       for row in nfl_stat_rows:  # for each nfl_statistic this week, find a scoring_def for this league
         s = None
         if scoring_def.get(row['pos_id']) is not None and scoring_def[row['pos_id']].get(row['nfl_scoring_cat_id']) is not None:
@@ -508,3 +542,41 @@ def update_live_players(play, gamekey):
 			#print key
 			#print value
     db.commit()
+
+def get_pos_dict():
+  cur.execute('select id, text_id from nfl_position')
+  pos_dict = collections.defaultdict(lambda: 0, {})
+  for row in cur.fetchall():
+    pos_dict[row['text_id']] = row['id']
+
+  return pos_dict
+
+def get_team_dict():
+  cur.execute('select id, club_id from nfl_team')
+  team_dict = collections.defaultdict(lambda: 0, {})
+  for row in cur.fetchall():
+    team_dict[row['club_id']] = row['id']
+
+  return team_dict
+
+def init_playerdict(team_id):
+  playerdict = dict()
+  playerdict[team_id+"_D"] = {}
+  playerdict[team_id+"_DST"] = {}
+  playerdict[team_id+"_OL"] = {}
+  playerdict[team_id+"_ST"] = {}
+  #query = ("insert into player (player_id, nfl_position_id, nfl_team_id, status) values ('"+team_id+"_DST', (select id from nfl_position where text_id = 'T_DST'),(select id from nfl_team where club_id = '"+team_id+"'), 'ACT')")
+
+  return playerdict
+parser = argparse.ArgumentParser(description='Update Game Statistics using NFL Game')
+
+parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
+parser.add_argument('-year', action="store", default="0", required=False, help="Year")
+parser.add_argument('-week', action="store", default="0", required=False, help="Week")
+parser.add_argument('-weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
+parser.add_argument('-all', action="store_true", default=False, help="Update all games, not just live ones.")
+parser.add_argument('-recalc_all', action="store_true", default=False, help="Recalculate all fantasy values, not just the ones with new NFL stat values.")
+
+start_time = time.time()
+args = parser.parse_args()
+main()

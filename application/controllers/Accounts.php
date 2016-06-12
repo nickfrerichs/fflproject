@@ -40,6 +40,7 @@ class Accounts extends CI_Controller{
         else
             $league_id = $this->account_model->get_league_id($maskid);
         $code_required = $this->common_noauth_model->join_code_required($maskid);
+        $valid_mask = $this->common_noauth_model->valid_mask($maskid);
 
         if ($league_id >= 0)
         {
@@ -57,7 +58,7 @@ class Accounts extends CI_Controller{
                 $code = $this->input->post('league_password');
                 $instant_activate = TRUE;
 
-                if ($this->account_model->join_code_ok($league_id,$code) == false)
+                if ($code && $this->account_model->join_code_ok($league_id,$code) == false)
                 {
                     $data['error'] = "Incorrect League Password";
                 }
@@ -87,18 +88,26 @@ class Accounts extends CI_Controller{
                         redirect(site_url());
                 }
             }
-
-            $this->load->helper('form');
-            $data['admin_exists'] = $this->account_model->admin_account_exists();
-            $data['v'] = 'guest_register';
-            $data['site_name'] = $this->common_noauth_model->get_site_name();
-            $data['code_required'] = $code_required;
-            $this->load->view("template/simple",$data);
         }
         else
         {
-            echo "<center>You need to use a valid invite link to register.</center>";
+            if ($valid_mask && $code_required)
+                $data['error'] = "League password is invalid.";
+            else
+            {
+                echo "Invalid url.";
+                return;
+            }
+
+            //echo "<center>You need to use a valid invite link to register.</center>";
         }
+        $this->load->helper('form');
+        $data['admin_exists'] = $this->account_model->admin_account_exists();
+        $data['v'] = 'guest_register';
+        $data['site_name'] = $this->common_noauth_model->get_site_name();
+        $data['code_required'] = $code_required;
+        $data['maskid'] = $maskid;
+        $this->load->view("template/simple",$data);
     }
 
     function forgot()

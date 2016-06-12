@@ -15,10 +15,10 @@
                     <?php if ($type->default):?>
                         default
                     <?php else: ?>
-                        <a href='<?=site_url('admin/schedule/gametypes/default/'.$type->id)?>'>set</a>
+                        <a href='<?=site_url('admin/schedule_templates/gametypes/default/'.$type->id)?>'>set</a>
                     <?php endif;?>
                 </td>
-                <td><a href='<?=site_url('admin/schedule/gametypes/delete/'.$type->id)?>'>delete</a></td>
+                <td><a href='<?=site_url('admin/schedule_templates/gametypes/delete/'.$type->id)?>'>delete</a></td>
             </tr>
         <?php endforeach; ?>
         </table>
@@ -32,7 +32,7 @@
             <table>
                 <tr>
                     <td><?=form_input('text_id')?></td>
-                    <td><?=form_submit('add', 'Add type')?></td>
+                    <td><input class="button small" type="submit" name="add" value="Add type"  /></td>
                 </tr>
             </table>
         <?=form_close()?>

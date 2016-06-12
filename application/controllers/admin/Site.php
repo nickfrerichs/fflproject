@@ -49,7 +49,7 @@ class Site extends MY_Admin_Controller{
 
         $data['settings'] = $this->site_model->get_site_settings();
         $data['week_types'] = $this->site_model->get_week_types_array();
-        $data['current_year'] = $this->current_year;
+        $data['current_year'] = date("Y");
         $this->bc["Settings"] = "";
         $this->admin_view('admin/site/site_settings',$data);
     }

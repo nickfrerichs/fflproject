@@ -125,10 +125,13 @@ class Schedule_model extends MY_Model{
                 ->from('schedule_template_matchup')
                 ->where('schedule_template_id', $template_id)->get()->result();
 
-        $default_type = $this->db->select('id')->from('schedule_game_type')
+        $row = $this->db->select('id')->from('schedule_game_type')
                 ->where('league_id', $this->leagueid)
-                ->order_by('default', 'desc')->get()->row()->id;
-
+                ->order_by('default', 'desc')->get()->row();
+        if (count($row) > 0)
+            $default_type = $row->id;
+        else
+            $default_type = 0;
         $data = array();
 
         foreach($matchups as $m)

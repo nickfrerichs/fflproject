@@ -1,4 +1,4 @@
-<?php print_r($draft_rounds); ?>
+<?php //print_r($draft_rounds); ?>
 <?php foreach($draft_rounds as $r): ?>
 <tr>
 	<td><?=$r->pick?></td>

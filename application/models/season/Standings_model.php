@@ -19,7 +19,7 @@ class Standings_model extends MY_Model{
 
         $divs = $this->db->select('distinct(division_id) as id, division.name')
             ->from('team_division')
-            ->join('division','division.id = team_division.id and division.year = team_division.year')
+            ->join('division','division.id = team_division.division_id and division.year = team_division.year')
             ->where('team_division.league_id',$this->leagueid)
             ->where('division.year',$year)->get()->result();
 

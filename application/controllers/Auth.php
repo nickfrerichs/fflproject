@@ -45,6 +45,7 @@ class Auth extends CI_Controller{
 
                     $this->session->set_userdata('user_id', $this->flexi_auth->get_user_id());
                     $this->load->model('security_model');
+
                     $this->security_model->set_session_variables();
 
                     // Save any public status or error messages (Whilst suppressing any admin messages) to CI's flash session data.

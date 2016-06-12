@@ -1,5 +1,5 @@
-<div class="col-sm-6">
-    <table class='table table-striped table-condensed table-border'>
+<div class="small-6">
+    <table class=''>
         <thead>
             <th class="text-right tscore-<?=$g['home_team']['team']->id?>" style="font-size:1.2em;">-</th>
             <th width="40%" height="55px" class="text-right">

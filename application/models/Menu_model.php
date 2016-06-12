@@ -5,15 +5,15 @@ class Menu_model extends CI_Model
 
     function __construct(){
         parent::__construct();
-        $this->current_year = $this->session->userdata('current_year');
 	}
 
 	function get_menu_items_data($admin = false)
 	{
-        if ($this->session->userdata('league_id') <= 0)
+        if ($this->session->userdata('league_id') <= 0 || $this->session->userdata('league_id') == "")
             $noleague = True;
         else
             $noleague = False;
+
 		$this->db->select('menu_item.text as item_text, menu_bar.text as menu_text, menu_item.url, menu_bar.url as bar_url')->
 		from('menu_bar')->join('menu_item', 'menu_bar.id = menu_item.menu_bar_id','left');
 
@@ -54,7 +54,7 @@ class Menu_model extends CI_Model
 
     function fill_vars($text)
     {
-        $text = str_ireplace("*season_year*",$this->current_year,$text);
+        $text = str_ireplace("*season_year*",$this->session->userdata('current_year'),$text);
         return $text;
     }
 

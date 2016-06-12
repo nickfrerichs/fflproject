@@ -7,6 +7,8 @@
 
 	</div>
 </div>
+
+<?php if($num_rounds > 0): ?>
 <div class="row">
 	<div class="columns">
 		<h5 class="text-center">Round <span id="round-num">1</span></h5>
@@ -18,6 +20,7 @@
 		</table>
 	</div>
 </div>
+
 
 <div class="row">
 	<!-- Prev/Next buttons -->
@@ -34,6 +37,7 @@
 
 	</div>
 	<div class="columns small-2"></div>
+<?php endif;?>
 
 <script>
 $(document).ready(function(){

@@ -26,7 +26,7 @@ class Schedule_templates extends MY_Admin_Controller{
                 'description' => $this->input->post('description'));
 
             $this->schedule_model->save_template($data);
-            redirect('admin/schedule/template');
+            redirect('admin/schedule_templates');
         }
 
         $templates = $this->schedule_model->get_templates_data();
@@ -59,7 +59,7 @@ class Schedule_templates extends MY_Admin_Controller{
                 }
             }
             $this->schedule_model->save_template_matchups($id, $data);
-            redirect('admin/schedule/template');
+            redirect('admin/schedule_templates');
         }
 
         if ($this->input->post('update'))
@@ -73,7 +73,7 @@ class Schedule_templates extends MY_Admin_Controller{
                 'description' => $this->input->post('description'));
 
             $this->schedule_model->save_template($data);
-            redirect('admin/schedule/template');
+            redirect('admin/schedule_templates');
         }
 
         $template = $this->schedule_model->get_template_data($id);
@@ -106,19 +106,19 @@ class Schedule_templates extends MY_Admin_Controller{
         if ($this->input->post('add'))
         {
             $this->schedule_model->add_gametype($this->input->post('text_id'));
-            redirect('admin/schedule/gametypes');
+            redirect('admin/schedule_templates/gametypes');
         }
 
         if ($action == 'default' && is_numeric($id))
         {
             $this->schedule_model->set_default_gametype($id);
-            redirect('admin/schedule/gametypes');
+            redirect('admin/schedule_templates/gametypes');
         }
 
         if ($action == 'delete' && is_numeric($id))
         {
             $this->schedule_model->delete_gametype($id);
-            redirect('admin/schedule/gametypes');
+            redirect('admin/schedule_templates/gametypes');
         }
 
         $gametypes = $this->schedule_model->get_gametypes_data();

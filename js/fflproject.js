@@ -13,6 +13,8 @@ function notice(text, noticetype)
 			break;
 		case "warning":
 			setcolor = "yellow";
+		case "error":
+			setcolor = "red";
 		default:
 	}
 	new jBox('Notice', {
@@ -66,7 +68,7 @@ $(document).on('click',".change-control", function(e){
     var control = $("#"+name+"-control");
     var cancel = $("#"+name+"-cancel");
     var field = $("#"+name+"-field");
-    var newvalue = $("#"+name+"-new");
+    var newvalue = $("#"+name+"-edit");
 	var type = $(this).data('type');
     var url = $(this).data('url');
     var var1 = $(this).data('var1');
@@ -78,7 +80,7 @@ $(document).on('click',".change-control", function(e){
 		var current = field.text();
 		control.data('current',current);
         field.html(
-            '<input id="'+name+'-new" type="'+type+'" placeholder="'+current+'">'
+            '<input id="'+name+'-edit" type="'+type+'" placeholder="'+current+'">'
         );
         control.text('Save');
         cancel.text('Cancel');
@@ -90,8 +92,9 @@ $(document).on('click',".change-control", function(e){
         $.post(url,{type:name,value:newvalue.val(),var1:var1, var2:var2, var3:var3}, function(data){
             if(data)
             {
+				console.log(data);
                 var d = $.parseJSON(data);
-                if(d.success){field.html(newvalue.val());}
+                if(d.success){field.html(newvalue.val()); notice('Setting saved.','success')}
 				else
 				{field.html(newvalue.attr('placeholder'));}
             }

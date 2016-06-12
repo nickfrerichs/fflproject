@@ -21,7 +21,7 @@
 		</table>
 		<?php endforeach; ?>
 
-		<?=form_submit('save', 'Save')?>
+		<input class="button small" type="submit" name="save" value="Save"  />
 		<?=form_close()?>
 	</div>
 </div>
