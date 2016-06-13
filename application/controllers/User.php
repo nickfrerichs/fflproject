@@ -26,7 +26,7 @@ class User extends CI_Controller{
         $this->load->model('common/common_noauth_model');
         $data = array();
 
-        if ($this->common_noauth_model->valid_mask($mask_id))
+        if ($this->common_noauth_model->valid_mask($mask_id) && $this->common_noauth_model->league_has_room($mask_id))
         {
             $data['is_owner'] = $this->account_model->user_is_owner($this->session->userdata('user_id'));
             $data['mask_id'] = $mask_id;
@@ -59,13 +59,18 @@ class User extends CI_Controller{
 		$user_id = $this->session->userdata('user_id');
 
     	$this->load->model('account_model');
-
-    	$leagueid = $this->account_model->get_league_id($mask_id, $code);
-        if ($leagueid == -1)
+        $this->load->model('common_noauth_model');
+        $leagueid = $this->account_model->get_league_id($mask_id, $code);
+        $has_room = $this->common_noauth_model->league_has_room($mask_id);
+        if ($has_room)
+        {
+            $response['msg'] = "League max teams reached.";
+        }
+        elseif ($leagueid == -1)
         {
             $response['msg'] = "League password incorrect.";
         }
-        if(!$this->session->userdata('leagues') || !array_key_exists($leagueid,$this->session->userdata('leagues')))
+        elseif(!$this->session->userdata('leagues') || !array_key_exists($leagueid,$this->session->userdata('leagues')))
         {
             // You can't join, cause this account is already an owner.
         	// Make sure the league exists

@@ -57,8 +57,11 @@ class Accounts extends CI_Controller{
                 $team_name = $this->input->post('team_name');
                 $code = $this->input->post('league_password');
                 $instant_activate = TRUE;
-
-                if ($code && $this->account_model->join_code_ok($league_id,$code) == false)
+                if (!$this->common_noauth_model->league_has_room($maskid))
+                {
+                    $data['error'] = "League team limit reached.";
+                }
+                elseif ($code && $this->account_model->join_code_ok($league_id,$code) == false)
                 {
                     $data['error'] = "Incorrect League Password";
                 }

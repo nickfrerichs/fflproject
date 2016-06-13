@@ -34,11 +34,13 @@ class Joinleague extends CI_Controller{
             $league_name = $this->common_noauth_model->league_name_from_mask_id($mask_id);
             $site_name = $this->common_noauth_model->get_site_name();
             $code_required = $this->common_noauth_model->join_code_required($mask_id);
+            $has_room = $this->common_noauth_model->league_has_room($mask_id);
             $data = array('v' => 'guest_invite',
                           'mask_id' => $mask_id,
                           'league_name' => $league_name,
                           'site_name' => $site_name,
-                          'code_required' => $code_required);
+                          'code_required' => $code_required,
+                          'has_room' => $has_room);
             $this->load->view('template/simple',$data);
             //echo "Not logged in";
             //redirect('/?redirect=joinleague/invite/'.$mask_id.'/'.$code);

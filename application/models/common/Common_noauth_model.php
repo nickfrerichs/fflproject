@@ -32,5 +32,16 @@ class Common_noauth_model extends CI_Model{
             return True;
         return False;
     }
+
+    function league_has_room($maskid)
+    {
+        $row = $this->db->select('league_settings.max_teams, league_settings.league_id')->from('league_settings')
+            ->join('league','league.id = league_settings.league_id')->where('mask_id',$maskid)->get()->row();
+        $active_teams = $this->db->from('team')->where('league_id',$row->league_id)->where('active',1)->count_all_results();
+        if ($active_teams < $row->max_teams)
+            return TRUE;
+        return FALSE;
+
+    }
 }
 ?>
