@@ -158,7 +158,9 @@ class Accounts extends CI_Controller{
             $this->session->sess_destroy();
             redirect(site_url(''));
         }
-        $this->load->view('reset_password', $data);
+        $data['site_name'] = $this->common_noauth_model->get_site_name();
+        $data['v'] = 'reset_password';
+        $this->load->view("template/simple",$data);
     }
 
 }
