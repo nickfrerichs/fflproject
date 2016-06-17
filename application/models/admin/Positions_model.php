@@ -102,7 +102,7 @@ class Positions_model extends MY_Model
                 ->where('league_id', $this->leagueid)
                 ->get();
 
-        if ($data->num_rows != 0)
+        if ($data->num_rows() != 0)
             return true;
         return false;
     }

@@ -89,6 +89,7 @@ $("#save-button").on("click",function(){
     var min_start = $("#start-min").val();
     var max_start = $("#start-max").val();
     var league_positions = []
+
     $("#league-positions option").each(function(){
         league_positions.push($(this).val());
     });
