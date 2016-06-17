@@ -206,8 +206,6 @@ class Myteam_roster_model extends MY_Model{
         if ($week < $this->current_week)
             return false;
 
-
-
         // If you made it this far, it's a current or future week.
 
         // 4. If it's the current week and the player doesn't have a bye, check if the game has started
@@ -232,9 +230,7 @@ class Myteam_roster_model extends MY_Model{
             return false;
 
         return true; // All checks passed, return true
-
     }
-
 
     function start_player($player_id, $lea_pos, $week)
     {

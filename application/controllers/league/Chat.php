@@ -82,6 +82,7 @@ class Chat extends CI_Controller{
         }
     }
 
+
     public function key()
     {
         echo $this->chat_model->get_chat_key();

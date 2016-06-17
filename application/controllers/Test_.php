@@ -8,6 +8,13 @@ class Test_ extends CI_Controller{
         //$this->load->model('common/common_model');
     }
 
+    function stream()
+    {
+        $this->output
+                ->set_content_type('text/event-stream')
+                ->set_output(json_encode(array('foo' => 'bar')));
+    }
+
     function mail()
     {
         echo "Sending a test message.";

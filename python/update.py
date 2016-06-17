@@ -61,10 +61,10 @@ def main():
     update_players(year, week, weektype)
 
   if(args.summary): # calculate statistic_week
-    update_statistic_summaries(year, week, weektype, args.all)
+    update_statistic_summaries(year, week, weektype)
 
   if(args.standings):
-    update_standings(year, week, weektype, args.all)
+    update_standings(year, week, weektype)
 
 
 def update_standings(year, week ,weektype, all):
@@ -308,7 +308,7 @@ def update_players(year, week, weektype):
     print "Added: " + str(add_count) + " players."
     print "Updated: " + str(update_count) + " players."
 
-def update_statistic_summaries(year, week, weektype, all):
+def update_statistic_summaries(year, week, weektype):
 
     if week == 'all' and weektype == "REG":
         weeks = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
@@ -439,7 +439,7 @@ def update_schedule(season_year, week, weektype="REG"):
 
     db.commit()
 
-    print "(%s Week %s): %s updated, %s added." % (str(year),str(week),str(updated),str(added))
+    print "(%s Week %s): %s updated, %s added." % (str(season_year),str(week),str(updated),str(added))
   #http://www.nfl.com/ajax/scorestrip?season=2013&seasonType=REG&week=1
   #sched_url = 'http://www.nfl.com/ajax/scorestrip?season=%d&seasonType=%s&week=%d'
 
@@ -475,15 +475,14 @@ def update_schedule(season_year, week, weektype="REG"):
 
 parser = argparse.ArgumentParser(description='Short sample app')
 
-parser.add_argument('-schedule', action="store_true", default=False, help="Update schedule")
+parser.add_argument('-schedule', action="store_true", default=False, help="Update NFL schedule")
 #parser.add_argument('-g', action="store_true", default=False, help="Update NFL game stats and recalculate fantasy stats")
-parser.add_argument('-players', action="store_true", default=False, help="Update players")
+parser.add_argument('-players', action="store_true", default=False, help="Update NFL players")
 parser.add_argument('-photos', action="store_true", default=False, help="Check for photos for players that don't have one.")
-parser.add_argument('-all', action="store_true", default=False, help="All weeks for specified year.")
 parser.add_argument('-summary', action="store_true", default=False, help="Stat summary update: use stored player stat values and recalculate weekly summary data.")
 parser.add_argument('-standings', action="store_true", default=False, help="Calculate standings results and add to schedule table.")
 parser.add_argument('-year', action="store", default="0", required=False, help="Year")
-parser.add_argument('-week', action="store", default="0", required=False, help="Week")
+parser.add_argument('-week', action="store", default="0", required=False, help="Week, use 'all' for all weeks.")
 parser.add_argument('-weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
 parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
 

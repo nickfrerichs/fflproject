@@ -114,6 +114,7 @@ $(".chat-button").on('click', function(){
 
         // Start getting a stream of data so we can know if new chats came in.
         evtSource = new EventSource("<?=site_url('league/chat/stream_get_chat_key')?>");
+
         evtSource.onmessage = function(e)
         {
             // Check every heartbeat, if the stored chat key does not equal the new one, we need to update
