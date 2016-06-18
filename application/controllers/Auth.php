@@ -1,7 +1,7 @@
 <?php
 
 class Auth extends CI_Controller{
-
+    
     function __construct()
     {
         parent::__construct();
@@ -21,7 +21,6 @@ class Auth extends CI_Controller{
 
     function login()
     {
-
         if ($this->input->post('login_identity'))
         {
             $this->load->library('form_validation');
@@ -78,8 +77,3 @@ class Auth extends CI_Controller{
         redirect(site_url());
     }
 }
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */

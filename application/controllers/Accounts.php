@@ -1,6 +1,6 @@
 <?php
 
-class Accounts extends CI_Controller{
+class Accounts extends MY_Basic_Controller{
 
     function __construct()
     {
@@ -8,22 +8,9 @@ class Accounts extends CI_Controller{
         $this->auth = new stdClass;
         $this->load->library('flexi_auth', FALSE);
         $this->load->model('account_model');
-        $this->load->model('common/common_noauth_model');
         if ($this->flexi_auth->is_logged_in())
         {
                 redirect('auth');
-        }
-
-        // To load the CI benchmark and memory usage profiler - set 1==1.
-        if ((1==0) && (!$this->input->is_ajax_request()))
-        {
-                $sections = array(
-                        'benchmarks' => TRUE, 'memory_usage' => TRUE,
-                        'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
-                );
-                $this->output->set_profiler_sections($sections);
-                $this->output->enable_profiler(TRUE);
         }
     }
 
@@ -106,11 +93,10 @@ class Accounts extends CI_Controller{
         }
         $this->load->helper('form');
         $data['admin_exists'] = $this->account_model->admin_account_exists();
-        $data['v'] = 'guest_register';
         $data['site_name'] = $this->common_noauth_model->get_site_name();
         $data['code_required'] = $code_required;
         $data['maskid'] = $maskid;
-        $this->load->view("template/simple",$data);
+        $this->basic_view('guest_register',$data);
     }
 
     function forgot()
@@ -126,14 +112,14 @@ class Accounts extends CI_Controller{
         }
         $data['site_name'] = $this->common_noauth_model->get_site_name();
         $this->load->helper('form');
-        $this->load->view('guest_forgot',$data);
+        $this->basic_view('guest_forgot',$data);
     }
 
     function reset_confirm($user="", $token="")
     {
         $email = "";
 
-        if ($this->flexi_auth->forgotten_password_complete($user, $token, 'imadumbfuck', $email))
+        if ($this->flexi_auth->forgotten_password_complete($user, $token, '', $email))
         {
             $email = $this->account_model->get_email_from_id($user);
             echo "A new password has been emailed to your email address.";
@@ -159,8 +145,7 @@ class Accounts extends CI_Controller{
             redirect(site_url(''));
         }
         $data['site_name'] = $this->common_noauth_model->get_site_name();
-        $data['v'] = 'reset_password';
-        $this->load->view("template/simple",$data);
+        $this->basic_view('reset_password',$data);
     }
 
 }

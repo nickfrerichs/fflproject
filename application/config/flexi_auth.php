@@ -1,4 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+// Need some variables from consolidated config file.
+include(FCPATH.'config.php');
+
 /*
 * Name: flexi auth Config
 *
@@ -439,7 +443,7 @@
 	 *	Do NOT change this salt once users have started registering accounts as their passwords will not work without the original salt.
 	 *	CHANGE THE DEFAULT STATIC SALT SET BELOW TO YOUR OWN RANDOM SET OF CHARACTERS.
 	*/
-	$config['security']['static_salt'] = 'change-me!';
+	$config['security']['static_salt'] = $fflp_salt;
 
 	/**
 	 * Set whether a salt is stored in the database and then used for password and hash token generation.
@@ -477,7 +481,7 @@
 	 * Note: If a user exceeds 3 times the limit set, the resulting time ban is doubled to further slow down attempts.
  	 * Example: 0 = unlimited attempts, 3 = 3 attempts.
 	*/
-	$config['security']['login_attempt_limit'] = 3;
+	$config['security']['login_attempt_limit'] = 5;
 
 	/**
 	 * If a user has exceeded the failed login attempt limit, set the length of time they must wait before they can attempt to login again.
@@ -513,8 +517,8 @@
 	 * Set your unique reCAPTCHA api keys.
 	 * !IMPORTANT: Obtain YOUR OWN reCAPTCHA keys from http://www.google.com/recaptcha.
 	*/
-	$config['security']['recaptcha_public_key']	= '';
-	$config['security']['recaptcha_private_key'] = '';
+	$config['security']['recaptcha_public_key']	= $fflp_recaptcha_public_key;
+	$config['security']['recaptcha_private_key'] = $fflp_recaptcha_private_key;
 
 	/**
 	 * Set the theme of the reCAPTCHA. For custom theming, see https://developers.google.com/recaptcha/docs/customization
@@ -599,10 +603,10 @@
 	###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++###
 
 	// Site title shown as 'from' header on emails.
-	$config['email']['site_title'] = "FFL";
+	$config['email']['site_title'] = $fflp_email_site_title;
 
 	// Reply email shown as 'from' header on emails.
-	$config['email']['reply_email'] = "ffl@mydomain.net";
+	$config['email']['reply_email'] = $fflp_email_reply_to;
 
 	/**
 	 * Type of email to send, options: 'html', 'text'.

@@ -1,5 +1,3 @@
-
-
 <div class="row align-center callout" style="max-width: 425px;">
 	<div class="columns small-12">
 		<div class="text-center">

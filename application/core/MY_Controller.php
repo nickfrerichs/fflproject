@@ -83,7 +83,6 @@ class MY_Controller extends CI_Controller{
 
 }
 
-
 class MY_Admin_Controller extends CI_Controller{
 
     function __construct()
@@ -133,4 +132,32 @@ class MY_Admin_Controller extends CI_Controller{
         $d['bc'] = $this->bc;
         $this->load->view('template/admin_init', $d);
     }
+}
+
+class MY_Basic_Controller extends CI_Controller{
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->model('common/common_noauth_model');
+
+        // Turn debugging on, if enabled.
+        if (1==0 && !$this->input->is_ajax_request())
+        {
+                $sections = array(
+                        'benchmarks' => TRUE, 'memory_usage' => TRUE,
+                        'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
+                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
+                );
+                $this->output->set_profiler_sections($sections);
+                $this->output->enable_profiler(TRUE);
+        }
+    }
+
+    function basic_view($viewname, $d=null)
+    {
+        $d['v'] = $viewname;
+        $this->load->view('template/simple', $d);
+    }
+
 }

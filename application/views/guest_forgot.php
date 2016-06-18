@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<?php $this->load->view('template/head'); ?>
 <br><br>
 <div class="row text-center callout" style="max-width: 425px;">
 	<div class="columns">
@@ -21,6 +18,3 @@
 		<?php endif;?>
     </div>
 </div>
-
-
-</html>

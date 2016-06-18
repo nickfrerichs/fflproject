@@ -1,6 +1,6 @@
 <?php
 
-class Joinleague extends CI_Controller{
+class Joinleague extends MY_Basic_Controller{
 
     function __construct()
     {
@@ -8,21 +8,6 @@ class Joinleague extends CI_Controller{
 
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
-        $this->load->model('common/common_noauth_model');
-
-        if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
-        {
-                $sections = array(
-                        'benchmarks' => TRUE, 'memory_usage' => TRUE,
-                        'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
-                );
-                $this->output->set_profiler_sections($sections);
-                $this->output->enable_profiler(TRUE);
-        }
-
-
-
     }
 
     function invite($mask_id="")
@@ -30,20 +15,17 @@ class Joinleague extends CI_Controller{
         if (!$this->flexi_auth->is_logged_in())
         {
             // If they aren't logged in, ask them to login, or register new account
-            //redirect('accounts/register/'.$mask_id.'/'.$code);
             $league_name = $this->common_noauth_model->league_name_from_mask_id($mask_id);
             $site_name = $this->common_noauth_model->get_site_name();
             $code_required = $this->common_noauth_model->join_code_required($mask_id);
             $has_room = $this->common_noauth_model->league_has_room($mask_id);
-            $data = array('v' => 'guest_invite',
-                          'mask_id' => $mask_id,
+            $data = array('mask_id' => $mask_id,
                           'league_name' => $league_name,
                           'site_name' => $site_name,
                           'code_required' => $code_required,
                           'has_room' => $has_room);
-            $this->load->view('template/simple',$data);
-            //echo "Not logged in";
-            //redirect('/?redirect=joinleague/invite/'.$mask_id.'/'.$code);
+            $this->basic_view('guest_invite',$data);
+
         }
         else
         {
