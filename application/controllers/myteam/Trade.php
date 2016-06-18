@@ -1,6 +1,6 @@
 <?php
 
-class Trade extends MY_Controller{
+class Trade extends MY_User_Controller{
 
     function __construct()
     {

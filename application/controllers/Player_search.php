@@ -1,5 +1,5 @@
 <?php
-class Player_search extends MY_Controller{
+class Player_search extends MY_User_Controller{
 
 // This controller presents the ajax data used by various jquery ajax/post functions.
 // The views dislay content to be put between <tbody></tbody> tags.

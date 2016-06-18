@@ -1,13 +1,13 @@
 <?php
 
-class Team extends MY_Controller{
-    
-    function __construct() 
+class Team extends MY_User_Controller{
+
+    function __construct()
     {
         parent::__construct();
         $this->load->model('statistics/team_statistics_model');
     }
-    
+
     function index()
     {
         $data = array();

@@ -1,5 +1,5 @@
 <?php
-class Draft extends MY_Controller{
+class Draft extends MY_User_Controller{
 
     private $per_page = 6;
 

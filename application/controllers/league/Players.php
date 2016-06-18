@@ -1,6 +1,6 @@
 <?php
 
-class Players extends MY_Controller{
+class Players extends MY_User_Controller{
 
     function __construct()
     {

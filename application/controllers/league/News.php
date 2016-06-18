@@ -1,6 +1,6 @@
 <?php
 
-class News extends MY_Controller{
+class News extends MY_User_Controller{
 
 
     function __construct()

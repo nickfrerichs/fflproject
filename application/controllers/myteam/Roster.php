@@ -1,6 +1,6 @@
 <?php
 
-class Roster extends MY_Controller{
+class Roster extends MY_User_Controller{
 
     function __construct()
     {

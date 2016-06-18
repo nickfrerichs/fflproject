@@ -26,6 +26,7 @@ class Accounts extends MY_Basic_Controller{
             $league_id = 0;
         else
             $league_id = $this->account_model->get_league_id($maskid);
+
         $code_required = $this->common_noauth_model->join_code_required($maskid);
         $valid_mask = $this->common_noauth_model->valid_mask($maskid);
 
@@ -44,11 +45,11 @@ class Accounts extends MY_Basic_Controller{
                 $team_name = $this->input->post('team_name');
                 $code = $this->input->post('league_password');
                 $instant_activate = TRUE;
-                if (!$this->common_noauth_model->league_has_room($maskid))
+                if ($league_id > 0 && !$this->common_noauth_model->league_has_room($maskid))
                 {
                     $data['error'] = "League team limit reached.";
                 }
-                elseif ($code && $this->account_model->join_code_ok($league_id,$code) == false)
+                elseif ($league_id > 0 && $code && $this->account_model->join_code_ok($league_id,$code) == false)
                 {
                     $data['error'] = "Incorrect League Password";
                 }

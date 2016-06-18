@@ -1,6 +1,6 @@
 <?php
 
-class Teams extends MY_Controller{
+class Teams extends MY_User_Controller{
 
 
     function __construct()

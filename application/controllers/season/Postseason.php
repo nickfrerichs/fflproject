@@ -1,6 +1,6 @@
 <?php
 
-class Postseason extends MY_Controller{
+class Postseason extends MY_User_Controller{
 
 
     function __construct()

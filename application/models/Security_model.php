@@ -108,7 +108,7 @@ class Security_model extends CI_Model
                 $this->session->set_userdata('debug_year', True);
             }
 
-            $this->session->set_userdata('expire_dynamic_vars',time()+60); // Make sure to check dynamic vars every 1 mins.
+            $this->session->set_userdata('expire_league_vars',time()+60); // Make sure to check dynamic vars every 1 mins.
             $this->session->set_userdata('live_scores',$this->live_scores_on());
 
             $this->set_user_messages();

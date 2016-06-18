@@ -1,6 +1,6 @@
 <?php
 
-class Messages extends MY_Controller{
+class Messages extends MY_User_Controller{
 
     function __construct()
     {
@@ -51,7 +51,7 @@ class Messages extends MY_Controller{
 
         $this->load->model('security_model');
         $this->security_model->set_user_messages();
-        
+
         $this->load->view('user/myteam/messages/ajax_display_message',$data);
     }
 

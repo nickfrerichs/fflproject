@@ -43,5 +43,14 @@ class Common_noauth_model extends CI_Model{
         return FALSE;
 
     }
+
+    function set_session_variables($expire=False)
+    {
+        if ($this->session->userdata('expire_basic_vars') < time() || $expire)
+        {
+            $this->session->set_userdata('site_name',$this->get_site_name());
+            $this->session->set_userdata('expire_basic_vars', time()+600);
+        }
+    }
 }
 ?>

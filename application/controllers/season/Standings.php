@@ -1,6 +1,6 @@
 <?php
 
-class Standings extends MY_Controller{
+class Standings extends MY_User_Controller{
 
     function __construct()
     {

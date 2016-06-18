@@ -1,6 +1,6 @@
 <?php
 
-class Moneylist extends MY_Controller{
+class Moneylist extends MY_User_Controller{
 
 
     function __construct()

@@ -1,5 +1,5 @@
 <?php
-class Settings extends MY_Controller{
+class Settings extends MY_User_Controller{
 
     function __construct()
     {

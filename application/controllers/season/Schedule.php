@@ -1,6 +1,6 @@
 <?php
 
-class Schedule extends MY_Controller{
+class Schedule extends MY_User_Controller{
 
 
     function __construct()

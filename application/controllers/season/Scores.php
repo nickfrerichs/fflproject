@@ -1,6 +1,6 @@
 <?php
 
-class Scores extends MY_Controller{
+class Scores extends MY_User_Controller{
 
 
     function __construct()

@@ -1,6 +1,6 @@
 <?php
 
-class MY_Controller extends CI_Controller{
+class MY_User_Controller extends MY_Basic_Controller{
     protected $userid;
     protected $leagueid;
     protected $current_week;
@@ -60,7 +60,7 @@ class MY_Controller extends CI_Controller{
 
         // This is to make sure the user session gets these vars if so much time has passed
         // since they were first set.
-        if ($this->session->userdata('expire_dynamic_vars') < time())
+        if ($this->session->userdata('expire_league_vars') < time())
         {
             $this->load->model('security_model');
             $this->security_model->set_dynamic_session_variables();
@@ -83,7 +83,7 @@ class MY_Controller extends CI_Controller{
 
 }
 
-class MY_Admin_Controller extends CI_Controller{
+class MY_Admin_Controller extends MY_Basic_Controller{
 
     function __construct()
     {
@@ -140,9 +140,10 @@ class MY_Basic_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->model('common/common_noauth_model');
+        $this->common_noauth_model->set_session_variables();
 
         // Turn debugging on, if enabled.
-        if (1==0 && !$this->input->is_ajax_request())
+        if (1==1 && !$this->input->is_ajax_request())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,

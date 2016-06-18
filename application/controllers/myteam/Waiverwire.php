@@ -1,6 +1,6 @@
 <?php
 
-class Waiverwire extends MY_Controller{
+class Waiverwire extends MY_User_Controller{
 
     private $per_page = 6;
     function __construct()
