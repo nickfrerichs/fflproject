@@ -47,7 +47,7 @@
                     <?php else: ?>
                         <td class="text-center">(none)</td>
                     <?php endif;?>
-                    <td class="text-center"><a href="#" id="set-admins-button">Assign</a></td>
+                    <td class="text-center"><a href="#" id="set-admins-button">Manage</a></td>
                 </tr>
                 <tr>
                     <?php $inviteurl = site_url('joinleague/invite/'.$info->mask_id); ?>

@@ -90,6 +90,11 @@ class Site extends MY_Admin_Controller{
         $action = $this->input->post('action');
 
         $response['currentValue'] = $this->site_model->toggle_league_admin($userid, $leagueid);
+        if ($userid == $this->session->userdata('user_id'))
+        {
+            $this->load->model('security_model');
+            $this->security_model->set_session_variables();
+        }
 
         echo json_encode($response);
 

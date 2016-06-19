@@ -59,10 +59,10 @@ class User extends CI_Controller{
 		$user_id = $this->session->userdata('user_id');
 
     	$this->load->model('account_model');
-        $this->load->model('common_noauth_model');
+        $this->load->model('common/common_noauth_model');
         $leagueid = $this->account_model->get_league_id($mask_id, $code);
         $has_room = $this->common_noauth_model->league_has_room($mask_id);
-        if ($has_room)
+        if (!$has_room)
         {
             $response['msg'] = "League max teams reached.";
         }

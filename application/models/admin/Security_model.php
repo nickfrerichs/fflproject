@@ -82,7 +82,7 @@ class Security_model extends MY_Model
 
         $messages = array();
         // Messages for league admin (is_owner)
-        if ($this->session->userdata('is_owner'))
+        if ($this->session->userdata('is_league_admin'))
         {
             if (!$this->max_teams_set() && $this->leagueid != 0)
             {

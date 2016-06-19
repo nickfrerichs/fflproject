@@ -19,3 +19,6 @@ $fflp_smtp_host = 'ssl://smtp.gmail.com';
 $fflp_smtp_user = '';
 $fflp_smtp_pass = '';
 $fflp_smtp_port = 465;
+
+// Show debug and profiler data
+$fflp_debug = False;

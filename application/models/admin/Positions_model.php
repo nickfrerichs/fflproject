@@ -40,6 +40,7 @@ class Positions_model extends MY_Model
     {
         $data = $this->db->select('nfl_position.id, nfl_position.text_id')
                 ->from('nfl_position')
+                ->order_by('display_order','asc')
                 ->get();
         $data_array = array();
         foreach ($data->result() as $result)

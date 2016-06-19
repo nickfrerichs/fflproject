@@ -141,9 +141,9 @@ class MY_Basic_Controller extends CI_Controller{
         parent::__construct();
         $this->load->model('common/common_noauth_model');
         $this->common_noauth_model->set_session_variables();
-
+        
         // Turn debugging on, if enabled.
-        if (1==1 && !$this->input->is_ajax_request())
+        if ($this->session->userdata('basic_debug') && !$this->input->is_ajax_request())
         {
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,

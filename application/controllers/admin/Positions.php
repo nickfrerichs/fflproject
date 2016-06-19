@@ -36,44 +36,64 @@ class Positions extends MY_Admin_Controller{
         <tr><td>Long Name</td><td><input id="long-text" type="text" value="<?php if($editid){echo $position->long_text;}?>"></td></tr>
         <tr><td>Roster Max</td><td>
             <select id="roster-max">
+                <?php if($position->max_roster == -1): ?>
+                    <option selected value="-1">No max</option>
+                <?php else: ?>
+                    <option value="-1">No max</option>
+                <?php endif; ?>
                 <?php for($i=0; $i<=$roster_max; $i++): ?>
                     <?php if ($editid && $position->max_roster == $i): ?>
-                        <option selected><?=$i?></option>
+                        <option selected value="<?=$i?>"><?=$i?></option>
                     <?php else:?>
-                        <option><?=$i?></option>
+                        <option value="<?=$i?>"><?=$i?></option>
                     <?php endif;?>
                 <?php endfor; ?>
             </select>
         </td></tr>
         <tr><td>Roster Min</td><td>
             <select id="roster-min">
+                <?php if($position->min_roster == -1): ?>
+                    <option selected value="-1">No min</option>
+                <?php else: ?>
+                    <option value="-1">No min</option>
+                <?php endif; ?>
                 <?php for($i=0; $i<=$roster_max; $i++): ?>
                     <?php if ($editid && $position->min_roster == $i): ?>
-                        <option selected><?=$i?></option>
+                        <option selected value="<?=$i?>"><?=$i?></option>
                     <?php else: ?>
-                        <option><?=$i?></option>
+                        <option value="<?=$i?>"><?=$i?></option>
                     <?php endif;?>
                 <?php endfor; ?>
             </select>
         </td></tr>
         <tr><td>Start Max</td><td>
             <select id="start-max">
+                <?php if($position->max_start == -1): ?>
+                    <option selected value="-1">No max</option>
+                <?php else: ?>
+                    <option value="-1">No max</option>
+                <?php endif; ?>
                 <?php for($i=0; $i<=$roster_max; $i++): ?>
                     <?php if ($editid && $position->max_start == $i): ?>
-                        <option selected><?=$i?></option>
+                        <option selected value="<?=$i?>"><?=$i?></option>
                     <?php else: ?>
-                        <option><?=$i?></option>
+                        <option value="<?=$i?>"><?=$i?></option>
                     <?php endif;?>
                 <?php endfor; ?>
             </select>
         </td></tr>
         <tr><td>Start Min</td><td>
             <select id="start-min">
+                <?php if($position->min_start == -1): ?>
+                    <option selected value="-1">No min</option>
+                <?php else: ?>
+                    <option value="-1">No min</option>
+                <?php endif; ?>
                 <?php for($i=0; $i<=$roster_max; $i++): ?>
                     <?php if ($editid && $position->min_start == $i): ?>
-                        <option selected><?=$i?></option>
+                        <option selected value="<?=$i?>"><?=$i?></option>
                     <?php else: ?>
-                        <option><?=$i?></option>
+                        <option value="<?=$i?>"><?=$i?></option>
                     <?php endif;?>
                 <?php endfor; ?>
             </select>

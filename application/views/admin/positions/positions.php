@@ -62,10 +62,10 @@
                         echo $nfl_positions[$nfl_id]." ";
                     }?>
                 </td>
-                <td><?php echo $lp->max_roster;?></td>
-                <td><?php echo $lp->min_roster;?></td>
-                <td><?php echo $lp->max_start;?></td>
-                <td><?php echo $lp->min_start;?></td>
+                <td><?=$lp->max_roster == -1 ? "No max" : $lp->max_roster?></td>
+                <td><?=$lp->min_roster == -1 ? "No min" : $lp->min_roster?></td>
+                <td><?=$lp->max_start == -1 ? "No max" : $lp->max_start?></td>
+                <td><?=$lp->min_start == -1 ? "No min" : $lp->min_start?></td>
                 <td>
                     <a class="show-edit-button" data-id="<?=$lp->id?>">edit</a>
                     <a href='<?php echo site_url('admin/positions/delete/'.$lp->id); ?>'>delete</a>

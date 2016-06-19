@@ -69,8 +69,8 @@
                 <button id="chat-button" class="button chat-button show-for-medium">chat<span class="unread-count"></span></button>
         <?php endif;?>
     </div>
-    <div class="hide-for-small-only">
-        <a href="<?=site_url('auth/logout')?>"><i class="fi-power columns"></i></a>
+    <div class="hide-for-small-only align-center" style="padding-right:5px;">
+        <a href="<?=site_url('auth/logout')?>"><i class="fi-power columns" style="font-size:1.5em"></i></a>
     </div>
 </div>
 
