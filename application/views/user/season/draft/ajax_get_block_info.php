@@ -1,5 +1,5 @@
 <div class="text-center"><h5>
-    <?php if(($scheduled_start_time > $current_time) && ($start_time > $current_time)): ?>
+    <?php if(($scheduled_start_time > $current_time && ($start_time == 0 || $start_time > $current_time))): ?>
     Draft Begins
     <?php elseif (empty($current_pick)): ?>
     End of Draft
@@ -10,7 +10,7 @@
 
 
 <?php //print_r($current_pick);?>
-<?php if(($scheduled_start_time > $current_time) && empty($current_pick)): // Draft is in the future?>
+<?php if(($scheduled_start_time > $current_time) && ($start_time == 0 || $start_time > $current_time)): // Draft is in the future?>
     <div class="d-block-team-name"><?=date('D M j - g:i a',$scheduled_start_time)?></div>
     <div id="countdown" class="d-block-clock" data-deadline=""
         data-currenttime="<?=$current_time?>" data-seconds="-1"

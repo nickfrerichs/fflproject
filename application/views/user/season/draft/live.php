@@ -486,14 +486,12 @@ function pad(n) {
 		var paused = $("#countdown").data('paused');
 		var currenttime = $("#countdown").data('currenttime');
 		var starttime = $("#countdown").data('starttime');
-
-		if (starttime > currenttime)
+		console.log(starttime);
+		if (starttime == "" || starttime > currenttime)
 		{$("#admin-pause-button").text("Start Draft");}
-
-		if ((starttime < currenttime) && (!paused))
+		else if ((starttime < currenttime) && (!paused))
 		{$("#admin-pause-button").text("Pause Draft");}
-
-		if ((starttime < currenttime) && (paused))
+		 else if ((starttime < currenttime) && (paused))
 		{$("#admin-pause-button").text("Resume Draft");}
 
 		$("#admin-undo").attr("disabled",!paused);

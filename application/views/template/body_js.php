@@ -18,6 +18,7 @@
 <script src="<?=site_url('js/vendor/what-input.js')?>"></script>
 <script src="<?=site_url('js/vendor/jquery.visible.min.js')?>"></script>
 <script src="<?=site_url('js/cropper.min.js')?>"></script>
+<script src="<?=site_url('js/eventsource.min.js')?>"></script>
 
 <!-- Using jbox for chat/alerts/notices/error popups -->
 <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>

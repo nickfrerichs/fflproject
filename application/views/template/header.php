@@ -105,6 +105,7 @@ $(function() {
 });
 
 $(".chat-button").on('click', function(){
+    console.log("here");
 
     if (typeof(evtSource) == "undefined")
     {
