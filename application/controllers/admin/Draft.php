@@ -85,6 +85,16 @@ class Draft extends MY_Admin_Controller
 
     }
 
+    function ajax_toggle_auto_start()
+    {
+        $response = array('success' => False);
+        $response['currentValue'] = $this->draft_model->toggle_auto_start();
+        $response['success'] = True;
+
+        echo json_encode($response);
+
+    }
+
 
 
 }

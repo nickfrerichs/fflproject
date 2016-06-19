@@ -25,6 +25,19 @@
 					<a href="#" id="picktime-cancel" class="cancel-control"></a>
 				</td>
 			</tr>
+			<tr>
+				<td><span data-tooltip class="has-tip top" title="Draft beings automatically at the scheduled time.  When off, admin must click start.">Auto start</span></td>
+				<td></td>
+				<td class="text-center">
+					<div class="switch tiny">
+					<input  class="switch-input toggle-control" data-item="autostart" data-url="<?=site_url('admin/draft/ajax_toggle_auto_start')?>"
+						id="autostart" type="checkbox" <?php if($settings->draft_start_time != 0){echo "checked";}?>
+						<?php if($settings->scheduled_draft_start_time == 0){echo " disabled";}?>>
+					<label class="switch-paddle" for="autostart">
+					</label>
+					</div>
+				</td>
+			</tr>
 		</table>
 	</div>
 </div>

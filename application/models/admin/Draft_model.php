@@ -80,7 +80,6 @@ class Draft_model extends MY_Model
         $data = array();
         if ($draft_time != false)
         {
-            $data['draft_start_time'] = $draft_time;
             $data['scheduled_draft_start_time'] = $draft_time;
         }
 
@@ -103,6 +102,9 @@ class Draft_model extends MY_Model
             $data['league_id'] = $this->leagueid;
             $this->db->insert('league_settings', $data());
         }
+
+        if ($draft_time != false)
+            $this->reset_auto_start();
     }
 
     function set_draft_deadlines()
@@ -135,6 +137,30 @@ class Draft_model extends MY_Model
     {
         return $this->db->select('draft_time_limit, draft_start_time, scheduled_draft_start_time')->from('league_settings')
             ->where('league_id',$this->leagueid)->get()->row();
+    }
+
+    function reset_auto_start()
+    {
+        $s = $this->get_draft_settings();
+        if ($s->draft_start_time > 0)
+        {
+            $this->db->where('league_id',$this->leagueid)->update('league_settings',array('draft_start_time' => $s->scheduled_draft_start_time));
+        }
+    }
+
+    function toggle_auto_start()
+    {
+        $s = $this->get_draft_settings();
+        $data = array('draft_start_time' => 0);
+        if ($s->draft_start_time == 0)
+        {
+            $data['draft_start_time'] = $s->scheduled_draft_start_time;
+        }
+        $this->db->where('league_id',$this->leagueid)->update('league_settings',$data);
+
+        if ($data['draft_start_time'] == 0)
+            return 0;
+        return 1;
     }
 
 
