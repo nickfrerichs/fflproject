@@ -42,7 +42,6 @@ line-height: 60px;
 	</div>
 	<div class="columns medium-9 hide-for-small-only">
 		<div class="text-center"><h5><a href="<?=site_url('season/draft')?>" target="_blank">Recent Picks</a></h5></div>
-
 			<table class="table-condensed">
 				<thead>
 					<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
@@ -50,11 +49,10 @@ line-height: 60px;
 				<tbody id="recent-picks">
 				</tbody>
 			</table>
-
 	</div>
 	<div class="columns small-12 text-center show-for-small-only">
-			<a href="#" class="show-for-small-only">Recent Picks</a>
-		</div>
+		<a href="#" class="show-for-small-only">Recent Picks</a>
+	</div>
 </div>
 
 
@@ -141,7 +139,7 @@ line-height: 60px;
 						<th></th>
 						</tr>
 		            </thead>
-		            <tbody id="draft-list" data-by="last_name" data-order="desc" data-url="<?=site_url('player_search/ajax_draft_list')?>">
+		            <tbody id="draft-list" data-by="last_name" data-order="desc" data-url="<?=site_url('player_search/ajax_draft_list')?>" data-var1=false>
 		            </tbody>
 		        </table>
 		    </div>
@@ -180,21 +178,23 @@ line-height: 60px;
 </div>
 
 
-<div id="debug" class="text-center hidden"></div>
+<div id="debug" class="text-center hide"></div>
 
 <?php endif; ?>
 
 <script>
+$("#draft-list").on('change',function(){
+	console.log("Draft list changed.");
+});
+
 $(document).ready(function(){
 
 	$.post("<?=site_url('season/draft/ajax_get_update_key')?>"); // in case of stale key, force update on load
-	$(updatePlayerList("draft-list"));
-	//$(updatePlayerList("watch-list"));
+	updatePlayerList("draft-list");
 	loadWatchList();
 	updateBlock();
 	loadMyTeam();
 	updateRecentPicks();
-
 
 	// This doesnt work in IE, need to check for that and use ajax instead at a longer interval
 	// Also, may want to add a variable to check if draft is live or not.
@@ -202,15 +202,12 @@ $(document).ready(function(){
 	evtSource.onmessage = function(e){
 		if($("#debug").text() != e.data)
 		{
-
-			//loadPlayerList(getpage(),getpos(),getsort(),getsearch());
-			$(updatePlayerList("draft-list"));
+			console.log('update block part');
+			updatePlayerList("draft-list");
 			loadWatchList();
-			//$(updatePlayerList("watch-list"));
 			updateRecentPicks();
 			updateBlock();
 			$("#debug").text(e.data);
-
 		}
 
 		$("#debug").text(e.data);
@@ -249,48 +246,7 @@ function updateTimer()
 		$("#countdown").text(clocktext);
 		$("#countdown").data('seconds',(timer-1));
 	}
-
-
-
 }
-
-// // Name search event
-// var timer;
-// $("#search-name").on("input",function(event){
-// 	clearTimeout(timer);
-// 	var delay = 500;
-// 	timer = setTimeout(function(){
-// 		loadPlayerList(1,getpos(),getsort(),getsearch());
-// 	},delay);
-// });
-
-// Position & sort event
-// $('.sort-group').on('change', function(){ loadPlayerList(1,getpos(),getsort(),getsearch()); });
-//
-// // Prev/Next button events
-// $("#next").click(function(){
-// 	var page = getpage();
-// 	var next = page+2;
-// 	var prev = page;
-// 	if ((page)*<?=$per_page?> <= gettotal())
-// 	{
-// 		loadPlayerList(page+1,getpos(),getsort(),getsearch());
-// 		$("#next").val(next.toString());
-// 		$("#prev").val(prev.toString());
-// 	}
-//
-// });
-// $("#prev").click(function(){
-// 	var next = parseInt($('#next').val())-1;
-// 	var prev = parseInt($('#prev').val())-1;
-// 	var page = getpage();
-// 	if (page > 1)
-// 	{
-// 		loadPlayerList(page-1,getpos(),getsort(),getsearch());
-// 		$("#next").val(next);
-// 		$("#prev").val(prev);
-// 	}
-// });
 
 // Watch and draft button events also addded Up and Down
 $("#draft-list, #watch-list").on("click",".btn-draft",function(event){
@@ -314,24 +270,18 @@ $("#draft-list, #watch-list").on("click",".btn-draft",function(event){
 			//var e = "a[data-value='"+vals[0]+"_"+vals[1]+"']";
 			e = "."+vals[0]+"-"+vals[1];
 			loadWatchList(e);
-			//$(updatePlayerList("watch-list"));
 			return;
 		}
 		loadWatchList();
-
-		//loadPlayerList(getpage(),getpos(),getsort(),getsearch(),true);
-		$(updatePlayerList("draft-list"));
+		updatePlayerList("draft-list");
 		if(vals[0] == "draft"){loadMyTeam();}
 	});
 })
 
-// $("#watch-list-pos").on('change',function(){
-// 	//loadWatchList();
-// });
 
 function loadWatchList()
 {
-	$(updatePlayerList("watch-list"));
+	updatePlayerList("watch-list");
 }
 
 function updateBlock()
@@ -344,7 +294,9 @@ function updateBlock()
 		//flash($("#on-the-block"))
 		<?php if ($this->is_league_admin)
 		{
-			echo "updateAdminButtons();";
+			echo "$('#admin-picks').data('on',false);\n";
+			echo "$('#draft-list').data('var1',false);\n";
+			echo "updateAdminButtons();\n";
 		}
 		?>
 	});
@@ -375,39 +327,6 @@ function flash(element, fadetime)
 	},fadetime);
 }
 
-// function loadPlayerList(page, pos, sort, search, dontreset)
-// {
-// 		url = "<?=site_url('season/draft/ajax_get_draft_table')?>";
-// 		$.post(url,{'page':page-1, 'sel_pos':pos, 'sel_sort':sort, 'search' : search }, function(data){
-// 			$("#available-players").html(data);
-//
-// 			<?php //if($this->is_admin)
-// 			{
-// 				echo 'if($("#admin-picks").data("on")) {$(".btn-draft:contains(\"Draft\")").attr("disabled",false);}';
-// 			}
-// 			?>
-//
-// 		});
-// 		if (dontreset == false)
-// 		{
-// 			$("#next").val(2);
-// 			$("#prev").val(0);
-// 		}
-// }
-
-// function loadWatchList(selector_text)
-// {
-// 	var pos = $('#watch-list-pos').val();
-// 	url ="<?=site_url('season/draft/ajax_get_watch_list')?>";
-// 	$.post(url,{'pos':pos},function(data){
-// 		$("#watch-list").html(data);
-// 		if (typeof(selector_text) != "undefined")
-// 		{
-// 			flash($(selector_text),100);
-// 		}
-// 	});
-// }
-
 function loadMyTeam()
 {
 	url ="<?=site_url('season/draft/ajax_get_myteam')?>";
@@ -415,14 +334,6 @@ function loadMyTeam()
 		$('#myteam-list').html(data);
 	});
 }
-
-
-
-// function getpage(){return parseInt($('#next').val())-1;} // Which page are we on?
-// function gettotal(){return parseInt($('#count-total').text());}
-// function getpos(){return $("#search-pos").val();}
-// function getsort(){return $("#search-sort").val();}
-// function getsearch(){return $("#search-name").val();}
 
 function pad(n) {
     return (n < 10) ? ("0" + n) : n;
@@ -437,18 +348,15 @@ function pad(n) {
 		console.log($(".btn-draft").data('on'));
 		if($("#admin-picks").data('on'))
 		{
-			$(".btn-draft:contains('Draft')").attr('disabled',true);
 			$("#admin-picks").data('on',false);
-			$("#admin-picks").text("Pick for User");
-			console.log("disabled=true");
+			$("#draft-list").data('var1',false);
 		}
 		else
 		{
-			$(".btn-draft:contains('Draft')").attr('disabled',false);
 			$("#admin-picks").data('on',true);
-			$("#admin-picks").text("Cancel user Pick");
-			console.log("disabled=false");
+			$("#draft-list").data('var1',true);
 		}
+		updateAdminButtons();
 	});
 
 	$("#admin-undo").on('click',function(){
@@ -479,6 +387,7 @@ function pad(n) {
 
 			});
 		}
+		updateAdminButtons();
 	});
 
 	function updateAdminButtons()
@@ -486,7 +395,7 @@ function pad(n) {
 		var paused = $("#countdown").data('paused');
 		var currenttime = $("#countdown").data('currenttime');
 		var starttime = $("#countdown").data('starttime');
-		console.log(starttime);
+
 		if (starttime == "" || starttime > currenttime)
 		{$("#admin-pause-button").text("Start Draft");}
 		else if ((starttime < currenttime) && (!paused))
@@ -497,9 +406,17 @@ function pad(n) {
 		$("#admin-undo").attr("disabled",!paused);
 
 		if($("#admin-picks").data('on'))
-		{$("#admin-picks").text("Cancel user Pick");}
+		{
+			$("#admin-picks").text("Cancel user Pick");
+			updatePlayerList("draft-list");
+			//$(".btn-draft:contains('Draft')").attr('disabled',false);
+		}
 		else
-		{$("#admin-picks").text("Pick for User");}
+		{
+			$("#admin-picks").text("Pick for User");
+			updatePlayerList("draft-list");
+			//$(".btn-draft:contains('Draft')").attr('disabled',true);
+		}
 
 	}
 

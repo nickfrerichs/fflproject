@@ -199,6 +199,7 @@ class Draft extends MY_User_Controller{
         $in_pos = $this->input->post('sel_pos');
         $in_sort = $this->input->post('sel_sort');
         $in_search = $this->input->post('search');
+
         $data = array();
 
         $data['page'] = ($in_page == '') ? 0 : $in_page;
@@ -251,10 +252,12 @@ class Draft extends MY_User_Controller{
 
         $player_id = $this->input->post('player_id');
         $admin_pick = $this->input->post('admin_pick');
+
         if ($this->draft_model->player_available($player_id) && $this->draft_model->is_teams_pick() && !$this->draft_model->draft_paused())
         {
             $this->draft_model->draft_player($player_id);
             $this->draft_model->order_watch_list();
+
         }
         elseif ($this->is_league_admin && $admin_pick == true && $this->draft_model->player_available($player_id))
         {

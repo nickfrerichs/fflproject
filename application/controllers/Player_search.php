@@ -90,6 +90,9 @@ class Player_search extends MY_User_Controller{
         $data['draft_team_id'] = $this->draft_model->get_draft_team_id();
         $data['team_id'] = $this->teamid;
         $data['paused'] = $this->draft_model->draft_paused();
+        $data['admin_pick'] = false;
+        if ($this->input->post('var1') == "true")
+            $data['admin_pick'] = true;
 
         $this->load->view('user/season/draft/ajax_get_draft_table', $data);
 

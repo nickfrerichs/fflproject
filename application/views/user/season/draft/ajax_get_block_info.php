@@ -8,8 +8,6 @@
     <?php endif;?>
 </h5></div>
 
-
-<?php //print_r($current_pick);?>
 <?php if(($scheduled_start_time > $current_time) && ($start_time == 0 || $start_time > $current_time)): // Draft is in the future?>
     <div class="d-block-team-name"><?=date('D M j - g:i a',$scheduled_start_time)?></div>
     <div id="countdown" class="d-block-clock" data-deadline=""
@@ -18,7 +16,7 @@
     </div>
 <?php elseif (empty($current_pick)): // Draft is over??>
     <div class="d-block-team-name">Draft is over.</div>
-<?php else: ?>
+<?php else: // Draft is in progress?>
     <div class="d-block-team-name"><?=$current_pick->team_name?></div>
     <?php if($current_pick->logo): ?>
         <?php $temp_logo_url = $logo_url; ?>
@@ -38,7 +36,3 @@
         data-paused="<?=$paused?>" data-starttime="<?=$start_time?>" data-teamid ="<?=$current_pick->team_id?>">...
     </div>
 <?php endif; ?>
-
-<script>
-
-</script>

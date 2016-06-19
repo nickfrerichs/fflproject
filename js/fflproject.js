@@ -211,9 +211,11 @@ function updatePlayerList(tbody)
 	var search = $('.player-list-text-input[data-for="'+tbody+'"]').val();
 	var per_page = $("#"+tbody+"-data").data('perpage');
 	var url = $("#"+tbody).data('url');
+	var var1 = $("#"+tbody).data('var1');
+	console.log(tbody+": "+var1);
 	//resetPlayerPage(tbody);
 	$.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
-	 			 'year':year, 'starter':starter, 'custom':custom}, function(data){
+	 			 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
 		$("#"+tbody).html(data);
 
 		// Display count currently on screen (1-10 of 500)

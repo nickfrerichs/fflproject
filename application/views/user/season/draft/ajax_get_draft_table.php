@@ -17,7 +17,7 @@
 
 		</td>
 		<td>
-			<?php if($draft_team_id == $team_id && !$paused): ?>
+			<?php if(($draft_team_id == $team_id && !$paused) || $admin_pick): ?>
 			<button class="button btn-draft tiny" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>">Draft</button>
 			<?php else: ?>
 			<button class="button btn-draft tiny" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>" disabled>Draft</button>

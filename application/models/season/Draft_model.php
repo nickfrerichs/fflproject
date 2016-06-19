@@ -300,9 +300,11 @@ class Draft_model extends MY_Model{
         }
     }
 
-    function order_watch_list($player_id=0, $direction='')
+    function order_watch_list($team_id = 0, $player_id=0, $direction='')
     {
-        $rows = $this->db->select('id')->from('draft_watch')->where('team_id',$this->teamid)
+        if ($team_id == 0)
+            $team_id = $this->teamid;
+        $rows = $this->db->select('id')->from('draft_watch')->where('team_id',$team_id)
             ->order_by('order','asc')->get()->result();
         foreach($rows as $count => $p)
         {
@@ -463,8 +465,14 @@ class Draft_model extends MY_Model{
                                           'player_id' => $player_id,
                                           'starting_position_id' => 0));
 
-        // Remove player from any watch lists
+        // Remove player from any watch lists, then reorder those teams watch lists.
+        $watchteams = $this->db->select('team_id')->from('draft_watch')->where('league_id',$this->leagueid)->where('player_id',$player_id)
+            ->get()->result();
         $this->db->delete('draft_watch',array('player_id' => $player_id, 'league_id' => $this->leagueid));
+        foreach ($watchteams as $team)
+        {
+            $this->order_watch_list($team->team_id);
+        }
 
         // Update draft_order table, store this player_id for this pick
         $this->db->where('id',$pickid);
