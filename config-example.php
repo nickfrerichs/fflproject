@@ -11,7 +11,7 @@ $fflp_dbpass = '';
 
 $fflp_salt = '';
 
-// Set these if you want to us Google's reCAPTCHA
+// Set these if you want to use Google's reCAPTCHA
 $fflp_use_recaptcha = False;
 $fflp_recaptcha_public_key = '';
 $fflp_recaptcha_private_key = '';

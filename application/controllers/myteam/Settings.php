@@ -80,6 +80,20 @@ class Settings extends MY_User_Controller{
             $this->security_model->set_session_variables();
         }
     }
+
+    function ajax_toggle_item()
+    {
+        $item = $this->input->post('item');
+        $response = array('success' => False);
+        if ($item == "chat_balloon")
+        {
+            $response['currentValue'] = $this->myteam_settings_model->toggle_chat_balloon();
+            $response['success'] = True;
+            $this->load->model('security_model');
+            $this->security_model->set_owner_session_variables();
+        }
+        echo json_encode($response);
+    }
 }
 
 ?>

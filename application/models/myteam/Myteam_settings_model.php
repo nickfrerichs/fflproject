@@ -25,8 +25,9 @@ class Myteam_settings_model extends MY_Model{
         if ($id == 0)
             $id = $this->ownerid;
 
-        return $this->db->select('first_name, last_name, phone_number')->from('owner')
-            ->where('id',$id)->get()->row();
+        return $this->db->select('first_name, last_name, phone_number, chat_balloon')->from('owner')
+            ->join('owner_setting','owner_setting.owner_id = owner.id')
+            ->where('owner.id',$id)->get()->row();
     }
 
     function get_owner_identity($id = 0)
@@ -209,6 +210,15 @@ class Myteam_settings_model extends MY_Model{
         $this->db->update('team',$data);
 
         return $short_name;
+    }
+
+    function toggle_chat_balloon()
+    {
+        $val = !$this->db->select('chat_balloon')->from('owner_setting')
+            ->where('owner_id',$this->ownerid)->get()->row()->chat_balloon;
+        $this->db->where('owner_id',$this->ownerid);
+        $this->db->update('owner_setting',array('chat_balloon' => $val));
+        return $val;
     }
 
 }

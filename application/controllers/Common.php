@@ -35,26 +35,34 @@ class Common extends CI_Controller{
 
     function liveElements($last_check_in = 0)
     {
-        $last_chat_key = $this->input->post('last_chat_key');
+
         $response = array("T" => time());
         $response["last_check_in"] = $last_check_in;
+
         if ($this->session->userdata('live_scores'))
             $response["ls"] = "1";
         else
             $response["ls"] = "0";
 
+
+
         $this->load->model('league/chat_model');
         $response["ur"] = $this->chat_model->get_unread_count();
 
+
         // Check for new chat messages since last_checked_in, add them to this array so they can
         // Be popped up to the user
-        if (is_numeric($last_chat_key))
+        if ($this->session->userdata('chat_balloon'))
         {
-            $response["cm"] = $this->chat_model->get_messages($last_chat_key,5,False);
-        }
-        else
-        {
-            $response['ck'] = $this->chat_model->get_chat_key();
+            $last_chat_key = $this->input->post('last_chat_key');
+            if (is_numeric($last_chat_key))
+            {
+                $response["cm"] = $this->chat_model->get_messages($last_chat_key,5,False);
+            }
+            else
+            {
+                $response['ck'] = $this->chat_model->get_chat_key();
+            }
         }
         echo json_encode($response);
     }

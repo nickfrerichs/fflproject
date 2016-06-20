@@ -1,4 +1,4 @@
-<?php //print_r($team_info); ?>
+<?php //print_r($owner_info); ?>
 <link href="<?=site_url('css/cropper.min.css')?>" rel="stylesheet">
 
 <!-- Confirm modal -->
@@ -115,6 +115,18 @@
                             <td id="password-field">********************</td>
                             <td class="text-left"><a href="#" id="password-control" data-command="edit">Change</a>
                                                 <a href="#" id="password-cancel"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Show Chat Balloons</b></td>
+                            <td></td>
+                            <td>
+                                <div class="switch tiny">
+                                <input  class="switch-input toggle-control" data-item="chat_balloon" data-url="<?=site_url('myteam/settings/ajax_toggle_item')?>"
+                                    id="chat_balloon" type="checkbox" <?php if($owner_info->chat_balloon == "1"){echo "checked";}?>>
+                                <label class="switch-paddle" for="chat_balloon">
+                                </label>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
