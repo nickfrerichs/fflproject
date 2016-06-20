@@ -1,7 +1,7 @@
 <?php
 
 class Auth extends CI_Controller{
-    
+
     function __construct()
     {
         parent::__construct();
@@ -31,7 +31,15 @@ class Auth extends CI_Controller{
 
             if ($this->flexi_auth->ip_login_attempts_exceeded())
             {
-                $this->form_validation->set_rules('recaptcha_response_field', 'Captcha Answer', 'required|validate_recaptcha');
+                $this->config->load('fflproject');
+                if ($this->config->item('use_recaptcha'))
+                    $this->form_validation->set_rules('recaptcha_response_field', 'Captcha Answer', 'required|validate_recaptcha');
+                else
+                {
+
+                    if (!$this->flexi_auth->validate_math_captcha($this->input->post('math_captcha_response_field')))
+                        redirect('');
+                }
             }
 
             if ($this->form_validation->run())

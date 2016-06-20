@@ -10,8 +10,12 @@ $fflp_dbuser = '';
 $fflp_dbpass = '';
 
 $fflp_salt = '';
+
+// Set these if you want to us Google's reCAPTCHA
+$fflp_use_recaptcha = False;
 $fflp_recaptcha_public_key = '';
 $fflp_recaptcha_private_key = '';
+
 $fflp_email_site_title = '';
 $fflp_email_reply_to = "";
 

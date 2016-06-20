@@ -21,7 +21,12 @@ class Home extends MY_Basic_Controller{
 
         if ($this->flexi_auth->ip_login_attempts_exceeded())
 	    {
-            $data['captcha'] = $this->flexi_auth->recaptcha(FALSE);
+            $this->config->load('fflproject');
+            $data['use_recaptcha'] = $this->config->item('use_recaptcha');
+            if ($data['use_recaptcha'])
+                $data['captcha'] = $this->flexi_auth->recaptcha(FALSE);
+            else
+                $data['captcha'] = $this->flexi_auth->math_captcha();
         }
 
         if (!$this->flexi_auth->is_logged_in())

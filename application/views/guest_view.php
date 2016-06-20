@@ -19,14 +19,22 @@
 						<input type="hidden" name="redirect" value="<?=$redirect?>">
 					<?php endif;?>
 
-					<?php if (isset($captcha)) {echo $captcha;} ?>
+					<?php if (isset($captcha)):?>
+						<?php if($use_recaptcha): ?>
+							<?=$captcha?>
+						<?php else: ?>
+							<input type="text" placeholder="<?=$captcha?>" name="math_captcha_response_field">
+						<?php endif;?>
+
+						 <br>
+					 <?php endif; ?>
 		<!--
 					<label class="checkbox">
 						<input type="checkbox" id="remember_me" name="remember_me" value="1">
 						Remember Me
 					</label>
 		-->
-				
+
 					<button type="submit" class="button small">Sign in</button>
 				</form>
 				<div><a href="<?=site_url('accounts/forgot')?>">Forgot Password</a></div>
