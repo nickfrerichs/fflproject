@@ -122,7 +122,7 @@ class Security_model extends CI_Model
 
         $messages = array();
 
-        // Check for unread messages.
+        // Check for unread messages, confusing cause I call notices to the user "messages" too.
         $msgs = $this->db->from('message')->where('team_id',$this->session->userdata('teamid'))->where('read',0)->count_all_results();
         if ( $msgs > 0)
         {
@@ -137,7 +137,25 @@ class Security_model extends CI_Model
                                             '<br><a href="'.site_url('myteam/messages').'">Go to your Inbox</a>',
                                 'id'=>'msg_new_messages'.$date);
         }
+
+        if($this->draft_in_progress())
+        {
+            $messages[] = array('class' => 'primary',
+                                'message' => '<a href="'.site_url('season/draft/live').'" data-ackurl="'.
+                                site_url('common/message_ack/msg_draft_in_progress').'" class="_message-close">Join the Draft currently in progress.</a>',
+                                'id' => 'msg_draft_in_progress');
+        }
         $this->session->set_userdata('user_messages',$messages);
+
+    }
+
+    function draft_in_progress()
+    {
+        $count = $this->db->from('league_settings')->where('league_id',$this->session->userdata('league_id'))
+            ->where('draft_pick_id >',0)->count_all_results();
+        if ($count > 0)
+            return True;
+        return False;
     }
 
     function live_scores_on()
