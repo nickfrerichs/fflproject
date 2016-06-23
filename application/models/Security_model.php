@@ -12,7 +12,7 @@ class Security_model extends CI_Model
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
 
-        $this->site_settings = $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id')
+        $this->site_settings = $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id, session_refresh_time')
             ->from('site_settings')->get()->row();
         $this->userid = $this->flexi_auth->get_user_id();
         if ($this->db->from('owner')->where('user_accounts_id',$this->userid)->count_all_results() > 0)
@@ -91,6 +91,7 @@ class Security_model extends CI_Model
     // every page load.
     function set_dynamic_session_variables()
     {
+        $this->session->set_userdata('session_refresh_time',$this->site_settings->session_refresh_time);
         if($this->session->userdata('is_owner'))
         {
             $week_year = $this->get_current_week();
@@ -110,9 +111,10 @@ class Security_model extends CI_Model
                 $this->session->set_userdata('debug_year', True);
             }
 
-            $this->session->set_userdata('expire_league_vars',time()+60); // Make sure to check dynamic vars every 1 mins.
+            $this->session->set_userdata('expire_league_vars',time()+$this->session->userdata('session_refresh_time')); // Make sure to check dynamic vars every 1 mins.
             $this->session->set_userdata('live_scores',$this->live_scores_on());
 
+            $this->session->set_userdata('draft_in_progress',$this->draft_in_progress());
             $this->set_user_messages();
         }
     }
@@ -138,13 +140,14 @@ class Security_model extends CI_Model
                                 'id'=>'msg_new_messages'.$date);
         }
 
-        if($this->draft_in_progress())
+        if($this->session->userdata('draft_in_progress'))
         {
             $messages[] = array('class' => 'primary',
                                 'message' => '<a href="'.site_url('season/draft/live').'" data-ackurl="'.
                                 site_url('common/message_ack/msg_draft_in_progress').'" class="_message-close">Join the Draft currently in progress.</a>',
                                 'id' => 'msg_draft_in_progress');
         }
+
         $this->session->set_userdata('user_messages',$messages);
 
     }

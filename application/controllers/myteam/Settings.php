@@ -46,6 +46,21 @@ class Settings extends MY_User_Controller{
             $response['msg'] = $this->myteam_settings_model->change_owner_phone($value);
             $response['success'] = true;
         }
+        if($type == 'email')
+        {
+            $response['msg'] = $this->myteam_settings_model->change_owner_email($value);
+            $response['success'] = true;
+        }
+        if($type == 'last')
+        {
+            $response['msg'] = $this->myteam_settings_model->change_owner_lastname($value);
+            $response['success'] = true;
+        }
+        if($type == 'first')
+        {
+            $response['msg'] = $this->myteam_settings_model->change_owner_firstname($value);
+            $response['success'] = true;
+        }
 
         $this->load->model('security_model');
         $this->security_model->set_session_variables();

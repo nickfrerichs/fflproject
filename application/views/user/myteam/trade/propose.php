@@ -1,7 +1,7 @@
 <?php $this->load->view('template/modals/stat_popup'); ?>
 
 <!-- Choose team modal -->
-<div class="reveal" id="choose-team-modal" data-reveal data-overlay="true">
+<div class="reveal tiny" id="choose-team-modal" data-reveal data-overlay="true">
 
 	<form class="navbar-form text-center">
 		<div><h5>Trade with</h5></div>
@@ -16,9 +16,14 @@
 
 <!-- Request players modal -->
 <div class="reveal" id="request-players-modal" data-reveal data-overlay="true">
+	<div class="row">
+		<div class="columns">
+			<h5 class="text-center">Trade request</h5>
+		</div>
+	</div>
 	<div id="trade-with-team">
 	</div>
-	<div><button class="button done-button">Done</button></div>
+	<div><button class="button done-button text-center">Done</button></div>
 
 	<button class="close-button" data-close aria-label="Close modal" type="button">
 	  <span aria-hidden="true">&times;</span>
@@ -27,6 +32,11 @@
 
 <!-- Trade players modal -->
 <div class="reveal" id="trade-players-modal" data-reveal data-overlay="true">
+	<div class="row">
+		<div class="columns">
+			<h5 class="text-center">Trade offer</h5>
+		</div>
+	</div>
 	<table class="text-center table-condensed">
 			<thead>
 				<th class="text-center">Pos</th><th class="text-center">Player</th><th></th>
@@ -58,16 +68,10 @@
 				<?php endforeach; ?>
 			</tbody>
 	</table>
-	<div><button class="button done-button">Done</button></div>
+	<div class="text-center"><button class="button done-button">Done</button></div>
 	<button class="close-button" data-close aria-label="Close modal" type="button">
 	  <span aria-hidden="true">&times;</span>
 	</button>
-</div>
-
-<div class="row">
-	<div class="column">
-		<h5>Propose Trade</h5>
-	</div>
 </div>
 
 
@@ -76,8 +80,8 @@
 		<table class="table-condensed">
 			<thead>
 				<th>
-					<div class="text-center"><h4><?=$team_name?></h4></div>
-					<div class="text-center"><h4><a href="#" id="trade-players">Add/Remove</a></h4></div>
+					<div class="text-center"><h5><?=$team_name?></h5></div>
+					<div class="text-center"><h5><a href="#" id="trade-players">Add/Remove</a></h5></div>
 				</th>
 			</thead>
 			<tbody id="trade-offer-text" class="text-center">
@@ -90,8 +94,8 @@
 		<table class="table-condensed">
 			<thead>
 				<th class="text-center">
-					<h4><span class="text-center" id="request-team-name"></span> <a href="#" id="trade-title">Blah</a></h4>
-					<div class="text-center"><h4><a id="request-players" href="#">Add/Remove</a></h4></div>
+					<h5><span class="text-center" id="request-team-name"></span><span style="font-size:.5em"><a href="#" id="trade-title"> (change)</a></h5></span>
+					<div class="text-center"><h5><a id="request-players" href="#">Add/Remove</a></h5></div>
 				</th>
 			</thead>
 			<tbody id="trade-request-text" class="text-center">
@@ -101,7 +105,7 @@
 
 	</div>
 </div>
-<div class="row">
+<div class="row" style="max-width:325px;">
 	<div class="column">
 		<form class="navbar-form text-center hide trade-form">
 			<div class="form-group">
@@ -197,14 +201,17 @@ $("#send-trade-offer").click(function(){
 	var trade_expire = $("#trade-expire").val();
 
 	url = "<?=site_url('myteam/trade/submit_trade_offer')?>";
-	$.post(url,{'offer' : myteam, 'request' : request, 'other_team' : other_team, 'trade_expire': trade_expire}, function(){
-		$("#send-trade-offer").addClass("disabled");
-		notice("Trade request sent.",'success');
-		setTimeout(function(){
-			window.location.replace("<?=site_url('myteam/trade')?>");
-		}, 2000);
+	if (myteam.length > 0 && request.length > 0)
+	{
+		$.post(url,{'offer' : myteam, 'request' : request, 'other_team' : other_team, 'trade_expire': trade_expire}, function(){
+			$("#send-trade-offer").addClass("disabled");
+			notice("Trade request sent.",'success');
+			setTimeout(function(){
+				window.location.replace("<?=site_url('myteam/trade')?>");
+			}, 2000);
 
-	});
+		});
+	}
 });
 
 });

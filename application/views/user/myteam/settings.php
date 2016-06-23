@@ -94,13 +94,27 @@
                     <tbody>
                         <tr>
                             <td><b>First Name</b></td>
-                            <td><?=$owner_info->first_name?></td>
-                            <td></td>
+                            <td id="first-field"><?=$owner_info->first_name?></td>
+                            <td>
+                                <a href="#" id="first-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
+                                <a href="#" id="first-cancel" class="cancel-control"></a>
+                            </td>
                         </tr>
                         <tr>
                             <td><b>Last Name</b></td>
-                            <td><?=$owner_info->last_name?></td>
-                            <td></td>
+                            <td id="last-field"><?=$owner_info->last_name?></td>
+                            <td>
+                                <a href="#" id="last-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
+                                <a href="#" id="last-cancel" class="cancel-control"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Email Address</b></td>
+                            <td id="email-field"><?=$owner_info->email?></td>
+                            <td>
+                                <a href="#" id="email-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
+                                <a href="#" id="email-cancel" class="cancel-control"></a>
+                            </td>
                         </tr>
                         <tr>
                             <td><b>Phone Number</b></td>

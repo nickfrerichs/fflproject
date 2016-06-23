@@ -56,7 +56,7 @@ class Common_noauth_model extends CI_Model{
         {
             // Need some variables from consolidated config file.
             $this->session->set_userdata('site_name',$this->get_site_name());
-            $this->session->set_userdata('expire_basic_vars', time()+300);
+            $this->session->set_userdata('expire_basic_vars', time()+$this->session->userdata('session_refresh_time'));
             $this->config->load('fflproject');
             $this->session->set_userdata('basic_debug',$this->config->item('basic_debug'));
         }

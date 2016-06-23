@@ -25,8 +25,9 @@ class Myteam_settings_model extends MY_Model{
         if ($id == 0)
             $id = $this->ownerid;
 
-        return $this->db->select('first_name, last_name, phone_number, chat_balloon')->from('owner')
+        return $this->db->select('first_name, last_name, phone_number, chat_balloon, user_accounts.uacc_email as email')->from('owner')
             ->join('owner_setting','owner_setting.owner_id = owner.id')
+            ->join('user_accounts','user_accounts.uacc_id=owner.user_accounts_id')
             ->where('owner.id',$id)->get()->row();
     }
 
@@ -210,6 +211,28 @@ class Myteam_settings_model extends MY_Model{
         $this->db->update('team',$data);
 
         return $short_name;
+    }
+
+    function change_owner_email($value)
+    {
+        $data = array('uacc_email' => $value);
+        $this->db->where('uacc_id',$this->session->userdata('user_id'));
+        $this->db->update('user_accounts',$data);
+        return $value;
+    }
+
+    function change_owner_lastname($value)
+    {
+        $data = array('last_name' => $value);
+        $this->db->where('id',$this->ownerid);
+        $this->db->update('owner',$data);
+    }
+
+    function change_owner_firstname($value)
+    {
+        $data = array('first_name' => $value);
+        $this->db->where('id',$this->ownerid);
+        $this->db->update('owner',$data);
     }
 
     function toggle_chat_balloon()

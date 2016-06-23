@@ -25,7 +25,6 @@ class Roster extends MY_User_Controller{
         $data['logo_thumb_url'] = $this->myteam_settings_model->get_logo_url(0,"thumb");
         $data['record'] = $this->myteam_roster_model->get_team_record_data();
 
-
         $this->user_view('user/myteam/roster', $data);
 
     }
@@ -45,16 +44,6 @@ class Roster extends MY_User_Controller{
 
     }
 
-    // I think this can go away
-    // function sit()
-    // {
-    //     if (!$this->offseason)
-    //     {
-    //         $player_id = $this->input->post('player_id');
-    //         $this->start($player_id,0);
-    //     }
-    // }
-
     function ajax_starter_table()
     {
         //$data['roster'] = $this->myteam_roster_model->get_roster_data();
@@ -65,22 +54,39 @@ class Roster extends MY_User_Controller{
         $data['lea_pos'] = $this->myteam_roster_model->get_league_positions_data();
         $starters_data = $this->myteam_roster_model->get_starters_data($this->teamid, $week);
         $starters = array();
-        // Blank starters array
+
+        // Blank starters array, if no max for a pos use the number of starters at that position as the limit for the for loop
         foreach ($lea_pos as $l)
         {
             $starters[$l->id]['pos'] = $l->text_id;
-            for($i = 0; $i<$l->max_start; $i++)
+            if ($l->max_start == -1)
             {
+
                 foreach($starters_data as $key => $s)
                 {
                     if ($s->starting_position_id == $l->id)
                     {
                         $starters[$l->id]['players'][] = $s;
                         unset($starters_data[$key]);
-                        continue 2;
+                        continue;
                     }
                 }
-                $starters[$l->id]['players'][] = null;
+            }
+            else
+            {
+                for($i = 0; $i<$l->max_start; $i++)
+                {
+                    foreach($starters_data as $key => $s)
+                    {
+                        if ($s->starting_position_id == $l->id)
+                        {
+                            $starters[$l->id]['players'][] = $s;
+                            unset($starters_data[$key]);
+                            continue 2;
+                        }
+                    }
+                    $starters[$l->id]['players'][] = null;
+                }
             }
         }
         $data['starters'] = $starters;
@@ -103,7 +109,8 @@ class Roster extends MY_User_Controller{
             foreach ($lea_pos as $pos)
             {
                 // OK to start this position if these are true.
-                if($week>0 && in_array($b->nfl_position_id,explode(',',$pos->nfl_position_id_list)) && $this->myteam_roster_model->num_starters($pos->id,$this->teamid,$week) < $pos->max_start)
+                if($week>0 && in_array($b->nfl_position_id,explode(',',$pos->nfl_position_id_list)) &&
+                    ($this->myteam_roster_model->num_starters($pos->id,$this->teamid,$week) < $pos->max_start || $pos->max_start == -1))
                 {
                     $bench[$b->player_id]['can_start'][$pos->id] = $pos->text_id;
                 }
@@ -111,6 +118,7 @@ class Roster extends MY_User_Controller{
            // if ($this->myteam_roster_model->num_starters($b->))
         }
         $data['bench'] = $bench;
+        print_r($bench);
         $data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array($week);
         $this->load->view('user/myteam/roster/ajax_bench_table',$data);
     }

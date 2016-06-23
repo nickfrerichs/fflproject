@@ -80,6 +80,107 @@ class Trade_model extends MY_Model{
 
     }
 
+    function trade_position_over_limit($trade_id, $team_id = 0)
+    {
+        // This is pretty complicated
+
+        $team_ids = $this->db->select('team1_id, team2_id')->from('trade')->where('id',$trade_id)->get()->row();
+
+        $team1_pos_array = array();
+        $team2_pos_array = array();
+
+        $pos_year = $this->common_model->league_position_year();
+        $positions = $this->db->select('id, nfl_position_id_list, max_roster, text_id')->from('position')->where('league_id',$this->leagueid)
+            ->where('position.year',$pos_year)->get()->result();
+
+        // $team1_roster & $team2_roster
+        $team1_adds = $this->db->select('nfl_position_id as pos_id')->from('trade_player')
+            ->join('player','player.id = trade_player.player_id')
+            ->where('trade_id',$trade_id)->where('team_id',$team_ids->team2_id)->get()->result();
+
+        $team2_adds = $this->db->select('nfl_position_id as pos_id')->from('trade_player')
+            ->join('player','player.id = trade_player.player_id')
+            ->where('trade_id',$trade_id)->where('team_id',$team_ids->team1_id)->get()->result();
+
+        foreach (range(1,2) as $i)
+        {
+            ${'team'.$i.'_roster'} = $this->db->select('nfl_position.id as pos_id')->from('roster')
+                ->join('player','roster.player_id = player.id')->join('nfl_position','nfl_position.id = player.nfl_position_id')
+                ->where('roster.team_id',$team_ids->{'team'.$i.'_id'})
+                ->get()->result();
+
+            if ($i == 1) {$j = 2;} else{$j=1;}
+
+            foreach($positions as $pos)
+            {
+                // Current roster
+                foreach(${'team'.$i.'_roster'} as $player)
+                {
+                    if (in_array($player->pos_id, explode(',',$pos->nfl_position_id_list)))
+                    {
+                        if (!isset(${'team'.$i.'_pos_array'}[$pos->id]))
+                            ${'team'.$i.'_pos_array'}[$pos->id] = 0;
+                        ${'team'.$i.'_pos_array'}[$pos->id]++;
+                    }
+                }
+                // Plus player who team1 will be adding
+                foreach(${'team'.$i.'_adds'} as $add)
+                {
+                    if (in_array($add->pos_id, explode(',',$pos->nfl_position_id_list)))
+                    {
+                        if (!isset(${'team'.$i.'_pos_array'}[$pos->id]))
+                            ${'team'.$i.'_pos_array'}[$pos->id] = 0;
+                        ${'team'.$i.'_pos_array'}[$pos->id]++;
+                    }
+                }
+                // Minus players who will be removed
+                foreach(${'team'.$j.'_adds'} as $remove)
+                {
+                    if (in_array($remove->pos_id, explode(',',$pos->nfl_position_id_list)))
+                    {
+                        if (!isset(${'team'.$i.'_pos_array'}[$pos->id]))
+                            ${'team'.$i.'_pos_array'}[$pos->id] = 0;
+                        ${'team'.$i.'_pos_array'}[$pos->id]--;
+                    }
+                }
+            }
+        }
+
+        $max = array();
+        foreach ($positions as $pos)
+            $max[$pos->id] = $pos->max_roster;
+
+        // It's important that team2 be checked first and make room
+        foreach($team2_pos_array as $posid => $t)
+        {
+            
+            if ($max[$posid] == -1)
+                continue;
+            // Return $team2 id, it's over the limit
+            if($t > $max[$posid])
+                return $team_ids->team2_id;
+        }
+
+        foreach($team1_pos_array as $posid => $t)
+        {
+            if ($max[$posid] == -1)
+                continue;
+            // Return $team1 id, it's over the limit
+            if($t > $max[$posid])
+                return $team_ids->team1_id;
+        }
+
+
+
+        // Made it here, no teams would be over position limits
+        return False;
+        // print_r($team1_pos_array);
+        // print_r($team2_pos_array);
+        // print_r($max);
+
+
+    }
+
     function trade_roster_over_limit($trade_id, $team_id = 0)
     {
 
@@ -88,6 +189,10 @@ class Trade_model extends MY_Model{
         // If team_id specified, return true if team is over the limit
         $this->load->model('common/common_model');
         $max = $this->common_model->get_roster_max();
+
+        // There is no roster max for this league... everything goes.
+        if ($max == -1)
+            return False;
 
         $row = $this->db->select('team1_id, team2_id')->from('trade')->where('id',$trade_id)->get()->row();
 
@@ -100,31 +205,33 @@ class Trade_model extends MY_Model{
             $team1_num = $this->db->from('roster')->where('team_id',$row->team1_id)->count_all_results();
             $team2_num = $this->db->from('roster')->where('team_id',$row->team2_id)->count_all_results();
 
+            // Team 2 would be over the limit, want to check this team before team1
+            if (($team2_num + ($team2_add_num - $team1_add_num) > $max))
+                return $row->team2_id; // someone is over the limit
+
             // Team 1 would be over the limit
             if (($team1_num + ($team1_add_num - $team2_add_num) > $max))
                 return $row->team1_id;
-            // Team 2 would be over the limit
-            if (($team2_num + ($team2_add_num-$team1_add_num) > $max))
-                return $row->team2_id; // someone is over the limit
+
         }
 
         // Neither team would be over the limit if trade is completed.
         return False;
 
         // I think the rest of this can go away.
-        if ($team_id == $row->team1_id)
-            $add_num = $team1_add_num - $team2_add_num;
-        elseif ($team_id == $row->team2_id)
-            $add_num = $team2_add_num - $team1_add_num;
-        else
-            return False; // Teamid isn't part of the trade.
+        // if ($team_id == $row->team1_id)
+        //     $add_num = $team1_add_num - $team2_add_num;
+        // elseif ($team_id == $row->team2_id)
+        //     $add_num = $team2_add_num - $team1_add_num;
+        // else
+        //     return False; // Teamid isn't part of the trade.
 
-        $current_num = $this->db->from('roster')->where('team_id',$team_id)->count_all_results();
+        // $current_num = $this->db->from('roster')->where('team_id',$team_id)->count_all_results();
 
-        if ($current_num + $add_num > $max)
-            return False; // Over the limit
-        else
-            return True; // Not over the limit
+        // if ($current_num + $add_num > $max)
+        //     return False; // Over the limit
+        // else
+        //     return True; // Not over the limit
     }
 
     function accept_trade_offer($trade_id)
@@ -163,7 +270,7 @@ class Trade_model extends MY_Model{
             $this->db->insert('roster', array('league_id'=>$this->leagueid,'team_id'=>$newteamid,'player_id'=>$p->player_id, 'starting_position_id'=>0));
         }
         // Mark trade as completed
-        $this->db->where('id',$trade_id)->update('trade',array('completed'=>1));
+        $this->db->where('id',$trade_id)->update('trade',array('completed'=>1, 'completed_date' => t_mysql()));
 
         // Send email
         $this->send_trade_email_notice($trade_id, "Trade Accepted");
@@ -171,7 +278,8 @@ class Trade_model extends MY_Model{
 
     function decline_trade_offer($trade_id)
     {
-        $this->db->where('id',$trade_id)->update('trade',array('canceled'=>1));
+        $this->db->where('id',$trade_id)->update('trade',array('canceled'=>1, 'completed_date' => t_mysql()));
+        $this->send_trade_email_notice($trade_id, "Trade Declined");
     }
 
     function valid_trade_action($tradeid,$action)
@@ -196,6 +304,7 @@ class Trade_model extends MY_Model{
         $data['team1_id'] = $team1_id;
         $data['team2_id'] = $team2_id;
         $data['expires'] = date("Y-m-d H:i:s",$trade_expire);
+        $data['year'] = $this->current_year;
         $this->db->insert('trade',$data);
 
         $trade_id = $this->db->insert_id();
@@ -262,6 +371,11 @@ class Trade_model extends MY_Model{
             $body = "Trade accepted, pending ".$team2data->team_name." clears enough roster spots.\n\n";
         }
 
+        if ($subject == "Trade Declined")
+        {
+            $body = "Trade declined by ".$team2data->team_name."\n\n";
+        }
+
         $body .= "Players offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):\n";
         foreach($proposed as $p)
         {
@@ -287,5 +401,42 @@ class Trade_model extends MY_Model{
         $this->email->message($body);
         $this->email->send();
 
+    }
+
+    function get_trade_log_array()
+    {
+        $result = array();
+        $data = $this->db->select('player.first_name, player.last_name, player.id as player_id')
+            ->select('team1.team_name as team1_name, team2.team_name as team2_name, team1.id as team1_id, team2.id as team2_id')
+            ->select('trade.id as trade_id')
+            ->select('UNIX_TIMESTAMP(trade.completed_date) as completed_date')
+            ->select('trade_player.team_id as old_team_id')
+            ->from('trade_player')->join('player','player.id = trade_player.player_id')
+            ->join('trade','trade.league_id = '.$this->leagueid.' and trade.year = '.$this->current_year.' and trade.id = trade_player.trade_id')
+            ->join('team as team1','team1.id = trade.team1_id')
+            ->join('team as team2','team2.id = trade.team2_id')
+            ->where('completed',1)
+            ->order_by('completed_date','desc')
+            ->get()->result();
+
+        foreach($data as $row)
+        {
+            $result[$row->trade_id]['team1']['team_name'] = $row->team1_name;
+            $result[$row->trade_id]['team2']['team_name'] = $row->team2_name;
+            $result[$row->trade_id]['team1']['team_id'] = $row->team1_id;
+            $result[$row->trade_id]['team2']['team_id'] = $row->team2_id;
+            $result[$row->trade_id]['completed_date'] = $row->completed_date;
+            if ($row->old_team_id == $row->team1_id)
+                $thisteam = "team1";
+            else
+                $thisteam = "team2";
+            $player = array('first_name' => $row->first_name,
+                            'last_name' => $row->last_name,
+                            'player_id' => $row->player_id);
+            $result[$row->trade_id][$thisteam]['players'][] = $player;
+
+        }
+
+        return $result;
     }
 }

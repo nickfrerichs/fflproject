@@ -242,7 +242,7 @@ function updateLiveElements()
         {
             $("#livedata").data("last_check_in",d.T);
 
-            // Update unread message count
+            // Update unread chat message count
             if (parseInt(d.ur) > 0)
                 {$(".unread-count").text(" ("+d.ur+")");}
             else{$(".unread-count").text("");}
@@ -281,7 +281,6 @@ function updateLiveElements()
                 });
                 $("#livedata").data("chat_key",new_chat_key);
             }
-
 
         }
     });

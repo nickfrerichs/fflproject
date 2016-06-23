@@ -64,6 +64,7 @@ class Common extends CI_Controller{
                 $response['ck'] = $this->chat_model->get_chat_key();
             }
         }
+        
         echo json_encode($response);
     }
 }

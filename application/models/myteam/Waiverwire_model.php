@@ -174,13 +174,13 @@ class Waiverwire_model extends MY_Model{
         $roster_max = $this->get_roster_max();
         if (($drop_id == 0 && ($roster_max <= $roster_num)) || $roster_num > $roster_max)
         {
-            $ret = "This will put your team over roster limit of ".$roster_max." players.  You'll have ".$roster_num.' drop_id:'.$drop_id;
+            $ret = "This will put your team over roster limit of ".$roster_max." players.  You'll have ".$roster_num;
             return False;
         }
 
         // Check position limit, this is a tad complicated
         $pos_year = $this->common_model->league_position_year();
-        $positions = $this->db->select('nfl_position_id_list, max_roster')->from('position')->where('league_id',$this->leagueid)
+        $positions = $this->db->select('nfl_position_id_list, max_roster, text_id')->from('position')->where('league_id',$this->leagueid)
             ->where('position.year',$pos_year)->get()->result();
         $pickup_nfl_pos = $this->db->select('nfl_position_id')->from('player')->where('id',$pickup_id)->get()->row()->nfl_position_id;
         $temp = $this->db->select('nfl_position_id')->from('player')->where('id',$drop_id)->get()->row();
@@ -189,9 +189,10 @@ class Waiverwire_model extends MY_Model{
         else
             $drop_nfl_pos = 0;
         $pos_limit = True;
+        $pos_limit_text = "";
         foreach ($positions as $p)
         {
-            if ($p->max_roster == 0)
+            if ($p->max_roster == 0) // limit is 0
             {
                 $pos_limit = False;
                 break;
@@ -216,12 +217,17 @@ class Waiverwire_model extends MY_Model{
                     $pos_limit = False;
                     break;
                 }
+                else
+                {
+                    $pos_limit = $p->max_roster;
+                    $pos_limit_text = $p->text_id;
+                }
             }
 
         }
         if ($pos_limit)
         {
-            $ret = "This will put you over the number of players allowed for this position.";
+            $ret = "You can only have " .$pos_limit." players on your roster at the ".$pos_limit_text." position.";
             return False;
         }
 

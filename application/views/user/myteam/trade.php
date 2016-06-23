@@ -8,7 +8,7 @@
 	<?php if(!$this->session->userdata('offseason')): ?>
 		<div class="column small-12"><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></div>
 	<?php endif;?>
-	<div class="column small-12"><a href="#">Trade log</a></div>
+	<div class="column small-12"><a href="<?=site_url('myteam/trade/log')?>">Trade log</a></div>
 </div>
 
 <!--

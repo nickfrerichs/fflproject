@@ -226,7 +226,9 @@ class Myteam_roster_model extends MY_Model{
                 ->where('id', $lea_pos)->where('league_id',$this->leagueid)
                 ->get()->row()->max_start;
 
-        if($this->num_starters($lea_pos, $this->teamid, $week) >= $max_starters) // Team already has too many starters in that position, false
+        // If max_starters = -1, use roster_max, if it's -1, then there is no limit.
+
+        if($max_starters != -1 && $this->num_starters($lea_pos, $this->teamid, $week) >= $max_starters) // Team already has too many starters in that position, false
             return false;
 
         return true; // All checks passed, return true

@@ -12,7 +12,7 @@ class Trade extends MY_User_Controller{
 
     function test()
     {
-        $this->trade_model->send_trade_email_notice(32,'Trade proposed');
+        $this->trade_model->trade_position_over_limit(4);
     }
 
     function index()
@@ -77,7 +77,8 @@ class Trade extends MY_User_Controller{
         $team1_players = $this->input->post('offer');
         $team2_players = $this->input->post('request');
         $trade_expire = $this->input->post('trade_expire');
-        $this->trade_model->add_trade($team1_id, $team2_id, $team1_players, $team2_players, $trade_expire);
+        if ((is_array($team1_players) && count($team1_players) > 0) && (is_array($team2_players) && count($team2_players) >0))
+            $this->trade_model->add_trade($team1_id, $team2_id, $team1_players, $team2_players, $trade_expire);
     }
 
     function ajax_accept()
@@ -91,28 +92,48 @@ class Trade extends MY_User_Controller{
             {
                 $limit_teamid = $this->trade_model->trade_roster_over_limit($tradeid);
 
-                // My team is over the limit, need to drop players
+                
                 if($limit_teamid == $this->session->userdata('team_id'))
                 {
+                    // Offering is over the roster limit, need to drop players
                     $response['msg'] = "You have too many players on your roster to accept the trade.  You must drop some players first.";
                 }
                 elseif($limit_teamid > 0) // The other team who made the offer must be over the limit, swich offer and send back.
                 {
+                    // Other team is over the roster limit, reverse trade
                     $this->trade_model->reverse_offer($tradeid);
                     $response['msg'] = "The offer has been accepted, pending the offering team having room on their roster to complete the trade.";
                 }
-                elseif($limit_teamid == false) // No one is over the limit, process the transaction
+                elseif($limit_teamid == False)
                 {
-                    //if (!$this->trade_model->trade_roster_over_limit($tradeid))
-                    if ($this->trade_model->player_ownership_ok($tradeid))
+                    // OK so far, check position limits
+                    $limit_teamid = $this->trade_model->trade_position_over_limit($tradeid);
+                
+                    if($limit_teamid == $this->session->userdata('team_id'))
                     {
-                        $this->trade_model->accept_trade_offer($tradeid);
-                        $response['success'] = true;
-                        $response['msg'] = "Trade successfully processed!";
+                        // Offering team is over a position limit
+                        $response['msg'] = "You have too many players at this position.  You must be under the limit first.";
                     }
-                    else
+                    elseif($limit_teamid > 0)
                     {
-                        $response['msg'] = "Oops, someone dropped a player invovled in this trade, it's no longer valid.";
+                        // Other team is over a position limit, reverse trade
+                        $this->trade_model->reverse_offer($tradeid);
+                        $response['msg'] = "The offer has been accepted, pending the offering team having room at that position.";
+                    }
+                    elseif($limit_teamid == False) // No one is over the limit, process the transaction
+                    {
+                        // Everything appears to be OK as far as limits, check ownership and process trade
+                        if ($this->trade_model->player_ownership_ok($tradeid))
+                        {
+                            $this->trade_model->accept_trade_offer($tradeid);
+                            $response['success'] = true;
+                            $response['msg'] = "Trade successfully processed!";
+                        }
+                        else
+                        {
+                            // This means a player involved in the trade is no longer owned by the original team when the trade was proposed.
+                            $response['msg'] = "Oops, someone dropped a player invovled in this trade, it's no longer valid.";
+                        }
                     }
                 }
                 echo json_encode($response);
@@ -196,5 +217,15 @@ class Trade extends MY_User_Controller{
 
         <?php
         // End the view
+    }
+
+    function log()
+    {
+        $data = array();
+        $data['log'] = $this->trade_model->get_trade_log_array();
+
+        $this->bc['Trade'] = site_url('myteam/trade');
+        $this->bc['Log'] = "";
+        $this->user_view('user/myteam/trade/log.php', $data);
     }
 }

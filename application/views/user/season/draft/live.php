@@ -183,9 +183,6 @@ line-height: 60px;
 <?php endif; ?>
 
 <script>
-$("#draft-list").on('change',function(){
-	console.log("Draft list changed.");
-});
 
 $(document).ready(function(){
 
@@ -202,7 +199,6 @@ $(document).ready(function(){
 	evtSource.onmessage = function(e){
 		if($("#debug").text() != e.data)
 		{
-			console.log('update block part');
 			updatePlayerList("draft-list");
 			loadWatchList();
 			updateRecentPicks();
@@ -264,7 +260,7 @@ $("#draft-list, #watch-list").on("click",".btn-draft",function(event){
 	{url="<?=site_url('season/draft/watch_player_down')?>";}
 
 	$.post(url,{'player_id':vals[1], 'admin_pick' : admin_pick}, function(data){
-		console.log(data);
+
 		if (vals[0] == "up" || vals[0] == "down")
 		{
 			//var e = "a[data-value='"+vals[0]+"_"+vals[1]+"']";
@@ -345,7 +341,7 @@ function pad(n) {
 	<script>
 
 	$("#admin-picks").on('click',function(){
-		console.log($(".btn-draft").data('on'));
+
 		if($("#admin-picks").data('on'))
 		{
 			$("#admin-picks").data('on',false);

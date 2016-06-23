@@ -92,7 +92,6 @@ $(document).on('click',".change-control", function(e){
         $.post(url,{type:name,value:newvalue.val(),var1:var1, var2:var2, var3:var3}, function(data){
             if(data)
             {
-				console.log(data);
                 var d = $.parseJSON(data);
                 if(d.success){field.html(newvalue.val()); notice('Setting saved.','success')}
 				else
@@ -212,7 +211,6 @@ function updatePlayerList(tbody)
 	var per_page = $("#"+tbody+"-data").data('perpage');
 	var url = $("#"+tbody).data('url');
 	var var1 = $("#"+tbody).data('var1');
-	console.log(tbody+": "+var1);
 	//resetPlayerPage(tbody);
 	$.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
 	 			 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
@@ -265,8 +263,8 @@ function resetPlayerPage(tbody) // This is not being used right now
 // MESSAGES: used site wide to present outstanding warnings/info to user/admin
 //
 $(document).on('click',"._message-close",function(){
-	console.log($(this));
+
 	var ackurl = $(this).data('ackurl');
-	console.log(ackurl);
+
 	$.post(ackurl);
 });

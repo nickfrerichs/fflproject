@@ -69,7 +69,7 @@ class Security_model extends MY_Model
     {
         $row = $this->db->select('roster_max')->from('league_settings')->where('league_id',$this->leagueid)
             ->get()->row();
-        if (count($row) > 0 && $row->roster_max > 0)
+        if (count($row) > 0 && $row->roster_max != 0)
             return True;
         return False;
     }

@@ -836,6 +836,7 @@ CREATE TABLE `owner_setting` (
   `owner_id` int(11) NOT NULL,
   `league_id` int(11) NOT NULL,
   `chat_read` int(11) NOT NULL,
+  `chat_balloon` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1165,7 +1166,8 @@ CREATE TABLE `site_settings` (
   `debug_admin` tinyint(1) NOT NULL,
   `debug_week` int(11) NOT NULL DEFAULT '-1',
   `debug_year` int(11) NOT NULL DEFAULT '-1',
-  `debug_week_type_id` int(11) NOT NULL DEFAULT '-1'
+  `debug_week_type_id` int(11) NOT NULL DEFAULT '-1',
+  `session_refresh_time` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1175,7 +1177,7 @@ CREATE TABLE `site_settings` (
 
 LOCK TABLES `site_settings` WRITE;
 /*!40000 ALTER TABLE `site_settings` DISABLE KEYS */;
-INSERT INTO `site_settings` VALUES ('FFL Project',0,0,-1,-1,-1);
+INSERT INTO `site_settings` VALUES ('FFL Project',0,0,-1,-1,-1,120);
 /*!40000 ALTER TABLE `site_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1359,6 +1361,8 @@ CREATE TABLE `trade` (
   `completed` tinyint(1) NOT NULL DEFAULT '0',
   `canceled` tinyint(1) NOT NULL DEFAULT '0',
   `expires` datetime NOT NULL,
+  `year` int(11) NOT NULL,
+  `completed_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1612,4 +1616,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-06-19 22:06:18
+-- Dump completed on 2016-06-23 15:40:09
