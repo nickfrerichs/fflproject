@@ -133,24 +133,28 @@ class Player_search extends MY_User_Controller{
         ?>
 
         <?php foreach($this->data['players'] as $p):?>
+            <?php if ($p->clear_time)
+            {
+                $remaining = $p->clear_time - time();
+                $hr = (int)($remaining / (60*60));
+                $min = (int)(($remaining - $hr*(60*60)) / 60);
+                $sec = (int)(($remaining - $hr*(60*60) - $min*60));
+            }
+            ?>
             <tr class="pickup-player" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">
                 <td><?=$p->position?></td>
-                <td><a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a></td>
+                <td>
+                    <a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a>
+                </td>
                 <td><?=$p->club_id?></td>
                 <td class="hide-for-small-only"><?=$this->data['matchups'][$p->club_id]['opp']?></td>
                 <td><?=$p->points?></td>
-                <td> <!-- Might want to make the waiviers not cleared notice better -->
-    				<?php if ($p->clear_time)
-    				{
-    					$remaining = $p->clear_time - time();
-    					$hr = (int)($remaining / (60*60));
-    					$min = (int)(($remaining - $hr*(60*60)) / 60);
-    					$sec = (int)(($remaining - $hr*(60*60) - $min*60));
-    				}
-    				?>
+                <td class="text-center" style="width:17%"> <!-- Might want to make the waiviers not cleared notice better -->
+
     				<?php if($p->clear_time): ?>
-    					Waivers clear in <?=$hr?>h:<?=$min?>m:<?=$sec?>s
-    				<?php else: ?>
+                    <button <?=($p->requested ? "disabled" : "")?> class="player-pickup button tiny" data-clear="no" data-pickup-id="<?=$p->id?>"
+                        data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup (<?=$hr?>h:<?=$min?>m)</button>
+                    <?php else: ?>
     					<button class="player-pickup button tiny" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup</button>
     				<?php endif;?>
                 </td>
@@ -245,5 +249,94 @@ class Player_search extends MY_User_Controller{
         <?php
         //END VIEW
         // ******************************
+    }
+
+    function ajax_news_ww_activity()
+    {
+        if ($this->leagueid == "")
+        {
+            echo '<div class="text-center" style="font-style:italic">Nothing to report</div>';
+        }
+        else
+        {
+
+            $this->per_page = 3;
+            $data = $this->waiverwire_model->get_log_data($this->current_year,$this->per_page, $this->data['page']*$this->per_page);
+            $waiverwire_log = $data['result'];
+
+            echo '<script>console.log("'.$this->data['page'].'")</script>';
+            ?>
+
+            <?php if (count($waiverwire_log) > 0): ?>
+                <br>
+                <?php foreach($waiverwire_log as $i=>$w): ?>
+                  <div>
+                      <span><?=$w->team_name?></span> <span class="date"><?=date("M j g:i a",$w->transaction_date)?></span><br>
+                      <span><strong>Add: </strong><?=$w->pickup_short_name?> <?=$w->pickup_pos?> <?=$w->pickup_club_id?></span><br>
+                      <span><strong>Drop: </strong><?=$w->drop_short_name?> <?=$w->drop_pos?> <?=$w->drop_club_id?></span>
+                  </div>
+                  <?php if($i+1 < count($waiverwire_log)): ?>
+                      <hr>
+                <?php endif;?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="text-center" style="font-style:italic">Nothing to report</div>
+            <?php endif;?>
+            <div id="news-ww-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$data['total']?>"></div>
+
+            <?php
+        }
+    }
+
+    function ajax_news_trade_activity()
+    {
+        if ($this->leagueid > 0)
+        {
+        $this->load->model('myteam/trade_model');
+        $this->per_page = 3;
+        $data = $this->trade_model->get_trade_log_array($this->current_year,$this->per_page, $this->data['page']*$this->per_page);
+        $log = $data['log'];
+        ?>
+        <?php if (count($log) > 0): ?>
+            <br>
+            <?php $i = 0; ?>
+            <?php foreach($log as $trade_id => $l): ?>
+
+              <div class="row">
+                <div class="columns">
+                   <span class="date"><?=date("n/j g:i a",$l['completed_date'])?></span>
+                </div>
+            </div>
+              <div class="row">
+                <div class="columns">
+                  <?=$l['team1']['team_name']?> gets
+                    <?php foreach($l['team1']['players'] as $p): ?>
+                        <div class="columns small-12" style="font-style:italic"><?=$p['first_name'].' '.$p['last_name']?></div>
+                    <?php endforeach;?>
+                </div>
+                <div class="columns">
+                  <?=$l['team2']['team_name']?> gets
+                    <?php foreach($l['team2']['players'] as $p): ?>
+                        <div class="columns small-12" style="font-style:italic"><?=$p['first_name'].' '.$p['last_name']?></div>
+                    <?php endforeach;?>
+                </div>
+              </div>
+              <?php if($i+1 < count($log)): ?>
+                  <hr>
+            <?php endif;?>
+            <?php $i++;?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="text-center" style="font-style:italic">Nothing to report</div>
+        <?php endif;?>
+        <div id="news-trade-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$data['total']?>"></div>
+
+        <?php
+
+        }
+        else
+        {
+            echo '<div class="text-center" style="font-style:italic">Nothing to report</div>';
+        }
     }
 }

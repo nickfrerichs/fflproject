@@ -2,9 +2,35 @@
 <link href="<?=site_url('/css/foundation-datepicker.min.css')?>" rel="stylesheet">
 <div class="row">
 	<div class="columns">
-		<?php //print_r($settings); ?>
+		<?php //print_r($approvals); ?>
 		<div class="row align-center">
-			<div class="columns" style="max-width:800px;">
+			<div class="columns small-12">
+				<h5>Waiver wire approvals</h5>
+				<table>
+					<thead>
+					</thead>
+					<tbody>
+						<?php foreach($approvals as $a): ?>
+							<tr>
+								<td><?=date("n/j/y g:i:s a",$a->request_date)?></td>
+		                        <td>
+									<div><b>Pick up:</b> <?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)</div>
+		                            <div style="color:#999"><b>Drop:</b> <?=$a->d_first.' ',$a->d_last?> (<?=$a->d_pos.' - '.$a->d_club_id?>)</div>
+
+		                        </td>
+		                        <td>
+		                            <div><b>Team:</b> <?=$a->team_name?></div>
+		                            <div><b>Owner:</b> <?=$a->o_first.' '.$a->o_last?></div>
+		                        </td>
+								<td>
+									<button class="button small ww-approve" data-id="<?=$a->ww_id?>">Approve</button>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+			<div class="columns small-12" style="max-width:800px;">
 				<h5 class="text-left">Settings</h5>
 				<table class="text-left">
 					<thead>
@@ -48,6 +74,14 @@
 		$(this).fdatepicker({
 			format: 'yyyy-mm-dd hh:ii',
 			pickTime: true
+		});
+	});
+
+	$('.ww-approve').on('click',function(){
+		var url = "<?=site_url('admin/transactions/ww_approve')?>";
+		var ww_id = $(this).data('id');
+		$.post(url, {'id':ww_id},function(data){
+			location.reload();
 		});
 	});
 

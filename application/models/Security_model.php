@@ -52,7 +52,7 @@ class Security_model extends CI_Model
                 ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1','left')
                 ->join('league','league.id = owner.active_league','left')
                 ->join('league_settings','league_settings.league_id = owner.active_league','left')
-                ->join('owner_setting','owner_setting.owner_id = owner.id')
+                ->join('owner_setting','owner_setting.owner_id = owner.id','left')
                 ->where('owner.user_accounts_id',$this->userid)->get()->row();
 
         $this->session->set_userdata('owner_id', $owner->owner_id);

@@ -28,47 +28,53 @@ hr{border: 1px solid #eaeaea;}
             </div>
             <?php endforeach; ?>
     </div>
-    <div class="columns small-order-1 medium-order-2 small-12 medium-5 large-4 callout right-bar">
+    <div class="columns small-order-1 medium-order-2 small-12 medium-5 large-4 right-bar">
       <div class="row">
-        <div class="columns">
+        <div class="columns callout small-12">
+          <h6 class="text-center">Recent Waiver Wire Activity</h6>
 
-                <h6 class="text-center">Recent Waiver Wire Activity</h6>
+          <div id="news-ww-list" data-url="<?=site_url('player_search/ajax_news_ww_activity')?>">
+          </div><br>
+          <div class="row">
+          <div class="columns text-right">
+              <ul class="pagination" role="navigation" aria-label="Pagination">
+                  <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="news-ww-list">Previous</a></li>
+              </ul>
+          </div>
+          <div class="columns text-left small-order-2 medium-order-3">
+              <ul class="pagination" role="navigation" aria-label="Pagination">
+                  <li class="pagination-next"><a href="#" class="player-list-next" data-for="news-ww-list">Next</a></li>
+              </ul>
+          </div>
+          </div>
 
-        <?php if (count($waiverwire_log) > 0): ?>
-            <br>
-            <?php foreach($waiverwire_log as $i=>$w): ?>
-              <div>
-                  <span><?=$w->team_name?></span> <span class="date"><?=date("M j g:i a",$w->transaction_date)?></span><br>
-                  <span><strong>Add: </strong><?=$w->pickup_short_name?> <?=$w->pickup_pos?> <?=$w->pickup_club_id?></span><br>
-                  <span><strong>Drop: </strong><?=$w->drop_short_name?> <?=$w->drop_pos?> <?=$w->drop_club_id?></span>
-              </div>
-              <?php if($i+1 < count($waiverwire_log)): ?>
-                  <hr>
-            <?php endif;?>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="text-center" style="font-style:italic">Nothing to report</div>
-        <?php endif;?>
-<!--             <div>
-                <span>Nick's Team</span> <span class="date">(9/22 8:03pm)</span><br>
-                     <span><strong>Add:</strong> A. Petersen - RB MIN</span><br>
-                     <span><strong>Drop:</strong> J. Cutler - RB CHI</span>
-            </div>
-            <br>
-            <div>
-                 <span>Matt's Team</span> <span class="date">(9/21 4:23pm)</span><br>
-                      <span><strong>Add:</strong> J. Feely - K JAX</span><br>
-                      <span><strong>Drop:</strong> E. Manning - QB NYG</span>
-
-            </div> -->
         </div>
+
       </div>
-      <?php if(1==0): ?>
+
+      <?php if(1==1): ?>
       <div class="row">
-        <div class="columns">
-         <br><hr>
-         <h6>Trade Activity</h6>
+        <div class="columns callout small-12">
+          <h6 class="text-center">Trade Activity</h6>
+
+          <div id="news-trade-list" data-url="<?=site_url('player_search/ajax_news_trade_activity')?>">
+          </div>
+          <br>
+          <div class="row">
+            <div class="columns text-right">
+              <ul class="pagination" role="navigation" aria-label="Pagination">
+                  <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="news-trade-list">Previous</a></li>
+              </ul>
+          </div>
+          <div class="columns text-left small-order-2 medium-order-3">
+              <ul class="pagination" role="navigation" aria-label="Pagination">
+                  <li class="pagination-next"><a href="#" class="player-list-next" data-for="news-trade-list">Next</a></li>
+              </ul>
+          </div>
+          </div>
+
         </div>
+
       </div>
       <?php endif;?>
 
@@ -83,3 +89,9 @@ hr{border: 1px solid #eaeaea;}
       <?php //debug($waiverwire_log,$this->session->userdata('debug'))?>
     </div>
 </div>
+
+<script>
+  updatePlayerList('news-ww-list');
+  updatePlayerList('news-trade-list');
+</script>
+

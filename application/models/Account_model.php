@@ -12,6 +12,9 @@ class Account_model extends CI_Model{
 
         $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 'team_name' => $team_name, 'long_name' => $team_name, 'active' => 1);
         $this->db->insert('team', $data);
+
+        $data = array('owner_id' => $owner_id, 'league_id' => $league_id);
+        $this->db->insert('owner_setting',$data);
     }
 
     function add_owner($user_id, $first_name, $last_name)

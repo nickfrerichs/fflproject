@@ -4,6 +4,7 @@
 
 <!-- Confirm modal -->
 <div class="reveal" id="confirm-modal" data-reveal data-overlay="true">
+    <div id="notclear" class="hide text-center">Players waivers have not cleared, you'll be notified when they do.</div>
     <div class="text-center">
             <div class="drop-text">Drop: No One</div>
             <div class="pickup-text">Pick up: No One</div>
@@ -125,6 +126,7 @@
 
     // Pick up table button click
 	$("#ww-list").on("click","button.player-pickup",function(){
+        $("#ww-list").data('clear',$(this).data('clear'));
 		$("#ww-list").data('playerid',$(this).data('pickup-id'));
 		$("#ww-list").data('playername',$(this).data('pickup-name'));
 		$(".pickup-text").text("Pickup: "+$(this).data("pickup-name"));
@@ -146,6 +148,7 @@
 		//drop_id = $("tr.drop-player.active").data("drop-id");
 		drop_id = $("#ww-drop-table").data('playerid');
 		//pickup_id = $("tr.pickup-player.active").data("pickup-id");
+        clear = $("#ww-list").data('clear');
 		pickup_id = $("#ww-list").data('playerid');
 		drop_name = $("tr.drop-player.active").data("drop-name");
 		drop_name = $("#ww-drop-table").data("playername");
@@ -162,8 +165,9 @@
 			if (response.success == true)
 			{
 				if (pickup_name == undefined){pickup_name = "No one";}
-                notice("Request processed succcessfuly.<br>Dropped: "+drop_name+"<br>Added: "+pickup_name,'success');
-
+                if (response.status_code == 1)
+                {notice("Request submitted, pending approval.<br><br> Drop: "+drop_name+"<br>Add: "+pickup_name);}
+                else {notice("Request processed succcessfuly.<br>Dropped: "+drop_name+"<br>Added: "+pickup_name,'success');}
 			}
 			else
 			{
@@ -187,9 +191,22 @@
             console.log(data);
 			var d = jQuery.parseJSON(data);
 			if (d.success == true)
-			{$("#confirm-modal").foundation('open');}
+			{
+                $("#notclear").addClass('hide');
+                $("#confirm-drop").text('Confirm');
+                $("#confirm-modal").foundation('open');
+            }
 			else {
-				console.log(d.error);
+                if (d.status_code == 1)
+                {
+                    pickup_name = $("#ww-list").data("playername");
+                    $("#notclear").text("You'll be notified when "+pickup_name+"'s waivers clear.");
+                    $("#notclear").removeClass('hide');
+                    $("#confirm-drop").text('Request player');
+                    $("#confirm-modal").foundation('open');
+                    return;
+                }
+
                 notice("Cannot process request:<br> "+d.error,'warning');
 				//$("#error-text").text("Error:"+d.error);
 				//$("#error-modal").foundation('open');
@@ -211,6 +228,8 @@
         $("#ww-list").data('playerid',0);
 		$("#ww-list").data('playername',"No One");
 		$(".pickup-text").text("Pick Up: No One");
+        $("#notclear").addClass('hide');
+        $("#confirm-drop").text('Confirm');
     }
 
 </script>

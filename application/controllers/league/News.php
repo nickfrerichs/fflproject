@@ -17,7 +17,13 @@ class News extends MY_User_Controller{
         $this->load->model('myteam/waiverwire_model');
         $data = array();
         $data['news'] = $this->news_model->get_news_data();
-        $data['waiverwire_log'] = $this->waiverwire_model->get_log_data($this->current_year,time()-(3*24*60*60*3));
+        //$data['waiverwire_log'] = $this->waiverwire_model->get_log_data($this->current_year,time()-(24*60*60*1));
         $this->user_view('user/league/news',$data);
+    }
+
+    public function test()
+    {
+        $this->load->model('security_model');
+        $this->security_model->set_owner_session_variables();
     }
 }

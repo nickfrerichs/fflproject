@@ -56,9 +56,11 @@ class Waiverwire extends MY_User_Controller{
     function log()
     {
         $data = array();
-        $data['log'] = $this->waiverwire_model->get_log_data();
+        $d = $this->waiverwire_model->get_log_data();
+        $data['log'] = $d['result'];
         $data['clear_time'] = $this->waiverwire_model->get_clear_time();
         $this->user_view('user/myteam/waiverwire/showlog.php',$data);
+
     }
 
     function priority()
@@ -78,7 +80,7 @@ class Waiverwire extends MY_User_Controller{
             $data = array();
             $data['drop_id'] = $drop;
             $data['pickup_id'] = $pickup;
-            if ($this->waiverwire_model->ok_to_process_transaction($pickup, $drop, $error))
+            if ($this->waiverwire_model->ok_to_process_transaction($pickup, $drop, $error, $status_code))
             {
                 if ($action == "execute") // Yes go ahead and update the database, log it.
                 {
@@ -90,8 +92,15 @@ class Waiverwire extends MY_User_Controller{
                 }
                 $data['success'] = True;
             }
+            elseif($status_code == 1 && $action == "execute")
+            {
+                $this->waiverwire_model->request_player($pickup, $drop);
+                $data['success'] = True;
+                $data['status_code'] = $status_code;
+            }
             else {
                 $data['success'] = False;
+                $data['status_code'] = $status_code;
                 $data['error'] = $error;
             }
             echo json_encode($data);

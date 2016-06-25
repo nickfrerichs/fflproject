@@ -6,6 +6,7 @@ class Transactions extends MY_Admin_Controller{
     {
         parent::__construct();
         $this->load->model('admin/leaguesettings_model');
+        $this->load->model('admin/transactions_model');
         $this->bc["League Admin"] = "";
         $this->bc["Waiver Wire & Trades"] = "";
     }
@@ -14,6 +15,7 @@ class Transactions extends MY_Admin_Controller{
     {
     	$data = array();
     	$data['settings'] = $this->leaguesettings_model->get_league_settings_data();
+        $data['approvals'] = $this->transactions_model->get_pending_ww_approvals();
     	$this->admin_view('admin/transactions/transactions',$data);
     }
 
@@ -28,6 +30,12 @@ class Transactions extends MY_Admin_Controller{
 
         $response['success'] = True;
         echo json_encode($response);
+    }
+
+    function ww_approve()
+    {
+        $id = $this->input->post('id');
+        $this->transactions_model->approve_ww($id);
     }
 
 }

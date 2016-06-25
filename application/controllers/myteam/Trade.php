@@ -222,7 +222,8 @@ class Trade extends MY_User_Controller{
     function log()
     {
         $data = array();
-        $data['log'] = $this->trade_model->get_trade_log_array();
+        $temp = $this->trade_model->get_trade_log_array();
+        $data['log'] = $temp['log'];
 
         $this->bc['Trade'] = site_url('myteam/trade');
         $this->bc['Log'] = "";

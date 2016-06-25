@@ -19,12 +19,12 @@
             </thead>
             <tbody>
                 <?php foreach($log as $l): ?>
-                    <?php if($clear_time < $l->request_date):?>
+                    <?php if($clear_time < $l->transaction_date):?>
                         <tr style="background-color:#CCCCCC">
                     <?php else: ?>
                         <tr>
                     <?php endif; ?>
-                        <td><?=date("n/j/y g:i a",$l->request_date)?></td>
+                        <td><?=date("n/j/y g:i a",$l->transaction_date)?></td>
                         <td>
                             <div>
                                 <b>Drop:</b> <?=$l->drop_first.' ',$l->drop_last?> (<?=$l->drop_pos.' - '.$l->drop_club_id?>)

@@ -835,7 +835,7 @@ CREATE TABLE `owner_setting` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `owner_id` int(11) NOT NULL,
   `league_id` int(11) NOT NULL,
-  `chat_read` int(11) NOT NULL,
+  `chat_read` int(11) NOT NULL DEFAULT '0',
   `chat_balloon` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1594,6 +1594,7 @@ CREATE TABLE `waiver_wire_log` (
   `request_date` datetime NOT NULL,
   `year` int(11) NOT NULL,
   `transaction_date` datetime NOT NULL,
+  `approved` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1616,4 +1617,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-06-23 15:40:09
+-- Dump completed on 2016-06-24 23:38:00

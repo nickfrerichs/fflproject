@@ -43,15 +43,18 @@ class Waiverwire_model extends MY_Model{
                 ->select('IFNULL(sum(fantasy_statistic.points),0) as points',false)
                 ->select('nfl_position.short_text as position')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
-                ->select('UNIX_TIMESTAMP(waiver_wire_log.transaction_date)+'.$clear_time.' as clear_time')
+                ->select('UNIX_TIMESTAMP(wwlog_drop.transaction_date)+'.$clear_time.' as clear_time')
+                ->select('IF(wwlog_request.approved=0,1,0) as requested')
                 ->from('player')
                 ->join('fantasy_statistic','fantasy_statistic.player_id = player.id and fantasy_statistic.year = '.
                         $this->current_year.' and fantasy_statistic.league_id = '.$this->leagueid,'left')
                 ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
                 ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
-                ->join('waiver_wire_log','waiver_wire_log.drop_player_id = player.id and waiver_wire_log.league_id = '.
+                ->join('waiver_wire_log as wwlog_drop','wwlog_drop.drop_player_id = player.id and wwlog_drop.league_id = '.
                         $this->leagueid.' and UNIX_TIMESTAMP(transaction_date)>'.(time()-$clear_time),'left')
+                ->join('waiver_wire_log as wwlog_request','wwlog_request.pickup_player_id = player.id and wwlog_request.team_id = '.
+                        $this->teamid.' and wwlog_request.approved = 0', 'left')
                 ->where('roster.id IS NULL',null,false)
                 ->where_in('nfl_position_id', $pos_list);
         if (count($owned_list) > 0 && $show_owned == false)
@@ -116,19 +119,24 @@ class Waiverwire_model extends MY_Model{
         return $owned;
     }
 
-    function drop_player($player_id)
+    function drop_player($player_id, $teamid=0)
     {
+        if ($player_id == 0)
+            return;
+            
+        if ($teamid == 0)
+            $teamid = $this->teamid;
         $this->load->model('common/common_model');
         $gamestart = $this->common_model->player_game_start_time($player_id);
         // Delete player from roster
         $this->db->where('player_id',$player_id)
-            ->where('team_id',$this->teamid)
+            ->where('team_id',$teamid)
             ->where('league_id',$this->leagueid)
             ->delete('roster');
 
         // Delete any starter rows for current team with this player
         $this->db->where('player_id', $player_id)
-                ->where('team_id', $this->teamid)
+                ->where('team_id', $teamid)
                 ->where('league_id', $this->leagueid);
         if ($gamestart > time()) // game is in the future, include this week
             $this->db->where('week >=', $this->current_week);
@@ -139,10 +147,12 @@ class Waiverwire_model extends MY_Model{
 
     }
 
-    function pickup_player($player_id)
+    function pickup_player($player_id, $teamid = 0)
     {
+        if ($teamid == 0)
+            $teamid = $this->teamid;
         $data['league_id'] = $this->leagueid;
-        $data['team_id'] = $this->teamid;
+        $data['team_id'] = $teamid;
         $data['player_id'] = $player_id;
         $data['starting_position_id'] = 0;
         $this->db->insert('roster',$data);
@@ -159,7 +169,7 @@ class Waiverwire_model extends MY_Model{
     }
 
 
-    function ok_to_process_transaction($pickup_id, $drop_id, &$ret="")
+    function ok_to_process_transaction($pickup_id, $drop_id, &$ret="", &$status_code=False)
     {
         // Check waiverwire is open
         if (!$this->waiverwire_open())
@@ -169,13 +179,37 @@ class Waiverwire_model extends MY_Model{
         if ($pickup_id == 0 && $drop_id > 0)
             return True;
 
+        // Check pick up player waivers are clear, do this first in case they want to be on the waiting list
+        $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
+            ->get()->row()->waiver_wire_clear_time;
+        $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('drop_player_id',$pickup_id)
+            ->where('UNIX_TIMESTAMP(transaction_date)+'.$clear_time.'>'.time())->count_all_results();
+        if($num >0)
+        {
+            $ret = "This player has not cleared waivers.";
+            $status_code = 1;
+            return False;
+        }
+
+        // Check if an approval is pending
+        $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('pickup_player_id',$pickup_id)
+            ->where('approved',0)->count_all_results();
+        if($num > 0)
+        {
+            $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the commissioner.";
+            return False;
+        }
+
         // Check roster limit
         $roster_num = $this->db->from('roster')->where('team_id',$this->teamid)->count_all_results();
         $roster_max = $this->get_roster_max();
-        if (($drop_id == 0 && ($roster_max <= $roster_num)) || $roster_num > $roster_max)
+        if ($roster_max != -1)
         {
-            $ret = "This will put your team over roster limit of ".$roster_max." players.  You'll have ".$roster_num;
-            return False;
+            if (($drop_id == 0 && ($roster_max <= $roster_num)) || $roster_num > $roster_max)
+            {
+                $ret = "This will put your team over roster limit of ".$roster_max." players.  You'll have ".$roster_num;
+                return False;
+            }
         }
 
         // Check position limit, this is a tad complicated
@@ -192,7 +226,7 @@ class Waiverwire_model extends MY_Model{
         $pos_limit_text = "";
         foreach ($positions as $p)
         {
-            if ($p->max_roster == 0) // limit is 0
+            if ($p->max_roster == -1) // limit is 0
             {
                 $pos_limit = False;
                 break;
@@ -250,20 +284,24 @@ class Waiverwire_model extends MY_Model{
             return False;
         }
 
-        // Check pick up player waivers are clear
-        $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
-            ->get()->row()->waiver_wire_clear_time;
-        $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('drop_player_id',$pickup_id)
-            ->where('UNIX_TIMESTAMP(transaction_date)+'.$clear_time.'>'.time())->count_all_results();
-        if($num >0)
-        {
-            $ret = "This player has not cleared waivers.";
-            return False;
-        }
-
         // All checks passed, return True;
         return True;
 
+    }
+
+    // This function is used when waivers have not yet cleared.
+    function request_player($pickup_id, $drop_id)
+    {
+        $now = t_mysql();
+        $data = array('team_id' => $this->teamid,
+                      'league_id' => $this->leagueid,
+                      'pickup_player_id' => $pickup_id,
+                      'drop_player_id' => $drop_id,
+                      'transaction_date' => '0000-00-00',
+                      'request_date' => $now,
+                      'year' => $this->current_year,
+                      'approved' => 0);
+        $this->db->insert('waiver_wire_log', $data);
     }
 
     function log_transaction($pickup_id, $drop_id)
@@ -275,7 +313,8 @@ class Waiverwire_model extends MY_Model{
                       'drop_player_id' => $drop_id,
                       'transaction_date' => $now,
                       'request_date' => $now,
-                      'year' => $this->current_year);
+                      'year' => $this->current_year,
+                      'approved' => 1);
 
         $this->db->insert('waiver_wire_log',$data);
 
@@ -305,12 +344,14 @@ class Waiverwire_model extends MY_Model{
         }
     }
 
-    function get_log_data($year = 0, $oldest = 0)
+    function get_log_data($year = 0, $limit = 100000, $start = 0)
     {
+
         if ($year == 0)
             $year = $this->current_year;
 
 
+        $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
         $this->db->select('d.first_name as drop_first, d.last_name as drop_last, d.short_name as drop_short_name, dt.club_id as drop_club_id')
             ->select('dp.short_text as drop_pos, p.first_name as pickup_first, p.last_name as pickup_last, p.short_name as pickup_short_name')
             ->select('pt.club_id as pickup_club_id, pp.short_text as pickup_pos')
@@ -328,11 +369,12 @@ class Waiverwire_model extends MY_Model{
             ->join('team','team.id = waiver_wire_log.team_id')
             ->join('owner','owner.id = team.owner_id')
             ->where('waiver_wire_log.league_id',$this->leagueid)
-            ->where('waiver_wire_log.transaction_date !=','00-00-00 00:00:00');
-         if ($oldest > 0)
-             $this->db->where('waiver_wire_log.transaction_date > ',t_mysql($oldest));
-        return $this->db->order_by('transaction_date','desc')
+            ->where('waiver_wire_log.transaction_date !=','00-00-00 00:00:00')
+            ->limit($limit, $start);
+        $return['result'] = $this->db->order_by('transaction_date','desc')
             ->get()->result();
+        $return['total'] = $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;
+        return $return;
     }
 
     function get_clear_time()
