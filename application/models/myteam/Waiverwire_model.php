@@ -52,9 +52,9 @@ class Waiverwire_model extends MY_Model{
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
                 ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
                 ->join('waiver_wire_log as wwlog_drop','wwlog_drop.drop_player_id = player.id and wwlog_drop.league_id = '.
-                        $this->leagueid.' and UNIX_TIMESTAMP(transaction_date)>'.(time()-$clear_time),'left')
+                        $this->leagueid.' and wwlog_drop.approved = 1 and UNIX_TIMESTAMP(transaction_date)>'.(time()-$clear_time),'left')
                 ->join('waiver_wire_log as wwlog_request','wwlog_request.pickup_player_id = player.id and wwlog_request.team_id = '.
-                        $this->teamid.' and wwlog_request.approved = 0', 'left')
+                        $this->teamid.' and wwlog_request.approved = 0 and wwlog_request.transaction_date = 0', 'left')
                 ->where('roster.id IS NULL',null,false)
                 ->where_in('nfl_position_id', $pos_list);
         if (count($owned_list) > 0 && $show_owned == false)
@@ -123,7 +123,7 @@ class Waiverwire_model extends MY_Model{
     {
         if ($player_id == 0)
             return;
-            
+
         if ($teamid == 0)
             $teamid = $this->teamid;
         $this->load->model('common/common_model');
@@ -304,6 +304,15 @@ class Waiverwire_model extends MY_Model{
         $this->db->insert('waiver_wire_log', $data);
     }
 
+    function cancel_request($id)
+    {
+        $now = t_mysql();
+        $data = array('transaction_date' => $now,
+              'approved' => 0);
+        $this->db->where('team_id',$this->teamid)->where('id',$id);
+        $this->db->update('waiver_wire_log',$data);
+    }
+
     function log_transaction($pickup_id, $drop_id)
     {
         $now = t_mysql();
@@ -437,6 +446,38 @@ class Waiverwire_model extends MY_Model{
         }
 
         return $data;
+
+    }
+
+    function get_pending_requests()
+    {
+
+        $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
+            ->get()->row()->waiver_wire_clear_time;
+
+        return $this->db->select('pp.first_name as p_first, pp.last_name as p_last, dp.first_name as d_first, dp.last_name as d_last')
+            ->select('team.team_name, owner.first_name as o_first, owner.last_name as o_last')
+            ->select('dt.club_id as d_club_id, pt.club_id as p_club_id')
+            ->select('dpos.text_id as d_pos, ppos.text_id as p_pos')
+            ->select('UNIX_TIMESTAMP(waiver_wire_log.request_date) as request_date')
+            ->select('IFNULL(UNIX_TIMESTAMP(wwlog_drop.transaction_date)+'.$clear_time.',0) as clear_time')
+            ->select('waiver_wire_log.id as ww_id')
+            ->from('waiver_wire_log')
+            ->join('player as dp','dp.id = drop_player_id')
+            ->join('player as pp','pp.id = pickup_player_id')
+            ->join('team','team.id = waiver_wire_log.team_id')
+            ->join('owner','team.owner_id = owner.id')
+            ->join('nfl_team as dt','dt.id = dp.nfl_team_id')
+            ->join('nfl_team as pt','pt.id = pp.nfl_team_id')
+            ->join('nfl_position as dpos','dpos.id = dp.nfl_position_id')
+            ->join('nfl_position as ppos','ppos.id = pp.nfl_position_id')
+            ->join('waiver_wire_log as wwlog_drop','wwlog_drop.drop_player_id = waiver_wire_log.pickup_player_id and wwlog_drop.league_id = '.
+                    $this->leagueid.' and wwlog_drop.approved = 1 and UNIX_TIMESTAMP(wwlog_drop.transaction_date)>'.(time()-$clear_time),'left')
+            ->where('waiver_wire_log.league_id',$this->leagueid)->where('waiver_wire_log.approved',0)->where('waiver_wire_log.transaction_date',0)
+            ->where('waiver_wire_log.team_id',$this->teamid)
+            ->where('waiver_wire_log.year',$this->current_year)
+            ->order_by('request_date','desc')
+            ->get()->result();
 
     }
 

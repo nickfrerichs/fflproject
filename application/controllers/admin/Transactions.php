@@ -35,7 +35,17 @@ class Transactions extends MY_Admin_Controller{
     function ww_approve()
     {
         $id = $this->input->post('id');
-        $this->transactions_model->approve_ww($id);
+        $result = $this->transactions_model->approve_ww($id);
+
+        echo json_encode($result);
+    }
+
+    function ww_reject()
+    {
+        $result = array();
+        $id = $this->input->post('id');
+        $this->transactions_model->reject_ww($id);
+        echo json_encode($result);
     }
 
 }

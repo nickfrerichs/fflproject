@@ -55,6 +55,45 @@
     </div>
 </div>
 
+<?php if(count($pending) > 0): ?>
+    <div class="row callout">
+        <div class="columns">
+            <h6>Pending Requests</h6>
+            <table>
+                <thead>
+                    <th>Clear Time</th><th>Pick Up</th><th>Drop</th>
+                </thead>
+                <tbody>
+            <?php foreach($pending as $i => $a): ?>
+                <?php if ($a->clear_time)
+                {
+
+                    $remaining = $a->clear_time - time();
+                    echo "Remaining: ".$remaining;
+                    $hr = (int)($remaining / (60*60));
+                    $min = (int)(($remaining - $hr*(60*60)) / 60);
+                    $sec = (int)(($remaining - $hr*(60*60) - $min*60));
+                    $clear_text = "(".$hr.":".$min.")";
+                }
+                else
+                    {$clear_text = "";}
+                ?>
+                <tr>
+                    <td>
+                        <button class="button small cancel-request" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
+                    </td>
+                    <td><?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)</td>
+                    <td><?=$a->d_first.' ',$a->d_last?> (<?=$a->d_pos.' - '.$a->d_club_id?>)</td>
+                </tr>
+            <?php endforeach;?>
+        </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+<?php endif;?>
+
 
 <?php if($this->session->userdata('offseason')): ?>
     <?php $this->load->view('user/offseason'); ?>
@@ -117,7 +156,13 @@
 <script>
     reloadPage();
 
-
+    $(".cancel-request").on('click',function(){
+        var id = $(this).data('id');
+        var url = "<?=site_url('myteam/waiverwire/ajax_cancel_request')?>";
+        $.post(url,{'id':id},function(data){
+            location.reload();
+        },'json');
+    });
 
     $("#drop-only").on('click',function(){
         clearSelections();

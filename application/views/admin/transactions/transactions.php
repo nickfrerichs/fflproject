@@ -24,6 +24,7 @@
 		                        </td>
 								<td>
 									<button class="button small ww-approve" data-id="<?=$a->ww_id?>">Approve</button>
+									<button class="button small ww-reject" data-id="<?=$a->ww_id?>">Reject</button>
 								</td>
 							</tr>
 						<?php endforeach; ?>
@@ -81,8 +82,24 @@
 		var url = "<?=site_url('admin/transactions/ww_approve')?>";
 		var ww_id = $(this).data('id');
 		$.post(url, {'id':ww_id},function(data){
+			console.log(data);
+
+			if (data.success == true)
+			{location.reload();}
+			else
+			{
+				notice(data.msg,'error');
+			}
+		},'json');
+	});
+
+	$('.ww-reject').on('click',function(){
+		var url = "<?=site_url('admin/transactions/ww_reject')?>";
+		var ww_id = $(this).data('id');
+		$.post(url, {'id':ww_id},function(data){
+			console.log('here');
 			location.reload();
-		});
+		},'json');
 	});
 
 </script>
