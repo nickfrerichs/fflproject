@@ -5,3 +5,4 @@ include(FCPATH.'config.php');
 
 $config['basic_debug'] = $fflp_debug;
 $config['use_recaptcha'] = $fflp_use_recaptcha;
+$config['fflp_email_reply_to'] = $fflp_email_reply_to;

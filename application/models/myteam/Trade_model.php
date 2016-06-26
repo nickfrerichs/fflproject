@@ -153,7 +153,7 @@ class Trade_model extends MY_Model{
         // It's important that team2 be checked first and make room
         foreach($team2_pos_array as $posid => $t)
         {
-            
+
             if ($max[$posid] == -1)
                 continue;
             // Return $team2 id, it's over the limit
@@ -387,15 +387,16 @@ class Trade_model extends MY_Model{
             $body.=$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")\n";
         }
 
+        $this->config->load('fflproject');
         $this->load->library('email');
-        $this->email->from('ff@mylanparty.net');
+        $this->email->from($this->config->item('fflp_email_reply_to'));
         $this->email->to($team2data->owner_email);
         $this->email->subject($subject);
         $this->email->message($body);
         $this->email->send();
 
         $this->load->library('email');
-        $this->email->from('ff@mylanparty.net');
+        $this->email->from($this->config->item('fflp_email_reply_to'));
         $this->email->to($team1data->owner_email);
         $this->email->subject($subject);
         $this->email->message($body);
@@ -414,7 +415,7 @@ class Trade_model extends MY_Model{
         $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
         $this->db->from('trade')->where('completed',1)->where('trade.year',$year)->where('league_id',$this->leagueid)->get()->result();
         $result['total'] = $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;
-        
+
         $data = $this->db->select('player.first_name, player.last_name, player.id as player_id')
             ->select('team1.team_name as team1_name, team2.team_name as team2_name, team1.id as team1_id, team2.id as team2_id')
             ->select('trade.id as trade_id')

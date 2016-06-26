@@ -9,6 +9,7 @@ class Waiverwire_model extends MY_Model{
         $this->current_week = $this->session->userdata('current_week');
         $this->current_weektype = $this->session->userdata('week_type');
         $this->leagueid = $this->session->userdata('league_id');
+        $this->load->model('common/common_waiverwire_model');
     }
 
     function get_roster_data()
@@ -28,7 +29,6 @@ class Waiverwire_model extends MY_Model{
 
     function get_nfl_players($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',$show_owned = false)
     {
-
         $pos_list = $this->common_model->league_nfl_position_id_array();
 
         $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
@@ -121,41 +121,46 @@ class Waiverwire_model extends MY_Model{
 
     function drop_player($player_id, $teamid=0)
     {
-        if ($player_id == 0)
-            return;
-
         if ($teamid == 0)
             $teamid = $this->teamid;
-        $this->load->model('common/common_model');
-        $gamestart = $this->common_model->player_game_start_time($player_id);
-        // Delete player from roster
-        $this->db->where('player_id',$player_id)
-            ->where('team_id',$teamid)
-            ->where('league_id',$this->leagueid)
-            ->delete('roster');
+        return $this->common_waiverwire_model->drop_player($player_id, $teamid, $this->current_year, $this->current_week, $this->week_type);
 
-        // Delete any starter rows for current team with this player
-        $this->db->where('player_id', $player_id)
-                ->where('team_id', $teamid)
-                ->where('league_id', $this->leagueid);
-        if ($gamestart > time()) // game is in the future, include this week
-            $this->db->where('week >=', $this->current_week);
-        else // this week's game has started, don't drop from this weeks starting lineup
-            $this->db->where('week >', $this->current_week);
-        $this->db->where('year', $this->current_year)
-                ->delete('starter');
-
+        // if ($player_id == 0)
+        //     return;
+        //
+        // if ($teamid == 0)
+        //     $teamid = $this->teamid;
+        //
+        // $gamestart = $this->common_model->player_game_start_time($player_id);
+        // // Delete player from roster
+        // $this->db->where('player_id',$player_id)
+        //     ->where('team_id',$teamid)
+        //     ->where('league_id',$this->leagueid)
+        //     ->delete('roster');
+        //
+        // // Delete any starter rows for current team with this player
+        // $this->db->where('player_id', $player_id)
+        //         ->where('team_id', $teamid)
+        //         ->where('league_id', $this->leagueid);
+        // if ($gamestart > time()) // game is in the future, include this week
+        //     $this->db->where('week >=', $this->current_week);
+        // else // this week's game has started, don't drop from this weeks starting lineup
+        //     $this->db->where('week >', $this->current_week);
+        // $this->db->where('year', $this->current_year)
+        //         ->delete('starter');
     }
 
     function pickup_player($player_id, $teamid = 0)
     {
         if ($teamid == 0)
             $teamid = $this->teamid;
-        $data['league_id'] = $this->leagueid;
-        $data['team_id'] = $teamid;
-        $data['player_id'] = $player_id;
-        $data['starting_position_id'] = 0;
-        $this->db->insert('roster',$data);
+        $this->common_waiverwire_model->pickup_player($player_id, $teamid, $this->leagueid);
+
+        // $data['league_id'] = $this->leagueid;
+        // $data['team_id'] = $teamid;
+        // $data['player_id'] = $player_id;
+        // $data['starting_position_id'] = 0;
+        // $this->db->insert('roster',$data);
     }
 
     function waiverwire_open()
@@ -306,11 +311,13 @@ class Waiverwire_model extends MY_Model{
 
     function cancel_request($id)
     {
-        $now = t_mysql();
-        $data = array('transaction_date' => $now,
-              'approved' => 0);
-        $this->db->where('team_id',$this->teamid)->where('id',$id);
-        $this->db->update('waiver_wire_log',$data);
+        $this->common_waiverwire_model->cancel_request($id, $this->teamid);
+
+        // $now = t_mysql();
+        // $data = array('transaction_date' => $now,
+        //       'approved' => 0);
+        // $this->db->where('team_id',$this->teamid)->where('id',$id);
+        // $this->db->update('waiver_wire_log',$data);
     }
 
     function log_transaction($pickup_id, $drop_id)
@@ -379,6 +386,7 @@ class Waiverwire_model extends MY_Model{
             ->join('owner','owner.id = team.owner_id')
             ->where('waiver_wire_log.league_id',$this->leagueid)
             ->where('waiver_wire_log.transaction_date !=','00-00-00 00:00:00')
+            ->where('waiver_wire_log.approved',1)
             ->limit($limit, $start);
         $return['result'] = $this->db->order_by('transaction_date','desc')
             ->get()->result();
@@ -400,52 +408,54 @@ class Waiverwire_model extends MY_Model{
 
     function get_priority_data_array()
     {
-        $data = array();
-        $standings = $this->db->select('team.team_name, owner.first_name, owner.last_name')
-            ->select('sum(schedule_result.team_score) as points, sum(schedule_result.opp_score) as opp_points')
-            ->select('(sum(win=1)+(sum(tie=1)/2))/count(schedule_result.id) as winpct')
-            ->select('sum(schedule_result.team_score) as points, sum(schedule_result.opp_score) as opp_points')
-            ->select('sum(win=1) as wins, sum(loss=1) as losses, sum(tie=1) as ties')
-            ->select('count(schedule_result.id) as total_games')
-            ->from('schedule')
-            ->join('schedule_result','schedule_result.schedule_id = schedule.id')
-            ->join('team','team.id = schedule_result.team_id')
-            ->join('owner','owner.id = team.owner_id')
-            ->join('nfl_week_type','nfl_week_type.id = schedule.nfl_week_type_id')
-            ->where('schedule.year',$this->current_year)
-            ->where('nfl_week_type.text_id',$this->current_weektype)
-            ->group_by('team.id')
-            ->order_by('winpct','asc')
-            ->order_by('points','asc')
-            ->order_by('opp_points','desc')
-            ->get()->result();
 
-
-        $draft_order = $this->db->select('team.team_name, owner.first_name, owner.last_name')
-                ->from('draft_order')
-                ->join('team','team.id = draft_order.team_id')
-                ->join('owner','owner.id = team.owner_id')
-                ->where('draft_order.round',1)
-                ->where('draft_order.league_id',$this->leagueid)
-                ->where('draft_order.year',$this->current_year)
-                ->order_by('draft_order.pick','desc')
-                ->get()->result();
-
-        $data['priority'] = array();
-        if(count($standings) == 0)
-        {
-            $data['type'] = 'draft_order';
-            foreach($draft_order as $key => $d)
-                $data['priority'][$key] = $d;
-        }
-        else
-        {
-            $data['type'] = 'standings';
-            foreach($standings as $key => $s)
-                $data['priority'][$key] = $s;
-        }
-
-        return $data;
+        return $this->common_waiverwire_model->get_ww_priority_data_array($this->leagueid, $this->current_year, $this->current_weektype);
+        // $data = array();
+        // $standings = $this->db->select('team.team_name, owner.first_name, owner.last_name')
+        //     ->select('sum(schedule_result.team_score) as points, sum(schedule_result.opp_score) as opp_points')
+        //     ->select('(sum(win=1)+(sum(tie=1)/2))/count(schedule_result.id) as winpct')
+        //     ->select('sum(schedule_result.team_score) as points, sum(schedule_result.opp_score) as opp_points')
+        //     ->select('sum(win=1) as wins, sum(loss=1) as losses, sum(tie=1) as ties')
+        //     ->select('count(schedule_result.id) as total_games')
+        //     ->from('schedule')
+        //     ->join('schedule_result','schedule_result.schedule_id = schedule.id')
+        //     ->join('team','team.id = schedule_result.team_id')
+        //     ->join('owner','owner.id = team.owner_id')
+        //     ->join('nfl_week_type','nfl_week_type.id = schedule.nfl_week_type_id')
+        //     ->where('schedule.year',$this->current_year)
+        //     ->where('nfl_week_type.text_id',$this->current_weektype)
+        //     ->group_by('team.id')
+        //     ->order_by('winpct','asc')
+        //     ->order_by('points','asc')
+        //     ->order_by('opp_points','desc')
+        //     ->get()->result();
+        //
+        //
+        // $draft_order = $this->db->select('team.team_name, owner.first_name, owner.last_name')
+        //         ->from('draft_order')
+        //         ->join('team','team.id = draft_order.team_id')
+        //         ->join('owner','owner.id = team.owner_id')
+        //         ->where('draft_order.round',1)
+        //         ->where('draft_order.league_id',$this->leagueid)
+        //         ->where('draft_order.year',$this->current_year)
+        //         ->order_by('draft_order.pick','desc')
+        //         ->get()->result();
+        //
+        // $data['priority'] = array();
+        // if(count($standings) == 0)
+        // {
+        //     $data['type'] = 'draft_order';
+        //     foreach($draft_order as $key => $d)
+        //         $data['priority'][$key] = $d;
+        // }
+        // else
+        // {
+        //     $data['type'] = 'standings';
+        //     foreach($standings as $key => $s)
+        //         $data['priority'][$key] = $s;
+        // }
+        //
+        // return $data;
 
     }
 

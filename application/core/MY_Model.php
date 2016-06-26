@@ -18,6 +18,7 @@ class MY_Model extends CI_Model
 
         $this->userid = $this->session->userdata('user_id'); // Add this to session like league_id
         $this->load->model('common/common_model');
+        $this->load->model('common/common_noauth_model');
 
         // Owner specific session variables.
         if ($this->session->userdata('is_owner'))

@@ -49,7 +49,8 @@ class Transactions_model extends MY_Model
             ->where('league_id',$this->leagueid)->get()->row();
 
         // confirm drop player is still available
-        if ($this->ok_to_process_transaction($log->team_id, $log->pickup_player_id, $log->drop_player_id, $msg))
+        //if ($this->ok_to_process_transaction($log->team_id, $log->pickup_player_id, $log->drop_player_id, $msg))
+        if ($this->ok_to_process_transaction($id, $msg))
         {
             // Deny all other open approvals waiting for this player.
             $rows = $this->db->select('id')->from('waiver_wire_log')->where('pickup_player_id',$log->pickup_player_id)
@@ -79,10 +80,7 @@ class Transactions_model extends MY_Model
         }
         $result['msg'] = $msg;
         return $result;
-
-
     }
-
 
     function get_roster_max()
     {
@@ -90,94 +88,101 @@ class Transactions_model extends MY_Model
             ->get()->row()->roster_max;
     }
 
-    function ok_to_process_transaction($team_id, $pickup_id, $drop_id, &$ret)
+    function ok_to_process_transaction($id, &$ret)
     {
+        //old
+        //function ok_to_process_transaction($team_id, $pickup_id, $drop_id, &$ret)
+
+        $this->load->model('common/common_waiverwire_model');
+        return $this->common_waiverwire_model->admin_ok_to_process_transaction($id, $ret);
+
+        // THE REST OF THIS IS OLD BEFORE MOVING TO common_waiverwire_model
         // Check roster limit
-        $roster_num = $this->db->from('roster')->where('team_id',$team_id)->count_all_results();
-        $roster_max = $this->get_roster_max();
-        if ($roster_max != -1)
-        {
-            if (($drop_id == 0 && ($roster_max <= $roster_num)) || $roster_num > $roster_max)
-            {
-                $ret = "This will put the team over roster limit of ".$roster_max." players.  They'll have ".$roster_num;
-                return False;
-            }
-        }
-
-        // Check position limit, this is a tad complicated
-        $pos_year = $this->common_model->league_position_year();
-        $positions = $this->db->select('nfl_position_id_list, max_roster, text_id')->from('position')->where('league_id',$this->leagueid)
-            ->where('position.year',$pos_year)->get()->result();
-        $pickup_nfl_pos = $this->db->select('nfl_position_id')->from('player')->where('id',$pickup_id)->get()->row()->nfl_position_id;
-        $temp = $this->db->select('nfl_position_id')->from('player')->where('id',$drop_id)->get()->row();
-        if (count($temp) == 1)
-            $drop_nfl_pos = $temp->nfl_position_id;
-        else
-            $drop_nfl_pos = 0;
-        $pos_limit = True;
-        $pos_limit_text = "";
-        foreach ($positions as $p)
-        {
-            if ($p->max_roster == -1) // limit is 0
-            {
-                $pos_limit = False;
-                break;
-            }
-            $p_array = explode(",",$p->nfl_position_id_list);
-            // If the player being added has an NFL position that is part of this league position..
-            if (in_array($pickup_nfl_pos,$p_array))
-            {
-
-                $pos_count = $this->db->from('roster')->join('player','player.id = roster.player_id')
-                    ->where('roster.team_id',$team_id)
-                    ->where_in('player.nfl_position_id',explode(",",$p->nfl_position_id_list))->count_all_results();
-
-                // If the player being dropped is also part of this league position, subtract one from count.
-                if (in_array($drop_nfl_pos,$p_array))
-                    $pos_count--;
-
-                // If position count after adding this picked up player doesn't put us over the limit, then we have
-                // room for in at least one league position spot.  Set temp pos_limt variable to false and break out of loop
-                if ($pos_count+1 <= $p->max_roster)
-                {
-                    $pos_limit = False;
-                    break;
-                }
-                else
-                {
-                    $pos_limit = $p->max_roster;
-                    $pos_limit_text = $p->text_id;
-                }
-            }
-
-        }
-        if ($pos_limit)
-        {
-            $ret = "The team can only have " .$pos_limit." players on it's roster at the ".$pos_limit_text." position.";
-            return False;
-        }
-
-        // Check drop player is owned by this team
-        $num = $this->db->from('roster')->where('league_id',$this->leagueid)
-            ->where('player_id',$drop_id)->where('team_id',$team_id)->count_all_results();
-        if($drop_id != 0 && $num==0)
-        {
-            $ret = "The team no longer owns the player they are wanting to drop.";
-            return False;
-        }
-
-
-        // Check if pick up player is already on a team.
-        $num = $this->db->from('roster')->where('player_id',$pickup_id)->where('league_id',$this->leagueid)->count_all_results();
-
-        if ($num > 0)
-        {
-            $ret = "This player is already on another team.";
-            return False;
-        }
-
-        // All checks passed, return True;
-        return True;
+        // $roster_num = $this->db->from('roster')->where('team_id',$team_id)->count_all_results();
+        // $roster_max = $this->get_roster_max();
+        // if ($roster_max != -1)
+        // {
+        //     if (($drop_id == 0 && ($roster_max <= $roster_num)) || $roster_num > $roster_max)
+        //     {
+        //         $ret = "This will put the team over roster limit of ".$roster_max." players.  They'll have ".$roster_num;
+        //         return False;
+        //     }
+        // }
+        //
+        // // Check position limit, this is a tad complicated
+        // $pos_year = $this->common_model->league_position_year();
+        // $positions = $this->db->select('nfl_position_id_list, max_roster, text_id')->from('position')->where('league_id',$this->leagueid)
+        //     ->where('position.year',$pos_year)->get()->result();
+        // $pickup_nfl_pos = $this->db->select('nfl_position_id')->from('player')->where('id',$pickup_id)->get()->row()->nfl_position_id;
+        // $temp = $this->db->select('nfl_position_id')->from('player')->where('id',$drop_id)->get()->row();
+        // if (count($temp) == 1)
+        //     $drop_nfl_pos = $temp->nfl_position_id;
+        // else
+        //     $drop_nfl_pos = 0;
+        // $pos_limit = True;
+        // $pos_limit_text = "";
+        // foreach ($positions as $p)
+        // {
+        //     if ($p->max_roster == -1) // limit is 0
+        //     {
+        //         $pos_limit = False;
+        //         break;
+        //     }
+        //     $p_array = explode(",",$p->nfl_position_id_list);
+        //     // If the player being added has an NFL position that is part of this league position..
+        //     if (in_array($pickup_nfl_pos,$p_array))
+        //     {
+        //
+        //         $pos_count = $this->db->from('roster')->join('player','player.id = roster.player_id')
+        //             ->where('roster.team_id',$team_id)
+        //             ->where_in('player.nfl_position_id',explode(",",$p->nfl_position_id_list))->count_all_results();
+        //
+        //         // If the player being dropped is also part of this league position, subtract one from count.
+        //         if (in_array($drop_nfl_pos,$p_array))
+        //             $pos_count--;
+        //
+        //         // If position count after adding this picked up player doesn't put us over the limit, then we have
+        //         // room for in at least one league position spot.  Set temp pos_limt variable to false and break out of loop
+        //         if ($pos_count+1 <= $p->max_roster)
+        //         {
+        //             $pos_limit = False;
+        //             break;
+        //         }
+        //         else
+        //         {
+        //             $pos_limit = $p->max_roster;
+        //             $pos_limit_text = $p->text_id;
+        //         }
+        //     }
+        //
+        // }
+        // if ($pos_limit)
+        // {
+        //     $ret = "The team can only have " .$pos_limit." players on it's roster at the ".$pos_limit_text." position.";
+        //     return False;
+        // }
+        //
+        // // Check drop player is owned by this team
+        // $num = $this->db->from('roster')->where('league_id',$this->leagueid)
+        //     ->where('player_id',$drop_id)->where('team_id',$team_id)->count_all_results();
+        // if($drop_id != 0 && $num==0)
+        // {
+        //     $ret = "The team no longer owns the player they are wanting to drop.";
+        //     return False;
+        // }
+        //
+        //
+        // // Check if pick up player is already on a team.
+        // $num = $this->db->from('roster')->where('player_id',$pickup_id)->where('league_id',$this->leagueid)->count_all_results();
+        //
+        // if ($num > 0)
+        // {
+        //     $ret = "This player is already on another team.";
+        //     return False;
+        // }
+        //
+        // // All checks passed, return True;
+        // return True;
 
     }
 

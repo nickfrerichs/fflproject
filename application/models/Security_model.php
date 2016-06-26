@@ -12,6 +12,8 @@ class Security_model extends CI_Model
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
 
+        $this->load->model('common/common_noauth_model');
+
         $this->site_settings = $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id, session_refresh_time')
             ->from('site_settings')->get()->row();
         $this->userid = $this->flexi_auth->get_user_id();
@@ -94,7 +96,7 @@ class Security_model extends CI_Model
         $this->session->set_userdata('session_refresh_time',$this->site_settings->session_refresh_time);
         if($this->session->userdata('is_owner'))
         {
-            $week_year = $this->get_current_week();
+            $week_year = $this->common_noauth_model->get_current_week($this->session->userdata('league_id'));
             if ($this->site_settings->debug_week == -1)
                 $this->session->set_userdata('current_week', $week_year->week);
             else
@@ -173,44 +175,7 @@ class Security_model extends CI_Model
         return False;
     }
 
-    function get_current_week()
-    {
-        $row = $this->db->select('season_year')->from('league')->where('id',$this->session->userdata('league_id'))->get()->row();
-        if (count($row) > 0)
-            $season_year = $row->season_year;
-        // Get the most recently past game start time.
-        // If it's start time is more than 12 hours ago
-        // Then get the next game is the current week.
-        $current_time = time();
-        $this->db->select('eid, week, year, UNIX_TIMESTAMP(start_time) as start')->from('nfl_schedule')
-            ->where('start_time <',t_mysql($current_time));
-        if (isset($season_year))
-            $this->db->where('year',$season_year);
-        $most_recent=$this->db->order_by('start_time','desc')->limit(1)->get()->row();
 
-        $this->db->select('eid, week, year, UNIX_TIMESTAMP(start_time) as start')->from('nfl_schedule')
-            ->where('start_time >',t_mysql($current_time));
-        if(isset($season_year))
-            $this->db->where('year',$season_year);
-        $next_game = $this->db->order_by('start_time','asc')->limit(1)->get()->row();
-
-        if (count($next_game) == 0)
-            return $most_recent;
-
-        // It's mid week, works for Thursday through Sunday
-        if ($most_recent->week == $next_game->week)
-            return $next_game;
-        else  // It's after Monday night, need to adjust to allow MNF to end.
-        {
-            // If the most recent game is 12 hours in the past, roll to the next week.
-            if ($most_recent->start + (60*60*12) < $current_time)
-                return $next_game;
-            else
-                return $most_recent;
-        }
-
-
-    }
 
     function t_mysql($unixtimestamp)
     {
