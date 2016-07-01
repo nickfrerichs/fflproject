@@ -10,9 +10,19 @@ class Draft_model extends MY_Model
             ->get()->result();
     }
 
-    function create_draft_order($order, $rounds, $reverse)
+    function create_draft_order($order, $rounds, $reverse, $trades)
     {
     	$this->db->delete('draft_order',array('year' => $this->current_year));
+        $settings = $this->get_draft_settings();
+        if ($settings->trade_draft_picks && $this->future_year_exists() && $trades)
+        {
+            $future_picks = $this->db->select('original_owner_team_id, pick_owner_team_id, round')->from('draft_future')
+                ->where('league_id',$this->leagueid)->where('year',$this->current_year)->get()->result();
+            $lookup = array();
+            foreach($future_picks as $f)
+                $lookup[$f->round][$f->original_owner_team_id] = $f->pick_owner_team_id;
+
+        }
 
         // Remove any dropdowns that were left blank
         foreach($order as $key => $val)
@@ -21,16 +31,22 @@ class Draft_model extends MY_Model
                 unset($order[$key]);
         }
 
+
+
     	$overall = 1;
     	$batch = array();
     	for($i=1; $i<=$rounds; $i++)
     	{
+
     		foreach ($order as $pick => $team_id)
     		{
                 if ($team_id == 0)
                     continue;
+                $set_team_id = $team_id;
+                if (count($lookup) > 0 && isset($lookup[$i][$team_id]))
+                    $set_team_id = $lookup[$i][$team_id];
     			$batch[] = array('league_id' => $this->leagueid,
-    						   'team_id' => $team_id,
+    						   'team_id' => $set_team_id,
     						   'round' => $i,
     						   'pick' => $pick+1,
     						   'overall_pick' => $overall,
@@ -135,7 +151,7 @@ class Draft_model extends MY_Model
 
     function get_draft_settings()
     {
-        return $this->db->select('draft_time_limit, draft_start_time, scheduled_draft_start_time')->from('league_settings')
+        return $this->db->select('draft_time_limit, draft_start_time, scheduled_draft_start_time, trade_draft_picks')->from('league_settings')
             ->where('league_id',$this->leagueid)->get()->row();
     }
 
@@ -163,7 +179,72 @@ class Draft_model extends MY_Model
         return 1;
     }
 
+    function get_future_pick_years_array()
+    {
+        $result = array();
+        $data = $this->db->select('distinct(year) as year')->from('draft_future')->where('league_id',$this->leagueid)->where('year>',$this->current_year)
+            ->order_by('year','asc')->get()->result();
 
+        foreach($data as $d)
+        {
+            $result[] = $d->year;
+        }
+        return $result;
+    }
 
+    function get_default_num_rounds()
+    {
+        $recent_year = $this->db->select('max(year) as year')->from('draft_future')->where('league_id',$this->leagueid)->get()->row()->year;
+        if ($recent_year != "")
+        {
+            return $this->db->select('max(round) as round')->from('draft_future')->where('league_id',$this->leagueid)
+                ->where('year',$recent_year)->get()->row()->round;
+        }
+        else
+        {
+            return 10;
+        }
+    }
+
+    function create_future_year($year, $rounds)
+    {
+        $teams = $this->get_league_teams_data();
+        $batch = array();
+        foreach(range(1,$rounds) as $i)
+        {
+            foreach($teams as $t)
+            {
+                $data = array('league_id' => $this->leagueid,
+                              'original_owner_team_id' => $t->team_id,
+                              'pick_owner_team_id' => $t->team_id,
+                              'round' => $i,
+                              'year' => $year);
+                $batch[] = $data;
+            }
+        }
+        $this->db->insert_batch('draft_future',$batch);
+    }
+
+    function future_year_exists($year = 0)
+    {
+        if ($year == 0)
+            $year = $this->current_year;
+        $count = $this->db->from('draft_future')->where('league_id',$this->leagueid)->where('year',$year)->count_all_results();
+        if($count == 0)
+            return False;
+        return True;
+    }
+
+    function get_future_picks_data($year)
+    {
+        return $this->db->select('org_team.team_name as org_team_name, round')
+            ->select('pick_team.team_name as pick_team_name')
+            ->from('draft_future')
+            ->join('team as org_team','original_owner_team_id = org_team.id')
+            ->join('team as pick_team','pick_owner_team_id = pick_team.id')
+            ->where('draft_future.league_id',$this->leagueid)
+            ->where('draft_future.year',$year)
+            ->order_by('round','asc')->get()->result();
+    }
 
 }

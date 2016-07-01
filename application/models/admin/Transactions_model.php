@@ -3,6 +3,12 @@
 class Transactions_model extends MY_Model
 {
 
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->model('common/common_waiverwire_model');
+    }
+
     function get_pending_ww_approvals()
     {
         return $this->db->select('pp.first_name as p_first, pp.last_name as p_last, dp.first_name as d_first, dp.last_name as d_last')
@@ -37,6 +43,7 @@ class Transactions_model extends MY_Model
         $this->db->update('waiver_wire_log',$data);
 
         // Notify the owner via email.
+        $this->common_waiverwire_model->send_email_notice($id,'reject');
 
     }
 
@@ -61,6 +68,7 @@ class Transactions_model extends MY_Model
                 $data = array('transaction_date'=>$now, 'approved' => 0);
                 $this->db->where('id',$row->id);
                 $this->db->update('waiver_wire_log',$data);
+                $this->common_waiverwire_model->send_email_notice($row->id,'rejected');
             }
 
             // Approve the transaction
@@ -75,6 +83,7 @@ class Transactions_model extends MY_Model
             $result['success'] = True;
 
             // Notify the owner via email.
+            $this->common_waiverwire_model->send_email_notice($id,'approved');
 
             return $result;
         }

@@ -300,7 +300,7 @@ class Player_search extends MY_User_Controller{
         <?php if (count($log) > 0): ?>
             <br>
             <?php $i = 0; ?>
-            <?php foreach($log as $trade_id => $l): ?>
+            <?php foreach((array)$log as $l): ?>
 
               <div class="row">
                 <div class="columns">
@@ -308,18 +308,17 @@ class Player_search extends MY_User_Controller{
                 </div>
             </div>
               <div class="row">
+                <?php foreach($l['teams'] as $team): ?>
                 <div class="columns">
-                  <?=$l['team1']['team_name']?> gets
-                    <?php foreach($l['team1']['players'] as $p): ?>
-                        <div class="columns small-12" style="font-style:italic"><?=$p['first_name'].' '.$p['last_name']?></div>
+                  <?=$team['team_name']?> gets
+                    <?php foreach($team['players'] as $p): ?>
+                        <div class="columns small-12" style="font-style:italic"><?=$p->first_name.' '.$p->last_name?></div>
+                    <?php endforeach;?>
+                    <?php foreach($team['picks'] as $p): ?>
+                        <div class="columns small-12" style="font-style:italic">Yr: <?=$p->year.', Rnd: '.$p->round?></div>
                     <?php endforeach;?>
                 </div>
-                <div class="columns">
-                  <?=$l['team2']['team_name']?> gets
-                    <?php foreach($l['team2']['players'] as $p): ?>
-                        <div class="columns small-12" style="font-style:italic"><?=$p['first_name'].' '.$p['last_name']?></div>
-                    <?php endforeach;?>
-                </div>
+                <?php endforeach; ?>
               </div>
               <?php if($i+1 < count($log)): ?>
                   <hr>

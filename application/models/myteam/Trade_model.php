@@ -63,6 +63,12 @@ class Trade_model extends MY_Model{
             ->get()->result();
     }
 
+    function get_trade_picks_data($trade_id, $team_id)
+    {
+        return $this->db->select('year, round')->from('trade_pick')->where('trade_id',$trade_id)
+            ->where('team_id',$team_id)->get()->result();
+    }
+
     function player_ownership_ok($trade_id)
     {
         $rows = $this->db->select('team_id, player_id')->from('trade_player')
@@ -238,6 +244,9 @@ class Trade_model extends MY_Model{
     {
         $players = $this->db->select('player_id, team_id')->from('trade_player')->where('trade_id',$trade_id)->get()->result();
         $teams = $this->db->select('team1_id, team2_id')->from('trade')->where('id',$trade_id)->get()->row();
+        $picks = $this->db->select('draft_order_id, draft_future_id, year, round, team_id')
+            ->from('trade_pick')->where('trade_id',$trade_id)->get()->result();
+        $draft_end = $this->db->select('draft_end')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->draft_end;
 
         foreach($players as $p)
         {
@@ -269,6 +278,32 @@ class Trade_model extends MY_Model{
             // Add player to new team
             $this->db->insert('roster', array('league_id'=>$this->leagueid,'team_id'=>$newteamid,'player_id'=>$p->player_id, 'starting_position_id'=>0));
         }
+
+        foreach($picks as $p)
+        {
+            if ($p->team_id == $teams->team1_id)
+            {
+                $newteamid = $teams->team2_id;
+                $oldteamid = $teams->team1_id;
+            }
+            else
+            {
+                $newteamid = $teams->team1_id;
+                $oldteamid = $teams->team2_id;
+            }
+
+            if ($p->draft_order_id > 0)
+            {
+                $this->db->where('id',$p->draft_order_id);
+                $this->db->update('draft_order',array('team_id' => $newteamid));
+            }
+            else
+            {
+                $this->db->where('id',$p->draft_future_id);
+                $this->db->update('draft_future',array('pick_owner_team_id' => $newteamid));
+            }
+        }
+
         // Mark trade as completed
         $this->db->where('id',$trade_id)->update('trade',array('completed'=>1, 'completed_date' => t_mysql()));
 
@@ -298,29 +333,73 @@ class Trade_model extends MY_Model{
         }
     }
 
-    function add_trade($team1_id, $team2_id, $team1_players, $team2_players, $trade_expire)
+    function add_trade($team1_id, $team2_id, $team1_players, $team2_players, $team1_picks, $team2_picks, $trade_expire)
     {
+        // First create an entry in the trade table.
         $data['league_id'] = $this->leagueid;
         $data['team1_id'] = $team1_id;
         $data['team2_id'] = $team2_id;
         $data['expires'] = date("Y-m-d H:i:s",$trade_expire);
         $data['year'] = $this->current_year;
         $this->db->insert('trade',$data);
-
+        $players_batch = array();
+        $picks_batch = array();
+        // Add the players, if any
         $trade_id = $this->db->insert_id();
-        foreach ($team1_players as $p)
+        if(is_array($team1_players))
         {
-            $players_batch[] = array('trade_id' => $trade_id,
-                                     'player_id' => $p,
-                                     'team_id' => $team1_id);
+            foreach ($team1_players as $p)
+            {
+                $players_batch[] = array('trade_id' => $trade_id,
+                                         'player_id' => $p,
+                                         'team_id' => $team1_id);
+            }
         }
-        foreach ($team2_players as $p)
+        if(is_array($team2_players))
         {
-            $players_batch[] = array('trade_id' => $trade_id,
-                                     'player_id' => $p,
-                                     'team_id' => $team2_id);
+            foreach ($team2_players as $p)
+            {
+                $players_batch[] = array('trade_id' => $trade_id,
+                                         'player_id' => $p,
+                                         'team_id' => $team2_id);
+            }
         }
-        $this->db->insert_batch('trade_player', $players_batch);
+        if (count($players_batch) > 0)
+            $this->db->insert_batch('trade_player', $players_batch);
+
+        // Add picks, if any
+        if(is_array($team1_picks))
+        {
+            foreach ($team1_picks as $p)
+            {
+                $pick_array = explode('-',$p);
+                $idkey = 'draft_order_id';
+                if ($pick_array[4] == "true")
+                    $idkey = 'draft_future_id';
+                $data = array('trade_id' => $trade_id,
+                                       'round' => $pick_array[3],
+                                       'year' => $pick_array[2],
+                                       $idkey => $pick_array[1],
+                                       'team_id' => $team1_id);
+                $this->db->insert('trade_pick',$data);
+            }
+        }
+        if(is_array($team2_picks))
+        {
+            foreach ($team2_picks as $p)
+            {
+                $pick_array = explode('-',$p);
+                $idkey = 'draft_order_id';
+                if ($pick_array[4] == "true")
+                    $idkey = 'draft_future_id';
+                $data = array('trade_id' => $trade_id,
+                                       'round' => $pick_array[3],
+                                       'year' => $pick_array[2],
+                                       $idkey => $pick_array[1],
+                                       'team_id' => $team2_id);
+                $this->db->insert('trade_pick',$data);
+            }
+        }
 
         $this->send_trade_email_notice($trade_id,"Trade Proposed");
 
@@ -333,6 +412,15 @@ class Trade_model extends MY_Model{
             return True;
         return False;
 
+    }
+
+    function get_settings_array()
+    {
+        $data = array();
+        $league_settings = $this->db->select('trade_draft_picks')->from('league_settings')->where('league_id',$this->leagueid)->get()->row();
+        $data['trade_draft_picks'] = $league_settings->trade_draft_picks;
+
+        return $data;
     }
 
     function reverse_offer($tradeid)
@@ -348,8 +436,10 @@ class Trade_model extends MY_Model{
         $data = $this->db->select('team1_id, team2_id')
             ->from('trade')->where('trade.id',$tradeid)->get()->row();
 
-        $proposed = $this->get_trade_players_data($tradeid, $data->team1_id);
-        $requested = $this->get_trade_players_data($tradeid, $data->team2_id);
+        $proposed_players = $this->get_trade_players_data($tradeid, $data->team1_id);
+        $requested_players = $this->get_trade_players_data($tradeid, $data->team2_id);
+        $proposed_picks = $this->get_trade_picks_data($tradeid, $data->team1_id);
+        $requested_picks = $this->get_trade_picks_data($tradeid, $data->team2_id);
 
         $this->load->model('common/common_model');
         $team1data = $this->common_model->team_info($data->team1_id);
@@ -375,16 +465,40 @@ class Trade_model extends MY_Model{
         {
             $body = "Trade declined by ".$team2data->team_name."\n\n";
         }
-
-        $body .= "Players offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):\n";
-        foreach($proposed as $p)
+        if (count($proposed_players) > 0)
         {
-            $body.=$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")\n";
+            $body .= "Players offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):\n";
+            foreach($proposed_players as $p)
+            {
+                $body.=$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")\n";
+            }
         }
-        $body .= "\nPlayers requested from ".$team2data->team_name.' ('.$team2data->first_name.' '.$team2data->last_name."):\n";
-        foreach($requested as $p)
+
+        if (count($proposed_picks) > 0)
         {
-            $body.=$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")\n";
+            $body .= "\nPicks offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):\n";
+            foreach($proposed_picks as $p)
+            {
+                $body.='Year: '.$p->year.', Round: '.$p->round."\n";
+            }
+        }
+
+        if (count($requested_players) > 0)
+        {
+            $body .= "\nPlayers requested from ".$team2data->team_name.' ('.$team2data->first_name.' '.$team2data->last_name."):\n";
+            foreach($requested_players as $p)
+            {
+                $body.=$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")\n";
+            }
+        }
+
+        if (count($requested_picks) > 0)
+        {
+            $body .= "\nPicks requested from ".$team2data->team_name.' ('.$team2data->first_name.' '.$team2data->last_name."):\n";
+            foreach($requested_picks as $p)
+            {
+                $body.='Year: '.$p->year.', Round: '.$p->round."\n";
+            }
         }
 
         $this->config->load('fflproject');
@@ -404,7 +518,59 @@ class Trade_model extends MY_Model{
 
     }
 
-    function get_trade_log_array($year = 0, $limit = 100000, $start = 0)
+
+    function get_trade_log_array($year=0, $limit=100000, $start=0)
+    {
+        if ($year == 0)
+            $year = $this->current_year;
+
+        $result = array();
+
+        $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
+
+        $this->db->from('trade')->where('completed',1)->where('trade.year',$year)->where('league_id',$this->leagueid)->get()->result();
+        $result['total'] = $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;
+
+        $trades = $this->db->select('trade.id, UNIX_TIMESTAMP(trade.completed_date) as completed_date, team1_id, team2_id')
+            ->select('t1.team_name as team1_name, t2.team_name as team2_name')
+            ->from('trade')
+            ->join('team as t1','t1.id = team1_id')
+            ->join('team as t2','t2.id = team2_id')
+            ->where('trade.league_id',$this->leagueid)->where('year',$this->current_year)->where('completed',1)
+            ->order_by('completed_date','desc')->limit($start,$limit)->get()->result();
+
+        $result['log'] = array();
+        foreach($trades as $t)
+        {
+            $result['log'][$t->id]['completed_date'] = $t->completed_date;
+            $result['log'][$t->id]['teams'][$t->team2_id]['players'] = array();
+            $result['log'][$t->id]['teams'][$t->team2_id]['picks'] = array();
+            $result['log'][$t->id]['teams'][$t->team1_id]['players'] = array();
+            $result['log'][$t->id]['teams'][$t->team1_id]['picks'] = array();
+            $result['log'][$t->id]['teams'][$t->team2_id]['team_name'] = $t->team1_name;
+            $result['log'][$t->id]['teams'][$t->team1_id]['team_name'] = $t->team2_name;
+
+            $players = $this->db->select('first_name, last_name, player.id as player_id, team_name, team.id as team_id')
+                ->from('trade_player')->join('player','player.id = trade_player.player_id')
+                ->join('team','team.id = trade_player.team_id')
+                ->where('trade_player.trade_id',$t->id)->get()->result();
+
+            foreach($players as $p)
+            {
+                $result['log'][$t->id]['teams'][$p->team_id]['players'][] = $p;
+            }
+
+            $picks = $this->db->select('round, year, team_id')->from('trade_pick')->where('trade_id',$t->id)->get()->result();
+
+            foreach($picks as $p)
+                $result['log'][$t->id]['teams'][$p->team_id]['picks'][] = $p;
+        }
+
+        return $result;
+
+    }
+
+    function get_trade_log_array_old($year = 0, $limit = 100000, $start = 0)
     {
 
         if ($year == 0)
@@ -448,7 +614,117 @@ class Trade_model extends MY_Model{
             $result['log'][$row->trade_id][$thisteam]['players'][] = $player;
 
         }
+
+
         $result['log'] = array_splice($result['log'],$start,$limit);
         return $result;
     }
+
+    function get_future_pick_years_array()
+    {
+        $result = array();
+        $data = $this->db->select('distinct(year) as year')->from('draft_future')->where('league_id',$this->leagueid)->get()->result();
+
+        foreach($data as $d)
+        {
+            $result[] = $d->year;
+        }
+        $default = $this->get_default_draft_trade_year();
+        if (!in_array($default,$result))
+            array_unshift($result,$default);
+        return $result;
+    }
+
+    function get_default_draft_trade_year($teamid = 0)
+    {
+        if ($teamid == 0)
+            $teamid = $this->teamid;
+        $draft_end = $this->db->select('draft_end')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->draft_end;
+        if ($draft_end < $this->current_year)
+            return $this->current_year;
+        return $this->db->select('min(year) as year')->from('draft_future')->where('pick_owner_team_id',$teamid)->where('league_id',$this->leagueid)
+            ->where('year > ',$this->current_year)->get()->row()->year;
+
+    }
+
+    function get_available_picks_data($year=0, $teamid=0)
+    {
+        $data = array();
+        if ($year == 0)
+            $year = $this->current_year;
+        if ($teamid == 0)
+            $teamid = $this->teamid;
+
+        $draft_end = $this->db->select('draft_end')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->draft_end;
+
+        // If we want this year and the draft hasn't ended and there are picks in draft_order table....
+        if ($year == $this->current_year && $draft_end < $this->current_year)
+        {
+            $data['picks'] = $this->db->select('id,round,pick,overall_pick')->from('draft_order')->where('team_id',$teamid)->where('player_id',0)
+                ->where('year',$year)->order_by('overall_pick','asc')->get()->result();
+            if(count($data['picks']) > 0)
+            {
+                $data['future'] = False;
+                return $data;
+            }
+        }
+
+        $data['picks'] = $this->db->select('id,round, 0 as pick')->from('draft_future')->where('pick_owner_team_id',$teamid)->where('year',$year)
+            ->order_by('round','asc')->get()->result();
+
+        $data['future'] = True;
+        return $data;
+
+    }
+
+    function players_on_roster($playerid_array, $teamid)
+    {
+        foreach($playerid_array as $p)
+        {
+            $num = $this->db->from('roster')->where('player_id',$p)->where('team_id',$teamid)->count_all_results();
+            if ($num <= 0)
+                return False;
+        }
+        return True;
+    }
+
+    function team_pick_available($id, $year, $round, $future, $teamid)
+    {
+        $draft_end = $this->db->select('draft_end')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->draft_end;
+        if ($year == $this->current_year && $draft_end < $this->current_year && $future=="false")
+        {
+            $num = $this->db->from('draft_order')->where('id',$id)->where('year',$year)->where('team_id',$teamid)
+                ->where('round',$round)->count_all_results();
+            if ($num > 0)
+                return True;
+            return False;
+        }
+        $num = $this->db->from('draft_future')->where('id',$id)->where('pick_owner_team_id',$teamid)->where('year',$year)
+            ->where('round',$round)->count_all_results();
+        if ($num > 0)
+            return True;
+        return False;
+    }
+
+    function pick_ownership_ok($tradeid)
+    {
+        $rows = $this->db->select('id, year, round, team_id, draft_order_id, draft_future_id')->from('trade_pick')
+            ->where('trade_id',$tradeid)->get()->result();
+
+        foreach($rows as $row)
+        {
+            $future = "false";
+            $id = $row->draft_order_id;
+            if ($row->draft_future_id > 0)
+            {
+                $future = "true";
+                $id = $row->draft_future_id;
+            }
+            if (!$this->team_pick_available($id, $row->year, $row->round, $future, $row->team_id))
+                return False;
+        }
+
+        return True;
+    }
+
 }

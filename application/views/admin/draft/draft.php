@@ -2,8 +2,11 @@
 <div class="row">
 	<div class="columns">
 
-		<div><a href="<?=site_url('admin/draft/create')?>">Create New Draft Order</a></div>
+		<div><a href="<?=site_url('admin/draft/create')?>">Create New <?=$this->session->userdata('current_year')?> Draft Order</a></div>
 		<div><a href="<?=site_url('admin/draft/settings')?>">Draft Settings</a></div>
+		<?php if($settings->trade_draft_picks): ?>
+			<div><a href="<?=site_url('admin/draft/future')?>">Draft Future</a></div>
+		<?php endif; ?>
 
 	</div>
 </div>

@@ -44,6 +44,18 @@
                     </td>
                 </tr>
                 <tr>
+                    <td><span data-tooltip class="has-tip top" title="Allow teams to trade future draft picks along with players.">Allow draft pick trading</span></td>
+                    <td></td>
+                    <td class="text-center">
+                        <div class="switch tiny">
+                        <input  class="switch-input toggle-control" data-item="tradepicks" data-url="<?=site_url('admin/leaguesettings/ajax_toggle_item')?>"
+                            id="tradepicks" type="checkbox" <?php if($settings->trade_draft_picks == "1"){echo "checked";}?>>
+                        <label class="switch-paddle" for="tradepicks">
+                        </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <td>Twitter Consumer Token</td>
                     <td id="consumertoken-field"><?=$settings->twitter_consumer_token?></td>
                     <td class="text-center">
@@ -121,3 +133,6 @@
     </div>
     <?=debug($settings,$this->session->userdata('debug'))?>
 </div>
+
+<script>
+</script>

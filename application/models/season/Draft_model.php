@@ -185,7 +185,7 @@ class Draft_model extends MY_Model{
             else
             {
                 $newkey = 0; // Draft must be over
-                $data = array('draft_update_key' => 0, 'draft_team_id' => 0, 'draft_pick_id' => 0);
+                $data = array('draft_update_key' => 0, 'draft_team_id' => 0, 'draft_pick_id' => 0, 'draft_end' => $this->current_year);
             }
             if($newkey != 0)
                 $data = array('draft_update_key' => $newkey, 'draft_team_id' => $row->team_id, 'draft_pick_id' => $row->id);
@@ -585,7 +585,7 @@ class Draft_model extends MY_Model{
     {
         return $this->db->select('UNIX_TIMESTAMP(scheduled_draft_start_time) as scheduled_draft_start_time')
             ->select('UNIX_TIMESTAMP(draft_start_time) as draft_start_time')
-            ->select('draft_pick_id, draft_update_key, draft_paused')
+            ->select('draft_pick_id, draft_update_key, draft_paused, draft_team_id')
             ->from('league_settings')->where('league_id',$this->leagueid)->get()->row();
     }
 

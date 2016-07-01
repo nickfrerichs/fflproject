@@ -9,7 +9,6 @@
 		<?php if ($draft_exists > 0): ?>
 		<div class="text-center"><strong>Warning: This will wipe out existing <?=$year?> draft data!!</strong></div>
 		<?php endif; ?>
-
 			<table>
 			<?php for ($i=1; $i <= count($teams); $i++): ?>
 			<tr>
@@ -39,6 +38,11 @@
 			    <label>
 			      <input id="reverse" type="checkbox"> Reverse every other round
 			    </label>
+				<?php if($traded_picks): ?>
+				<label>
+				  <input id="trades" type="checkbox" checked> Apply traded draft picks
+				</label>
+				<?php endif;?>
 				</td>
 			</tr>
 		  	<tr>
@@ -66,7 +70,8 @@ $(document).ready(function(){
 		url = "<?=site_url('admin/draft/do_create')?>";
 		order = getorderarray();
 		rounds = $("#rounds").val();
-		$.post(url,{'order[]' : order, 'rounds' : rounds, 'reverse' : $("#reverse").prop("checked")}, function(data){
+		trades = $("#trades").prop("checked");
+		$.post(url,{'order[]' : order, 'rounds' : rounds, 'reverse' : $("#reverse").prop("checked"), 'trades':trades}, function(data){
 			window.location.replace("<?=site_url('admin/draft')?>");
 		});
 	});

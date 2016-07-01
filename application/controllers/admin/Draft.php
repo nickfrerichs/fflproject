@@ -15,6 +15,7 @@ class Draft extends MY_Admin_Controller
     {
         $data = array();
         $data['num_rounds'] = $this->draft_model->get_num_rounds();
+        $data['settings'] = $this->draft_model->get_draft_settings();
         $this->admin_view('admin/draft/draft',$data);
     }
 
@@ -24,6 +25,11 @@ class Draft extends MY_Admin_Controller
         $data['teams'] = $this->draft_model->get_league_teams_data();
         $data['draft_exists'] = $this->draft_model->get_draft_order_count();
         $data['year'] = $this->current_year;
+        $data['settings'] = $this->draft_model->get_draft_settings();
+        if ($data['settings']->trade_draft_picks && $this->draft_model->future_year_exists())
+            $data['traded_picks'] = True;
+        else
+            $data['traded_picks'] = False;
         $this->bc["Draft"] = site_url('admin/draft');
         $this->bc["Create Order"] = "";
         $this->admin_view('admin/draft/create',$data);
@@ -34,10 +40,9 @@ class Draft extends MY_Admin_Controller
         $order = $this->input->post('order');
         $reverse = $this->input->post('reverse');
         $rounds = $this->input->post('rounds');
+        $trades = $this->input->post('trades');
 
-
-
-        $this->draft_model->create_draft_order($order, $rounds, $reverse);
+        $this->draft_model->create_draft_order($order, $rounds, $reverse, $trades);
     }
 
     function ajax_draft_table()
@@ -95,7 +100,39 @@ class Draft extends MY_Admin_Controller
 
     }
 
+    function future()
+    {
+        $data = array();
 
+        $data['pick_years'] = $this->draft_model->get_future_pick_years_array();
+        $data['default_num_rounds'] = $this->draft_model->get_default_num_rounds();
+
+        $this->bc["Draft"] = site_url('admin/draft');
+        $this->bc["Future"] = "";
+        $this->admin_view('admin/draft/future',$data);
+    }
+
+    function future_manage($year)
+    {
+        $data = array();
+        $data['picks'] = $this->draft_model->get_future_picks_data($year);
+
+        $this->bc["Draft"] = site_url('admin/draft');
+        $this->bc["Future"] = site_url('admin/draft/future');
+        $this->bc[$year] = "";
+        $this->admin_view('admin/draft/future_manage',$data);
+    }
+
+    function ajax_create_future_picks()
+    {
+        $response = array();
+        $year = $this->input->post('year');
+        $rounds = $this->input->post('rounds');
+        if (!$this->draft_model->future_year_exists($year))
+            $this->draft_model->create_future_year($year, $rounds);
+
+        echo json_encode($response);
+    }
 
 }
 ?>
