@@ -1,6 +1,21 @@
 
 <?php $this->load->view('template/modals/stat_popup');?>
 
+<?php if($keepers_num > 0):?>
+    <div class="reveal small" id="set-keepers-modal" data-reveal data-overlay="true">
+        <h5>Keepers</h5>
+        <table>
+            <thead>
+            </thead>
+            <tbody id="keepers-table">
+            </tbody>
+        </table>
+    	<button class="close-button" data-close aria-label="Close modal" type="button">
+    	  <span aria-hidden="true">&times;</span>
+    	</button>
+    </div>
+<?php endif;?>
+
 <div class="row callout">
     <div class="columns medium-3 text-center small-12">
         <div><h4><?=$teamname?></h4></div>
@@ -83,6 +98,10 @@
     <div class="columns callout">
         <div class="row">
             <div class="columns medium-2">
+                <?php if ($keepers_num > 0): ?>
+                    <a id="set-keepers" href="#"> Edit Keepers</a>
+
+                <?php endif;?>
                 <select id="selected-week">
                     <?php foreach($weeks as $w): ?>
                         <?php if($w->week == $this->session->userdata('current_week')): ?>
@@ -92,6 +111,7 @@
                         <?php endif;?>
                     <?php endforeach; ?>
                 </select>
+
             </div>
         </div>
         <!--
@@ -171,6 +191,37 @@ $(document).ready(function(){
         });
     }
 
+    <?php if($keepers_num > 0): ?>
+        $("#set-keepers").on('click',function(){
+            var url = "<?=site_url('myteam/roster/ajax_keeper_table')?>";
+            $.post(url,{},function(data){
+                $("#keepers-table").html(data);
+                keeper_max_check();
+            });
+            $("#set-keepers-modal").foundation('open');
+        });
+
+        $("#keepers-table").on('click','.keeper-toggle',function(){
+            var id = $(this).attr('id').replace('keeper-','');
+            var url = "<?=site_url('myteam/roster/toggle_keeper')?>";
+            $.post(url,{'id':id},function(){
+
+            });
+            keeper_max_check();
+        });
+
+        $(document).on("closed.zf.reveal",function(){
+            loadTables();
+        });
+
+        function keeper_max_check()
+        {
+            var len = $(".keeper-toggle:checked").length;
+            if (len >= <?=$keepers_num?>)
+            {$(".keeper-toggle:not(:checked)").attr('disabled',true);}
+            else {$(".keeper-toggle:not(:checked)").attr('disabled',false);}
+        }
+    <?php endif;?>
 
 });
 

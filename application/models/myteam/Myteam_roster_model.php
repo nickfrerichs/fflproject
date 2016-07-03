@@ -22,24 +22,24 @@ class Myteam_roster_model extends MY_Model{
     function get_roster_data()
     {
 
-        $data = $this->db->select('roster.player_id, starter.starting_position_id')
+        $data = $this->db->select('roster.player_id')
                 ->select('player.first_name, player.last_name, player.short_name')
                 ->select('nfl_position.short_text as nfl_pos_text_id, nfl_position.id as nfl_pos_id')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('position.nfl_position_id_list, position.text_id as starting_text_id')
-                ->select('sum(fantasy_statistic.points) as points')
+                ->select('team_keeper.id IS NOT NULL as keeper',false)
                 ->from('roster')
-                ->join('starter', 'starter.player_id = roster.player_id'.
-                       ' and starter.week = '.$this->current_week.' and starter.year = '.$this->current_year, 'left')
                 ->join('player', 'player.id = roster.player_id')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id')
-                ->join('nfl_team', 'nfl_team.id = player.nfl_team_id',left)
+                ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('position', 'position.id = roster.starting_position_id','left')
-                ->join('fantasy_statistic', 'fantasy_statistic.player_id = player.id', 'left')
+                ->join('team_keeper','team_keeper.team_id = '.$this->teamid.' and team_keeper.year='.$this->current_year.
+                        ' and team_keeper.player_id=player.id','left')
                 ->where('roster.team_id', $this->teamid)
-                ->where('fantasy_statistic.year',$this->current_year)
                 ->group_by('player.id')
                 ->order_by('nfl_position.display_order', 'asc')
+                ->order_by('player.last_name','asc')
+                ->order_by('player.first_name','asc')
                 ->get();
 
         return $data->result();
@@ -51,11 +51,14 @@ class Myteam_roster_model extends MY_Model{
     function get_bench_data($week)
     {
         $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, '.
-            'nfl_position.short_text as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points '.
+            'nfl_position.short_text as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points, '.
+            'team_keeper.id IS NOT NULL as keeper '.
             'from `roster` join `player` on `roster`.`player_id` = `player`.`id` '.
             'join nfl_position on nfl_position.id = player.nfl_position_id '.
             'left join nfl_team on nfl_team.id = player.nfl_team_id '.
-            'left join fantasy_statistic on fantasy_statistic.player_id = roster.player_id and fantasy_statistic.year = '.$this->current_year.
+            ' left join team_keeper on team_keeper.team_id = '.$this->teamid.' and team_keeper.year='.$this->current_year.
+            ' and team_keeper.player_id=player.id'.
+            ' left join fantasy_statistic on fantasy_statistic.player_id = roster.player_id and fantasy_statistic.year = '.$this->current_year.
             ' and fantasy_statistic.league_id = roster.league_id where '.
             '`roster`.`player_id` not in (SELECT `player_id` FROM `starter` where `week` = '.$week.
             ' and `year` = '.$this->current_year.' and team_id = '.$this->teamid.') and `roster`.`league_id` = '.$this->leagueid.
@@ -75,14 +78,17 @@ class Myteam_roster_model extends MY_Model{
         return $this->db->select('starter.starting_position_id, player.id as player_id, player.first_name, player.last_name, player.short_name')
             ->select('nfl_position.short_text as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id',false)
             ->select('IFNULL(sum(fantasy_statistic.points),0) as points',false)
+            ->select('team_keeper.id IS NOT NULL as keeper',false)
             ->from('starter')
             ->join('player','player.id = starter.player_id')
             ->join('nfl_position','nfl_position.id = player.nfl_position_id')
             ->join('nfl_team','nfl_team.id = player.nfl_team_id','left')
             ->join('fantasy_statistic','fantasy_statistic.player_id = starter.player_id and fantasy_statistic.year = '.$this->current_year.
                     ' and fantasy_statistic.league_id = starter.league_id','left')
+            ->join('team_keeper','team_keeper.team_id = '.$this->teamid.' and team_keeper.year='.$this->current_year.
+                    ' and team_keeper.player_id=player.id','left')
             ->where('starter.year',$this->current_year)->where('starter.week', $week)
-            ->where('team_id',$teamid)->group_by('starter.player_id')
+            ->where('starter.team_id',$teamid)->group_by('starter.player_id')
             ->order_by('starter.id','asc')
             ->get()->result();
     }
@@ -362,5 +368,38 @@ class Myteam_roster_model extends MY_Model{
 
     }
 
+    function get_keepers_num()
+    {
+        return $this->db->select('keepers_num')->from('league_settings')->where('league_id',$this->leagueid)
+            ->get()->row()->keepers_num;
+    }
+
+    function keeper_add_ok()
+    {
+        $max = $this->db->select('keepers_num')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->keepers_num;
+        $num = $this->db->from('team_keeper')->where('team_id',$this->teamid)->where('year',$this->current_year)->count_all_results();
+        if($num < $max)
+            return True;
+        return False;
+    }
+
+    function toggle_keeper($player_id)
+    {
+        $row = $this->db->select('id')->from('team_keeper')->where('team_id',$this->teamid)->where('year',$this->current_year)
+            ->where('player_id',$player_id)->get()->row();
+        if (count($row) == 1)
+        {
+            $this->db->where('id',$row->id)->delete('team_keeper');
+        }
+        elseif ($this->keeper_add_ok())
+        {
+            $data = array('team_id' => $this->teamid,
+                          'player_id' => $player_id,
+                          'league_id' => $this->leagueid,
+                          'year' => $this->current_year);
+            $this->db->insert('team_keeper',$data);
+        }
+
+    }
 
 }

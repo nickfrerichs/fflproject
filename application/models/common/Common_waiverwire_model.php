@@ -196,6 +196,9 @@ class Common_waiverwire_model extends CI_Model{
             $this->db->where('week >', $week);
         $this->db->where('year', $year)
                 ->delete('starter');
+
+        // Delete any keeper rows for current team with this player for this year
+        $this->db->where('player_id',$player_id)->where('team_id',$teamid)->where('year',$year)->delete('team_keeper');
     }
 
     function pickup_player($player_id, $teamid = 0, $leagueid)
@@ -255,7 +258,7 @@ class Common_waiverwire_model extends CI_Model{
         }
 
         $body .= "\n\n--\nThis is an automated email.";
-        
+
         $this->config->load('fflproject');
         $this->load->library('email');
         $this->email->from($this->config->item('fflp_email_reply_to'));

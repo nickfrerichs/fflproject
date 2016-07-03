@@ -24,6 +24,7 @@ class Roster extends MY_User_Controller{
         $data['weeks'] = $this->myteam_roster_model->get_weeks_left();
         $data['logo_thumb_url'] = $this->myteam_settings_model->get_logo_url(0,"thumb");
         $data['record'] = $this->myteam_roster_model->get_team_record_data();
+        $data['keepers_num'] = $this->myteam_roster_model->get_keepers_num();
 
         $this->user_view('user/myteam/roster', $data);
 
@@ -118,9 +119,24 @@ class Roster extends MY_User_Controller{
            // if ($this->myteam_roster_model->num_starters($b->))
         }
         $data['bench'] = $bench;
-        print_r($bench);
         $data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array($week);
         $this->load->view('user/myteam/roster/ajax_bench_table',$data);
+    }
+
+    function ajax_keeper_table()
+    {
+        $data = array();
+        $data['roster'] = $this->myteam_roster_model->get_roster_data();
+        $this->load->view('user/myteam/roster/ajax_keeper_table',$data);
+    }
+
+    function toggle_keeper()
+    {
+        $id = $this->input->post('id');
+        if ($this->myteam_roster_model->is_player_owner($id))
+        {
+            $this->myteam_roster_model->toggle_keeper($id);
+        }
     }
 
 }

@@ -1,12 +1,13 @@
-<?php debug($bench,$this->session->userdata('debug')); ?>
+
 <?php foreach($bench as $b): ?>
     <tr>
         <td>
             <div>
                 <?php if(strlen($b['data']->first_name.$b['data']->last_name) > 12){$name = $b['data']->short_name; }
                       else{$name = $b['data']->first_name." ".$b['data']->last_name;} ?>
-
+                <?php if($b['data']->keeper){echo "<strong>";} ?>
                 <a href="#" class="stat-popup" data-type="player" data-id="<?=$b['data']->player_id?>"><?=$name?></a>
+                <?php if($b['data']->keeper){echo "</strong>";} ?>
             </div>
             <div>
                 <?=$b['data']->pos_text.' - '.$b['data']->club_id?>

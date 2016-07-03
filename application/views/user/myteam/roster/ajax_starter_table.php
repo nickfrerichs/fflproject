@@ -13,7 +13,9 @@
         <div>
                 <?php if(strlen($p->first_name.$p->last_name) > 12){$name = $p->short_name; }
                       else{$name = $p->first_name." ".$p->last_name;} ?>
+            <?php if($p->keeper){echo "<strong>";} ?>
             <a href="#" class="stat-popup" data-type="player" data-id="<?=$p->player_id?>"><?=$name?></a>
+            <?php if($p->keeper){echo "</strong>";} ?>
         </div>
         <div>
             <?=$p->pos_text?> - <?=$p->club_id?>

@@ -18,7 +18,7 @@ class Rosters_model extends MY_Model
         return $data->result();
 
     }
-    
+
     function get_team_name($teamid)
     {
         $data = $this->db->select('team_name')
@@ -27,7 +27,7 @@ class Rosters_model extends MY_Model
                 ->get();
         return $data->row()->team_name;
     }
-    
+
     function player_is_available($playerid)
     {
         $data = $this->db->select('roster.id')
@@ -39,7 +39,7 @@ class Rosters_model extends MY_Model
           return true;
         return false;
     }
-    
+
     function add_player_to_team($playerid, $teamid)
     {
         $data = array('league_id' => $this->leagueid,
@@ -47,13 +47,27 @@ class Rosters_model extends MY_Model
             'player_id' => $playerid);
         $this->db->insert('roster',$data);
     }
-    
+
     function remove_player_from_team($playerid, $teamid)
     {
+        $this->load->model('common/common_model');
+        $gamestart = $this->common_model->player_game_start_time($playerid);
+
+        // Delete from starter table
+        $this->db->where('league_id',$this->leagueid)->where('team_id',$teamid)->where('player_id',$playerid);
+        if ($gamestart > time()) // if game is in the future, include this week
+            $this->db->where('week >=',$this->current_week);
+        else
+            $this->db->where('week >',$this->current_week);
+        $this->db->delete('starter');
+
+        // Delete any keeper rows for current team with this player for this year
+        $this->db->where('player_id',$playerid)->where('team_id',$teamid)->where('year',$this->current_year)->delete('team_keeper');
+
         $this->db->where('player_id', $playerid)
                 ->where('team_id', $teamid)
                 ->delete('roster');
     }
-    
-    
+
+
 }

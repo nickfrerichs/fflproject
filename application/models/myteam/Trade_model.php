@@ -275,6 +275,9 @@ class Trade_model extends MY_Model{
             // Delete from roster table
             $this->db->delete('roster', array('league_id'=>$this->leagueid, 'team_id'=>$oldteamid, 'player_id'=>$p->player_id));
 
+            // Delete any keeper rows for current team with this player for this year
+            $this->db->where('player_id',$p->player_id)->where('team_id',$oldteamid)->where('year',$this->current_year)->delete('team_keeper');
+
             // Add player to new team
             $this->db->insert('roster', array('league_id'=>$this->leagueid,'team_id'=>$newteamid,'player_id'=>$p->player_id, 'starting_position_id'=>0));
         }

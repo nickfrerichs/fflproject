@@ -44,6 +44,14 @@
                     </td>
                 </tr>
                 <tr>
+                    <td><span data-tooltip class="has-tip top" title="Number of players an owner can set the keeper flag on to retain for the next season. ">Number of Keepers</span></td>
+                    <td id="keepersnum-field" class="short"><?=$settings->keepers_num?></td>
+                    <td class="text-center">
+                        <a href="#" id="keepersnum-control" class="change-control" data-type="number" data-url="<?=site_url('admin/leaguesettings/ajax_change_item')?>">Change</a>
+                        <a href="#" id="keepersnum-cancel" class="cancel-control"></a>
+                    </td>
+                </tr>
+                <tr>
                     <td><span data-tooltip class="has-tip top" title="Allow teams to trade future draft picks along with players.">Allow draft pick trading</span></td>
                     <td></td>
                     <td class="text-center">
