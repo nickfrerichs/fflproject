@@ -6,7 +6,7 @@ class Positions extends MY_Admin_Controller{
     {
         parent::__construct();
 
-        $this->load->model('admin/security_model');
+        $this->load->model('admin/admin_security_model');
         $this->load->model('admin/positions_model');
         $this->bc["League Admin"] = "";
         $this->bc["Positions"] = "";
@@ -136,7 +136,7 @@ class Positions extends MY_Admin_Controller{
 
     function edit($var)
     {
-        if ($this->security_model->is_position_in_league($var))
+        if ($this->admin_security_model->is_position_in_league($var))
         {
             $this->load->helper('form');
             $nfl_positions = $this->positions_model->get_nfl_positions_data(true);
@@ -174,11 +174,16 @@ class Positions extends MY_Admin_Controller{
 
     function delete($var)
     {
-        if ($this->security_model->is_position_in_league($var))
+        if ($this->admin_security_model->is_position_in_league($var))
         {
             $this->positions_model->reconcile_current_positions_year($var);
             redirect('admin/positions');
         }
+    }
+
+    function test()
+    {
+        echo $this->positions_model->reconcile_current_positions_year();
     }
 }
 ?>

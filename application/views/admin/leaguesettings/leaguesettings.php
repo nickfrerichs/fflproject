@@ -64,6 +64,18 @@
                     </td>
                 </tr>
                 <tr>
+                    <td><span data-tooltip class="has-tip top" title="Teams cannot start/sit players after the first game of the week has started.">Lock lineups after first game</span></td>
+                    <td></td>
+                    <td class="text-center">
+                        <div class="switch tiny">
+                        <input  class="switch-input toggle-control" data-item="locklineups" data-url="<?=site_url('admin/leaguesettings/ajax_toggle_item')?>"
+                            id="locklineups" type="checkbox" <?php if($settings->lock_lineups_first_game == "1"){echo "checked";}?>>
+                        <label class="switch-paddle" for="locklineups">
+                        </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <td>Twitter Consumer Token</td>
                     <td id="consumertoken-field"><?=$settings->twitter_consumer_token?></td>
                     <td class="text-center">

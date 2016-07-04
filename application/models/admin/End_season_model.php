@@ -19,5 +19,79 @@ class End_season_model extends MY_Model
 		return False;
 
 	}
+
+	function clear_rosters($year)
+	{
+		// Clear rosters except for keepers
+		$sql = 'delete roster from roster left join team_keeper on team_keeper.team_id = roster.team_id '.
+			   'and team_keeper.player_id = roster.player_id and team_keeper.year='.$year.' '.
+			   'where roster.league_id = '.$this->leagueid.' and team_keeper.id IS NULL';
+		$this->db->query($sql);
+	}
+
+	function enable_offseason()
+	{
+		$this->db->where('league_id',$this->leagueid);
+		$this->db->update('league_settings',array('offseason' => 1));
+	}
+
+	function set_season_year($year)
+	{
+		$this->db->where('id', $this->leagueid);
+		$this->db->update('league',array('season_year' => $year));
+	}
+
+	function clear_draft_order($year)
+	{
+		// Clear draft_order and draft_watch
+		$this->db->where('league_id', $this->leagueid)->where('year',$year)->delete('draft_order');
+		$this->db->where('league_id', $this->leagueid)->delete('draft_watch');
+
+		// Update league_settings
+		$this->db->where('league_id',$this->leagueid);
+		$this->db->update('league_settings',array('draft_end'=>$year-1));
+	}
+
+	function clear_player_transactions($year)
+	{
+		// waiver_wire_log
+		$this->db->where('league_id',$this->leagueid)->where('year',$year)->delete('waiver_wire_log');
+
+		// trade_pick
+		$sql = 'delete trade_pick from trade_pick join trade on trade.id = trade_pick.trade_id '.
+			   'where trade.league_id = '.$this->leagueid.' and trade.year = '.$year;
+		$this->db->query($sql);
+
+		// trade_player
+		$sql = 'delete trade_player from trade_player join trade on trade.id = trade_player.trade_id '.
+			   'where trade.league_id = '.$this->leagueid.' and trade.year = '.$year;
+		$this->db->query($sql);
+
+		// trade
+		$this->db->where('league_id',$this->leagueid)->where('year',$year)->delete('trade');
+	}
+
+	function clear_schedule($year)
+	{
+		// schedule_result
+		$sql = 'delete schedule_result from schedule_result join schedule on schedule.id = schedule_result.schedule_id '.
+			   'where schedule.league_id = '.$this->leagueid.' and schedule.year = '.$year;
+		$this->db->query($sql);
+
+		// schedule
+		$this->db->where('league_id',$this->leagueid)->where('year',$year)->delete('schedule');
+
+		// money_list
+		$this->db->where('league_id',$this->leagueid)->where('year',$year)->delete('money_list');
+	}
+
+	function clear_scores($year)
+	{
+		$this->db->where('league_id',$this->leagueid)->where('year',$year)->delete('starter');
+
+		$this->db->where('league_id',$this->leagueid)->where('year',$year)->delete('fantasy_statistic_week');
+
+		$this->db->where('league_id',$this->leagueid)->where('year',$year)->delete('fantasy_statistic');
+	}
 }
 ?>

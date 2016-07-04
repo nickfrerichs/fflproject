@@ -47,6 +47,7 @@ class Content_model extends MY_Model
                           'date_posted' => t_mysql($date_posted),
                           'last_updated' => t_mysql(time()));
             $this->db->insert('content',$data);
+            $return_id = $this->db->insert_id();
         }
         else
         {
@@ -55,7 +56,14 @@ class Content_model extends MY_Model
                 $data['date_posted'] = t_mysql($date_posted);
             $this->db->where('id',$content_id);
             $this->db->update('content',$data);
+            $return_id = $content_id;
         }
+        return $return_id;
+    }
+
+    function delete_content_item($id)
+    {
+        $this->db->where('league_id',$this->leagueid)->where('id',$id)->delete('content');
     }
 
     function ok_to_save($text_id)

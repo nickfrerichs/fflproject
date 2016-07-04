@@ -260,23 +260,25 @@ class Trade_model extends MY_Model{
                 $newteamid = $teams->team1_id;
                 $oldteamid = $teams->team2_id;
             }
-            // Delete player from old team
-            $this->load->model('common/common_model');
-            $gamestart = $this->common_model->player_game_start_time($p->player_id);
-
-            // Delete from starter table
-            $this->db->where('league_id',$this->leagueid)->where('team_id',$oldteamid)->where('player_id',$p->player_id);
-            if ($gamestart > time()) // if game is in the future, include this week
-                $this->db->where('week >=',$this->current_week);
-            else
-                $this->db->where('week >',$this->current_week);
-            $this->db->delete('starter');
-
-            // Delete from roster table
-            $this->db->delete('roster', array('league_id'=>$this->leagueid, 'team_id'=>$oldteamid, 'player_id'=>$p->player_id));
-
-            // Delete any keeper rows for current team with this player for this year
-            $this->db->where('player_id',$p->player_id)->where('team_id',$oldteamid)->where('year',$this->current_year)->delete('team_keeper');
+            // Drop from old team
+            $this->common_model->drop_player($p->player_id, $oldteamid);
+            // // Delete player from old team
+            // $this->load->model('common/common_model');
+            // $gamestart = $this->common_model->player_game_start_time($p->player_id);
+            //
+            // // Delete from starter table
+            // $this->db->where('league_id',$this->leagueid)->where('team_id',$oldteamid)->where('player_id',$p->player_id);
+            // if ($gamestart > time()) // if game is in the future, include this week
+            //     $this->db->where('week >=',$this->current_week);
+            // else
+            //     $this->db->where('week >',$this->current_week);
+            // $this->db->delete('starter');
+            //
+            // // Delete from roster table
+            // $this->db->delete('roster', array('league_id'=>$this->leagueid, 'team_id'=>$oldteamid, 'player_id'=>$p->player_id));
+            //
+            // // Delete any keeper rows for current team with this player for this year
+            // $this->db->where('player_id',$p->player_id)->where('team_id',$oldteamid)->where('year',$this->current_year)->delete('team_keeper');
 
             // Add player to new team
             $this->db->insert('roster', array('league_id'=>$this->leagueid,'team_id'=>$newteamid,'player_id'=>$p->player_id, 'starting_position_id'=>0));

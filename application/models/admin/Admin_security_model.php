@@ -1,6 +1,6 @@
 <?php
 
-class Security_model extends MY_Model
+class Admin_security_model extends MY_Model
 {
     function is_league_admin()
     {

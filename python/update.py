@@ -67,7 +67,7 @@ def main():
     update_standings(year, week, weektype)
 
 
-def update_standings(year, week ,weektype, all):
+def update_standings(year, week ,weektype):
 
     if week == 'all':
         weeks = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
@@ -100,10 +100,10 @@ def update_standings(year, week ,weektype, all):
                     'week = %s and year = %s and nfl_week_type_id = (select id from nfl_week_type where text_id = "%s")') %
                     (str(leagueid),str(week),str(year),weektype))
             cur.execute(query)
-            print query
+
             schedule = cur.fetchall()
             for one in schedule:
-                print one
+
                 sched_id = one['id']
                 #find winner team_id and loser team_id
                 winid = 0
@@ -147,7 +147,7 @@ def update_standings(year, week ,weektype, all):
 
 
                 query = 'select id from schedule_result where schedule_id = %s and team_id = %s' % (str(sched_id),str(homeid))
-                print query
+
                 cur.execute(query)
                 if cur.rowcount == 1:
                     sched_result_id = cur.fetchone()['id']
@@ -320,7 +320,6 @@ def update_statistic_summaries(year, week, weektype):
     query = 'select id from nfl_week_type where text_id = "%s"' % (weektype)
     cur.execute(query)
     nfl_week_type_id = cur.fetchone()['id']
-
     query = ('select league.id from league join league_settings on league_settings.league_id = league.id where league_settings.nfl_season = "%s"' %(weektype))
     cur.execute(query)
     leaguerows = cur.fetchall()
@@ -328,7 +327,6 @@ def update_statistic_summaries(year, week, weektype):
     for league in leaguerows:
         leagueid = league['id']
         for w in weeks:
-            print "Week "+w
             query = ('select fs.player_id, sum(fs.points) as points, fs.week, fs.nfl_week_type_id, fs.year, fs.league_id, '+
                     'IFNULL(s.team_id,0) as team_id from fantasy_statistic as fs left join starter as s on s.league_id = fs.league_id and '+
                     's.week = fs.week and s.year = fs.year and s.nfl_week_type_id = fs.nfl_week_type_id and s.player_id = fs.player_id '+
@@ -475,16 +473,16 @@ def update_schedule(season_year, week, weektype="REG"):
 
 parser = argparse.ArgumentParser(description='Short sample app')
 
-parser.add_argument('-schedule', action="store_true", default=False, help="Update NFL schedule")
+parser.add_argument('--schedule', action="store_true", default=False, help="Update NFL schedule")
 #parser.add_argument('-g', action="store_true", default=False, help="Update NFL game stats and recalculate fantasy stats")
-parser.add_argument('-players', action="store_true", default=False, help="Update NFL players")
-parser.add_argument('-photos', action="store_true", default=False, help="Check for photos for players that don't have one.")
-parser.add_argument('-summary', action="store_true", default=False, help="Stat summary update: use stored player stat values and recalculate weekly summary data.")
-parser.add_argument('-standings', action="store_true", default=False, help="Calculate standings results and add to schedule table.")
-parser.add_argument('-year', action="store", default="0", required=False, help="Year")
-parser.add_argument('-week', action="store", default="0", required=False, help="Week, use 'all' for all weeks.")
-parser.add_argument('-weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
-parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
+parser.add_argument('--players', action="store_true", default=False, help="Update NFL players")
+parser.add_argument('--photos', action="store_true", default=False, help="Check for photos for players that don't have one.")
+parser.add_argument('--summary', action="store_true", default=False, help="Stat summary update: use stored player stat values and recalculate weekly summary data.")
+parser.add_argument('--standings', action="store_true", default=False, help="Calculate standings results and add to schedule table.")
+parser.add_argument('--year', action="store", default="0", required=False, help="Year")
+parser.add_argument('--week', action="store", default="0", required=False, help="Week, use 'all' for all weeks.")
+parser.add_argument('--weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
+parser.add_argument('--hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
 
 start_time = time.time()
 args = parser.parse_args()

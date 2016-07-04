@@ -178,27 +178,30 @@ class Common_waiverwire_model extends CI_Model{
 
     function drop_player($player_id, $teamid, $year, $week, $weektype)
     {
-        if ($player_id == 0)
-            return;
-
-        $gamestart = $this->common_noauth_model->player_game_start_time($player_id, $year, $week, $weektype);
-        // Delete player from roster
-        $this->db->where('player_id',$player_id)
-            ->where('team_id',$teamid)
-            ->delete('roster');
-
-        // Delete any starter rows for current team with this player
-        $this->db->where('player_id', $player_id)
-                ->where('team_id', $teamid);
-        if ($gamestart > time()) // game is in the future, include this week
-            $this->db->where('week >=', $week);
-        else // this week's game has started, don't drop from this weeks starting lineup
-            $this->db->where('week >', $week);
-        $this->db->where('year', $year)
-                ->delete('starter');
-
-        // Delete any keeper rows for current team with this player for this year
-        $this->db->where('player_id',$player_id)->where('team_id',$teamid)->where('year',$year)->delete('team_keeper');
+        $this->common_noauth_model->drop_player($player_id, $teamid, $year, $week, $weektype);
+        
+        //
+        // if ($player_id == 0)
+        //     return;
+        //
+        // $gamestart = $this->common_noauth_model->player_game_start_time($player_id, $year, $week, $weektype);
+        // // Delete player from roster
+        // $this->db->where('player_id',$player_id)
+        //     ->where('team_id',$teamid)
+        //     ->delete('roster');
+        //
+        // // Delete any starter rows for current team with this player
+        // $this->db->where('player_id', $player_id)
+        //         ->where('team_id', $teamid);
+        // if ($gamestart > time()) // game is in the future, include this week
+        //     $this->db->where('week >=', $week);
+        // else // this week's game has started, don't drop from this weeks starting lineup
+        //     $this->db->where('week >', $week);
+        // $this->db->where('year', $year)
+        //         ->delete('starter');
+        //
+        // // Delete any keeper rows for current team with this player for this year
+        // $this->db->where('player_id',$player_id)->where('team_id',$teamid)->where('year',$year)->delete('team_keeper');
     }
 
     function pickup_player($player_id, $teamid = 0, $leagueid)

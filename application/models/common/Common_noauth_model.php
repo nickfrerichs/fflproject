@@ -92,7 +92,7 @@ class Common_noauth_model extends CI_Model{
             return $most_recent;
 
         // It's mid week, works for Thursday through Sunday
-        if ($most_recent->week == $next_game->week)
+        if (!isset($most_recent) || $most_recent->week == $next_game->week)
             return $next_game;
         else  // It's after Monday night, need to adjust to allow MNF to end.
         {
@@ -141,6 +141,77 @@ class Common_noauth_model extends CI_Model{
     function get_leagues_data()
     {
         return $this->db->select('id')->from('league')->get()->result();
+    }
+
+    function drop_player($player_id, $teamid, $year, $week, $weektype)
+    {
+        if ($player_id == 0)
+            return;
+
+        $gamestart = $this->player_game_start_time($player_id, $year, $week, $weektype);
+        $lineup_locked = $this->is_player_lineup_locked($player_id, $teamid, $year, $week, $weektype);
+        // Delete player from roster
+        $this->db->where('player_id',$player_id)
+            ->where('team_id',$teamid)
+            ->delete('roster');
+
+        // Delete any starter rows for current team with this player
+        $this->db->where('player_id', $player_id)
+                ->where('team_id', $teamid);
+        if(!$lineup_locked)
+            $this->db->where('week >=',$week);
+        else // this week's game has started, don't drop from this weeks starting lineup
+            $this->db->where('week >', $week);
+        $this->db->where('year', $year)
+                ->delete('starter');
+
+        // Delete any keeper rows for current team with this player for this year
+        $this->db->where('player_id',$player_id)->where('team_id',$teamid)->where('year',$year)->delete('team_keeper');
+    }
+
+    function is_player_lineup_locked($player_id, $teamid, $year, $week, $weektype)
+    {
+        $leagueid = $this->db->select('league_id')->from('team')->where('id',$teamid)->get()->row()->league_id;
+
+        $lock_first_game = $this->db->select('lock_lineups_first_game')->from('league_settings')->where('league_id',$leagueid)
+            ->get()->row()->lock_lineups_first_game;
+
+        if ($lock_first_game && !$this->session->userdata('debug_week'))
+        {
+            $first_game_time = $this->db->select('UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
+                ->where('year',$year)->where('week',$week)->where('gt',$weektype)
+                ->order_by('start_time','asc')->get()->row()->start_time;
+            if ($first_game_time < time())
+                return True;
+        }
+
+        // 4. If it's the current week and the player doesn't have a bye, check if the game has started
+        //    though if debug_week is set, don't worry about the start time.
+        if ($this->player_opponent($player_id) != "Bye")
+        {
+            $start_time = $this->player_game_start_time($player_id);
+            if ($start_time < time() && !$this->session->userdata('debug_week'))
+                return True;
+        }
+        return False;
+    }
+
+    function player_opponent($player_id,$year=0,$week=0,$weektype="REG")
+    {
+
+        $p_team = $this->player_club_id($player_id);
+
+        $game = $this->db->select('v,h,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
+            ->where('year = '.$year.' and week = '.$week.' and gt ="'.$weektype.'"'.
+            ' and (v = "'.$p_team.'" or h = "'.$p_team.'")')
+            ->get()->row();
+        if (count($game) == 0)
+            return 'Bye';
+        if ($p_team == $game->v)
+            return '@'.$game->h;
+        else
+            return $game->v;
+
     }
 }
 ?>

@@ -37,6 +37,7 @@ class Roster extends MY_User_Controller{
             $player_id = $this->input->post('player_id');
             $lea_pos = $this->input->post('pos_id');
             $week = $this->input->post('week');
+
             if( $this->myteam_roster_model->ok_to_start($lea_pos,$player_id,$week))
             {
                 $this->myteam_roster_model->start_player($player_id, $lea_pos,$week);

@@ -19,7 +19,7 @@
     	</td>
 	</tr>
 <?php endforeach; ?>
-<?php if(count($roster) < $roster_max): ?>
+<?php if(count($roster) < $roster_max || $roster_max == -1): ?>
 <tr class="drop-player" data-drop-id="0" data-drop-name="No One">
     <!--
     <td>

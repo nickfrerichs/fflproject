@@ -125,8 +125,8 @@ class MY_Admin_Controller extends MY_Basic_Controller{
     function admin_view($viewname, $d=null)
     {
         $this->load->model('menu_model');
-        $this->load->model('admin/security_model');
-        $d['_messages'] = $this->security_model->get_admin_messages();
+        $this->load->model('admin/admin_security_model');
+        $d['_messages'] = $this->admin_security_model->get_admin_messages();
         $d['menu_items'] = $this->menu_model->get_menu_items_data(true);
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
@@ -141,7 +141,7 @@ class MY_Basic_Controller extends CI_Controller{
         parent::__construct();
         $this->load->model('common/common_noauth_model');
         $this->common_noauth_model->set_session_variables();
-        
+
         // Turn debugging on, if enabled.
         if ($this->session->userdata('basic_debug') && !$this->input->is_ajax_request())
         {

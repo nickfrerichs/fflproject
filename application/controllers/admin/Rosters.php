@@ -5,7 +5,7 @@ class Rosters extends MY_Admin_Controller{
     function __construct()
     {
         parent::__construct();
-        $this->load->model('admin/security_model');
+        $this->load->model('admin/admin_security_model');
         $this->load->model('admin/rosters_model');
         $this->bc["League Admin"] = "";
         $this->bc["Teams"] = site_url('admin/teams');
@@ -19,7 +19,7 @@ class Rosters extends MY_Admin_Controller{
 
     function view($teamid)
     {
-        if ($this->security_model->is_team_in_league($teamid))
+        if ($this->admin_security_model->is_team_in_league($teamid))
         {
             $this->load->model('player_search_model');
             $data = array();

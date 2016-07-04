@@ -5,7 +5,7 @@ class Scoring extends MY_Admin_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model('admin/security_model');
+        $this->load->model('admin/admin_security_model');
         $this->load->model('admin/scoring_model');
         $this->bc["League Admin"] = "";
         $this->bc["Scoring"] = "";

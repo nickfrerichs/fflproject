@@ -31,26 +31,18 @@ class Common_model extends CI_Model{
         //     return $row->start_time;
     }
 
+    function is_player_lineup_locked($player_id)
+    {
+        return $this->common_noauth_model->is_player_lineup_locked($player_id, $this->leagueid, $this->current_year, $this->current_week, $this->current_weektype);
+    }
+
     function player_opponent($player_id,$week=0,$year=0)
     {
         if ($year == 0)
             $year = $this->session->userdata('current_year');
         if ($week == 0)
             $week = $this->session->userdata('current_week');
-
-        $p_team = $this->player_club_id($player_id);
-
-        $game = $this->db->select('v,h,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
-            ->where('year = '.$year.' and week = '.$week.' and gt ="'.$this->current_weektype.'"'.
-            ' and (v = "'.$p_team.'" or h = "'.$p_team.'")')
-            ->get()->row();
-        if (count($game) == 0)
-            return 'Bye';
-        if ($p_team == $game->v)
-            return '@'.$game->h;
-        else
-            return $game->v;
-
+        $this->common_noauth_model($player_id,$year,$week,$this->current_weektype);
     }
 
     function player_club_id($playerid)
@@ -183,6 +175,11 @@ class Common_model extends CI_Model{
                 unset($messages[$key]);
         }
         $this->session->set_userdata('user_messages',$messages);
+    }
+
+    function drop_player($player_id, $teamid)
+    {
+        $this->common_noauth_model->drop_player($player_id, $teamid, $this->current_year, $this->current_week, $this->current_weektype);
     }
 }
 

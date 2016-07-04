@@ -5,7 +5,7 @@ class Teams extends MY_Admin_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model('admin/security_model');
+        $this->load->model('admin/admin_security_model');
         $this->load->model('admin/teams_model');
         $this->load->model('admin/rosters_model');
         $this->bc["League Admin"] = "";
@@ -14,7 +14,7 @@ class Teams extends MY_Admin_Controller
 
     function index()
     {
-        if ($this->security_model->is_league_admin())
+        if ($this->admin_security_model->is_league_admin())
         {
             $data = array();
             $teams = $this->teams_model->get_league_teams_data(false);
@@ -32,7 +32,7 @@ class Teams extends MY_Admin_Controller
 
     function show($var)
     {
-        if ($this->security_model->is_team_in_league($var))
+        if ($this->admin_security_model->is_team_in_league($var))
         {
             $team = $this->teams_model->get_team_data($var);
 
@@ -44,7 +44,7 @@ class Teams extends MY_Admin_Controller
 
     function ajax_get_teams()
     {
-        if ($this->security_model->is_league_admin())
+        if ($this->admin_security_model->is_league_admin())
         {
             $teams = $this->teams_model->get_league_teams_data(false);
             ?>

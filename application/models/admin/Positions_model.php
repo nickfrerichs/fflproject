@@ -73,7 +73,8 @@ class Positions_model extends MY_Model
             'max_roster' => $values['max_roster'],
             'min_roster' => $values['min_roster'],
             'max_start' => $values['max_start'],
-            'min_start' => $values['min_start']);
+            'min_start' => $values['min_start'],
+            'year' => $values['year']);
 
         if(isset($values['id']))
         {

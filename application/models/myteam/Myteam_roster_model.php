@@ -200,7 +200,7 @@ class Myteam_roster_model extends MY_Model{
         // 1. you must be the owner to do anything.
         if (!$this->is_player_owner($player_id))  //Not the players owner, false
             return false;
-
+        echo "here";
         // 2. The players NFL position must be defined as a league position, or be zero if benching.
         $nfl_pos = $this->db->select('player.nfl_position_id')->from('player')
                 ->where('player.id',$player_id)->get()->row()->nfl_position_id;
@@ -212,15 +212,10 @@ class Myteam_roster_model extends MY_Model{
         if ($week < $this->current_week)
             return false;
 
-        // If you made it this far, it's a current or future week.
-
-        // 4. If it's the current week and the player doesn't have a bye, check if the game has started
-        //    though if debug_week is set, don't worry about the start time.
-        if ($week == $this->current_week && $this->common_model->player_opponent($player_id) != "Bye")
+        // 4. If you made it this far, it's a current or future week, check current week for locked status.
+        if ($this->common_model->is_player_lineup_locked($player_id))
         {
-            $start_time = $this->common_model->player_game_start_time($player_id);
-            if ($start_time < time() && !$this->session->userdata('debug_week'))
-                return false;
+            return False;
         }
 
         // 5. If the player is being benched, it's OK since we already checked if the game has started
@@ -281,6 +276,7 @@ class Myteam_roster_model extends MY_Model{
         $data = $this->db->select('roster.id')->from('roster')
                 ->where('roster.team_id', $this->teamid)
                 ->where('roster.league_id', $this->leagueid)
+                ->where('roster.player_id',$playerid)
                 ->get();
         if ($data->num_rows() > 0)
             return true;

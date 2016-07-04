@@ -6,7 +6,7 @@ class Content extends MY_Admin_Controller
     {
         parent::__construct();
         $this->load->model('admin/content_model');
-        $this->load->model('admin/security_model');
+        $this->load->model('admin/admin_security_model');
         $this->bc["League Admin"] = "";
         $this->bc["Content"] = "";
     }
@@ -60,12 +60,22 @@ class Content extends MY_Admin_Controller
         $this->admin_view('admin/content/edit',$data);
     }
 
+    function delete_news($id)
+    {
+        $data = array();
+        $this->content_model->delete_content_item($id);
+        redirect('admin/content');
+    }
+
     function create($text_id)
     {
         if ($this->content_model->ok_to_save($text_id))
         {
-            $this->content_model->save_content(0,$text_id);
-            redirect('admin/content/view/'.$text_id);
+            $id = $this->content_model->save_content(0,$text_id);
+            if($text_id == "news")
+                redirect('admin/content/edit_news/'.$id);
+            else
+                redirect('admin/content/view/'.$text_id);
         }
     }
 

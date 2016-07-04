@@ -16,7 +16,8 @@
                     <hr>
                     <?=$c->data?>
 
-                    <a href="<?=site_url('admin/content/edit_news/'.$c->id)?>">Edit</a>
+                    <a href="<?=site_url('admin/content/edit_news/'.$c->id)?>">Edit</a> |
+                    <a href="<?=site_url('admin/content/delete_news/'.$c->id)?>">Delete</a>
                 </div>
             </div>
             <?php endforeach;?>
