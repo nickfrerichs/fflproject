@@ -96,6 +96,7 @@ class Trade extends MY_User_Controller{
         if (($team1_picks || $team2_picks) && !$settings['trade_draft_picks'])
             exit;
 
+
         // Check for pick ownership
         if ($team1_picks)
         {
@@ -121,6 +122,7 @@ class Trade extends MY_User_Controller{
         if ((is_array($team1_players) && count($team1_players) > 0) || (is_array($team2_players) && count($team2_players) >0)
             || (is_array($team1_picks) && count($team1_picks)>0) || (is_array($team2_picks) && count($team2_picks > 0)))
         {
+
             $this->trade_model->add_trade($team1_id, $team2_id, $team1_players, $team2_players, $team1_picks, $team2_picks, $trade_expire);
         }
     }
@@ -313,7 +315,6 @@ class Trade extends MY_User_Controller{
         $teamid = $this->input->post('teamid');
         $pick_year = $this->trade_model->get_default_draft_trade_year($teamid);
         $pick_years = $this->trade_model->get_future_pick_years_array();
-
 
         ?>
 

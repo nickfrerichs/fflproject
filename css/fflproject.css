@@ -2,7 +2,7 @@
 /* MAIN SITE STYLING */
 /* --------------------- */
 
-body{background-color:#FFFFFF; font-size:.9rem}
+body{background-color:#FAFAFA; font-size:.9rem}
 
 /* wraps around the header, footer, and view */
 #body-wrap{
@@ -43,7 +43,9 @@ div.switch{margin:0px;}
 td input{margin-bottom:0px !important;}
 td select{margin-bottom:0px !important;}
 
-.callout{border-color:#eaeaea; border-radius:5px}
+.callout{border-color: #E1E1E1; border-radius:5px}
+
+/* #eaeaea; */
 
 /* --------------------- */
 /* MENU BAR STYLING      */

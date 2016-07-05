@@ -71,9 +71,10 @@ $(document).ready(function(){
 	// Reply button click
 	$("#message-reply").on("click",function(){
 		url = "<?=site_url('myteam/messages/')?>";
-		window.location.replace("<?=site_url('myteam/messages/compose/reply')?>"+"/"+this.name);
-
+		var id = $("#displayed-message").data("message-id");
+		window.location.replace("<?=site_url('myteam/messages/compose/reply')?>"+"/"+id);
 	});
+
 	// Delete button click
 	$("#message-delete").on("click",function(){
 		url = "<?=site_url('myteam/messages/delete_message')?>";

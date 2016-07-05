@@ -360,12 +360,10 @@ class Waiverwire_model extends MY_Model{
         }
     }
 
-    function get_log_data($year = 0, $limit = 100000, $start = 0)
+    function get_log_data($year = 0, $limit = 100000, $start = 0, $days=0)
     {
-
         if ($year == 0)
             $year = $this->current_year;
-
 
         $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
         $this->db->select('d.first_name as drop_first, d.last_name as drop_last, d.short_name as drop_short_name, dt.club_id as drop_club_id')
@@ -386,8 +384,10 @@ class Waiverwire_model extends MY_Model{
             ->join('owner','owner.id = team.owner_id')
             ->where('waiver_wire_log.league_id',$this->leagueid)
             ->where('waiver_wire_log.transaction_date !=','00-00-00 00:00:00')
-            ->where('waiver_wire_log.approved',1)
-            ->limit($limit, $start);
+            ->where('waiver_wire_log.approved',1);
+            if ($days != 0)
+                $this->db->where('waiver_wire_log.transaction_date > date_sub(now(), INTERVAL '.$days.' day)');
+            $this->db->limit($limit, $start);
         $return['result'] = $this->db->order_by('transaction_date','desc')
             ->get()->result();
         $return['total'] = $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;

@@ -628,7 +628,8 @@ class Trade_model extends MY_Model{
     function get_future_pick_years_array()
     {
         $result = array();
-        $data = $this->db->select('distinct(year) as year')->from('draft_future')->where('league_id',$this->leagueid)->get()->result();
+        $data = $this->db->select('distinct(year) as year')->from('draft_future')->where('league_id',$this->leagueid)
+            ->where('year>',$this->current_year)->get()->result();
 
         foreach($data as $d)
         {
@@ -696,6 +697,11 @@ class Trade_model extends MY_Model{
     function team_pick_available($id, $year, $round, $future, $teamid)
     {
         $draft_end = $this->db->select('draft_end')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->draft_end;
+
+        // Picks in the past aren't avaialble
+        if ($year <= $draft_end)
+            return False;
+
         if ($year == $this->current_year && $draft_end < $this->current_year && $future=="false")
         {
             $num = $this->db->from('draft_order')->where('id',$id)->where('year',$year)->where('team_id',$teamid)
@@ -728,7 +734,6 @@ class Trade_model extends MY_Model{
             if (!$this->team_pick_available($id, $row->year, $row->round, $future, $row->team_id))
                 return False;
         }
-
         return True;
     }
 

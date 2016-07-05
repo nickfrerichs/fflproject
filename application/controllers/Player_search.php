@@ -255,13 +255,12 @@ class Player_search extends MY_User_Controller{
     {
         if ($this->leagueid == "")
         {
-            echo '<div class="text-center" style="font-style:italic">Nothing to report</div>';
+            echo '<div class="text-center" style="font-style:italic">Nothing recent to report</div>';
         }
         else
         {
-
             $this->per_page = 3;
-            $data = $this->waiverwire_model->get_log_data($this->current_year,$this->per_page, $this->data['page']*$this->per_page);
+            $data = $this->waiverwire_model->get_log_data($this->current_year,$this->per_page, $this->data['page']*$this->per_page, 3);
             $waiverwire_log = $data['result'];
 
             echo '<script>console.log("'.$this->data['page'].'")</script>';
@@ -326,7 +325,7 @@ class Player_search extends MY_User_Controller{
             <?php $i++;?>
             <?php endforeach; ?>
         <?php else: ?>
-            <div class="text-center" style="font-style:italic">Nothing to report</div>
+            <div class="text-center" style="font-style:italic">Nothing recent to report</div>
         <?php endif;?>
         <div id="news-trade-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$data['total']?>"></div>
 
@@ -338,4 +337,37 @@ class Player_search extends MY_User_Controller{
             echo '<div class="text-center" style="font-style:italic">Nothing to report</div>';
         }
     }
+
+    function ajax_news_news_list()
+    {
+        $this->per_page = 3;
+        $this->load->model('league/news_model');
+        $result = $this->news_model->get_news_data($this->per_page, $this->data['page']*$this->per_page);
+        $news = $result['news'];
+
+
+
+
+        // The view
+        ?>
+        <?php foreach($news as $n): ?>
+        <div class="section callout">
+
+          <h5 class="title">
+              <?=$n->title?>
+          </h5>
+          <div class="date"><?=date("M j g:i a",$n->date_posted)?></div>
+
+          <div class="news-body">
+            <?=$n->data?>
+          </div>
+        </div>
+        <?php endforeach; ?>
+        <div id="news-news-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$result['total']?>"></div>
+
+        <?php
+        // End view
+
+    }
+
 }

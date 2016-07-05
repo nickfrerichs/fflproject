@@ -219,9 +219,10 @@ $("#request-picks").click(function(){
 	// otherpicks, otherpick-year
 	if ($("#requestpicks").html().trim() == "")
 	{
-		updatePicks("request", $("#team-dropdown").val());
+
 		$.post("<?=site_url('myteam/trade/ajax_get_pick_years')?>",{"teamid":$("#team-dropdown").val()},function(data){
 			$("#requestpick-year").html(data);
+			updatePicks("request", $("#team-dropdown").val());
 		});
 	}
 	$("#request-picks-modal").foundation("open");
@@ -382,8 +383,9 @@ $("#send-trade-offer").click(function(){
 	if (myteam.length > 0 || request.length > 0 || request_picks.length >0 || offer_picks.length > 0)
 	{
 		$.post(url,{'offer' : myteam, 'request' : request, 'other_team' : other_team, 'trade_expire': trade_expire,
-		 			'request_picks' : request_picks, 'offer_picks' : offer_picks}, function(data){
-
+		 			'request_picks' : request_picks, 'offer_picks' : offer_picks}, function(data)
+		{
+			console.log(data);
 			$("#send-trade-offer").addClass("disabled");
 			notice("Trade request sent.",'success');
 			setTimeout(function(){

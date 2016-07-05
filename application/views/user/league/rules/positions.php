@@ -1,6 +1,5 @@
 <div class="row">
     <div class="columns">
-        <?=print_r($league_pos,true)?>
         <table>
             <thead>
                 <th>Position</th>
