@@ -412,7 +412,7 @@ class Trade_model extends MY_Model{
     function trades_open()
     {
         $deadline_open = $this->db->select('count(league_id) as count')->from('league_settings')->where('league_id',$this->leagueid)
-                ->where('trade_deadline >','CURRENT_TIMESTAMP()')->get()->row()->count;
+                ->where('trade_deadline > CURRENT_TIMESTAMP()')->get()->row()->count;
         if ($deadline_open > 0)
             return True;
         return False;

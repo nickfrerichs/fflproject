@@ -166,7 +166,7 @@ class Waiverwire_model extends MY_Model{
     function waiverwire_open()
     {
         $deadline_open = $this->db->select('count(league_id) as count')->from('league_settings')->where('league_id',$this->leagueid)
-                ->where('waiver_wire_deadline >','CURRENT_TIMESTAMP()')->get()->row()->count;
+                ->where('waiver_wire_deadline > CURRENT_TIMESTAMP()')->get()->row()->count;
         if ($deadline_open > 0)
             return True;
         return False;
