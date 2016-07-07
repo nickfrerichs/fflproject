@@ -26,3 +26,4 @@ $fflp_smtp_port = 465;
 
 // Show debug and profiler data
 $fflp_debug = False;
+$fflp_log_threshold = 0;

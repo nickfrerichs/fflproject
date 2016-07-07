@@ -218,7 +218,7 @@ $config['directory_trigger'] = 'd';
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 1;
+$config['log_threshold'] = $fflp_log_threshold;
 
 /*
 |--------------------------------------------------------------------------

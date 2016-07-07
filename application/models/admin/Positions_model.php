@@ -83,17 +83,6 @@ class Positions_model extends MY_Model
         }
         else
           $this->db->insert('position',$data);
-
-        //$id = $this->db->insert_id();
-
-        /*
-        foreach(explode(',',$values['league_positions']) as $nfl_pos_id)
-        {
-            $data = array('nfl_position_id' => $nfl_pos_id, 'league_position_id' => $id);
-            $this->db->insert('position_lookup',$data);
-        }
-         *
-         */
     }
 
     function position_exists($id)
