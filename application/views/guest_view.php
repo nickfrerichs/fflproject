@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-	<body>
 		<br><br>
-		<?php $this->load->view('template/head'); ?>
-		<div class="row align-center">
-			<div class="columns callout" style="max-width:425px;">
+		<div class="row align-center" style="max-width:425px;">
+			<div class="columns callout" >
 			<?php if (!$admin_exists): ?>
 				<h5> Welcome to the FFL Project </h5>
 				<br>
@@ -42,5 +38,3 @@
 			<?php endif;?>
 			</div>
 		</div>
-	</body>
-</html>

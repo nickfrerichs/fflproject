@@ -2,7 +2,6 @@
 <?php $this->load->view('template/modals/stat_popup.php');?>
 <?php $all_live_players = true; ?>
 <?php $view = $this->input->get('view');?>
-<link href="<?=site_url('css/livescore.css')?>" type ="text/css" rel="stylesheet" />
 
 <div class="row">
     <div class="columns">

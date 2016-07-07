@@ -12,7 +12,6 @@ class Scores extends MY_User_Controller{
         $this->bc['Weekly Scores'] = "";
     }
 
-
     function index()
     {
 
@@ -37,8 +36,6 @@ class Scores extends MY_User_Controller{
         if ($week > 0)
             $this->bc['Week '.$week] = "";
         $this->user_view('user/season/scores',$data);
-
-
     }
 
     function live($teamid = 0)

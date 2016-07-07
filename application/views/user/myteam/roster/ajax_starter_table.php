@@ -31,12 +31,12 @@
                 <?php endif; ?>
             <?php endif;?>
         </td>
-        <td class="hide-for-extra-small">
+        <td class="hide-for-extra-small text-center">
             <?=$p->points?>
         </td>
 
-        <td>
-            <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == '' || 1==1): ?>
+        <td class="text-center">
+            <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == ''): ?>
                 <button class="button small roster-sit-btn" value="<?=$p->player_id?>">
                     <div>
                         Sit
@@ -56,7 +56,7 @@
             <i>Vacant</i>
         </div>
         </td>
-        <td class="hide-for-extra-small">-</td><td>-</td><td>-</td>
+        <td class="hide-for-extra-small">-</td><td class="text-center">-</td><td class="text-center">-</td>
     </tr>
 <?php endif; ?>
 <?php endforeach; ?>

@@ -16,9 +16,11 @@
         </div>
     </div>
 </div>
+<br>
 <div class="row">
     <div class="columns">
         <button id="submit" class="button small">Save</button>
+        <button id="cancel" class="button small">Cancel</button>
     </div>
 </div>
 <script src="<?=site_url('js/tinymce/tinymce.min.js')?>"></script>
@@ -31,11 +33,17 @@ $(document).ready(function(){
         selector:'#content',
         plugins: 'table colorpicker',
         table_styles: 'Default=table',
-        init_instance_callback: "loadcontent"});
+        init_instance_callback: "loadcontent",
+        content_css: "<?=site_url('css/foundation.min.css')?>",
+        height: "280"});
 })
 
 $("#submit").on('click',function(){
     savecontent();
+});
+
+$("#cancel").on('click',function(){
+    window.location.replace("<?=site_url('admin/content')?>");
 });
 
 
@@ -43,7 +51,6 @@ function loadcontent()
 {
     var url = "<?=site_url('admin/content/loadcontent')?>";
     $.post(url,{'id' : "<?php if (!isset($content->id)){echo '0';}else{echo $content->id;} ?>"}, function(data){
-        console.log(data);
         tinymce.activeEditor.setContent(data);
     });
 }

@@ -64,7 +64,7 @@ class Content extends MY_Admin_Controller
     {
         $data = array();
         $this->content_model->delete_content_item($id);
-        redirect('admin/content');
+        redirect('admin/content/news');
     }
 
     function create($text_id)

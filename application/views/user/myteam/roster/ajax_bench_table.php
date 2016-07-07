@@ -23,7 +23,7 @@
                  <?php endif; ?>
             <?php endif;?>
          </td>
-        <td class="hide-for-extra-small">
+        <td class="hide-for-extra-small text-center">
             <?=$b['data']->points?>
         </td>
         <td>

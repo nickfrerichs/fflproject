@@ -35,6 +35,7 @@ class Positions extends MY_Admin_Controller{
         <tr><td>Short Name</td><td><input id="short-text" type="text" value="<?php if($editid){echo $position->text_id;}?>"></td></tr>
         <tr><td>Long Name</td><td><input id="long-text" type="text" value="<?php if($editid){echo $position->long_text;}?>"></td></tr>
         <tr><td>Roster Max</td><td>
+            <?php if($roster_max == -1){$roster_max=20;}?>
             <select id="roster-max">
                 <?php if($position->max_roster == -1): ?>
                     <option selected value="-1">No max</option>

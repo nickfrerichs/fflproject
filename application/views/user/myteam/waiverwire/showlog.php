@@ -19,7 +19,7 @@
             </thead>
             <tbody>
                 <?php foreach($log as $l): ?>
-                    <?php if($clear_time < $l->transaction_date):?>
+                    <?php if($clear_time < $l->transaction_date != "" && $l->drop_id != ""):?>
                         <tr style="background-color:#CCCCCC">
                     <?php else: ?>
                         <tr>
@@ -27,7 +27,11 @@
                         <td><?=date("n/j/y g:i a",$l->transaction_date)?></td>
                         <td>
                             <div>
+                                <?php if($l->drop_id == ""): ?>
+                                <b>Drop:</b> No One
+                            <?php else:?>
                                 <b>Drop:</b> <?=$l->drop_first.' ',$l->drop_last?> (<?=$l->drop_pos.' - '.$l->drop_club_id?>)
+                            <?php endif;?>
                             </div>
                             <div>
                                 <b>Pick up:</b> <?=$l->pickup_first.' ',$l->pickup_last?> (<?=$l->pickup_pos.' - '.$l->pickup_club_id?>)

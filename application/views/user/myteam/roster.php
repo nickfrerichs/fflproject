@@ -128,7 +128,7 @@
                 <div><h5>Starting Lineup</h5></div>
                 <table>
                     <thead>
-                        <th class="text-center">Pos</th><th class="text-center">Player</th><th class="text-center">Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Sit</th>
+                        <th>Pos</th><th>Player</th><th>Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Sit</th>
                     </thead>
                     <tbody id ="starter-tbody">
                     </tbody>
@@ -138,7 +138,7 @@
                 <div><h5>Bench</h5></div>
                 <table>
                     <thead>
-                        <th class="text-center">Player</th><th class="text-center">Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Start as</th>
+                        <th>Player</th><th>Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Start as</th>
                     </thead>
                     <tbody id="bench-tbody">
                     </tbody>
