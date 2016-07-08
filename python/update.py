@@ -227,7 +227,10 @@ def update_players(year, week, weektype):
     for p in players:
         # print ".",
         count = count + 1
-        birthdate = players[p].birthdate
+        try:
+            birthdate = str(datetime.datetime.strptime(players[p].birthdate, '%m/%d/%Y'))
+        except:
+            birthdate = "0000-00-00"
         college = players[p].college
         full = players[p].full_name
         gsis_id = players[p].gsis_id
@@ -305,7 +308,6 @@ def update_players(year, week, weektype):
             ", status = '"+status+"'"+
             ", photo = '"+photo+"'"+
             " where player_id = '" + str(gsis_id)+"'")
-
         cur.execute(query)
     db.commit()
     print "Added: " + str(add_count) + " players."
