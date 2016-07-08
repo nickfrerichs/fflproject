@@ -151,16 +151,15 @@ class Security_model extends CI_Model
         }
 
         // Look for open trades
-        $trades = $this->db->from('trade')->where('(team1_id = '.$this->session->userdata('team_id').' or team2_id = '.
-            $this->session->userdata('team_id').')',null,false)
+        $trades = $this->db->from('trade')->where('team2_id', $this->session->userdata('team_id'))
             ->where('year',$this->session->userdata('current_year'))->where('completed',0)->where('expires > NOW()')
             ->where('completed_date',0)->count_all_results();
         if ($trades > 0)
         {
             if ($trades == 1)
-                $note = "You have 1 open trade.";
+                $note = "You have 1 trade awaiting a response.";
             else
-                $note = "You have ".$trades." open trades.";
+                $note = "You have ".$trades." trades awaiting responses.";
             $messages[] = array('class'=>'primary',
                                 'message'=> $note.
                                 '<br><a href="'.site_url('myteam/trade').'" data-ackurl="'.site_url('common/message_ack/msg_open_trades').'" class="_message-close">View Trades</a>',
