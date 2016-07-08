@@ -16,11 +16,12 @@
 }
 
 .week-future{
-    color: #DDD;
+    color: #999;
 }
 
 </style>
-
+<div class="row">
+    <div class="columns callout">
 <?php if ($selected_week == 0): ?>
     <div class="row">
         <div class="columns">
@@ -49,7 +50,7 @@
                     <?php endif;?>
                 <?php endforeach;?>
                 </tr>
-                <tr><td colspan=<?=count($weeks)?>></td></tr>
+
             </table>
         </div>
     </div>
@@ -98,3 +99,5 @@
             </div>
         <?php endforeach;?>
     </div>
+</div>
+</div>

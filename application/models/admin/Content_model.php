@@ -72,7 +72,7 @@ class Content_model extends MY_Model
             return true;
 
 
-        $predefined = array('playoffs');
+        $predefined = array('playoffs','rules');
         if(in_array($text_id,$predefined))
         {
             $num = $this->db->from('content')->where('league_id',$this->leagueid)->where('year',$this->current_year)

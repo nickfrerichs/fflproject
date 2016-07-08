@@ -14,7 +14,8 @@ class Rules extends MY_User_Controller{
 
     public function index()
     {
-        $this->user_view('user/league/rules');
+        $data['content'] = $this->rules_model->get_rules_content();
+        $this->user_view('user/league/rules', $data);
     }
 
     public function scoring()

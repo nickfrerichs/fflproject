@@ -29,14 +29,6 @@
     </div>
 </div>
 
-
-<div class="row">
-    <div class="columns">
-        <h3>Settings</h3>
-    </div>
-</div>
-
-
 <div class="row callout">
     <div class="columns">
         <div class="row">

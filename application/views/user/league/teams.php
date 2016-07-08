@@ -1,10 +1,6 @@
 <?php //print_r($teams); ?>
 
-<div class="row">
-    <div class="columns">
-        <h4>Teams</h4>
-    </div>
-</div>
+
 
     <div class="row callout">
         <?php foreach($teams as $t): ?>

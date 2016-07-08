@@ -1,41 +1,43 @@
 <?php //print_r($years); ?>
-
 <div class="row">
-	<div class="columns">
-		<h5>Draft</h5>
-	</div>
-</div>
-<div class="row">
-	<div class="columns">
-		<a href="<?=site_url('season/draft/live')?>"><?=$this->session->userdata('current_year')?> Live Draft</a>
-	</div>
-</div>
-<div class="row align-center">
-	<div class="columns small-5 medium-2">
-		<select id="year-select" class="form-control">
-			<?php foreach($years as $y): ?>
-				<option value="<?=$y->year?>"><?=$y->year?></option>
-			<?php endforeach; ?>
-		</select>
-	</div>
-</div>
+	<div class="columns callout">
+		<div class="row">
+			<div class="columns">
+				<h5>Draft</h5>
+			</div>
+		</div>
+		<div class="row">
+			<div class="columns">
+				<a href="<?=site_url('season/draft/live')?>"><?=$this->session->userdata('current_year')?> Live Draft</a>
+			</div>
+		</div>
+		<div class="row align-center">
+			<div class="columns small-5 medium-2">
+				<select id="year-select" class="form-control">
+					<?php foreach($years as $y): ?>
+						<option value="<?=$y->year?>"><?=$y->year?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
 
-<div class="row">
-	<div class="columns">
-		<table>
-			<thead>
-				<th>Pick</th>
-				<th>Player</th>
-				<th>Pos</th>
-				<th>NFL Team</th>
-				<th>Owner</th>
-			</thead>
-			<tbody id="draft-results-table">
-			</tbody>
-		</table>
+		<div class="row">
+			<div class="columns">
+				<table>
+					<thead>
+						<th>Pick</th>
+						<th>Player</th>
+						<th>Pos</th>
+						<th>NFL Team</th>
+						<th>Owner</th>
+					</thead>
+					<tbody id="draft-results-table">
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>
-
 
 <script>
 $( document ).ready(function() {

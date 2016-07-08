@@ -293,7 +293,7 @@ class Player_search extends MY_User_Controller{
         {
         $this->load->model('myteam/trade_model');
         $this->per_page = 3;
-        $data = $this->trade_model->get_trade_log_array($this->current_year,$this->per_page, $this->data['page']*$this->per_page);
+        $data = $this->trade_model->get_trade_log_array($this->current_year,$this->per_page, $this->data['page']*$this->per_page,3);
         $log = $data['log'];
         ?>
         <?php if (count($log) > 0): ?>

@@ -1,6 +1,6 @@
 
 
-    <?php $predefined = array('playoffs','news'); ?>
+    <?php $predefined = array('playoffs','rules'); ?>
     <?php if (count($content) > 0): ?>
         <div class="row">
             <div class="columns">

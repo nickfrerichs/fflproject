@@ -31,5 +31,7 @@
             <?php endforeach;?>
                 <?php endforeach;?>
         </table>
+        <span style="font-style:italic">Use this URL to display to your league (ex: in League Rules): </span><?=site_url('league/rules/scoring')?>
+
     </div>
 </div>

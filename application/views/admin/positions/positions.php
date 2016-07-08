@@ -73,6 +73,8 @@
             </tr>
         <?php endforeach;?>
         </table>
+        <br>
+        <span style="font-style:italic">Use this URL to display to your league (ex: in League Rules): </span><?=site_url('league/rules/positions')?>
     </div>
 </div>
 

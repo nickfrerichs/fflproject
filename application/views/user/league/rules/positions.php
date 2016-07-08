@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="columns">
+    <div class="columns callout">
         <table>
             <thead>
                 <th>Position</th>

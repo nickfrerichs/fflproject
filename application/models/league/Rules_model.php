@@ -50,5 +50,15 @@ class Rules_model extends MY_Model{
         return $data;
     }
 
+    function get_rules_content()
+    {
+
+        $row = $this->db->select('data')->from('content')->where('text_id','rules')->where('league_id',$this->leagueid)
+            ->get()->row();
+        if (count($row) > 0)
+            return $row->data;
+        return False;
+    }
+
 }
 ?>
