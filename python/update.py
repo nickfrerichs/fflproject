@@ -435,7 +435,7 @@ def update_schedule(season_year, week, weektype="REG"):
       else:
         query = ("Insert into nfl_schedule (eid, gsis, d, t, q, k, h, hnn, hs, v, vnn, vs, p, rz, ga, gt, week, year, start_time) "+
 			   "Values(%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" %
-	       (eid, gsis, day, time, quarter, k, home, home_long, home_score, away, away_long, away_score, p, rz, ga, weektype, week, season_year, start_time))
+	       (eid, gsis, day, time, quarter, k, home, home_long, home_score, away, away_long, away_score, p, rz, ga, weektype, week, season_year, str(start_time)[:-6]))
         added += 1
       cur.execute(query)
 
