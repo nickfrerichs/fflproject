@@ -118,9 +118,7 @@ class Player_search_model extends CI_Model{
 
     function get_league_years()
     {
-        return $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
-            ->order_by('year','desc')
-            ->get()->result();
+        return $this->common_model->get_league_years();
     }
 
     function get_nfl_positions_data($include_all_pos = false)

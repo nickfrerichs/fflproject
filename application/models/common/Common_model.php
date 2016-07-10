@@ -181,6 +181,13 @@ class Common_model extends CI_Model{
     {
         $this->common_noauth_model->drop_player($player_id, $teamid, $this->current_year, $this->current_week, $this->current_weektype);
     }
+
+    function get_league_years()
+    {
+        return $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
+            ->order_by('year','desc')
+            ->get()->result();
+    }
 }
 
 ?>

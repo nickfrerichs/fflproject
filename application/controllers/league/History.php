@@ -13,7 +13,23 @@ class History extends MY_User_Controller{
 
     public function index()
     {
-        $this->user_view('user/league/history');
+        $this->load->model('player_search_model');
+        $data = array();
+        $data['years'] = $this->player_search_model->get_league_years();
+        $this->user_view('user/league/history', $data);
+    }
+
+    public function player_records()
+    {
+        $this->load->model('player_search_model');
+        $data = array();
+        $data['positions'] = $this->player_search_model->get_nfl_positions_data();
+        $data['years'] = $this->player_search_model->get_league_years();
+
+        $this->bc['History'] = site_url('league/history');
+        $this->bc['Player Records'] = "";
+        $this->user_view('user/league/history/player_records', $data);
+
     }
 }
 ?>
