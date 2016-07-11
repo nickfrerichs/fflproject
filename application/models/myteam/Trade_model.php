@@ -44,7 +44,7 @@ class Trade_model extends MY_Model{
             ->where('trade.league_id',$this->leagueid)
             ->where('completed',0)
             ->where('canceled',0)
-            ->where('trade.expires >','NOW()',false)
+            ->where('trade.expires > NOW()')
             ->where('(team1_id = '.$this->teamid.' or team2_id='.$this->teamid.')')
             ->get()->result();
     }
@@ -325,7 +325,7 @@ class Trade_model extends MY_Model{
     function valid_trade_action($tradeid,$action)
     {
         $trade = $this->db->select('team1_id, team2_id')->from('trade')
-            ->where('id',$tradeid)->where('completed',0)->where('canceled',0)->where('expires >','NOW()')
+            ->where('id',$tradeid)->where('completed',0)->where('canceled',0)->where('expires > NOW()')
             ->get()->row();
 
         if (count($trade) == 0)

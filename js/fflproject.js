@@ -92,8 +92,9 @@ $(document).on('click',".change-control", function(e){
         $.post(url,{type:name,value:newvalue.val(),var1:var1, var2:var2, var3:var3}, function(data){
             if(data)
             {
+
                 var d = $.parseJSON(data);
-                if(d.success){field.html(newvalue.val()); notice('Setting saved.','success')}
+                if(d.success){field.html(newvalue.val()); notice('Saved.','success')}
 				else
 				{field.html(newvalue.attr('placeholder'));}
             }

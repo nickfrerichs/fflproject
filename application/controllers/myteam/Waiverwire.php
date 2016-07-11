@@ -54,6 +54,8 @@ class Waiverwire extends MY_User_Controller{
         $d = $this->waiverwire_model->get_log_data();
         $data['log'] = $d['result'];
         $data['clear_time'] = $this->waiverwire_model->get_clear_time();
+        $this->bc['Waiver Wire'] = site_url('myteam/waiverwire');
+        $this->bc['Log'] = "";
         $this->user_view('user/myteam/waiverwire/showlog.php',$data);
 
     }
@@ -62,6 +64,8 @@ class Waiverwire extends MY_User_Controller{
     {
         $data = array();
         $data['data'] = $this->waiverwire_model->get_priority_data_array();
+        $this->bc['Waiver Wire'] = site_url('myteam/waiverwire');
+        $this->bc['Priority'] = "";
         $this->user_view('user/myteam/waiverwire/showpriority.php',$data);
     }
 

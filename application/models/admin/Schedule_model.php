@@ -168,14 +168,21 @@ class Schedule_model extends MY_Model{
 
     function get_gametypes_data()
     {
-        return $this->db->select('id, text_id, default')->from('schedule_game_type')
+        return $this->db->select('id, text_id, default, title_game')->from('schedule_game_type')
                 ->where('league_id',$this->leagueid)->get()->result();
     }
 
-    function add_gametype($id)
+    function get_gametype_data($id)
+    {
+        return $this->db->select('id, text_id, default, for_title')->from('schedule_game_type')
+                ->where('league_id',$this->leagueid)->where('id',$id)->get()->row();
+    }
+
+    function add_gametype($id, $title_game)
     {
         $this->db->insert('schedule_game_type', array('text_id' => $id,
                                                     'league_id' => $this->leagueid,
+                                                    'title_game' => $title_game,
                                                     'default' => 0));
     }
 
@@ -191,6 +198,13 @@ class Schedule_model extends MY_Model{
     {
         $this->db->delete('schedule_game_type', array('league_id' => $this->leagueid,
                                                   'id' => $id));
+    }
+
+    function set_gametype_name($id, $name)
+    {
+        $data = array('text_id' => $name);
+        $this->db->where('league_id',$this->leagueid)->where('id',$id);
+        $this->db->update('schedule_game_type',$data);
     }
 
 }

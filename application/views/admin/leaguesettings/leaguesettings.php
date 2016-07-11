@@ -120,7 +120,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><span data-tooltip class="has-tip top" title="When Twitter auth is configured, all chat messages are tweeted out.">Twitter Chat Updates</span></td>
+                    <td><span data-tooltip class="has-tip top" title="When Twitter auth is configured, all chat messages are tweeted.">Twitter Chat Updates</span></td>
                     <td></td>
                     <td class="text-center">
                         <div class="switch tiny">

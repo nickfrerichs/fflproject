@@ -60,7 +60,7 @@ def main():
   if(args.players): # Update players
     update_players(year, week, weektype)
 
-  if(args.summary): # calculate statistic_week
+  if(args.stats_summary): # calculate statistic_week
     update_statistic_summaries(year, week, weektype)
 
   if(args.standings):
@@ -476,13 +476,13 @@ def update_schedule(season_year, week, weektype="REG"):
 #
 #   return playerdict
 
-parser = argparse.ArgumentParser(description='Short sample app')
+parser = argparse.ArgumentParser(description='FFLProject: Update various parts of the database')
 
 parser.add_argument('--schedule', action="store_true", default=False, help="Update NFL schedule")
 #parser.add_argument('-g', action="store_true", default=False, help="Update NFL game stats and recalculate fantasy stats")
 parser.add_argument('--players', action="store_true", default=False, help="Update NFL players")
 parser.add_argument('--photos', action="store_true", default=False, help="Check for photos for players that don't have one.")
-parser.add_argument('--summary', action="store_true", default=False, help="Stat summary update: use stored player stat values and recalculate weekly summary data.")
+parser.add_argument('--stats_summary', action="store_true", default=False, help="Calculate and store player fantasy stats summaries")
 parser.add_argument('--standings', action="store_true", default=False, help="Calculate standings results and add to schedule table.")
 parser.add_argument('--year', action="store", default="0", required=False, help="Year")
 parser.add_argument('--week', action="store", default="0", required=False, help="Week, use 'all' for all weeks.")

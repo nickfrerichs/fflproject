@@ -105,7 +105,12 @@ class Schedule_templates extends MY_Admin_Controller{
     {
         if ($this->input->post('add'))
         {
-            $this->schedule_model->add_gametype($this->input->post('text_id'));
+            $text_id = $this->input->post('text_id');
+            if ($this->input->post('title_game'))
+                $title_game = true;
+            else
+                $title_game = false;
+            $this->schedule_model->add_gametype($text_id, $title_game);
             redirect('admin/schedule_templates/gametypes');
         }
 
@@ -127,6 +132,21 @@ class Schedule_templates extends MY_Admin_Controller{
         $this->bc['Schedule Templates'] = site_url('admin/schedule_templates');
         $this->bc['Game Types'] = "";
         $this->admin_view('admin/schedule/schedule_gametypes', array('types' => $gametypes));
+
+    }
+
+    function ajax_gametype_name_edit()
+    {
+        $response = array('success' => false);
+        $id = str_replace("type","",$this->input->post('type'));
+        $value = $this->input->post('value');
+
+        $this->schedule_model->set_gametype_name($id, $value);
+        $response['success'] = True;
+
+        echo json_encode($response);
+
+
     }
 
 }
