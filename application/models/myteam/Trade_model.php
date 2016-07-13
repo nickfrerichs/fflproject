@@ -97,83 +97,84 @@ class Trade_model extends MY_Model{
 
         $pos_year = $this->common_model->league_position_year();
         $positions = $this->db->select('id, nfl_position_id_list, max_roster, text_id')->from('position')->where('league_id',$this->leagueid)
-            ->where('position.year',$pos_year)->get()->result();
+            ->where('position.year',$pos_year)->order_by('max_roster','asc')->get()->result();
 
         // $team1_roster & $team2_roster
-        $team1_adds = $this->db->select('nfl_position_id as pos_id')->from('trade_player')
+        $team1_adds = $this->db->select('nfl_position_id as pos_id, player.first_name, player.last_name')->from('trade_player')
             ->join('player','player.id = trade_player.player_id')
             ->where('trade_id',$trade_id)->where('team_id',$team_ids->team2_id)->get()->result();
 
-        $team2_adds = $this->db->select('nfl_position_id as pos_id')->from('trade_player')
+        $team2_adds = $this->db->select('nfl_position_id as pos_id, player.first_name, player.last_name')->from('trade_player')
             ->join('player','player.id = trade_player.player_id')
             ->where('trade_id',$trade_id)->where('team_id',$team_ids->team1_id)->get()->result();
 
-        foreach (range(1,2) as $i)
+        // Important that team 2 be checked first.
+        foreach (range(2,1) as $i)
         {
+            // Get the nfl_position_id of the teams roster.
             ${'team'.$i.'_roster'} = $this->db->select('nfl_position.id as pos_id')->from('roster')
                 ->join('player','roster.player_id = player.id')->join('nfl_position','nfl_position.id = player.nfl_position_id')
                 ->where('roster.team_id',$team_ids->{'team'.$i.'_id'})
                 ->get()->result();
 
-            if ($i == 1) {$j = 2;} else{$j=1;}
+            // Make an array of the pos_ids for all players if the trade goes through.
+            $pos_ids = array();
+            foreach(${'team'.$i.'_roster'} as $p)
+                $pos_ids[] = $p->pos_id;
 
-            foreach($positions as $pos)
+            if ($i == 1) {$j = 2;} else{$j=1;}
+            // Plus players who will be added by trade
+            foreach(${'team'.$i.'_adds'} as $add)
+                $pos_ids[] = $add->pos_id;
+
+            // Minus player who will be removed by the Trade
+            foreach(${'team'.$j.'_adds'} as $remove)
             {
-                // Current roster
-                foreach(${'team'.$i.'_roster'} as $player)
+                foreach($pos_ids as $key => $pos_id)
                 {
-                    if (in_array($player->pos_id, explode(',',$pos->nfl_position_id_list)))
+                    if ($pos_id == $remove->pos_id)
                     {
-                        if (!isset(${'team'.$i.'_pos_array'}[$pos->id]))
-                            ${'team'.$i.'_pos_array'}[$pos->id] = 0;
-                        ${'team'.$i.'_pos_array'}[$pos->id]++;
-                    }
-                }
-                // Plus player who team1 will be adding
-                foreach(${'team'.$i.'_adds'} as $add)
-                {
-                    if (in_array($add->pos_id, explode(',',$pos->nfl_position_id_list)))
-                    {
-                        if (!isset(${'team'.$i.'_pos_array'}[$pos->id]))
-                            ${'team'.$i.'_pos_array'}[$pos->id] = 0;
-                        ${'team'.$i.'_pos_array'}[$pos->id]++;
-                    }
-                }
-                // Minus players who will be removed
-                foreach(${'team'.$j.'_adds'} as $remove)
-                {
-                    if (in_array($remove->pos_id, explode(',',$pos->nfl_position_id_list)))
-                    {
-                        if (!isset(${'team'.$i.'_pos_array'}[$pos->id]))
-                            ${'team'.$i.'_pos_array'}[$pos->id] = 0;
-                        ${'team'.$i.'_pos_array'}[$pos->id]--;
+                        unset($pos_ids[$key]);
+                        break;
                     }
                 }
             }
-        }
 
-        $max = array();
-        foreach ($positions as $pos)
-            $max[$pos->id] = $pos->max_roster;
 
-        // It's important that team2 be checked first and make room
-        foreach($team2_pos_array as $posid => $t)
-        {
+            $lea_pos_array = array();
+            foreach($positions as $lea_pos)
+                $lea_pos_array[] = array('spots' => $lea_pos->max_roster, 'id_list' => $lea_pos->nfl_position_id_list, 'text_id' => $lea_pos->text_id);
 
-            if ($max[$posid] == -1)
-                continue;
-            // Return $team2 id, it's over the limit
-            if($t > $max[$posid])
-                return $team_ids->team2_id;
-        }
 
-        foreach($team1_pos_array as $posid => $t)
-        {
-            if ($max[$posid] == -1)
-                continue;
-            // Return $team1 id, it's over the limit
-            if($t > $max[$posid])
-                return $team_ids->team1_id;
+            foreach($pos_ids as $key => $pos_id)
+            {
+                $ok = false;
+                foreach($lea_pos_array as $pos_key => $lea_pos)
+                {
+                    if(in_array($pos_id, explode(',',$lea_pos['id_list'])))
+                    {
+                        if ($lea_pos['spots'] == -1)
+                        {
+                            $ok = true;
+                            break;
+                        }
+                        if ($lea_pos['spots'] == 0)
+                            continue;
+                        if ($lea_pos['spots'] > 0)
+                        {
+                            $lea_pos_array[$pos_key]['spots']--;
+                            $ok = true;
+                            break;
+                        }
+                    }
+                }
+                if (!$ok)
+                {
+                    return array('team_id' => $team_ids->{'team'.$i.'_id'},
+                                 'nfl_pos_id' => $pos_id);
+                }
+
+            }
         }
 
 

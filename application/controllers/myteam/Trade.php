@@ -152,20 +152,20 @@ class Trade extends MY_User_Controller{
                 elseif($limit_teamid == False)
                 {
                     // OK so far, check position limits
-                    $limit_teamid = $this->trade_model->trade_position_over_limit($tradeid);
+                    $pos_limit = $this->trade_model->trade_position_over_limit($tradeid);
 
-                    if($limit_teamid == $this->session->userdata('team_id'))
+                    if($pos_limit != false && $pos_limit['team_id'] == $this->session->userdata('team_id'))
                     {
                         // Offering team is over a position limit
                         $response['msg'] = "You have too many players at this position.  You must be under the limit first.";
                     }
-                    elseif($limit_teamid > 0)
+                    elseif($pos_limit != false && $pos_limit['team_id'] > 0)
                     {
                         // Other team is over a position limit, reverse trade
                         $this->trade_model->reverse_offer($tradeid);
                         $response['msg'] = "The offer has been accepted, pending the offering team having room at that position.";
                     }
-                    elseif($limit_teamid == False) // No one is over the limit, process the transaction
+                    elseif($pos_limit == False) // No one is over the limit, process the transaction
                     {
                         // Everything appears to be OK as far as limits, check ownership of player and picks and process trade
                         if ($this->trade_model->player_ownership_ok($tradeid) && $this->trade_model->pick_ownership_ok($tradeid))
@@ -208,6 +208,7 @@ class Trade extends MY_User_Controller{
     {
         $open_trades = array();
         $trades = $this->trade_model->get_open_trades();
+
         foreach ($trades as $t)
         {
             if ($t->team1_id == $this->teamid)
@@ -323,5 +324,10 @@ class Trade extends MY_User_Controller{
         <?php endforeach;?>
 
         <?php
+    }
+
+    function test()
+    {
+        $this->trade_model->trade_position_over_limit(27);
     }
 }
