@@ -48,4 +48,19 @@ class Transactions extends MY_Admin_Controller{
         echo json_encode($result);
     }
 
+    function set_ww_approval_setting()
+    {
+        $response = array('success' => false);
+        $value = $this->input->post('value');
+        $response['value'] = $value;
+        $this->transactions_model->set_ww_approval_setting($value);
+        $response['success'] = True;
+        echo json_encode($response);
+    }
+
+    function test()
+    {
+        $this->transactions_model->set_ww_approval_setting("auto");
+    }
+
 }

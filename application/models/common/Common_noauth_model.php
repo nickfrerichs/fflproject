@@ -15,6 +15,12 @@ class Common_noauth_model extends CI_Model{
         return $this->db->select('name')->from('site_settings')->get()->row()->name;
     }
 
+    function get_league_name($leagueid)
+    {
+        return $this->db->select('league_name')->from('league')->where('id',$leagueid)
+            ->get()->row()->league_name;
+    }
+
     function join_code_required($maskid)
     {
         $row = $this->db->select('join_password')->from('league')

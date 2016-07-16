@@ -319,8 +319,15 @@ class Trade_model extends MY_Model{
 
     function decline_trade_offer($trade_id)
     {
+        $this->db->select('team1_id, team2_id')->from('trade')->where('id',$trade_id)->get()->row();
         $this->db->where('id',$trade_id)->update('trade',array('canceled'=>1, 'completed_date' => t_mysql()));
         $this->send_trade_email_notice($trade_id, "Trade Declined");
+
+        $row = $this->db->select('team1_id, team2_id')->from('trade')->where('id',$trade_id)->get()->row();
+        if ($row->team1_id == $this->teamid)
+            return "Trade Canceled";
+        if ($row->team2_id == $this->teamid)
+            return "Trade Declined";
     }
 
     function valid_trade_action($tradeid,$action)
@@ -334,7 +341,7 @@ class Trade_model extends MY_Model{
 
         if ($action == "decline" || $action == "accept")
         {
-            if ($trade->team2_id == $this->teamid)
+            if ($trade->team2_id == $this->teamid || $trade->team1_id == $this->teamid)
                 return True;
         }
     }

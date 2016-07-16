@@ -197,7 +197,7 @@ class Trade extends MY_User_Controller{
             $tradeid = $this->input->post('tradeid');
             if($this->trade_model->valid_trade_action($tradeid,'decline'))
             {
-                $this->trade_model->decline_trade_offer($tradeid);
+                $response['msg'] = $this->trade_model->decline_trade_offer($tradeid);
                 $response['success'] = true;
             }
             echo json_encode($response);
@@ -263,7 +263,7 @@ class Trade extends MY_User_Controller{
                         </button>
 
                     <?php else: ?>
-                        Waiting for response
+                        <div><button class="button decline-button small" value="<?=$trade_id?>">Remove Offer</button></div>
                     <?php endif; ?>
                     </td>
                 </tr>

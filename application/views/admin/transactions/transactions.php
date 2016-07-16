@@ -54,6 +54,35 @@
 							</td>
 						</tr>
 						<tr>
+							<?php $t = $settings->waiver_wire_approval_type;?>
+							<td>Waiverwire approvals</td>
+							<td>
+								<fieldset>
+									<div class="row">
+										<div class="columns small-12">
+											<input type="radio" class="ww-approvals" name="ww-approvals" value="auto" id="fullauto" required <?php if($t=="auto"){echo "checked";}?>>
+											<label for="fullauto">
+												<span data-tooltip class="has-tip top" title="Auto approve all waiver requests.  When there is contention for a player, team with a worse record wins. (remember to set up a scheduled task)">Fully Automatic</span>
+												</label>
+										</div>
+										<div class="columns small-12">
+											<input type="radio" class="ww-approvals" name="ww-approvals" value="semiauto" id="partauto" required <?php if($t=="semiauto"){echo "checked";}?>>
+											<label for="partauto">
+												<span data-tooltip class="has-tip top" title="Auto approve except when contention for a player, league admin decides priority and manually approves those. (remember to set up schedule task)">Semi Automatic</span>
+												</label>
+										</div>
+										<div class="columns small-12">
+											<input type="radio" class="ww-approvals" name="ww-approvals" value="manual" id="manual" required <?php if($t=="manual"){echo "checked";}?>>
+											<label for="manual">
+												<span data-tooltip class="has-tip top" title="League admin must approve every waiver wire request. (no schedule task needed)">Manual</span>
+												</label>
+										</div>
+									</div>
+								</fieldset>
+							</td>
+							<td></td>
+						</tr>
+						<tr>
 							<td>Trade deadline</td>
 							<td id="tdeadline-field" class="short"><?=$settings->trade_deadline?></td>
 							<td class="text-center">
@@ -82,8 +111,6 @@
 		var url = "<?=site_url('admin/transactions/ww_approve')?>";
 		var ww_id = $(this).data('id');
 		$.post(url, {'id':ww_id},function(data){
-			console.log(data);
-
 			if (data.success == true)
 			{location.reload();}
 			else
@@ -97,8 +124,16 @@
 		var url = "<?=site_url('admin/transactions/ww_reject')?>";
 		var ww_id = $(this).data('id');
 		$.post(url, {'id':ww_id},function(data){
-			console.log('here');
 			location.reload();
+		},'json');
+	});
+
+	$(".ww-approvals").on('click', function(){
+		var url="<?=site_url('admin/transactions/set_ww_approval_setting')?>";
+		$.post(url,{'value':$(this).val()},function(data){
+			if (data.success)
+			{notice('Saved.','success');}
+			else {notice('An error ocurred while saving.','Error');}
 		},'json');
 	});
 

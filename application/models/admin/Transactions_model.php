@@ -18,14 +18,14 @@ class Transactions_model extends MY_Model
             ->select('UNIX_TIMESTAMP(waiver_wire_log.request_date) as request_date')
             ->select('waiver_wire_log.id as ww_id')
             ->from('waiver_wire_log')
-            ->join('player as dp','dp.id = drop_player_id')
-            ->join('player as pp','pp.id = pickup_player_id')
+            ->join('player as dp','dp.id = drop_player_id','left')
+            ->join('player as pp','pp.id = pickup_player_id','left')
             ->join('team','team.id = waiver_wire_log.team_id')
             ->join('owner','team.owner_id = owner.id')
-            ->join('nfl_team as dt','dt.id = dp.nfl_team_id')
-            ->join('nfl_team as pt','pt.id = pp.nfl_team_id')
-            ->join('nfl_position as dpos','dpos.id = dp.nfl_position_id')
-            ->join('nfl_position as ppos','ppos.id = pp.nfl_position_id')
+            ->join('nfl_team as dt','dt.id = dp.nfl_team_id','left')
+            ->join('nfl_team as pt','pt.id = pp.nfl_team_id','left')
+            ->join('nfl_position as dpos','dpos.id = dp.nfl_position_id','left')
+            ->join('nfl_position as ppos','ppos.id = pp.nfl_position_id','left')
             ->where('waiver_wire_log.league_id',$this->leagueid)->where('approved',0)->where('transaction_date',0)
             ->order_by('request_date','desc')
             ->get()->result();
@@ -192,6 +192,17 @@ class Transactions_model extends MY_Model
         //
         // // All checks passed, return True;
         // return True;
+
+    }
+
+    function set_ww_approval_setting($value)
+    {
+        if (in_array($value, array("auto","semiauto","manual")))
+        {
+            $data = array('waiver_wire_approval_type' => $value);
+            $this->db->where('league_id',$this->leagueid);
+            $this->db->update('league_settings',$data);
+        }
 
     }
 

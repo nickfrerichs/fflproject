@@ -72,9 +72,9 @@ $(document).ready(function(){
 		$.post(url,{'tradeid':tradeid}, function(data){
 			result = $.parseJSON(data);
 			if (result.success != true)
-			{notice(data.msg);}
+			{notice(result.msg);}
 			else {
-				notice("Trade declined.","success");
+				notice(result.msg,"success");
 			}
 			load_open_trades();
 		});

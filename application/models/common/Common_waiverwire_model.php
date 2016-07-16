@@ -48,18 +48,24 @@ class Common_waiverwire_model extends CI_Model{
                 ->from('draft_order')
                 ->join('team','team.id = draft_order.team_id')
                 ->join('owner','owner.id = team.owner_id')
-                ->where('draft_order.round',1)
                 ->where('draft_order.league_id',$leagueid)
                 ->where('draft_order.year',$year)
-                ->order_by('draft_order.pick','desc')
+                ->order_by('draft_order.overall_pick','asc')
                 ->get()->result();
 
         $data['priority'] = array();
         if(count($standings) == 0)
         {
             $data['type'] = 'draft_order';
+            $added = array();
             foreach($draft_order as $key => $d)
-                $data['priority'][$key] = $d;
+            {
+                if (in_array($d->team_id,$added))
+                    continue;
+                $data['priority'][] = $d;
+                $added[] = $d->team_id;
+            }
+            $data['priority'] = array_reverse($data['priority']);
         }
         else
         {
@@ -179,7 +185,7 @@ class Common_waiverwire_model extends CI_Model{
     function drop_player($player_id, $teamid, $year, $week, $weektype)
     {
         $this->common_noauth_model->drop_player($player_id, $teamid, $year, $week, $weektype);
-        
+
         //
         // if ($player_id == 0)
         //     return;
@@ -270,6 +276,39 @@ class Common_waiverwire_model extends CI_Model{
         $this->email->message($body);
         $this->email->send();
 
+    }
+
+    function send_admin_approval_notice($leagueid)
+    {
+        $admins = $this->db->select('uacc_email as email')->from('league_admin')
+            ->join('user_accounts','uacc_id = league_admin_id')
+            ->where('league_admin.league_id',$leagueid)->get()->result();
+
+        $league_name = $this->common_noauth_model->get_league_name($leagueid);
+
+        $this->config->load('fflproject');
+        $this->load->library('email');
+        $this->email->from($this->config->item('fflp_email_reply_to'));
+        $this->email->subject("Waiver wire request needs approval.");
+        $this->email->message("Hi League Admin,\n\nA waiver wire request needs approval for league: ".$league_name.".");
+        foreach($admins as $admin)
+        {
+            $this->email->to($admin->email);
+            $this->email->send();
+        }
+    }
+
+    function get_approval_settings($leagueid)
+    {
+        return $this->db->select('waiver_wire_approval_type as type, UNIX_TIMESTAMP(waiver_wire_approval_last_check) as last_check')
+            ->from('league_settings')->where('league_id',$leagueid)->get()->row();
+    }
+
+    function update_last_check($leagueid)
+    {
+        $data = array('waiver_wire_approval_last_check' => t_mysql());
+        $this->db->where('league_id',$leagueid);
+        $this->db->update('league_settings',$data);
     }
 
 }

@@ -210,7 +210,7 @@
 			if (response.success == true)
 			{
 				if (pickup_name == undefined){pickup_name = "No one";}
-                if (response.status_code == 1)
+                if ((response.status_code == 1) || (response.manual != undefined && response.manual == true))
                 {notice("Request submitted, pending approval.<br><br> Drop: "+drop_name+"<br>Add: "+pickup_name);}
                 else {notice("Request processed succcessfuly.<br>Dropped: "+drop_name+"<br>Added: "+pickup_name,'success');}
 			}
@@ -233,7 +233,6 @@
 		pickup_id = $("#ww-list").data('playerid');
 
 		$.post(url,{'pickup_id':pickup_id,'drop_id':drop_id},function(data){
-            console.log(data);
 			var d = jQuery.parseJSON(data);
 			if (d.success == true)
 			{

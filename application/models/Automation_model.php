@@ -13,6 +13,14 @@ class Automation_model extends CI_Model{
     {
         $week_year = $this->common_noauth_model->get_current_week($leagueid);
         $week_type = $this->common_noauth_model->get_week_type($leagueid);
+        $approval_settings = $this->common_waiverwire_model->get_approval_settings($leagueid);
+        $approval_type = $approval_settings->type;
+        $last_check = $approval_settings->last_check;
+        $admin_notified = false;
+        if ($approval_type == "manual")
+        {
+            return;
+        }
 
         $now = t_mysql();
 
@@ -54,6 +62,7 @@ class Automation_model extends CI_Model{
 
             // If there is only 1 team, they will be the winner anyway.
             $ww_winner = array('priority' => PHP_INT_MAX);
+
             foreach ($teams as $t)
             {
                 if ($priority[$t->team_id]['priority'] < $ww_winner['priority'])
@@ -63,46 +72,61 @@ class Automation_model extends CI_Model{
                 }
             }
 
-            // Approve the WW for this team, after checking that they still have the drop player,
-            // If not, reject the transaction, email them either way.
 
-            if ($this->common_waiverwire_model->admin_ok_to_process_transaction($ww_winner['data']->ww_id, $msg))
+            // If contention and semi automation, time to exit.
+            if ($approval_type == "semiauto" && count($teams) > 1)
             {
-                $log = $this->db->select('pickup_player_id, drop_player_id, team_id, id')->from('waiver_wire_log')
-                    ->where('id',$ww_winner['data']->ww_id)->get()->row();
-                // Process the transaction for the winner
-                $this->common_waiverwire_model->drop_player($log->drop_player_id, $log->team_id, $week_year->year, $week_year->week, $week_type);
-                $this->common_waiverwire_model->pickup_player($log->pickup_player_id, $log->team_id, $leagueid);
-
-                // Update the log
-                $data = array('transaction_date' => $now, 'approved' => 1);
-                $this->db->where('id',$ww_winner['data']->ww_id);
-                $this->db->update('waiver_wire_log',$data);
-
-                $this->common_waiverwire_model->send_email_notice($ww_winner['data']->ww_id,'approved');
-
-                // Deny all other open approvals waiting for this player.
-                $rows = $this->db->select('id')->from('waiver_wire_log')->where('pickup_player_id',$log->pickup_player_id)
-                    ->where('league_id',$leagueid)->where('team_id != ',$log->team_id)
-                    ->where('transaction_date',0)->where('approved',0)->get()->result();
-
-                foreach($rows as $row)
+                // An email should be sent here to the league admin, but only one?
+                if (!$admin_notified && $last_check < time()-(60*60))
                 {
-                    $data = array('transaction_date'=>$now, 'approved' => 0);
-                    $this->db->where('id',$row->id);
-                    $this->db->update('waiver_wire_log',$data);
-                    $this->common_waiverwire_model->send_email_notice($row->id,'priority');
+                    echo "Sending admin notice\n";
+                    $this->common_waiverwire_model->update_last_check($leagueid);
+                    $this->common_waiverwire_model->send_admin_approval_notice($leagueid);
+                    $admin_notified = true;
                 }
+                continue;
             }
-            else
-            {
-                // Something is up, cancel the winners request and email them.
-                $this->common_waiverwire_model->cancel_request($ww_winner['data']->ww_id, $ww_winner['data']->team_id);
-                $this->common_waiverwire_model->send_email_notice($ww_winner['data']->ww_id,"rejected");
+                // Approve the WW for this team, after checking that they still have the drop player,
+                // If not, reject the transaction, email them either way.
 
-                // maybe call this function recursively to move on to next winner??
-            }
-            // Here is where you would adjust the priority, if you were keeping track of it.
+                if ($this->common_waiverwire_model->admin_ok_to_process_transaction($ww_winner['data']->ww_id, $msg))
+                {
+                    $log = $this->db->select('pickup_player_id, drop_player_id, team_id, id')->from('waiver_wire_log')
+                        ->where('id',$ww_winner['data']->ww_id)->get()->row();
+                    // Process the transaction for the winner
+                    $this->common_waiverwire_model->drop_player($log->drop_player_id, $log->team_id, $week_year->year, $week_year->week, $week_type);
+                    $this->common_waiverwire_model->pickup_player($log->pickup_player_id, $log->team_id, $leagueid);
+
+                    // Update the log
+                    $data = array('transaction_date' => $now, 'approved' => 1);
+                    $this->db->where('id',$ww_winner['data']->ww_id);
+                    $this->db->update('waiver_wire_log',$data);
+
+                    $this->common_waiverwire_model->send_email_notice($ww_winner['data']->ww_id,'approved');
+
+                    // Deny all other open approvals waiting for this player.
+                    $rows = $this->db->select('id')->from('waiver_wire_log')->where('pickup_player_id',$log->pickup_player_id)
+                        ->where('league_id',$leagueid)->where('team_id != ',$log->team_id)
+                        ->where('transaction_date',0)->where('approved',0)->get()->result();
+
+                    foreach($rows as $row)
+                    {
+                        $data = array('transaction_date'=>$now, 'approved' => 0);
+                        $this->db->where('id',$row->id);
+                        $this->db->update('waiver_wire_log',$data);
+                        $this->common_waiverwire_model->send_email_notice($row->id,'priority');
+                    }
+                }
+                else
+                {
+                    // Something is up, cancel the winners request and email them.
+                    $this->common_waiverwire_model->cancel_request($ww_winner['data']->ww_id, $ww_winner['data']->team_id);
+                    $this->common_waiverwire_model->send_email_notice($ww_winner['data']->ww_id,"rejected");
+
+                    // maybe call this function recursively to move on to next winner??
+                }
+                // Here is where you would adjust the priority, if you were keeping track of it.
+
         }
     }
 }

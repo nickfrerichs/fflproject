@@ -201,7 +201,7 @@ class Waiverwire_model extends MY_Model{
             ->where('approved',0)->count_all_results();
         if($num > 0)
         {
-            $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the commissioner.";
+            $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the league admin.";
             return False;
         }
 
@@ -320,17 +320,21 @@ class Waiverwire_model extends MY_Model{
         // $this->db->update('waiver_wire_log',$data);
     }
 
-    function log_transaction($pickup_id, $drop_id)
+    function log_transaction($pickup_id, $drop_id, $approve = true)
     {
-        $now = t_mysql();
+        $request_date = t_mysql();
+        $trans_date = "0000-00-00 00:00:00";
+        if ($approve)
+            $trans_date = $request_date;
+
         $data = array('team_id' => $this->teamid,
                       'league_id' => $this->leagueid,
                       'pickup_player_id' => $pickup_id,
                       'drop_player_id' => $drop_id,
-                      'transaction_date' => $now,
-                      'request_date' => $now,
+                      'transaction_date' => $trans_date,
+                      'request_date' => $request_date,
                       'year' => $this->current_year,
-                      'approved' => 1);
+                      'approved' => $approve);
 
         $this->db->insert('waiver_wire_log',$data);
 

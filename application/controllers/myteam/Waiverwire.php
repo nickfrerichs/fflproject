@@ -75,6 +75,7 @@ class Waiverwire extends MY_User_Controller{
         {
             $pickup = $this->input->post('pickup_id');
             $drop = $this->input->post('drop_id');
+            $settings = $this->common_waiverwire_model->get_approval_settings($this->leagueid);
 
             $data = array();
             $data['drop_id'] = $drop;
@@ -83,11 +84,21 @@ class Waiverwire extends MY_User_Controller{
             {
                 if ($action == "execute") // Yes go ahead and update the database, log it.
                 {
-                    if ($drop != "0")
-                        $this->waiverwire_model->drop_player($drop);
-                    if ($pickup != "0")
-                        $this->waiverwire_model->pickup_player($pickup);
-                    $this->waiverwire_model->log_transaction($pickup, $drop);
+                    if ($settings->type == "manual")
+                    {
+                        $approve = false;
+                        $this->common_waiverwire_model->send_admin_approval_notice($this->leagueid);
+                        $data['manual'] = True;
+                    }
+                    else
+                    {
+                        if ($drop != "0")
+                            $this->waiverwire_model->drop_player($drop);
+                        if ($pickup != "0")
+                            $this->waiverwire_model->pickup_player($pickup);
+                        $approve = true;
+                    }
+                    $this->waiverwire_model->log_transaction($pickup, $drop, $approve);
                 }
                 $data['success'] = True;
             }
