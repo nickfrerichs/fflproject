@@ -42,9 +42,10 @@ class Transactions extends MY_Admin_Controller{
 
     function ww_reject()
     {
-        $result = array();
+        $result = array('success' => false);
         $id = $this->input->post('id');
         $this->transactions_model->reject_ww($id);
+        $result['success'] = true;
         echo json_encode($result);
     }
 

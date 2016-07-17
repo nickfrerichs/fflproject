@@ -71,8 +71,12 @@ def update_standings(year, week ,weektype):
 
     if week == 'all':
         weeks = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
+        weeks = range(1,18)
     else:
         weeks = [week]
+
+    if args.week == "0":
+        weeks = range(1,int(week)+1)
 
     # Get all leagues of current weektype
     query = ('select league.id from league join league_settings on league.id = league_settings.league_id where nfl_season = "%s"' % weektype)
@@ -83,6 +87,7 @@ def update_standings(year, week ,weektype):
         leagueid = l['id']
 
         for week in weeks:
+
             # Get score totals for this week
             query = (('SELECT sum(fs.points) as points, team_id FROM fantasy_statistic as fs join starter as s on '+
                     's.player_id = fs.player_id and s.year = fs.year and s.week = fs.week where fs.league_id = %s and '+
@@ -92,6 +97,14 @@ def update_standings(year, week ,weektype):
             scores = dict()
             cur.execute(query)
             rows = cur.fetchall()
+
+
+            # If there are no stats for this week, skip it, it's probably not happend yet.
+            if len(rows) == 0:
+                continue
+
+            print "Updating week "+str(week)+" for leagueid "+str(leagueid)
+
             for row in rows:
                 scores[row['team_id']] = row['points']
 

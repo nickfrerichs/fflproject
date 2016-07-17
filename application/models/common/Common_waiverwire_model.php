@@ -93,6 +93,9 @@ class Common_waiverwire_model extends CI_Model{
         $pickup_id = $log->pickup_player_id;
         $drop_id = $log->drop_player_id;
 
+        if ($pickup_id == 0 && $drop_id > 0)
+            return True;
+
         // Check roster limit
         $roster_num = $this->db->from('roster')->where('team_id',$team_id)->count_all_results();
         $roster_max = $this->get_roster_max($leagueid);

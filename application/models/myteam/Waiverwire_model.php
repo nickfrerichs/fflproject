@@ -198,7 +198,7 @@ class Waiverwire_model extends MY_Model{
 
         // Check if an approval is pending
         $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('pickup_player_id',$pickup_id)
-            ->where('approved',0)->count_all_results();
+            ->where('transaction_date',0)->count_all_results();
         if($num > 0)
         {
             $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the league admin.";

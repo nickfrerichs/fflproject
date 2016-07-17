@@ -43,7 +43,7 @@ class Transactions_model extends MY_Model
         $this->db->update('waiver_wire_log',$data);
 
         // Notify the owner via email.
-        $this->common_waiverwire_model->send_email_notice($id,'reject');
+        $this->common_waiverwire_model->send_email_notice($id,'rejected');
 
     }
 
@@ -61,7 +61,8 @@ class Transactions_model extends MY_Model
         {
             // Deny all other open approvals waiting for this player.
             $rows = $this->db->select('id')->from('waiver_wire_log')->where('pickup_player_id',$log->pickup_player_id)
-                ->where('league_id',$this->leagueid)->where('team_id != ',$log->team_id)->get()->result();
+                ->where('league_id',$this->leagueid)->where('team_id != ',$log->team_id)
+                ->where('transaction_date',0)->get()->result();
 
             foreach($rows as $row)
             {
