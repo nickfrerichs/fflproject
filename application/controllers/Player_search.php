@@ -262,8 +262,6 @@ class Player_search extends MY_User_Controller{
             $this->per_page = 3;
             $data = $this->waiverwire_model->get_log_data($this->current_year,$this->per_page, $this->data['page']*$this->per_page, 3);
             $waiverwire_log = $data['result'];
-
-            echo '<script>console.log("'.$this->data['page'].'")</script>';
             ?>
 
             <?php if (count($waiverwire_log) > 0): ?>

@@ -10,7 +10,7 @@ class Leaguesettings_model extends MY_Model{
             ->select('s.twitter_consumer_token, s.twitter_consumer_secret, s.twitter_access_token, s.twitter_access_secret')
             ->select('s.twitter_player_moves, s.twitter_chat_updates, league.league_name, s.offseason, s.waiver_wire_deadline')
             ->select('s.trade_deadline, s.waiver_wire_clear_time, s.trade_draft_picks, s.keepers_num, s.lock_lineups_first_game')
-            ->select('s.waiver_wire_approval_type')
+            ->select('s.waiver_wire_approval_type, s.show_whos_online')
             ->from('league')->join('league_settings as s','s.league_id = league.id')
             ->where('league.id',$leagueid)
             ->get()->row();
@@ -49,6 +49,13 @@ class Leaguesettings_model extends MY_Model{
         $this->db->where('league_id',$leagueid);
         $this->db->update('league_settings', array($lookup[$type] => $value));
         return $this->db->affected_rows();
+    }
+
+    function set_wo_setting($value)
+    {
+        $data = array('show_whos_online' => $value);
+        $this->db->where('league_id',$this->leagueid);
+        $this->db->update('league_settings',$data);
     }
 
 }

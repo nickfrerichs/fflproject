@@ -201,7 +201,6 @@ $(document).on('click',".player-list-a-sort", function(e){
 
 function updatePlayerList(tbody)
 {
-	console.log("here");
 	var page = $('#'+tbody+'-data').data('page');
 	var pos = $('.player-list-position-select[data-for="'+tbody+'"]').val();
 	var year = $('.player-list-year-select[data-for="'+tbody+'"]').val();

@@ -76,6 +76,28 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>Display who's online</td>
+                    <td>
+                        <fieldset>
+                            <div class="row">
+                                <div class="columns small-12">
+                                    <input type="radio" class="wo-setting" name="wo-setting" value="1" id="fullauto" required <?php if($settings->show_whos_online==1){echo "checked";}?>>
+                                    <label for="fullauto">On</label>
+                                </div>
+                                <div class="columns small-12">
+                                    <input type="radio" class="wo-setting" name="wo-setting" value="2" id="partauto" required <?php if($settings->show_whos_online==2){echo "checked";}?>>
+                                    <label for="partauto">On (league admins only)</label>
+                                </div>
+                                <div class="columns small-12">
+                                    <input type="radio" class="wo-setting" name="wo-setting" value="0" id="manual" required <?php if($settings->show_whos_online==0){echo "checked";}?>>
+                                    <label for="manual">Off</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
                     <td>Twitter Consumer Token</td>
                     <td id="consumertoken-field"><?=$settings->twitter_consumer_token?></td>
                     <td class="text-center">
@@ -155,4 +177,12 @@
 </div>
 
 <script>
+$(".wo-setting").on('click', function(){
+    var url="<?=site_url('admin/leaguesettings/set_wo_setting')?>";
+    $.post(url,{'value':$(this).val()},function(data){
+        if (data.success)
+        {notice('Saved.','success');}
+        else {notice('An error ocurred while saving.','Error');}
+    },'json');
+});
 </script>

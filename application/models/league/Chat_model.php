@@ -71,6 +71,15 @@ class Chat_model extends MY_Model{
             ->where('league_id',$this->leagueid)->where('id >',$last_read)->get()->row()->num;
     }
 
+    function update_last_check_in()
+    {
+        $check_in_time = time();
+        $data = array('last_check_in' => t_mysql($check_in_time));
+        $this->db->where('owner_id',$this->ownerid)->where('league_id',$this->leagueid);
+        $this->db->update('owner_setting',$data);
+        return $check_in_time;
+    }
+
     function get_last_read_key()
     {
         $row = $this->db->select('chat_read')->from('owner_setting')->where('owner_id',$this->ownerid)
@@ -125,6 +134,37 @@ class Chat_model extends MY_Model{
                 $firstnames[strtolower($o->first_name)] = 1;
         }
         return $firstnames;
+    }
+
+    function whos_online()
+    {
+        # Get a list of all last check in times
+        $firstnames = $this->get_firstnames();
+        $data = array();
+        $online = $this->db->select('owner.id, owner.last_name, owner.first_name as chat_name, owner.first_name')
+            ->select('IFNULL(league_admin.league_admin_id,0) as league_admin')
+            ->from('owner_setting')
+            ->join('owner','owner.id = owner_setting.owner_id')
+            ->join('user_accounts','uacc_id=owner.user_accounts_id')
+            ->join('league_admin','league_admin_id = user_accounts.uacc_id and league_admin.league_id='.$this->leagueid,'left')
+            ->where('owner_setting.league_id',$this->leagueid)
+            ->where('owner_setting.last_check_in>',t_mysql(time()-($this->session->userdata('live_element_refresh_time')*2)))
+            ->order_by('first_name','asc')
+            ->order_by('last_name','asc')
+            ->get()->result();
+
+        foreach($online as $d)
+        {
+            $add = array();
+            if ($d->league_admin > 0)
+                $add['a'] = 1;
+            if($firstnames[strtolower($d->first_name)] > 1)
+                $add['n'] = $d->first_name.' '.$d->last_name[0];
+            else
+                $add['n'] = $d->first_name;
+            $data[] = $add;
+        }
+        return $data;
     }
 
 }

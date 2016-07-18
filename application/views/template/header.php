@@ -22,55 +22,63 @@
 
 <!-- Normal menu bar for normal computers -->
 <div id="title-bar-row" class="row align-spaced align-middle">
-    <div class="columns">
-        <div class="row align-left align-middle">
-            <!-- At one point, I was going to put in a logo, this is where it was.
-            <div id="site-logo" class="columns show-for-medium shrink">
+    <div class="columns small-12">
+        <div class="row align-spaced align-middle">
+            <div class="columns">
+                <div class="row align-left align-middle">
+                    <!-- At one point, I was going to put in a logo, this is where it was.
+                    <div id="site-logo" class="columns show-for-medium shrink">
 
+                    </div>
+                    -->
+                    <div id="league-site-names" class="columns shrink">
+                        <div class="site-title hide-for-small-only hide-for-small-custom"><?=$this->session->userdata('site_name')?></div>
+                        <div class="league-name-title hide-for-small-only hide-for-small-custom"><?=$this->session->userdata('league_name')?></div>
+
+                            <?php if($this->session->userdata('league_id')): ?>
+                                <?php if($this->session->userdata('live_scores')){$live="";}else{$live="hide";}?>
+                                <span class="hide-for-small-only">
+                                    <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
+                                </span>
+                            <?php endif;?>
+                    </div>
+                </div>
             </div>
-            -->
-            <div id="league-site-names" class="columns shrink">
-                <div class="site-title hide-for-small-only hide-for-small-custom"><?=$this->session->userdata('site_name')?></div>
-                <div class="league-name-title hide-for-small-only hide-for-small-custom"><?=$this->session->userdata('league_name')?></div>
 
-                    <?php if($this->session->userdata('league_id')): ?>
-                        <?php if($this->session->userdata('live_scores')){$live="";}else{$live="hide";}?>
-                        <span class="hide-for-small-only">
-                            <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
-                        </span>
-                    <?php endif;?>
+            <div class="top-bar columns shrink" id="main-menu">
+                <ul class="menu show-for-small-only site-title-small"><?=$this->session->userdata('league_name')?></ul>
+                <ul class="dropdown menu medium-horizontal drilldown vertical" data-responsive-menu="drilldown medium-dropdown">
+                    <?php foreach($menu_items as $button => $subitem): ?>
+                        <?php if (!is_array($subitem)): ?>
+                            <li><a href="<?=site_url($subitem)?>"><?=$button?></a></li>
+                        <?php continue;?>
+                        <?php endif;?>
+                      <li><a href="#"><?=$button?></a>
+                          <ul class="menu vertical">
+                          <?php foreach($subitem as $subtext => $url): ?>
+                              <li><a href="<?=site_url($url)?>"><?=$subtext?></a></li>
+                          <?php endforeach; ?>
+                          </ul>
+                      </li>
+                    <?php endforeach; ?>
+                    <li class="show-for-small-only">
+                        <a href="<?=site_url('auth/logout')?>">Logoff</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="align-right columns shrink">
+                <?php if($this->session->userdata('league_id')): ?>
+                        <button id="chat-button" class="button chat-button show-for-medium">chat<span class="unread-count"></span></button>
+                <?php endif;?>
+            </div>
+            <div class="hide-for-small-only align-center" style="padding-right:5px;">
+                <a href="<?=site_url('auth/logout')?>"><i class="fi-power columns" style="font-size:1.5em"></i></a>
             </div>
         </div>
-    </div>
-
-    <div class="top-bar columns shrink" id="main-menu">
-        <ul class="menu show-for-small-only site-title-small"><?=$this->session->userdata('league_name')?></ul>
-        <ul class="dropdown menu medium-horizontal drilldown vertical" data-responsive-menu="drilldown medium-dropdown">
-            <?php foreach($menu_items as $button => $subitem): ?>
-                <?php if (!is_array($subitem)): ?>
-                    <li><a href="<?=site_url($subitem)?>"><?=$button?></a></li>
-                <?php continue;?>
-                <?php endif;?>
-              <li><a href="#"><?=$button?></a>
-                  <ul class="menu vertical">
-                  <?php foreach($subitem as $subtext => $url): ?>
-                      <li><a href="<?=site_url($url)?>"><?=$subtext?></a></li>
-                  <?php endforeach; ?>
-                  </ul>
-              </li>
-            <?php endforeach; ?>
-            <li class="show-for-small-only">
-                <a href="<?=site_url('auth/logout')?>">Logoff</a>
-            </li>
-        </ul>
-    </div>
-    <div class="align-right columns shrink">
-        <?php if($this->session->userdata('league_id')): ?>
-                <button id="chat-button" class="button chat-button show-for-medium">chat<span class="unread-count"></span></button>
-        <?php endif;?>
-    </div>
-    <div class="hide-for-small-only align-center" style="padding-right:5px;">
-        <a href="<?=site_url('auth/logout')?>"><i class="fi-power columns" style="font-size:1.5em"></i></a>
+        <div class="row">
+            <div id="whos-online" class="columns text-right">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -100,12 +108,11 @@
 //
 $(function() {
     // Check every Xs to see some things were updated.
-    setInterval(function(){updateLiveElements();}, 7000);
+    setInterval(function(){updateLiveElements();}, <?=$this->session->userdata('live_element_refresh_time')*1000?>);
     updateLiveElements();
 });
 
 $(".chat-button").on('click', function(){
-    console.log("here");
 
     if (typeof(evtSource) == "undefined")
     {
@@ -228,11 +235,13 @@ function chatScrollBottom(set)
 function updateLiveElements()
 {
     var last_check_in = $("#livedata").data("last_check_in");
+    var last_wo_check_in = $("#livedata").data("last_wo_check_in");
     var chat_key = $("#livedata").data("chat_key");
     var url = "<?=site_url('common/liveElements')?>";
     if (last_check_in !== undefined){url +=("/"+last_check_in);}
+    if (last_wo_check_in == undefined){last_wo_check_in = 0;}
 
-    $.post(url,{'last_chat_key':chat_key},function(data){
+    $.post(url,{'last_chat_key':chat_key, 'last_wo_check_in':last_wo_check_in},function(data){
         <?php if($this->session->userdata('debug')): ?>
             console.log(data);
         <?php endif; ?>
@@ -240,8 +249,6 @@ function updateLiveElements()
 
         if (parseInt(d.T) > 1)
         {
-            $("#livedata").data("last_check_in",d.T);
-
             // Update unread chat message count
             if (parseInt(d.ur) > 0)
                 {$(".unread-count").text(" ("+d.ur+")");}
@@ -274,12 +281,28 @@ function updateLiveElements()
                             stack: false
                         });
                         chat_jbox.open();
-                        setTimeout(function(){chat_jbox.close(); console.log('closed');},4000);
+                        setTimeout(function(){chat_jbox.close();},4000);
 
                         return
                     }
                 });
                 $("#livedata").data("chat_key",new_chat_key);
+            }
+
+            //Whos online
+            if (d.wo !== undefined)
+            {
+                var text = "Who's Here: ";
+                $("#livedata").data("last_wo_check_in",d.T);
+                $.each(d.wo,function(index, owner){
+                    if (owner.a == 1)
+                        {text+='<span class="wo-admin">'+owner.n+'</span>';}
+                    else
+                        {text+=owner.n;}
+                    if (d.wo.length-1 > index)
+                    {text+=", ";}
+                    $("#whos-online").html(text);
+                });
             }
 
         }

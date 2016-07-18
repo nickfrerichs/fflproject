@@ -41,6 +41,19 @@ class Leaguesettings extends MY_Admin_Controller
         $return['rows'] = $result;
         echo json_encode($return);
     }
+    function set_wo_setting()
+    {
+        $response = array('success' => false);
+        $value = $this->input->post('value');
+        $this->leaguesettings_model->set_wo_setting($value);
+        $response['success'] = true;
+
+        $this->load->model('security_model');
+        $this->security_model->set_session_variables();
+
+        echo json_encode($response);
+
+    }
 
 }
 ?>

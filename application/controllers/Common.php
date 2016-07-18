@@ -35,9 +35,12 @@ class Common extends CI_Controller{
 
     function liveElements($last_check_in = 0)
     {
+        $this->load->model('league/chat_model');
 
-        $response = array("T" => time());
-        $response["last_check_in"] = $last_check_in;
+        $interval = $this->session->userdata('live_element_refresh_time');
+        $check_in = $this->chat_model->update_last_check_in();
+
+        $response = array("T" => $check_in);
 
         if ($this->session->userdata('live_scores'))
             $response["ls"] = "1";
@@ -45,9 +48,15 @@ class Common extends CI_Controller{
             $response["ls"] = "0";
 
 
-
-        $this->load->model('league/chat_model');
         $response["ur"] = $this->chat_model->get_unread_count();
+
+        if($this->session->userdata('show_whos_online'))
+        {
+            // If twice the interval has passed since last wo_check_in, send who is online data
+            $last_wo_check_in = $this->input->post('last_wo_check_in');
+            if ($last_wo_check_in <= $check_in-($interval*2))
+                $response["wo"] = $this->chat_model->whos_online();
+        }
 
 
         // Check for new chat messages since last_checked_in, add them to this array so they can
@@ -64,7 +73,7 @@ class Common extends CI_Controller{
                 $response['ck'] = $this->chat_model->get_chat_key();
             }
         }
-        
+
         echo json_encode($response);
     }
 }

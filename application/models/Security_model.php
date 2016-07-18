@@ -14,7 +14,8 @@ class Security_model extends CI_Model
 
         $this->load->model('common/common_noauth_model');
 
-        $this->site_settings = $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id, session_refresh_time')
+        $this->site_settings = $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id')
+            ->select('session_refresh_time, live_element_refresh_time')
             ->from('site_settings')->get()->row();
         $this->userid = $this->flexi_auth->get_user_id();
         if ($this->db->from('owner')->where('user_accounts_id',$this->userid)->count_all_results() > 0)
@@ -49,7 +50,7 @@ class Security_model extends CI_Model
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
                 ->select('team.id as team_id, team_name, owner.active_league, team.active, league.league_name, league.season_year')
-                ->select('league_settings.offseason, owner_setting.chat_balloon')
+                ->select('league_settings.offseason, owner_setting.chat_balloon, league_settings.show_whos_online')
                 ->from('owner')
                 ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1','left')
                 ->join('league','league.id = owner.active_league','left')
@@ -67,10 +68,16 @@ class Security_model extends CI_Model
         $this->session->set_userdata('offseason', $owner->offseason);
         $this->session->set_userdata('chat_balloon', $owner->chat_balloon);
 
+
         if ($this->db->from('league_admin')->where('league_id',$owner->active_league)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)
             $this->session->set_userdata('is_league_admin', True);
         else
             $this->session->set_userdata('is_league_admin', False);
+
+        if ($owner->show_whos_online == 1 || ($owner->show_whos_online == 2 && $this->session->userdata('is_league_admin')))
+            $this->session->set_userdata('show_whos_online',True);
+        else
+            $this->session->set_userdata('show_whos_online',False);
 
         $week_type = $this->db->select('nfl_season')->from('league_settings')->where('league_id',$this->session->userdata('league_id'))->get()->row()->nfl_season;
         $this->session->set_userdata('week_type', $week_type);
@@ -94,6 +101,7 @@ class Security_model extends CI_Model
     function set_dynamic_session_variables()
     {
         $this->session->set_userdata('session_refresh_time',$this->site_settings->session_refresh_time);
+        $this->session->set_userdata('live_element_refresh_time',$this->site_settings->live_element_refresh_time);
         if($this->session->userdata('is_owner'))
         {
             $week_year = $this->common_noauth_model->get_current_week($this->session->userdata('league_id'));
