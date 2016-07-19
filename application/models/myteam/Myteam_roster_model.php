@@ -200,7 +200,7 @@ class Myteam_roster_model extends MY_Model{
         // 1. you must be the owner to do anything.
         if (!$this->is_player_owner($player_id))  //Not the players owner, false
             return false;
-        echo "here";
+
         // 2. The players NFL position must be defined as a league position, or be zero if benching.
         $nfl_pos = $this->db->select('player.nfl_position_id')->from('player')
                 ->where('player.id',$player_id)->get()->row()->nfl_position_id;
