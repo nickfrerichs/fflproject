@@ -21,7 +21,7 @@
         <div class="row">
             <div class="columns medium-4 text-center small-12">
                 <h3><?=$team->long_name?></h3>
-                <img class="med-logo team-logo" src="<?=$logo?>">
+                <img class="med-logo team-logo" src="<?=$logo?>" style="max-height: 200px;">
             </div>
             <div class="columns medium-8 small-12">
                 <br>

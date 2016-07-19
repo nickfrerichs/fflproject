@@ -2,25 +2,21 @@
 .short{max-width:40px;}
 </style>
 
-<div class="row">
+
+<div class="row align-center" style="max-width:650px;">
+
     <div class="columns">
-        <h5><?=$settings->league_name?></h5>
+        <h4><?=$settings->league_name?></h4>
     </div>
-</div>
 
-<div class="row align-center">
-    <div class="columns small-10">
-
-        <h6>Settings</h6>
+    <div class="columns small-12 callout">
+        <h6><b>League Settings</b></h6>
         <table class="table">
             <thead>
-                <th style="width:30%"></th>
-                <th style="width:40%"></th>
-                <th style="width:30%"></th>
             </thead>
             <tbody>
                 <tr>
-                    <td><span data-tooltip class="has-tip top" title="Maximum number of teams allowed in the league.">Max Teams</span></td>
+                    <td><span data-tooltip class="has-tip top" title="Maximum number of active teams allowed in the league.  Use Season > Teams to toggle active teams.">Max Active Teams</span></td>
                     <td id="maxteams-field" class="short"><?=$settings->max_teams?></td>
                     <td class="text-center">
                         <a href="#" id="maxteams-control" class="change-control" data-type="number" data-url="<?=site_url('admin/leaguesettings/ajax_change_item')?>">Change</a>
@@ -28,7 +24,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><span data-tooltip class="has-tip top" title="Maximum number of players allowed on a team's roster.">Roster Max</span></td>
+                    <td><span data-tooltip class="has-tip top" title="Maximum number of players allowed on a team's roster.">Team Roster Max</span></td>
                     <td id="rostermax-field" class="short"><?=$settings->roster_max?></td>
                     <td class="text-center">
                         <a href="#" id="rostermax-control" class="change-control" data-type="number" data-url="<?=site_url('admin/leaguesettings/ajax_change_item')?>">Change</a>
@@ -36,20 +32,18 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><span data-tooltip class="has-tip top" title="Set a password that new members must know when signing up a new team.">Join Password</span></td>
-                    <td id="joinpassword-field"><?=$settings->join_password?></td>
-                    <td class="text-center">
-                        <a href="#" id="joinpassword-control" class="change-control" data-type="text" data-url="<?=site_url('admin/leaguesettings/ajax_change_item')?>">Change</a>
-                        <a href="#" id="joinpassword-cancel" class="cancel-control"></a>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span data-tooltip class="has-tip top" title="Number of players an owner can set the keeper flag on to retain for the next season. ">Number of Keepers</span></td>
+                    <td><span data-tooltip class="has-tip top" title="Number of players an owner can set the keeper flag on to retain for the next season. Leave at 0 to disable keepers.">Number of Keepers</span>
+                        </td>
                     <td id="keepersnum-field" class="short"><?=$settings->keepers_num?></td>
                     <td class="text-center">
                         <a href="#" id="keepersnum-control" class="change-control" data-type="number" data-url="<?=site_url('admin/leaguesettings/ajax_change_item')?>">Change</a>
                         <a href="#" id="keepersnum-cancel" class="cancel-control"></a>
                     </td>
+                </tr>
+                <tr>
+                    <td><span data-tooltip class="has-tip top" title="Make it so no team has keepers selected.  Use this if making a change to the allowed number of keepers.">Clear Existing Keepers</span></td>
+                    <td></td>
+                    <td class="text-center"><a href="#" id="clear-keepers">Clear</a></td>
                 </tr>
                 <tr>
                     <td><span data-tooltip class="has-tip top" title="Allow teams to trade future draft picks along with players.">Allow draft pick trading</span></td>
@@ -76,6 +70,25 @@
                     </td>
                 </tr>
                 <tr>
+                    <td><span data-tooltip class="has-tip top" title="Offseason disables ability for owners to make changes.  Historical stats are still available.">Offseason enabled</span></td>
+                    <td></td>
+                    <td class="text-center">
+                        <div class="switch tiny">
+                        <input  class="switch-input toggle-control" data-item="offseason" data-url="<?=site_url('admin/leaguesettings/ajax_toggle_item')?>"
+                            id="offseason" type="checkbox" <?php if($settings->offseason == "1"){echo "checked";}?>>
+                        <label class="switch-paddle" for="offseason">
+                        </label>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="columns small-12 callout">
+        <h6><b>Cosmetic</b></h6>
+        <table>
+            <tbody>
+                <tr>
                     <td>Display who's online</td>
                     <td>
                         <fieldset>
@@ -97,6 +110,35 @@
                     </td>
                     <td></td>
                 </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="columns small-12 callout">
+        <h6><b>Join settings</b></h6>
+        <table>
+            <tbody>
+                <tr>
+                    <td><span data-tooltip class="has-tip top" title="Set a password that new owners must know when joining the league.">Join Password</span></td>
+                    <td id="joinpassword-field"><?=$settings->join_password?></td>
+                    <td class="text-center">
+                        <a href="#" id="joinpassword-control" class="change-control" data-type="text" data-url="<?=site_url('admin/leaguesettings/ajax_change_item')?>">Change</a>
+                        <a href="#" id="joinpassword-cancel" class="cancel-control"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Invite URL </td>
+                    <td colspan=2 class="text-right"><a href="<?=$invite_url?>"><?=$invite_url?></a></small></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="columns small-12 callout">
+        <h6><b>Twitter API</b></h6>
+
+        <table>
+            <thead>
+            </thead>
+            <tbody>
                 <tr>
                     <td>Twitter Consumer Token</td>
                     <td id="consumertoken-field"><?=$settings->twitter_consumer_token?></td>
@@ -153,25 +195,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td><span data-tooltip class="has-tip top" title="Offseason disables ability for owners to make changes.  Historical stats are still available.">Offseason enabled</span></td>
-                    <td></td>
-                    <td class="text-center">
-                        <div class="switch tiny">
-                        <input  class="switch-input toggle-control" data-item="offseason" data-url="<?=site_url('admin/leaguesettings/ajax_toggle_item')?>"
-                            id="offseason" type="checkbox" <?php if($settings->offseason == "1"){echo "checked";}?>>
-                        <label class="switch-paddle" for="offseason">
-                        </label>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Invite URL </td>
-                    <td colspan=2 class="text-right"><a href="<?=$invite_url?>"><?=$invite_url?></a></small></td>
-                </tr>
             </tbody>
         </table>
-
+        <a href="https://apps.twitter.com/">https://apps.twitter.com/</a>
+    </div>
     </div>
     <?=debug($settings,$this->session->userdata('debug'))?>
 </div>

@@ -5,7 +5,7 @@
             <?php if($this->session->userdata('league_id')): ?>
                 <?php if($this->session->userdata('live_scores')){$live="";$title="hide";}else{$live="hide";$title="";}?>
                 <span class="<?=$live?>">
-                    <a class="live-scores" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
+                    <a class="live-scores" href="<?=site_url('season/scores/live')?>">Games in progress</a>
                 </span>
                 <span class="<?=$title?>">
                     <?=$this->session->userdata('site_name')?>
@@ -34,13 +34,6 @@
                     <div id="league-site-names" class="columns shrink">
                         <div class="site-title hide-for-small-only hide-for-small-custom"><?=$this->session->userdata('site_name')?></div>
                         <div class="league-name-title hide-for-small-only hide-for-small-custom"><?=$this->session->userdata('league_name')?></div>
-
-                            <?php if($this->session->userdata('league_id')): ?>
-                                <?php if($this->session->userdata('live_scores')){$live="";}else{$live="hide";}?>
-                                <span class="hide-for-small-only">
-                                    <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">LIVE SCORES</a>
-                                </span>
-                            <?php endif;?>
                     </div>
                 </div>
             </div>
@@ -75,8 +68,14 @@
                 <a href="<?=site_url('auth/logout')?>"><i class="fi-power columns" style="font-size:1.5em"></i></a>
             </div>
         </div>
-        <div class="row">
-            <div id="whos-online" class="columns text-right">
+        <div id="title-bar-small-row" class="row">
+            <div class="columns medium-3 hide-for-small-only">
+                <?php if($this->session->userdata('league_id')): ?>
+                    <?php if($this->session->userdata('live_scores')){$live="";}else{$live="hide";}?>
+                            <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">Games in progress</a>
+                <?php endif;?>
+            </div>
+            <div id="whos-online" class="columns text-right small-12 medium-9">
             </div>
         </div>
     </div>
