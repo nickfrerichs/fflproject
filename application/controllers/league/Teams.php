@@ -40,6 +40,7 @@ class Teams extends MY_User_Controller{
         $data['schedule'] = $this->schedule_model->get_team_schedule($team_id);
         $data['team_id'] = $team_id;
         $data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+        $data['byeweeks'] = $this->common_model->get_byeweeks_array();
         $data['record'] = $this->myteam_roster_model->get_team_record_data($team_id);
 
         $data['team'] = $this->teams_model->get_team_data($team_id);

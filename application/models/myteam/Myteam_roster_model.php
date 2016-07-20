@@ -343,6 +343,8 @@ class Myteam_roster_model extends MY_Model{
             $data[$s->h]['opp'] = $s->v;
             $data[$s->h]['time'] = $s->start_time;
         }
+        $data['NONE']['opp'] = "-";
+        $data['FA']['time'] = 0;
 
         return $data;
     }

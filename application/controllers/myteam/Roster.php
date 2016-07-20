@@ -93,6 +93,7 @@ class Roster extends MY_User_Controller{
         }
         $data['starters'] = $starters;
         $data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array($week);
+        $data['byeweeks'] = $this->common_model->get_byeweeks_array();
 
         $this->load->view('user/myteam/roster/ajax_starter_table',$data);
     }
@@ -121,6 +122,7 @@ class Roster extends MY_User_Controller{
         }
         $data['bench'] = $bench;
         $data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array($week);
+        $data['byeweeks'] = $this->common_model->get_byeweeks_array();
         $this->load->view('user/myteam/roster/ajax_bench_table',$data);
     }
 

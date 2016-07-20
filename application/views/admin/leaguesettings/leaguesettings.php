@@ -212,4 +212,12 @@ $(".wo-setting").on('click', function(){
         else {notice('An error ocurred while saving.','Error');}
     },'json');
 });
+
+$("#clear-keepers").on('click',function(){
+    var url="<?=site_url('admin/leaguesettings/clear_keepers')?>";
+    $.post(url,{},function(data){
+        if (data.success)
+        {notice('Keepers cleared.','success');}
+    },'json');
+});
 </script>

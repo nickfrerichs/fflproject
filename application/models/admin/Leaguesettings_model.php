@@ -58,5 +58,14 @@ class Leaguesettings_model extends MY_Model{
         $this->db->update('league_settings',$data);
     }
 
+    function clear_keepers($year = 0)
+    {
+        if ($year == 0)
+            $year = $this->current_year;
+
+        $this->db->where('year',$year)->where('league_id',$this->leagueid);
+        $this->db->delete('team_keeper');
+    }
+
 }
 ?>

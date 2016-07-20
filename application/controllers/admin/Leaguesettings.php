@@ -55,5 +55,14 @@ class Leaguesettings extends MY_Admin_Controller
 
     }
 
+    function clear_keepers()
+    {
+        $response = array('success' => false);
+        $this->leaguesettings_model->clear_keepers();
+        $response['success'] = true;
+
+        echo json_encode($response);
+    }
+
 }
 ?>

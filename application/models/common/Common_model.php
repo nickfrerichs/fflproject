@@ -64,8 +64,11 @@ class Common_model extends CI_Model{
 
     function num_season_weeks()
     {
+        # Should probably change this to use nfl_schedule
         if ($this->current_weektype == "REG")
-            return 17;
+            return $this->db->select('max(week) as week')->from('nfl_schedule')->where('year',$this->current_year)
+                ->where('gt',$this->current_weektype)->get()->row()->week;
+            #return 17;
         return 0;
     }
 
@@ -187,6 +190,45 @@ class Common_model extends CI_Model{
         return $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
             ->order_by('year','desc')
             ->get()->result();
+    }
+
+    function get_byeweeks_array()
+    {
+        $schedule = $this->db->select('h,v,week')->from('nfl_schedule')->where('year',$this->current_year)->get()->result();
+        $nfl_teams = $this->db->select('distinct(club_id) as club_id')->from('nfl_team')
+            ->where('club_id !=','NONE')->get()->result();
+        $weeks = $this->num_season_weeks();
+
+        $opp_array = array();
+        $bye_array = array();
+
+        foreach($nfl_teams as $t)
+        {
+            foreach (range(1,$weeks) as $w)
+            {
+                $opp_array[$w][$t->club_id] = 'bye';
+            }
+        }
+
+        foreach($schedule as $s)
+        {
+
+            $opp_array[$s->week][$s->h] = $s->v;
+            $opp_array[$s->week][$s->v] = $s->h;
+
+        }
+
+        foreach($opp_array as $week => $t)
+        {
+            foreach($t as $team => $opp)
+            {
+                if ($opp == 'bye')
+                    $bye_array[$team] = $week;
+            }
+        }
+        $bye_array['NONE'] = 0;
+        $bye_array['FA'] = 0;
+        return $bye_array;
     }
 }
 

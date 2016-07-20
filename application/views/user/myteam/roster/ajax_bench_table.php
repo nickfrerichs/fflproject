@@ -23,6 +23,7 @@
                  <?php endif; ?>
             <?php endif;?>
          </td>
+         <td><span class="hide-for-extra-small">Week </span><?=$byeweeks[$b['data']->club_id]?></td>
         <td class="hide-for-extra-small text-center">
             <?=$b['data']->points?>
         </td>

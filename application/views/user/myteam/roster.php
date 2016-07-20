@@ -124,21 +124,21 @@
         </div>
         -->
         <div class="row">
-            <div class="medium-6 columns small-12">
+            <div class="large-6 columns small-12">
                 <div><h5>Starting Lineup</h5></div>
                 <table>
                     <thead>
-                        <th>Pos</th><th>Player</th><th>Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Sit</th>
+                        <th>Pos</th><th>Player</th><th>Opponent</th><th>Bye</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Sit</th>
                     </thead>
                     <tbody id ="starter-tbody">
                     </tbody>
                 </table>
             </div>
-            <div class="medium-6 columns small-12">
+            <div class="large-6 columns small-12">
                 <div><h5>Bench</h5></div>
                 <table>
                     <thead>
-                        <th>Player</th><th>Opponent</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Start as</th>
+                        <th>Player</th><th>Opponent</th><th>Bye</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Start as</th>
                     </thead>
                     <tbody id="bench-tbody">
                     </tbody>

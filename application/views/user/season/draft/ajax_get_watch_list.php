@@ -44,7 +44,7 @@
 		<?php endif;?>
 
 			<div><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong></div>
-			<div><?=$p->club_id.' - '.$p->position?></div>
+			<div><?=$p->club_id.' - '.$p->position?> <span style="font-size: .8em">(bye <?=$byeweeks[$p->club_id]?>)</span></div>
 		</td>
 		<td>
 			<button class="button tiny btn-draft" data-value="watch_<?=$p->id?>">

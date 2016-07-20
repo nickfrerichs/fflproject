@@ -169,7 +169,7 @@ line-height: 60px;
 		<div class="d-myteam-heading text-center"><h5>My Team</h5></div>
 		<table class="text-center table-condensed">
 			<thead>
-				<th class="text-center">Player Name</th><th class="text-center">Team/Pos</th><th class="text-center">Pick</th><th class="text-center hide-for-small-only">Round</th>
+				<th class="text-center">Player Name</th><th class="text-center">Team/Pos</th><th class="text-center">Bye</th><th class="text-center">Pick</th><th class="text-center hide-for-small-only">Round</th>
 			</thead>
 			<tbody id="myteam-list">
 			</tbody>

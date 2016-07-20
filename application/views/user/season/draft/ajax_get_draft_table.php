@@ -2,8 +2,8 @@
 	<tr>
 		<td>
 			<div class="hide-for-small-only"><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong> </div>
-			<div class="show-for-small-only"><strong><span class="selected-player-name"><?=$p->first_name[0].'.'.$p->last_name?></span></strong> </div>
-			<div><?=$p->club_id?> - <?=$p->position?></div>
+			<div class="show-for-small-only"><strong><span class="selected-player-name"><?=$p->first_name[0].'.'.$p->last_name?></span></strong></div>
+			<div><?=$p->club_id?> - <?=$p->position?> <span style="font-size: .7em">(bye <?=$byeweeks[$p->club_id]?>)</span></div>
 		</td>
 		<?php if($p->team_name == ""): ?>
 		<td style="vertical-align:middle">

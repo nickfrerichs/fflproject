@@ -31,6 +31,9 @@
                 <?php endif; ?>
             <?php endif;?>
         </td>
+        <td>
+            <span class="hide-for-extra-small">Week </span><?=$byeweeks[$p->club_id]?>
+        </td>
         <td class="hide-for-extra-small text-center">
             <?=$p->points?>
         </td>
@@ -56,6 +59,7 @@
             <i>Vacant</i>
         </div>
         </td>
+        <td>-</td>
         <td class="hide-for-extra-small">-</td><td class="text-center">-</td><td class="text-center">-</td>
     </tr>
 <?php endif; ?>

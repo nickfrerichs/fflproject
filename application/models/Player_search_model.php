@@ -28,12 +28,12 @@ class Player_search_model extends CI_Model{
         $this->db->select('player.id, player.first_name, player.last_name')
                 ->select('IFNULL(sum(fantasy_statistic.points),0) as points',false)
                 ->select('nfl_position.short_text as position')
-                ->select('nfl_team.club_id')
+                ->select('IFNULL(nfl_team.club_id,"NONE") as club_id')
                 ->select('team.team_name')
                 ->from('player')
                 ->join('fantasy_statistic','fantasy_statistic.player_id = player.id and fantasy_statistic.year = '.$this->session->userdata('current_year').
                         ' and fantasy_statistic.league_id = '.$this->leagueid,'left')
-                ->join('nfl_team', 'nfl_team.id = player.nfl_team_id')
+                ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id')
                 ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
                 ->join('team','team.id = roster.team_id','left');

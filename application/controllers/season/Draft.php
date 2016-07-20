@@ -182,6 +182,7 @@ class Draft extends MY_User_Controller{
     {
         $data = array();
         $data['players'] = $this->draft_model->get_myteam();
+        $data['byeweeks'] = $this->common_model->get_byeweeks_array();
         $this->load->view('user/season/draft/ajax_get_myteam',$data);
     }
 

@@ -94,6 +94,8 @@ class Player_search extends MY_User_Controller{
         if ($this->input->post('var1') == "true")
             $data['admin_pick'] = true;
 
+        $data['byeweeks'] = $this->common_model->get_byeweeks_array();
+
         $this->load->view('user/season/draft/ajax_get_draft_table', $data);
 
     }
@@ -112,6 +114,9 @@ class Player_search extends MY_User_Controller{
         $this->data['per_page'] = $this->per_page;
         $this->data['page'] = $this->in_page;
         $this->data['paused'] = $this->draft_model->draft_paused();
+
+        $this->data['byeweeks'] = $this->common_model->get_byeweeks_array();
+
         $this->load->view('user/season/draft/ajax_get_watch_list', $this->data);
     }
 
@@ -127,6 +132,7 @@ class Player_search extends MY_User_Controller{
         $this->data['players'] = $nfl_players['result'];
         $this->data['per_page'] = $this->per_page;
         $this->data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+        $this->data['byeweeks'] = $this->common_model->get_byeweeks_array();
         //$this->load->view('user/myteam/waiverwire/ajax_pickup_table',$data);
 
         // BEGIN VIEW
@@ -147,10 +153,10 @@ class Player_search extends MY_User_Controller{
                     <a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a>
                 </td>
                 <td><?=$p->club_id?></td>
-                <td class="hide-for-small-only"><?=$this->data['matchups'][$p->club_id]['opp']?></td>
+                <td class="hide-for-extra-small"><?=$this->data['matchups'][$p->club_id]['opp']?></td>
+                <td><span class="hide-for-small-only">Week </span><?=$this->data['byeweeks'][$p->club_id]?></td>
                 <td><?=$p->points?></td>
-                <td class="text-center" style="width:17%"> <!-- Might want to make the waiviers not cleared notice better -->
-
+                <td class="text-center" style="width:17%">
     				<?php if($p->clear_time): ?>
                     <button <?=($p->requested ? "disabled" : "")?> class="player-pickup button tiny" data-clear="no" data-pickup-id="<?=$p->id?>"
                         data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup (<?=$hr?>h:<?=$min?>m)</button>
@@ -175,6 +181,7 @@ class Player_search extends MY_User_Controller{
         $this->data['players'] = $nfl_players['result'];
         $this->data['per_page'] = $this->per_page;
         $this->data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+        $this->data['byeweeks'] = $this->common_model->get_byeweeks_array();
 
         //$this->load->view('player_search/ajax_full_player_list',$this->data);
 
@@ -188,6 +195,7 @@ class Player_search extends MY_User_Controller{
                 <td><?=$p->position?></td>
                 <td><?=$p->club_id?></td>
                 <td><?=$this->data['matchups'][$p->club_id]['opp']?></td>
+                <td><span class="hide-for-small-only">Week </span><?=$this->data['byeweeks'][$p->club_id]?></td>
                 <td><?=$p->points?></td>
                 <td><?=$p->team_name?></td>
             </tr>
