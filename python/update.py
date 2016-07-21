@@ -18,7 +18,13 @@ from tzlocal import get_localzone
 import urllib2
 import urllib
 import os
-import player_photo
+
+try:
+	import player_photo
+	custom_player_photo = True
+except:
+	custom_player_photo = False
+
 import config as c
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
@@ -205,7 +211,9 @@ def update_players(year, week, weektype):
         return pos_dict
 
     def get_photo(player):
-        photo = player_photo.get(player)
+	photo = ""
+	if custom_player_photo:
+        	photo = player_photo.get(player)
         if photo == "":
             if (player.team != ""):
                 photo = 'nfl/'+player.team.upper()+".png"
@@ -322,6 +330,7 @@ def update_players(year, week, weektype):
             ", photo = '"+photo+"'"+
             " where player_id = '" + str(gsis_id)+"'")
         cur.execute(query)
+	db.commit()
     db.commit()
     print "Added: " + str(add_count) + " players."
     print "Updated: " + str(update_count) + " players."
