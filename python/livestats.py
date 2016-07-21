@@ -572,12 +572,12 @@ def init_playerdict(team_id):
   return playerdict
 parser = argparse.ArgumentParser(description='Update Game Statistics using NFL Game')
 
-parser.add_argument('--hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
-parser.add_argument('--year', action="store", default="0", required=False, help="Year")
-parser.add_argument('--week', action="store", default="0", required=False, help="Week")
-parser.add_argument('--weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
-parser.add_argument('--all', action="store_true", default=False, help="Update all games, not just live ones.")
-parser.add_argument('--recalc_all', action="store_true", default=False, help="Recalculate all fantasy values, not just the ones with new NFL stat values.")
+parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
+parser.add_argument('-year', action="store", default="0", required=False, help="Year")
+parser.add_argument('-week', action="store", default="0", required=False, help="Week")
+parser.add_argument('-weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
+parser.add_argument('-all', action="store_true", default=False, help="Update all games, not just live ones.")
+parser.add_argument('-recalc_all', action="store_true", default=False, help="Recalculate all fantasy values, not just the ones with new NFL stat values.")
 
 start_time = time.time()
 args = parser.parse_args()
