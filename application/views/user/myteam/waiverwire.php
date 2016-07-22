@@ -125,6 +125,7 @@
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="last_name" class="player-list-a-sort">Name</a></th>
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="club_id" class="player-list-a-sort">NFL Team</a></th>
                         <th class="hide-for-small-only">Wk <?=$this->session->userdata('current_week')?> Opp.</th>
+                        <th>Bye</th>
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="points" class="player-list-a-sort">Points</a></th>
                         <th><Team</th>
                     </thead>

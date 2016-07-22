@@ -194,11 +194,11 @@ class Common_model extends CI_Model{
 
     function get_byeweeks_array()
     {
-        $schedule = $this->db->select('h,v,week')->from('nfl_schedule')->where('year',$this->current_year)->get()->result();
+        $schedule = $this->db->select('h,v,week')->from('nfl_schedule')->where('year',$this->current_year)
+            ->where('gt',$this->week_type)->get()->result();
         $nfl_teams = $this->db->select('distinct(club_id) as club_id')->from('nfl_team')
             ->where('club_id !=','NONE')->get()->result();
         $weeks = $this->num_season_weeks();
-
         $opp_array = array();
         $bye_array = array();
 
@@ -226,6 +226,7 @@ class Common_model extends CI_Model{
                     $bye_array[$team] = $week;
             }
         }
+
         $bye_array['NONE'] = 0;
         $bye_array['FA'] = 0;
         return $bye_array;

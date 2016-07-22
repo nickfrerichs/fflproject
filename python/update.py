@@ -392,6 +392,13 @@ def update_schedule(season_year, week, weektype="REG"):
 	weeks = [week]
 
   for week in weeks:
+
+    if (args.schedule_clear):
+        query = ('delete from nfl_schedule where week = %s and year = %s and gt = "%s"' % 
+            (str(week),str(season_year), weektype))
+        cur.execute(query)
+        db.commit()
+
     # Should probably change this to use nflgame somehow, otherwise the timezone stuff without am/pm is tricky.
     updated = 0
     added = 0
@@ -499,6 +506,7 @@ def update_schedule(season_year, week, weektype="REG"):
 parser = argparse.ArgumentParser(description='FFLProject: Update various parts of the database')
 
 parser.add_argument('-schedule', action="store_true", default=False, help="Update NFL schedule")
+parser.add_argument('-schedule_clear', action="store_true", default=False, help="Add this to delete exiting schedule records for the week and re-add them.")
 #parser.add_argument('-g', action="store_true", default=False, help="Update NFL game stats and recalculate fantasy stats")
 parser.add_argument('-players', action="store_true", default=False, help="Update NFL players")
 parser.add_argument('-photos', action="store_true", default=False, help="Check for photos for players that don't have one.")

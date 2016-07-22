@@ -1,6 +1,6 @@
 <div class="row">
     <div class="columns">
-        <table class="table table-condensed">
+        <table class="text-left">
             <tr>
                 <th>Name</th><th>Team</th><th>Phone</th>
             </tr>

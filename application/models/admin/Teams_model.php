@@ -6,8 +6,11 @@ class Teams_model extends MY_Model
     {
         $data = $this->db->select('team.id, team.owner_id, team.team_name, team.league_id, team.active') #team
                 ->select('owner.first_name, owner.last_name') #owner
+                ->select('division.name as division_name')
                 ->from('team')
                 ->join('owner', 'owner.id = team.owner_id')
+                ->join('team_division','team_division.team_id = team.id and year='.$this->current_year,'left')
+                ->join('division','division.id = team_division.division_id','left')
                 ->where('team.league_id', $this->leagueid);
                 if ($active_only)
                     $this->db->where('team.active',1);
