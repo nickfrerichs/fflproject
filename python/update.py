@@ -316,7 +316,8 @@ def update_players(year, week, weektype):
 
             # Recheck for photo from get_photo function if this player has the default team photo.
             # and photos arg was specified
-            if args.photos and 'nfl/' in photo and active:
+            if args.photos and ('nfl/' in photo or photo == "") and active:
+                print "Checking photo for "+player_info(players[p])
                 photo = get_photo(players[p])
 
             update_count = update_count + 1
@@ -475,6 +476,13 @@ def update_schedule(season_year, week, weektype="REG"):
 
   #game_url = http://www.nfl.com/liveupdate/game-center/%s/%s_gtd.json
   #game_url = 'http://www.nfl.com/liveupdate/game-center/%s/%s_gtd.json'
+
+
+def player_info(player):
+    name = player.player_id+": "
+    name += player.first_name+" "+player.last_name
+    name += " ("+player.team+" - "+player.position+")"
+    return name
 
 # I THINK THESE ARE USED FOR LIVE STATS ONLY
 # def get_pos_dict():
