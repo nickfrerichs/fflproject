@@ -2,20 +2,18 @@
 <div class="row">
 	<div class="columns callout">
 		<div class="row">
-			<div class="columns">
-				<h5>Draft</h5>
-			</div>
-		</div>
-		<div class="row">
-			<div class="columns">
-				<a href="<?=site_url('season/draft/live')?>"><?=$this->session->userdata('current_year')?> Live Draft</a>
-			</div>
+			<h4 class="columns">
+				<a href="<?=site_url('season/draft/live')?>" class="button"><?=$this->session->userdata('current_year')?> Live Draft</a>
+			</h4>
 		</div>
 		<div class="row align-center">
 			<div class="columns small-5 medium-2">
 				<select id="year-select" class="form-control">
+					<?php if(!in_array($this->session->userdata('current_year'),$years)):?>
+					<option value="<?=$this->session->userdata('current_year')?>"><?=$this->session->userdata('current_year')?></option>
+					<?php endif;?>
 					<?php foreach($years as $y): ?>
-						<option value="<?=$y->year?>"><?=$y->year?></option>
+						<option value="<?=$y?>"><?=$y?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>

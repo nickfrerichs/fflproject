@@ -481,6 +481,7 @@ class Draft_model extends MY_Model{
         $this->adjust_pick_deadlines();
 
     }
+    
     function adjust_pick_deadlines($pick_id = 0)
     {
         /* ---------------------------------------------------
@@ -589,10 +590,16 @@ class Draft_model extends MY_Model{
             ->from('league_settings')->where('league_id',$this->leagueid)->get()->row();
     }
 
-    function get_draft_years()
+    function get_draft_years_array()
     {
-        return $this->db->select('distinct(year) as year')->from('draft_order')->where('league_id',$this->leagueid)
+        $data = array();
+        $years = $this->db->select('distinct(year) as year')->from('draft_order')->where('league_id',$this->leagueid)
             ->order_by('year','desc')->get()->result();
+        foreach($years as $y)
+        {
+            $data[] = $y->year;
+        }
+        return $data;
     }
 
     function get_draft_results($year)

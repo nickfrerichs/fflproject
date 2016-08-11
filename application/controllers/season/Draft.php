@@ -21,7 +21,7 @@ class Draft extends MY_User_Controller{
         $data['sort'] = array('a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');
         $data['pos'] = $this->player_search_model->get_nfl_positions_data();
 
-        $data['years'] = $this->draft_model->get_draft_years();
+        $data['years'] = $this->draft_model->get_draft_years_array();
 
         //if ($data['start_time'] < time())
             $this->user_view('user/season/draft',$data);

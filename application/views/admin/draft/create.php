@@ -60,12 +60,13 @@
 $(document).ready(function(){
 
 	$(".choose-team").on("change",function(){
-		$(".choose-team option[value='"+$(this).val()+"']").not($(this).find("option")).remove();
+		//$(".choose-team option[value='"+$(this).val()+"']").not($(this).find("option")).remove();
 
 	});
 	$("#reset-button").on("click",function(){
 		location.reload();
 	});
+
 	$("#create-button").on("click",function(){
 		url = "<?=site_url('admin/draft/do_create')?>";
 		order = getorderarray();

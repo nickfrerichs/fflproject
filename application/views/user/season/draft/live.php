@@ -139,7 +139,7 @@ line-height: 60px;
 						<th></th>
 						</tr>
 		            </thead>
-		            <tbody id="draft-list" data-by="last_name" data-order="desc" data-url="<?=site_url('player_search/ajax_draft_list')?>" data-var1=false>
+		            <tbody id="draft-list" data-by="last_name" data-order="asc" data-url="<?=site_url('player_search/ajax_draft_list')?>" data-var1=false>
 		            </tbody>
 		        </table>
 		    </div>
