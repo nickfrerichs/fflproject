@@ -1,5 +1,5 @@
 <div class="row align-center">
-    <div class="small-6">
+    <div class="columns medium-6 small-12">
     <table class=''>
         <thead>
             <th colspan=2 style="font-size:1.5em;">
@@ -18,7 +18,7 @@
         </tbody>
     </table>
     </div>
-    <div class="small-6">
+    <div class="columns medium-6 small-12">
         <table class=''>
             <thead>
                 <th colspan=2 style="font-size:1.5em;">

@@ -27,6 +27,9 @@ table{font-size:1em;}
 
 /* Foundation overrides */
 /* --------------------- */
+
+
+
 .button{margin-bottom:1px; margin-top:1px;}
 .table-condensed td, .table-condensed th{
 	padding-top:2px;
@@ -175,9 +178,10 @@ td select{margin-bottom:0px !important;}
 /* Live score stuff
 /* ----------------------- */
 
-.livescore-font-size{
-    font-size:1.1em;
+.livescore-small-font{
+	font-size:.8em;
 }
+
 
 .livescore-status{
     color:#337ab7;
@@ -230,40 +234,8 @@ tr.livescore-hide-player{
 
 @media only screen and (max-width: 480px)
 {
-    .livescore-font-size{
-        font-size:1em;
+    .livescore-small-screen-status{
+        font-size:.8em;
     }
 }
 
-@media only screen and (min-width: 750px) and (max-width: 991px)
-{
-    .sm-livescore-status{
-        width:45%;
-    }
-    .livescore-font-size{
-        font-size:.9em;
-    }
-    .livescore-detail
-    {
-        font-size: 10px;
-        color:#337ab7;
-    }
-}
-
-/* med size*/
-@media only screen and (min-width: 992px)
-{
-    .sm-livescore-status{
-        width:58%;
-    }
-}
-
-/* large size*/
-@media only screen and (min-width: 1200px)
-{
-    .sm-livescore-status{
-        width:65%;
-
-
-    }
-}

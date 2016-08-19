@@ -72,6 +72,9 @@ def main():
   if(args.standings):
     update_standings(year, week, weektype)
 
+  if(args.team_photos):
+    update_team_photos()
+
 
 def update_standings(year, week ,weektype):
 
@@ -190,6 +193,25 @@ def update_standings(year, week ,weektype):
                 cur.execute(query)
 
             db.commit()
+
+
+def update_team_photos():
+    print "(Save team photos should be saved as T_<club_id>.ext)"
+    path = raw_input("Enter the path where they are located.    ./images/")
+    ext = raw_input("Enter the extension of the files (.gif, .jpg, etc): ")
+
+    query = ('SELECT player.id AS player_id, club_id, player.player_id as nflgame_id FROM nfl_position JOIN player ON nfl_position.id = player.nfl_position_id '+
+             'JOIN nfl_team ON nfl_team.id = player.nfl_team_id WHERE nfl_position.type = 3 OR nfl_position.type = 4')
+
+    cur.execute(query)
+    rows = cur.fetchall()
+    for row in rows:
+        photo = os.path.join(path,"T_"+row['club_id']+ext)
+        query = 'update player set photo = "'+photo+'" where player.id = '+str(row['player_id'])
+        cur.execute(query)
+        db.commit()
+        print "Updated "+row['nflgame_id']+" with "+photo
+
 
 
 def update_players(year, week, weektype):
@@ -524,6 +546,7 @@ parser.add_argument('-year', action="store", default="0", required=False, help="
 parser.add_argument('-week', action="store", default="0", required=False, help="Week, use 'all' for all weeks.")
 parser.add_argument('-weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
 parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
+parser.add_argument('-team_photos', action="store_true", default=False, help="Update generic team photos for defenses, offensive lines, and other non-players.")
 
 start_time = time.time()
 args = parser.parse_args()

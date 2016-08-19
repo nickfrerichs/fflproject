@@ -113,7 +113,8 @@ class Schedule_model extends MY_Model{
             $data[] = array('week' => $week,
                             'game' => $game,
                             'year' => $this->current_year,
-                            'league_id' => $this->leagueid);
+                            'league_id' => $this->leagueid,
+                            'nfl_week_type_id' => $this->common_model->get_week_type_id());
             $game++;
         }
         $this->db->insert_batch('schedule', $data);
@@ -142,7 +143,8 @@ class Schedule_model extends MY_Model{
                             'week' => $m->week,
                             'year' => $this->current_year,
                             'league_id' => $this->leagueid,
-                            'game' => $m->game);
+                            'game' => $m->game,
+                            'nfl_week_type_id' => $this->common_model->get_week_type_id());
         }
         $this->db->delete('schedule', array('league_id' => $this->leagueid, 'year' => $this->current_year));
         $this->db->insert_batch('schedule', $data);

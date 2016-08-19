@@ -231,6 +231,13 @@ class Common_model extends CI_Model{
         $bye_array['FA'] = 0;
         return $bye_array;
     }
+
+    function get_week_type_id($text = "")
+    {
+        if ($text == "")
+            $text = $this->current_weektype;
+        return $this->db->select('id')->from('nfl_week_type')->where('text_id',strtoupper($text))->get()->row()->id;
+    }
 }
 
 ?>

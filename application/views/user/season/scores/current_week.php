@@ -2,7 +2,6 @@
 <?php $this->load->view('template/modals/stat_popup.php');?>
 <?php $all_live_players = true; ?>
 <?php $view = $this->input->get('view');?>
-
 <div class="row">
     <div class="columns">
             <div class="row">
@@ -14,7 +13,7 @@
             </div>
             <div class="row callout">
                 <div class="columns">
-                        <!-- Currently selected game -->
+                    <!-- Currently selected game -->
                     <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $selected_game, 'view' => $view)); ?>
 
                     <?php if ($view == 'live'): ?>
@@ -79,6 +78,7 @@ $(document).ready(function(){
                     // Check if live update for this player
                     if(data.players_live.hasOwnProperty(id))
                     {
+
                         // Get playerplayid, and update it
                         var last_playerplayid = player_ele.data('playerplayid');
                         var current_playerplayid = data.players_live[id].play_id;
@@ -95,6 +95,9 @@ $(document).ready(function(){
                     // Check if the player's team has a teamid in the DOM, if so, update the team status and/or details, then do player score update
                     if (teamid)
                     {
+                        // For debugging
+                               // doTeamDetailUpdate(0);
+                                //teamStatusDelay = 10000;
                         //  Get vars for this player's team status update
                         var last_teamplayid = player_ele.data('teamplayid');
                         var current_teamplayid = data.nfl_games[teamid].p;
@@ -176,6 +179,25 @@ $(document).ready(function(){
                             {console.log('doTeamDetailUpdate done.');}
 
                         },delay);
+                    }
+                    function doTeamDetailUpdateNew(delay)
+                    {
+                        //var teamid = $("#player-"+id).data('team');
+                        var text = data.nfl_games[teamid].d;
+                        console.log(status_ele);
+                        
+                        var stat_jbox = new jBox('Tooltip', {
+                            content: text,
+                            target: $("#player-3674"),
+                            appendTo: status_ele,
+                            width: 400,
+                            stack: false
+                        });
+                        stat_jbox.open();
+                        setTimeout(function(){stat_jbox.close();},4000);
+
+
+
                     }
                     function doPlayerScoreUpdate()
                     {
