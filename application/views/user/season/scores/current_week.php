@@ -2,6 +2,7 @@
 <?php $this->load->view('template/modals/stat_popup.php');?>
 <?php $all_live_players = true; ?>
 <?php $view = $this->input->get('view');?>
+
 <div class="row">
     <div class="columns">
             <div class="row">
@@ -13,24 +14,27 @@
             </div>
             <div class="row callout">
                 <div class="columns">
+                    <?php if(isset($selected_game)):?>
                     <!-- Currently selected game -->
-                    <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $selected_game, 'view' => $view)); ?>
+                        <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $selected_game, 'view' => $view)); ?>
+                    <?php endif; ?>
+                    <?php if ($view == 'live'): ?> 
+                        <?php if (count($matchups) > 0): ?>
+                            <?php foreach($matchups as $m): ?>
+                                <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $m, 'view' => $view)); ?>
 
-                    <?php if ($view == 'live'): ?>
-
-                        <?php foreach($matchups as $m): ?>
-                            <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $m, 'view' => $view)); ?>
-
-                        <?php endforeach;?>
+                            <?php endforeach;?>
+                        <?php endif;?>
 
                     <?php elseif($view == 'all' || $view == ""): ?>
-
-                    <h4 class="text-center">Other games</h4>
-                    <div class="row callout">
-                        <?php foreach($matchups as $m): ?>
-                            <?php $this->load->view('user/season/scores/livescore_game_min', array('g' => $m)); ?>
-                        <?php endforeach;?>
-                    </div>
+                        <?php if (count($matchups) > 0): ?>
+                            <h4 class="text-center">Other games</h4>
+                            <div class="row callout">
+                                <?php foreach($matchups as $m): ?>
+                                    <?php $this->load->view('user/season/scores/livescore_game_min', array('g' => $m)); ?>
+                                <?php endforeach;?>
+                            </div>
+                        <?php endif;?>
 
                     <?php endif; ?>
                 </div>

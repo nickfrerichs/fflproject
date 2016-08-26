@@ -58,7 +58,8 @@ class Scores extends MY_User_Controller{
         //$data['scores'] = $this->scores_model->get_scores_data($data['week'], $data['year'], $data['week_type']);
 
         $data['matchups'] = $this->scores_model->get_fantasy_matchups($teamid);
-        $data['selected_game'] = $data['matchups'][0];
+        if (count($data['matchups']) > 0)
+            $data['selected_game'] = $data['matchups'][0];
         unset($data['matchups'][0]);
 
         $this->user_view('user/season/scores/current_week',$data);
