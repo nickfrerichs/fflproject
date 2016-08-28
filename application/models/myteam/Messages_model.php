@@ -51,6 +51,29 @@ class Messages_model extends MY_Model{
                                           'read' => 0,
                                           'message_date' => $message_date,
                                           'folder_id' => 0));
+
+
+
+        $body = "League: ".$this->session->userdata('league_name').
+                "\nMessage From: ".$this->session->userdata('first_name')." ".$this->session->userdata('last_name').
+                " (".$this->session->userdata('team_name').")\n-------------------\n\n".$body;
+        $this->email_new_message($to,$subject,$body);
+
+    }
+
+    function email_new_message($to, $subject, $body)
+    {
+        $recipient = $this->db->select('uacc_email')->from('team')->join('owner','owner.id = team.owner_id')
+            ->join('user_accounts','user_accounts.uacc_id = owner.user_accounts_id')
+            ->where('team.id',$to)->get()->row()->uacc_email;
+
+        $this->config->load('fflproject');
+        $this->load->library('email');
+        $this->email->from($this->config->item('fflp_email_reply_to'));
+        $this->email->to($recipient);
+        $this->email->subject($subject);
+        $this->email->message($body);
+        $this->email->send();
     }
 
     function get_messages_from_folder($folder_id)
