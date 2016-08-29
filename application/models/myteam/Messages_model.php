@@ -69,7 +69,7 @@ class Messages_model extends MY_Model{
 
         $this->config->load('fflproject');
         $this->load->library('email');
-        $this->email->from($this->config->item('fflp_email_reply_to'));
+        $this->email->from($this->config->item('fflp_email_reply_to'), $this->config->item('fflp_email_site_title'));
         $this->email->to($recipient);
         $this->email->subject($subject);
         $this->email->message($body);

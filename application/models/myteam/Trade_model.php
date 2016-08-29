@@ -516,14 +516,14 @@ class Trade_model extends MY_Model{
 
         $this->config->load('fflproject');
         $this->load->library('email');
-        $this->email->from($this->config->item('fflp_email_reply_to'));
+        $this->email->from($this->config->item('fflp_email_reply_to'), $this->config->item('fflp_email_site_title'));
         $this->email->to($team2data->owner_email);
         $this->email->subject($subject);
         $this->email->message($body);
         $this->email->send();
 
         $this->load->library('email');
-        $this->email->from($this->config->item('fflp_email_reply_to'));
+        $this->email->from($this->config->item('fflp_email_reply_to'), $this->config->item('fflp_email_site_title'));
         $this->email->to($team1data->owner_email);
         $this->email->subject($subject);
         $this->email->message($body);

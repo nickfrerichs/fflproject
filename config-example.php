@@ -17,12 +17,17 @@ $fflp_recaptcha_public_key = '';
 $fflp_recaptcha_private_key = '';
 
 $fflp_email_site_title = '';
-$fflp_email_reply_to = "";
+$fflp_email_reply_to = '';
 
 $fflp_smtp_host = 'ssl://smtp.gmail.com';
 $fflp_smtp_user = '';
 $fflp_smtp_pass = '';
 $fflp_smtp_port = 465;
+
+// Set this to smtp to use these settings, or sendmail to ue your local settings
+$fflp_smtp_protocol = "smtp";
+// Set this to "\r\n" "\r" or "\n", can cause auth issues if not correct for your OS.
+$fflp_smtp_newline = "\r\n";
 
 // Show debug and profiler data
 $fflp_debug = False;

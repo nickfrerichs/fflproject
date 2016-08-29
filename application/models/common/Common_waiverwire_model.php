@@ -273,7 +273,7 @@ class Common_waiverwire_model extends CI_Model{
 
         $this->config->load('fflproject');
         $this->load->library('email');
-        $this->email->from($this->config->item('fflp_email_reply_to'));
+        $this->email->from($this->config->item('fflp_email_reply_to'), $this->config->item('fflp_email_site_title'));
         $this->email->to($data->email_address);
         $this->email->subject($subject);
         $this->email->message($body);
@@ -291,7 +291,7 @@ class Common_waiverwire_model extends CI_Model{
 
         $this->config->load('fflproject');
         $this->load->library('email');
-        $this->email->from($this->config->item('fflp_email_reply_to'));
+        $this->email->from($this->config->item('fflp_email_reply_to'), $this->config->item('fflp_email_site_title'));
         $this->email->subject("Waiver wire request needs approval.");
         $this->email->message("Hi League Admin,\n\nA waiver wire request needs approval for league: ".$league_name.".");
         foreach($admins as $admin)
