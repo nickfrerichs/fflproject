@@ -2,30 +2,21 @@
 	<tr><td class="text-center" style="padding-top:160px; padding-bottom:160px;">You aren't watching any players</td></tr>
 <?php else: ?>
 <?php foreach ($players as $key => $p): ?>
-	<?php if (array_key_exists($key+1, $players)){$dn_id = $players[$key+1]->id;}else{$dn_id = "";} ?>
-	<?php if (array_key_exists($key-1, $players)){$up_id = $players[$key-1]->id;}else{$up_id = "";} ?>
-
-	<?php if($key == 0 && array_key_exists($key+1, $players)): ?>
-		<tr class="aup-<?=$p->id?> adown-<?=$dn_id?>">
-	<?php elseif(array_key_exists($key+1, $players) && $key+1 == count($players)): ?>
-		<tr class="adown-<?=$p->id?> aup-<?=$up_id?>">
-	<?php else:?>
-		<tr class="aup-<?=$p->id?> adown-<?=$p->id?> aup-<?=$up_id?> adown-<?=$dn_id?>">
-	<?php endif;?>
+	<tr>
 		<td class="text-center">
 			<?=$p->order?>
 		</td>
 		<td>
 			<div>
-				<?php if($key != 0): ?>
-				<a href="#" class="btn-draft up-test" data-value="up_<?=$p->id?>"><i class="fi-arrow-up" style="font-size:1.2em"></i></a>
+				<?php if($key != 0 || ($this->in_page!=""&&$this->in_page!=0)): ?>
+				<a href="#" class="btn-draft" data-value="up_<?=$p->id?>"><i class="fi-arrow-up" style="font-size:1.2em"></i></a>
 				<?php else: ?>
 					<span class=""></span>
 				<?php endif;?>
 			</div>
 
 			<div>
-				<?php if(count($players) != $key+1):?>
+				<?php if(count($players) != $key+1 || $this->in_page != floor($total_players/$this->per_page)):?>
 				<a href="#" class="btn-draft" data-value="down_<?=$p->id?>"><i class="fi-arrow-down" style="font-size:1.2em"></i></a>
 				<?php else: ?>
 					<span class=""></span>
@@ -33,16 +24,7 @@
 			</div>
 		</td>
 
-		<?php if (count($players) == 1): ?>
-			<td>
-		<?php elseif($key == 0): ?>
-			<td class="up-<?=$p->id?> down-<?=$players[$key+1]->id?>">
-		<?php elseif($key+1 == count($players)): ?>
-			<td class="down-<?=$p->id?> up-<?=$players[$key-1]->id?>">
-		<?php else:?>
-			<td class="up-<?=$p->id?> down-<?=$p->id?> up-<?=$players[$key-1]->id?> down-<?=$players[$key+1]->id?>">
-		<?php endif;?>
-
+		<td>
 			<div><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong></div>
 			<div><?=$p->club_id.' - '.$p->position?> <span style="font-size: .8em">(bye <?=$byeweeks[$p->club_id]?>)</span></div>
 		</td>
