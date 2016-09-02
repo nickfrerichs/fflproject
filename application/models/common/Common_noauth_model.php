@@ -78,12 +78,13 @@ class Common_noauth_model extends CI_Model{
         $row = $this->db->select('season_year')->from('league')->where('id',$leagueid)->get()->row();
         if (count($row) > 0)
             $season_year = $row->season_year;
+        $week_type = $this->get_week_type($leagueid);
         // Get the most recently past game start time.
         // If it's start time is more than 12 hours ago
         // Then get the next game is the current week.
         $current_time = time();
         $this->db->select('eid, week, year, UNIX_TIMESTAMP(start_time) as start')->from('nfl_schedule')
-            ->where('start_time <',t_mysql($current_time));
+            ->where('start_time <',t_mysql($current_time))->where('gt',$week_type);
         if (isset($season_year))
             $this->db->where('year',$season_year);
         $most_recent=$this->db->order_by('start_time','desc')->limit(1)->get()->row();
