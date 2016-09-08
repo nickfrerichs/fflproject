@@ -386,6 +386,7 @@ class Waiverwire_model extends MY_Model{
             ->join('nfl_team as pt','pt.id = p.nfl_team_id','left')
             ->join('team','team.id = waiver_wire_log.team_id')
             ->join('owner','owner.id = team.owner_id')
+            ->where('waiver_wire_log.year',$year)
             ->where('waiver_wire_log.league_id',$this->leagueid)
             ->where('waiver_wire_log.transaction_date !=','00-00-00 00:00:00')
             ->where('waiver_wire_log.approved',1);
