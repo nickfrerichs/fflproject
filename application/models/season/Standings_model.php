@@ -16,12 +16,22 @@ class Standings_model extends MY_Model{
             $year = $this->current_year;
 
         $divs_array = array();
+        $teams_array = array();
 
         $divs = $this->db->select('distinct(division_id) as id, division.name')
             ->from('team_division')
             ->join('division','division.id = team_division.division_id and division.year = team_division.year')
             ->where('team_division.league_id',$this->leagueid)
             ->where('division.year',$year)->get()->result();
+
+        $teams = $this->db->select('home_team_id, away_team_id')->from('schedule')->where('year',$year)->get()->result();
+        foreach($teams as $t)
+        {
+            if (!in_array($t->home_team_id,$teams_array))
+                $teams_array[] = $t->home_team_id;
+            if (!in_array($t->away_team_id,$teams_array))
+                $teams_array[] = $t->away_team_id;
+        }
 
         if (count($divs) > 0)
         {
@@ -36,14 +46,13 @@ class Standings_model extends MY_Model{
                     ->select('standings_notation_def.text as notation_text, standings_notation_def.symbol as notation_symbol')
                     ->from('team')
                     ->join('schedule_result','schedule_result.team_id = team.id and schedule_result.year='.$year,'left')
-                    ->join('schedule','(schedule.home_team_id = team.id or schedule.away_team_id = team.id) and schedule.year='.$year)
                     ->join('owner','team.owner_id = owner.id')
                     ->join('team_division','team_division.team_id = team.id and team_division.year = '.$year)
                     ->join('standings_notation_team','standings_notation_team.team_id = team.id','left')
                     ->join('standings_notation_def','standings_notation_def.id = standings_notation_team.standings_notation_def_id','left')
                     ->where('team.league_id',$this->leagueid)
                     ->where('team_division.division_id',$d->id)
-                    ->where('schedule.year',$year)
+                    ->where_in('team.id',$teams_array)
                     ->group_by('team.id')
                     ->order_by('wins','desc')
                     ->order_by('losses','asc')
@@ -62,10 +71,9 @@ class Standings_model extends MY_Model{
                 ->select('count(schedule_result.id) as total_games')
                 ->from('team')
                 ->join('schedule_result','schedule_result.team_id = team.id and schedule_result.year='.$year,'left')
-                ->join('schedule','(schedule.home_team_id = team.id or schedule.away_team_id = team.id) and schedule.year='.$year)
                 ->join('owner','team.owner_id = owner.id')
                 ->where('team.league_id',$this->leagueid)
-                ->where('schedule.year',$year)
+                ->where_in('team.id',$teams_array)
                 ->group_by('team.id')
                 ->order_by('wins','desc')
                 ->order_by('losses','asc')
