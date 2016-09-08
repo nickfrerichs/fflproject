@@ -51,7 +51,8 @@ class Player_statistics_model extends MY_Model{
     function get_player_data($player_id)
     {
         // also used by waiver_wire_model > log_transaction
-        return $this->db->select('first_name, last_name, nfl_position.short_text as pos, profile_url, photo, number, player.id as player_id')->from('player')
+        return $this->db->select('first_name, last_name, nfl_position.short_text as pos, profile_url, photo, number, player.id as player_id')
+                ->from('player')
                 ->select('nfl_team.club_id')
                 ->select('actual_pick as draft_pick')
                 ->select('IFNULL(draft_order.round,"Undrafted") as round',false)
@@ -61,7 +62,8 @@ class Player_statistics_model extends MY_Model{
                 ->join('nfl_team','nfl_team.id = player.nfl_team_id','left')
                 ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
                 ->join('team','team.id = roster.team_id','left')
-                ->join('draft_order','draft_order.player_id = player.id and draft_order.league_id='.$this->leagueid,'left')
+                ->join('draft_order','draft_order.player_id = player.id and draft_order.league_id='.$this->leagueid.
+                       ' and draft_order.year='.$this->current_year,'left')
                 ->where('player.id',$player_id)->get()->row();
     }
 
