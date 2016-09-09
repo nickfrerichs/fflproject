@@ -7,6 +7,6 @@
                 {$date = date("n/j g:i a",$m->date);}
               ?>
         <td class="chat-row"><b><?=$m->chat_name?></b> <i><?=$date?></i><br>
-        <?=$m->message_text?></td>
+        <?=auto_link($m->message_text)?></td>
     </tr>
 <?php endforeach;?>
