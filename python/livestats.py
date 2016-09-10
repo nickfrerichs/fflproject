@@ -10,6 +10,7 @@ import datetime
 import subprocess
 import os
 import config as c
+from pprint import pprint
 
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
@@ -382,6 +383,9 @@ def update_fantasy_statistics(year, week, weektype):
   for l in leagues:
       leagueid = l['id']
       scoring_def = get_scoring_def_dict(leagueid)
+      pprint(scoring_def)
+
+      # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']].append(row)
 
       for row in nfl_stat_rows:  # for each nfl_statistic this week, find a scoring_def for this league
         s = None
@@ -390,14 +394,22 @@ def update_fantasy_statistics(year, week, weektype):
         elif scoring_def.get(0) is not None and scoring_def[0].get(row['nfl_scoring_cat_id']) is not None:
           s = scoring_def[0][row['nfl_scoring_cat_id']]
 
-
+        # A scoring def for this category exists if not None
         if s is not None:
-          if s['per'] == 0:
-            points = 0
-          elif s['round'] == 1:
-            points = int(math.ceil(row['value'] * (s['points']/float(s['per']))))
-          else:
-            points = int(math.floor(row['value'] * (s['points']/float(s['per']))))
+          # Calculate points, this is done different depending if this scoring def is a range or not
+          if len(s) == 1:
+              if s[0]['per'] == 0:
+                points = 0
+              elif s[0]['round'] == 1:
+                points = int(math.ceil(row['value'] * (s[0]['points']/float(s[0]['per']))))
+              else:
+                points = int(math.floor(row['value'] * (s[0]['points']/float(s[0]['per']))))
+          elif s[0]['is_range']:
+              # Check to see if row['value'] is in the range, if so set points, if not continue to next scoring def (or add one that's zero points?)
+              for one in s:
+                  if row['value'] >= one['range_start'] and row['value'] <= one['range_end']:
+                      points = int(one['points'])
+
 
           # query = (('select id from fantasy_statistic where nfl_statistic_id = %s') % (row['id']))
           query = (('select id, points from fantasy_statistic where week = %s and nfl_week_type_id = (select id from nfl_week_type where text_id = "%s") and year = %s and player_id = %s and league_id = %s and nfl_scoring_cat_id = %s')
@@ -451,7 +463,7 @@ def get_yard_line(yard_line, team = ""):
       return 50 - yd
 
 def get_scoring_def_dict(leagueid):
-  query = (('select scoring_def.nfl_scoring_cat_id, per, points, round, nfl_position_id from scoring_def '+
+  query = (('select scoring_def.nfl_scoring_cat_id, per, points, round, is_range, range_start, range_end, nfl_position_id from scoring_def '+
   'join nfl_scoring_cat on nfl_scoring_cat.id = scoring_def.nfl_scoring_cat_id where league_id = %s') % str(leagueid))
 
   cur.execute(query)
@@ -459,11 +471,18 @@ def get_scoring_def_dict(leagueid):
   scoring_def = {}
   for row in cur.fetchall():
     if scoring_def.get(row['nfl_position_id']) is None:
-      scoring_def[row['nfl_position_id']] = {}
-    scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']] = {}
-    scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['per'] = row['per']
-    scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['round'] = row['round']
-    scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['points'] = row['points']
+        scoring_def[row['nfl_position_id']] = {}
+
+    if scoring_def[row['nfl_position_id']].get(row['nfl_scoring_cat_id']) is None:
+        scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']] = list()
+    scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']].append(row)
+    # newdef = {}
+    # newdef['per'] = row['per']
+    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['round'] = row['round']
+    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['points'] = row['points']
+    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['range_start'] = row['range_start']
+    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['range_end'] = row['range_end']
+    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['is_range'] = row['is_range']
   return scoring_def
 
 def add_other_player_stats(playerdict, player):

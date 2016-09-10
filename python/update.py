@@ -362,7 +362,7 @@ def update_statistic_summaries(year, week, weektype):
 
     if week == 'all' and weektype == "REG":
         weeks = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
-    elif weektype == "REG":
+    elif weektype == "REG" or weektype == "PRE":
         weeks = [week]
     else:
         sys.exit('quitting')
@@ -417,7 +417,7 @@ def update_schedule(season_year, week, weektype="REG"):
   for week in weeks:
 
     if (args.schedule_clear):
-        query = ('delete from nfl_schedule where week = %s and year = %s and gt = "%s"' % 
+        query = ('delete from nfl_schedule where week = %s and year = %s and gt = "%s"' %
             (str(week),str(season_year), weektype))
         cur.execute(query)
         db.commit()

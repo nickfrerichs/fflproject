@@ -1,4 +1,5 @@
 
+<?php //print_r($bench); print_r($matchups);?>
 <?php foreach($bench as $b): ?>
     <tr>
         <td>
@@ -30,7 +31,7 @@
         <td>
             <div class="row align-center">
                 <div class="columns text-center">
-                    <?php if ($matchups[$b['data']->club_id]['time'] > time() || $matchups[$b['data']->club_id]['time'] == ''): ?>
+                    <?php if ($matchups[$b['data']->club_id]['time'] > time() || $matchups[$b['data']->club_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
                         <?php if (isset($b['can_start'])): ?>
                             <?php foreach ($b['can_start'] as $pos_id => $can_pos): ?>
                                         <button class="button small roster-start-btn" value="<?=$b['data']->player_id?>_<?=$pos_id?>">

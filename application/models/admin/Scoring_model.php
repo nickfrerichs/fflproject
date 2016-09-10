@@ -19,12 +19,12 @@ class Scoring_model extends MY_Model
             $v[] = $value->nfl_scoring_cat_id;
 
         // Returns all not currently assigned statistic_categories for this position
-        $this->db->select('nfl_scoring_cat.id, nfl_scoring_cat.text_id, '
-                . 'nfl_scoring_cat.long_text, nfl_scoring_cat_type.text as type_text')
-                ->from('nfl_scoring_cat')->join('nfl_scoring_cat_type', 'nfl_scoring_cat.type = nfl_scoring_cat_type.id');
+        $this->db->select('nfl_scoring_cat.id, nfl_scoring_cat.text_id, nfl_scoring_cat.long_text, nfl_scoring_cat_type.text as type_text')
+                ->from('nfl_scoring_cat')
+                ->join('nfl_scoring_cat_type', 'nfl_scoring_cat.type = nfl_scoring_cat_type.id');
         if(count($v) > 0)
             $this->db->where_not_in('nfl_scoring_cat.id',$v);
-        $categories = $this->db->order_by('type', 'asc')->order_by('id','asc')->get()->result();
+        $categories = $this->db->order_by('type', 'asc')->order_by('nfl_scoring_cat.id','asc')->get()->result();
 
         return $categories;
 
@@ -35,9 +35,9 @@ class Scoring_model extends MY_Model
         $def_year = $this->common_model->scoring_def_year();
 
         $data = $this->db->select('scoring_def.id, scoring_def.nfl_scoring_cat_id, scoring_def.per, '
-                . 'scoring_def.points, scoring_def.league_id, scoring_def.round')
+                . 'scoring_def.points, scoring_def.league_id, scoring_def.round, scoring_def.range_start, scoring_def.range_end, scoring_def.is_range')
                 ->select('nfl_scoring_cat.text_id, nfl_scoring_cat.long_text, nfl_scoring_cat.type')
-                ->select('nfl_position.text_id as pos_text')
+                ->select('IFNULL(nfl_position.text_id,"All") as pos_text, IFNULL(nfl_position.id,0) as pos_id')
                 ->select('nfl_scoring_cat_type.text as type_text')
                 ->from('scoring_def')
                 ->join('nfl_scoring_cat', 'nfl_scoring_cat.id = scoring_def.nfl_scoring_cat_id','left')
@@ -45,6 +45,8 @@ class Scoring_model extends MY_Model
                 ->join('nfl_scoring_cat_type', 'nfl_scoring_cat_type.id = nfl_scoring_cat.type')
                 ->where('scoring_def.league_id', $this->leagueid)
                 ->where('scoring_def.year',$def_year)
+                ->order_by('nfl_scoring_cat.type','asc')
+                ->order_by('nfl_scoring_cat.id','asc')
                 ->get();
         return $data->result();
     }
@@ -84,23 +86,27 @@ class Scoring_model extends MY_Model
         return false;
     }
 
-    function add_stat_value_entry($stat_id, $position_id)
+    function add_stat_value_entry($stat_id, $position_id, $is_range = False)
     {
         $year = $this->reconcile_scoring_def_year();
         $data = array('nfl_scoring_cat_id' => $stat_id,
                     'per' => 0,
                     'points' => 0,
+                    'range_start' => 0,
+                    'range_end' => 0,
+                    'is_range' => $is_range,
                     'league_id' => $this->leagueid,
                     'nfl_position_id' => $position_id,
                     'year' => $year);
         $this->db->insert('scoring_def', $data);
     }
 
-    function save_value($id, $points, $per, $round)
+    function save_value($id, $points, $per, $round, $start, $end)
     {
         $def_year = $this->reconcile_scoring_def_year();
         $this->db->where('id', $id);
-        $this->db->update('scoring_def',array('points' => $points, 'per' => $per, 'round' => $round));
+        $this->db->update('scoring_def',array('points' => $points, 'per' => $per, 'round' => $round,
+                          'range_start' => $start, 'range_end' => $end));
     }
 
     function delete($id)
@@ -122,7 +128,7 @@ class Scoring_model extends MY_Model
         // the current year as the scoring_def year
         if ($num > 0)
         {
-            $scoring_defs = $this->db->select('id, nfl_scoring_cat_id, per, points, round, league_id, nfl_position_id')
+            $scoring_defs = $this->db->select('id, nfl_scoring_cat_id, per, points, round, range_start, range_end, league_id, nfl_position_id')
                     ->from('scoring_def')->where('league_id',$this->leagueid)->where('year',$current_def_year)->get()->result();
 
             foreach($scoring_defs as $def)
@@ -130,12 +136,12 @@ class Scoring_model extends MY_Model
                 if ($deleteid && $def->id == $deleteid)
                     continue;
 
-
-
                 $data = array('nfl_scoring_cat_id' => $def->nfl_scoring_cat_id,
                               'per' => $def->per,
                               'points' => $def->points,
                               'round' => $def->round,
+                              'range_start' => $def->range_start,
+                              'range_end' => $def->range_end,
                               'nfl_position_id' => $def->nfl_position_id,
                               'league_id' => $this->leagueid,
                               'year' => $this->current_year);
@@ -160,7 +166,5 @@ class Scoring_model extends MY_Model
         }
 
         return $current_def_year;
-
-
     }
 }

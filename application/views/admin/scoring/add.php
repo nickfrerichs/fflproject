@@ -43,7 +43,12 @@ function SetStatID(stat_id) {
             <?php endif; ?>
                 <tr>
                     <td><?=$cat->long_text?></td>
-                    <td><input class="button small" type="submit" name="1" value="Add"  onClick="SetStatID(<?=$cat->id?>);" /></td>
+                    <td>
+                        <input class="button tiny" type="submit" name="type" value="Per unit"  onClick="SetStatID(<?=$cat->id?>);" />
+                    </td>
+                    <td>
+                        <input class="button tiny" type="submit" name="type" value="Unit range"  onClick="SetStatID(<?=$cat->id?>);" />
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>

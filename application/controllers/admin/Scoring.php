@@ -22,8 +22,13 @@ class Scoring extends MY_Admin_Controller
             $scoring_defs[$s->type_text][$s->pos_text][$s->id]['per'] = $s->per;
             $scoring_defs[$s->type_text][$s->pos_text][$s->id]['points'] = $s->points;
             $scoring_defs[$s->type_text][$s->pos_text][$s->id]['round'] = $s->round;
+            $scoring_defs[$s->type_text][$s->pos_text][$s->id]['range_end'] = $s->range_end;
+            $scoring_defs[$s->type_text][$s->pos_text][$s->id]['range_start'] = $s->range_start;
+            $scoring_defs[$s->type_text][$s->pos_text][$s->id]['is_range'] = $s->is_range;
             $scoring_defs[$s->type_text][$s->pos_text][$s->id]['long_text'] = $s->long_text;
             $scoring_defs[$s->type_text][$s->pos_text][$s->id]['pos_text'] = $s->pos_text;
+            $scoring_defs[$s->type_text][$s->pos_text][$s->id]['cat_id'] = $s->nfl_scoring_cat_id;
+            $scoring_defs[$s->type_text][$s->pos_text][$s->id]['pos_id'] = $s->pos_id;
         }
 
 
@@ -35,10 +40,20 @@ class Scoring extends MY_Admin_Controller
     {
         // SECURITY: league
         $stat_id = $this->input->post('stat_id');
+
+        // This will be "Per unit" or "Unit range"
+        $type = $this->input->post('type');
+
         if ($stat_id)
         {
-            if (!$this->scoring_model->stat_value_exists($position_id,$stat_id))
-                $this->scoring_model->add_stat_value_entry($stat_id, $position_id);
+            if ($type == "Unit range")
+            {
+                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, true);
+            }
+            elseif (!$this->scoring_model->stat_value_exists($position_id,$stat_id))
+            {
+                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, false);
+            }
         }
 
         $this->load->helper('form');
@@ -70,8 +85,17 @@ class Scoring extends MY_Admin_Controller
 
             foreach ($values as $key => $val)
             {
+                if (!array_key_exists('per',$val))
+                    $val['per'] = 0;
+                if (!array_key_exists('start',$val))
+                    $val['start'] = 0;
+                if (!array_key_exists('end',$val))
+                    $val['end'] = 0;
+
                 $this->scoring_model->reconcile_scoring_def_year(False,$key,array('points' => $val['points'],
                                                                                         'per' => $val['per'],
+                                                                                        'range_start' => $val['start'],
+                                                                                        'range_end' => $val['end'],
                                                                                         'round' => $val['round']));
             }
             redirect(site_url('admin/scoring'));
