@@ -147,6 +147,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
             query = 'select id from nfl_live_game where nfl_schedule_gsis = %s' % (livestatus['gamekey'])
             cur.execute(query)
             ls = livestatus
+            if ls['def'] == 'JAC': ls['def'] = 'JAX'
             if cur.rowcount > 0:
               query = (('update nfl_live_game set down = %s, to_go = %s, quarter = "%s", off_nfl_team_id = '+
                 '(select id from nfl_team where club_id = "%s"), def_nfl_team_id = '+
