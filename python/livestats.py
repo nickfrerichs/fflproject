@@ -148,6 +148,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
             cur.execute(query)
             ls = livestatus
             if ls['def'] == 'JAC': ls['def'] = 'JAX'
+            if ls['def'] == 'STL': ls['def'] = 'LA'
             if cur.rowcount > 0:
               query = (('update nfl_live_game set down = %s, to_go = %s, quarter = "%s", off_nfl_team_id = '+
                 '(select id from nfl_team where club_id = "%s"), def_nfl_team_id = '+
@@ -384,7 +385,6 @@ def update_fantasy_statistics(year, week, weektype):
   for l in leagues:
       leagueid = l['id']
       scoring_def = get_scoring_def_dict(leagueid)
-      pprint(scoring_def)
 
       # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']].append(row)
 
