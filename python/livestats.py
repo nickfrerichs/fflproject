@@ -122,8 +122,11 @@ def update_nfl_statistics(year, week, weektype, update_all):
         livestatus['quarter'] = game.time.qtr
         livestatus['down'] = game.down
         lastplay = None;
+
 #      if game.gamekey == "56300":
         for drive in game.drives:
+          if drive.team == "JAC": drive.team="JAX"
+          if drive.team == "STL": drive.team="LA"
           livestatus['off'] = drive.team
           if drive.team == game.home:
             livestatus['def'] = game.away
