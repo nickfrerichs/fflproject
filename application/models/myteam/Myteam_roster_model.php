@@ -207,13 +207,12 @@ class Myteam_roster_model extends MY_Model{
         if($lea_pos !=0 && !$this->nfl_pos_in_lea_pos($nfl_pos, $lea_pos)) // Players NFL pos not defined in lea_pos, false
            return false;
 
-
         // 3. you cant can't make changes for past weeks
         if ($week < $this->current_week)
             return false;
 
         // 4. If you made it this far, it's a current or future week, check current week for locked status.
-        if ($this->common_model->is_player_lineup_locked($player_id))
+        if ($week == $this->current_week && $this->common_model->is_player_lineup_locked($player_id))
         {
             return False;
         }

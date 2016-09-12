@@ -18,7 +18,7 @@
                     <!-- Currently selected game -->
                         <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $selected_game, 'view' => $view)); ?>
                     <?php endif; ?>
-                    <?php if ($view == 'live'): ?> 
+                    <?php if ($view == 'live'): ?>
                         <?php if (count($matchups) > 0): ?>
                             <?php foreach($matchups as $m): ?>
                                 <?php $this->load->view('user/season/scores/livescore_game_full',array('g' => $m, 'view' => $view)); ?>
@@ -61,7 +61,6 @@ $(document).ready(function(){
 
             var url = "<?=site_url('season/scores/live_json')?>";
             $.post(url,{},function(data){
-                console.log($("#key").data('update'));
 
                 // Set FFL team scores
                 $.each(data.scores.teams,function(id, score){
@@ -76,7 +75,6 @@ $(document).ready(function(){
                     var score_ele = $("#player-"+id+" > .player-score");
                     //var score_ele = $("#player-"+id+"-score");
                     var player_ele = $("#player-"+id);
-                    var debug_id = "5289";
                     var teamStatusDelay = 0;
 
                     // Check if live update for this player
@@ -104,6 +102,7 @@ $(document).ready(function(){
                                 //teamStatusDelay = 10000;
                         //  Get vars for this player's team status update
                         var last_teamplayid = player_ele.data('teamplayid');
+
                         var current_teamplayid = data.nfl_games[teamid].p;
                         player_ele.data('teamplayid',current_teamplayid);
 
@@ -137,13 +136,10 @@ $(document).ready(function(){
                     function doPlayerStatusUpdate(delay)
                     {
                         var text = data.players_live[id].text;
-                        console.log(text);
+                        (text);
                         setTimeout(function(){
                             status_ele.text(text)
                             player_ele.addClass('livescore-player-update');
-                            if (id == debug_id)
-                            {console.log('doPlayerStatusUpdate done.');
-                             console.log(player_ele);}
 
                         },delay);
                     }
@@ -166,9 +162,7 @@ $(document).ready(function(){
                             }
                             status_ele.text(text)
                             player_ele.removeClass('livescore-player-update');
-                            if (id == debug_id)
-                            {//console.log('doTeamStatusUpdate done.');
-                            }
+
                         },delay);
                     }
                     function doTeamDetailUpdate(delay)
@@ -179,8 +173,7 @@ $(document).ready(function(){
                             status_ele.text(text)
                             setStatusStyleClass("livescore-detail");
                             player_ele.removeClass('livescore-player-update');
-                            if (id == debug_id)
-                            {console.log('doTeamDetailUpdate done.');}
+
 
                         },delay);
                     }
@@ -188,8 +181,7 @@ $(document).ready(function(){
                     {
                         //var teamid = $("#player-"+id).data('team');
                         var text = data.nfl_games[teamid].d;
-                        console.log(status_ele);
-                        
+
                         var stat_jbox = new jBox('Tooltip', {
                             content: text,
                             target: $("#player-3674"),

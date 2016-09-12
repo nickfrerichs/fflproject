@@ -33,7 +33,7 @@ class Common_model extends CI_Model{
 
     function is_player_lineup_locked($player_id)
     {
-        return $this->common_noauth_model->is_player_lineup_locked($player_id, $this->leagueid, $this->current_year, $this->current_week, $this->current_weektype);
+        return $this->common_noauth_model->is_player_lineup_locked($player_id, $this->teamid, $this->current_year, $this->current_week, $this->current_weektype);
     }
 
     function player_opponent($player_id,$week=0,$year=0)

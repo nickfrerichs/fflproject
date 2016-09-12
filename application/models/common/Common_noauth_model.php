@@ -194,9 +194,9 @@ class Common_noauth_model extends CI_Model{
 
         // 4. If it's the current week and the player doesn't have a bye, check if the game has started
         //    though if debug_week is set, don't worry about the start time.
-        if ($this->player_opponent($player_id) != "Bye")
+        if ($this->player_opponent($player_id,$year,$week,$weektype) != "Bye")
         {
-            $start_time = $this->player_game_start_time($player_id);
+            $start_time = $this->player_game_start_time($player_id,$year,$week,$weektype);
             if ($start_time < time() && !$this->session->userdata('debug_week'))
                 return True;
         }
