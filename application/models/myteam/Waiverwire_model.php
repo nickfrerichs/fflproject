@@ -176,6 +176,7 @@ class Waiverwire_model extends MY_Model{
 
     function ok_to_process_transaction($pickup_id, $drop_id, &$ret="", &$status_code=False)
     {
+        $settings = $this->common_waiverwire_model->get_approval_settings($this->leagueid);
         // Check waiverwire is open
         if (!$this->waiverwire_open())
             return False;
@@ -199,7 +200,7 @@ class Waiverwire_model extends MY_Model{
         // Check if an approval is pending
         $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('pickup_player_id',$pickup_id)
             ->where('transaction_date',0)->count_all_results();
-        if($num > 0)
+        if($num > 0 && $settings->type != "manual")
         {
             $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the league admin.";
             return False;

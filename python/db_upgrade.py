@@ -35,6 +35,7 @@ def upgrade_db(version):
         db.commit()
         return get_db_version()
         # site_settings db_version
+        # alter table fantasy_statistic_week alter week_type_id set DEFAULT 0;
 
 
 def get_db_version():
