@@ -1,4 +1,4 @@
-<div class="small-6">
+<div class="small-12">
     <table class=''>
         <thead>
             <th class="text-right tscore-<?=$g['home_team']['team']->id?>" style="font-size:1.2em;">-</th>
