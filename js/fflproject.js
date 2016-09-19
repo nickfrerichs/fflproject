@@ -269,3 +269,180 @@ $(document).on('click',"._message-close",function(){
 
 	$.post(ackurl);
 });
+
+
+//
+//  Server Sent events
+//
+
+function sse_stream_start()
+{
+	if (typeof(evtSource) == "undefined")
+    {
+		console.log("Started sse stream.");
+		evtSource = new EventSource(BASE_URL+"sse/stream");
+        evtSource.onmessage = function(e)
+        {
+			var d = JSON.parse(e.data);
+
+			// Show/Hide live score url
+			if (d.ls != undefined)
+			{
+				if (d.ls == "on")
+					{$(".live-scores").removeClass('hide');}
+				else
+					{$(".live-scores").addClass('hide');}
+			}
+
+			// Update who's online text
+			if (d.wo != undefined)
+			{
+				var text = "Who's Here: ";
+				$.each(d.wo,function(index, owner){
+					if (owner.a == 1)
+						{text+='<span class="wo-admin">'+owner.n+'</span>';}
+					else
+						{text+=owner.n;}
+					if (d.wo.length-1 > index)
+					{text+=", ";}
+					$("#whos-online").html(text);
+				});
+			}
+
+			if (d.chat != undefined)
+			{
+				$.each(d.chat,function(i, msg){
+					// This is for the popup ballons.
+					// Don't show these for mobile view.
+					if (chatOpen() != true && $("#chat-button").is(":visible"))
+					{
+						var text = "<b>"+msg.chat_name+"</b><br><i>"+msg.message_text+"</i>";
+						var chat_jbox = new jBox('Tooltip', {
+							content: text,
+							target: $("#chat-button"),
+							width: 200,
+							addClass: 'Tooltip-chat',
+							stack: false
+						});
+						chat_jbox.open();
+						setTimeout(function(){chat_jbox.close();},4000);
+					}
+					// If chatbox exists, append the chats
+					if (typeof(cb) != undefined)
+					{
+						bottom = chatScrollBottom();
+						$(".chat-history-ajax").append(msg.html);
+						if(bottom){chatScrollBottom(true);}
+					}
+				});
+			}
+			if (d.ur != undefined)
+			{
+				if (parseInt(d.ur) > 0)
+					{$(".unread-count").text(" ("+d.ur+")");}
+				else{$(".unread-count").text("");}
+			}
+
+        }
+	}
+	else {
+		console.log("Already started sse stream.");
+	}
+}
+// #############################
+// Chat box stuff
+// #############################
+$(document).on('click','.chat-button',function(){
+    if (typeof(cb) == "undefined")
+    {
+        $("#chat-history-ajax").html("<i>Loading...</i>");
+        // onOpen Erase unread count on chat-button...we just read them.
+        // Create the jBox from the chat-modal element, then open it.
+        // onClose, scroll back to bottom
+        cb = new jBox('Modal',{
+            content: $("#chat-modal"),
+            blockScroll: false,
+            draggable: 'title',
+            overlay: false,
+            title: "League Chat",
+            addClass: 'jBox-chat',
+            position: {x: 'right', y:'bottom'},
+			onOpen: function(){
+				markChatsRead();
+			},
+            onClose: function() {
+                if (Foundation.MediaQuery.current == 'small')
+                {$(window).scrollTop(0);}
+                chatScrollBottom(true);
+            }
+        });
+        cb.open();
+        // Set the focus to the textarea.. may change to only do this on large displays.
+        $("#chat-message").focus();
+        populateChat();
+    }
+    else {
+        cb.toggle();
+    }
+});
+
+// Post a new message to chat as long as there is non-whitespace in the textarea and you didn't press shift+enter
+$(document).on('keypress','#chat-message',function(event){
+
+    if(event.keyCode == 13 && !event.shiftKey){
+
+        if ($(this).val().trim() == "") {event.preventDefault(); return}
+        var url = BASE_URL+"league/chat/post";
+
+        $.post(url,{'message' : $(this).val()}, function(){
+			console.log("Posted");
+            $("#chat-message").val('');
+
+            chatScrollBottom(true);
+        });
+        event.preventDefault();
+    }
+});
+
+// Add messages to empty chat.
+function populateChat()
+{
+    var url = BASE_URL+"league/chat/get_messages";
+    $.post(url,{}, function(data){
+        $(".chat-history-ajax").html(data);
+        $(".chat-history-table").each(function(){$(this).scrollTop($(this).prop('scrollHeight'));});
+    });
+
+}
+
+// return true if scrolled to bottom, false if not
+// if true passed in, set scroll to bottom
+function chatScrollBottom(set)
+{
+    // Return true if the currently active chat is near the bottom, false if not.
+    if(set == undefined)
+    {
+        var chat_history_table_id = "#chat-history-table";
+        var h = $(chat_history_table_id).height()+$(chat_history_table_id).scrollTop();
+        if (h > $(chat_history_table_id).prop('scrollHeight')-25)
+        {return true;}
+        return false;
+    }
+    else
+    {
+        $("#chat-history-table").scrollTop($("#chat-history-table").prop('scrollHeight'));
+    }
+}
+
+function chatOpen()
+{
+	return $('#chat-modal').is(':visible');
+}
+
+function markChatsRead()
+{
+	var url = BASE_URL+"league/chat/ajax_chats_read";
+	$.post(url,{},function(){
+		$(".unread-count").text("");
+	});
+}

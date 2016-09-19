@@ -24,7 +24,6 @@ class Chat extends MY_Basic_Controller{
         {
              die();
         }
-
         $this->load->model('league/chat_model');
     }
 
@@ -49,54 +48,65 @@ class Chat extends MY_Basic_Controller{
             $data['messages'] = $this->chat_model->get_messages();
 
         }
-        $this->load->view('user/league/chat/ajax_show_messages',$data);
 
+        //$this->chat_model->set_last_read_key();
+
+        ?>
+
+        <?php foreach($data['messages'] as $m): ?>
+            <?=$m->html?>
+        <?php endforeach;?>
+
+        <?php
+
+
+
+    }
+
+    public function ajax_chats_read()
+    {
         $this->chat_model->set_last_read_key();
-
-
     }
 
-    public function ajax_get_messages()
-    {
-        $key = $this->input->post(('chat_key'));
-        $this->chat_model->set_last_read_key($key);
-        $messages = $this->chat_model->get_messages();
-        //print_r($messages);
-        echo json_encode($messages);
+    // public function ajax_get_messages()
+    // {
+    //     $key = $this->input->post(('chat_key'));
+    //     $this->chat_model->set_last_read_key($key);
+    //     $messages = $this->chat_model->get_messages();
+    //     //print_r($messages);
+    //     echo json_encode($messages);
+    // }
+
+    // public function stream_get_chat_key()
+    // {
+    //     session_write_close();
+    //     //$count = 10;
+    //     header("Content-Type: text/event-stream\n\n");
+    //     header("Cache-Control: no-cache\n\n");
+    //     while(1)
+    //     {
+    //         echo "data: ".$this->chat_model->get_chat_key()."\n\n";
+    //         ob_flush(); // Needed to add this after moving to centos, no idea why.
+    //         flush();
+    //         usleep(500000); //half a second
+    //         //$count--;
+    //     }
+    // }
 
 
-    }
+    // public function key()
+    // {
+    //     echo $this->chat_model->get_chat_key();
+    // }
 
-    public function stream_get_chat_key()
-    {
-        session_write_close();
-        //$count = 10;
-        header("Content-Type: text/event-stream\n\n");
-        header("Cache-Control: no-cache\n\n");
-        while(1)
-        {
-            echo "data: ".$this->chat_model->get_chat_key()."\n\n";
-            ob_flush(); // Needed to add this after moving to centos, no idea why.
-            flush();
-            usleep(500000); //half a second
-            //$count--;
-        }
-    }
+    // public function unread()
+    // {
+    //     echo $this->chat_model->get_unread_count();
+    // }
 
-
-    public function key()
-    {
-        echo $this->chat_model->get_chat_key();
-    }
-
-    public function unread()
-    {
-        echo $this->chat_model->get_unread_count();
-    }
-
-    public function last_read()
-    {
-        echo $this->chat_model->get_last_read_key();
-    }
+    // public function last_read()
+    // {
+    //     echo $this->chat_model->get_last_read_key();
+    // }
 }
 ?>

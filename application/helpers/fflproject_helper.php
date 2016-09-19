@@ -62,6 +62,11 @@ function t_mysql($unixtimestamp = null)
 //     }
 // }
 
+function sse_json($var)
+{
+    echo "data: ".json_encode($var)."\n\n";
+}
+
 function debug($var,$debug)
 {
 
