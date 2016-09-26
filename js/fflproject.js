@@ -271,9 +271,9 @@ $(document).on('click',"._message-close",function(){
 });
 
 
-//
+// ###############################
 //  Server Sent events
-//
+// ###############################
 
 function sse_stream_start()
 {
@@ -341,6 +341,16 @@ function sse_stream_start()
 				if (parseInt(d.ur) > 0)
 					{$(".unread-count").text(" ("+d.ur+")");}
 				else{$(".unread-count").text("");}
+			}
+
+			if (d.live != undefined)
+			{
+				console.log(d.live);
+			}
+
+			if (d.debug != undefined)
+			{
+				console.log(d.debug);
 			}
 
         }

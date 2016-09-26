@@ -173,9 +173,66 @@ td select{margin-bottom:0px !important;}
 	width:100px;
 }
 
-
 /* ----------------------- */
 /* Live score stuff
+/* ----------------------- */
+
+/* COMPACT VIEW */
+/* Make the matchup table look better */
+table.ls-c-matchup-table tr:nth-of-type(even) {background-color: transparent !important;}
+table.ls-c-matchup-table tr{border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;}
+table.ls-c-matchup-table tr td.ls-c-td-left{padding-left: 2px;}
+table.ls-c-matchup-table tr td.ls-c-td-right{padding-right: 2px;}
+table.ls-c-matchup-table{table-layout: fixed;}
+
+/* td with player/game info */
+.ls-c-playerbox{
+	font-size: .8em;
+	padding-top:1px;
+	padding-bottom:1px;
+}
+/* td that lights up to highlight a players status */
+.ls-c-playerlight{
+	width: 5px;
+	padding: 0px;
+}
+/* tds containing team/player score */
+.ls-c-teamscore{width: 30px; padding: 3px; font-size: 1.2em; font-weight: normal;}
+.ls-c-playerscore{
+	color: #2199e8;
+	padding: 2px;
+}
+
+/* middle td containing positions */
+.ls-c-position{
+	font-size: .8em;
+	background-color: #EEE;
+	color: #777;
+	padding:0px;
+	width: 30px;
+}
+
+/* div of yardline / field position */
+.ls-c-drivebar{
+	height:8px;
+	margin-bottom: 3px;
+}
+
+/* Text on drive bar, usually yard line */
+.ls-c-drivebar-text{
+	font-size: 8px;
+	color: white;;
+}
+
+/* text of current game status */
+.ls-c-gamestatus{
+	font-size: .8em;
+}
+
+
+
+/* ----------------------- */
+/* Live score stuff OLD
 /* ----------------------- */
 
 .livescore-small-font{
@@ -238,4 +295,3 @@ tr.livescore-hide-player{
         font-size:.8em;
     }
 }
-
