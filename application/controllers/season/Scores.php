@@ -40,19 +40,20 @@ class Scores extends MY_User_Controller{
 
     function live($teamid = 0)
     {
-        $this->compact();
-        return;
+            $this->compact();
+            return;
     }
 
     function compact()
     {
-        $data = array();
-        $data['matchups'] = $this->scores_model->get_fantasy_matchups(null, $this->current_week);
-        $this->user_view('user/season/scores/live/compact',$data);
+            $data = array();
+            $data['matchups'] = $this->scores_model->get_fantasy_matchups(null, $this->current_week);
+            $this->user_view('user/season/scores/live/compact',$data);
     }
 
     function live_old($teamid = 0)
     {
+
         $data = array();
 
         //if (!$this->live)
