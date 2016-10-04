@@ -12,7 +12,7 @@ class Sse_model extends MY_Model{
 
     function get_sse_settings()
     {
-        return $this->db->select('sse_chat, sse_draft, sse_live_scores, last_live_score')
+        return $this->db->select('sse_chat, sse_draft, sse_live_scores')
             ->from('owner_setting')
             ->where('owner_id',$this->ownerid)->where('league_id',$this->leagueid)
             ->get()->row();
@@ -52,12 +52,6 @@ class Sse_model extends MY_Model{
     {
         return $this->db->select('live_scores_key, draft_update_key, chat_key')->from('league_settings')->where('league_id',$this->leagueid)
             ->get()->row();
-    }
-
-    function set_last_live_score($key)
-    {
-        $this->db->where('league_id',$this->leagueid)->where('owner_id',$this->ownerid);
-        $this->db->update('owner_setting',array('last_live_score' => $key));
     }
 
 }

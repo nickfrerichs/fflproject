@@ -275,11 +275,25 @@ $(document).on('click',"._message-close",function(){
 //  Server Sent events
 // ###############################
 
+function sse_on(sse_func)
+{
+	var url = BASE_URL+"sse/turn_on/"+sse_func
+	$.post(url, {}, function(){});
+	//console.log(sse_func+" on");
+}
+
+function sse_off(sse_func)
+{
+	var url = BASE_URL+"sse/turn_off/"+sse_func
+	$.post(url, {}, function(){});
+	//console.log(sse_func+" off");
+}
+
 function sse_stream_start()
 {
 	if (typeof(evtSource) == "undefined")
     {
-		console.log("Started sse stream.");
+		//console.log("Started sse stream.");
 		evtSource = new EventSource(BASE_URL+"sse/stream");
         evtSource.onmessage = function(e)
         {
@@ -465,6 +479,7 @@ function playerActive(id)
 	playerBoxFromTeam(id).addClass('ls-playeractive');
 	$("."+id+" .progress").addClass('success');
 	$("."+id+" .progress").removeClass('secondary')
+	$("."+id+" .ls-c-drivebar").removeClass("hide");
 }
 
 // This is the default, remove both classes
@@ -475,6 +490,7 @@ function playerInactive(id)
 	playerBoxFromTeam(id).addClass("ls-playerinactive");
 	$("."+id+" .progress").removeClass('success');
 	$("."+id+" .progress").addClass('secondary')
+	$("."+id+" .ls-c-drivebar").removeClass("hide");
 }
 
 function playerBoxFromTeam(id)
@@ -528,7 +544,7 @@ $(document).on('keypress','#chat-message',function(event){
         var url = BASE_URL+"league/chat/post";
 
         $.post(url,{'message' : $(this).val()}, function(){
-			console.log("Posted");
+			//console.log("Posted");
             $("#chat-message").val('');
 
             chatScrollBottom(true);

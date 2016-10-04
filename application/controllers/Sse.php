@@ -27,7 +27,7 @@ class Sse extends MY_User_Controller{
         $last_live_element_check = 0;
         $interval = $this->session->userdata('live_element_refresh_time');
 
-        $first = True;
+        $ls_first = True;
 
         while($count > 0)
         {
@@ -37,14 +37,11 @@ class Sse extends MY_User_Controller{
             $keys = $this->sse_model->keys();
             $data = array();
 
-            # REMOVE, JUST FOR debugging
-            $settings->sse_live_scores = True;
             // If the chat_key is new, output chats that occured since the last one.
             if (($settings->sse_chat || $this->session->userdata('chat_balloon')) && $last_keys->chat_key != $keys->chat_key)
             {
                 $this->load->model('league/chat_model');
                 // If chat is open, include the owners messages too, otherwise we don't want balloons for ourself
-                // {"message_id":"1115","message_text":"asdf","date":"1474228635","owner_id":"11","first_name":"Nick","last_name":"Frerichs","chat_name":"Nick"}
                 if ($settings->sse_chat)
                     $chatdata = $this->chat_model->get_messages($last_keys->chat_key,5,True);
                 else
@@ -61,13 +58,13 @@ class Sse extends MY_User_Controller{
             }
 
             // If sse_live_scores is set and live_scores_key has changed, output stuff needed for live scores.
-            if ($first || ($settings->sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
+            if (($ls_first && $settings->sse_live_scores) || ($settings->sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
             {
                 $this->load->model('season/scores_model');
                 $data['live']['scores'] = $this->scores_model->get_fantasy_scores_array();
                 $data['live']['players_live'] = $this->scores_model->get_player_live_array();
                 $data['live']['nfl_games'] = $this->scores_model->get_nfl_game_live_array();
-                $this->sse_model->set_last_live_score($settings->last_live_score);
+                $ls_first = False;
             }
 
             // Update things at a slower interval like live scoring icon, etc
@@ -98,7 +95,6 @@ class Sse extends MY_User_Controller{
             usleep(250000); //half a second
             //$count--;
             $last_keys = $keys;
-            $first = False;
         }
         echo "\n";
         echo $runtime;
