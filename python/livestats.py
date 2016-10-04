@@ -18,9 +18,9 @@ cur = db.cursor()
 query = 'select current_timestamp'
 cur.execute(query)
 sql_now = cur.fetchone()['current_timestamp']
+unix_timestamp = int(time.mktime(sql_now.timetuple()))
 
 def main():
-
     cur_year, cur_week = nflgame.live.current_year_and_week()
     cur_weektype = nflgame.live._cur_season_phase
 
@@ -85,6 +85,7 @@ def update_games(year, week, weektype, update_all = False):
 def update_nfl_statistics(year, week, weektype, update_all):
   global sql_now
   last_updated = sql_now
+  live_changes_made = False
 
   # -----------------------------------------------------------------------------------------
   # 1. Get nfl_statistics from nflgame
@@ -151,7 +152,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
             update_live_players(lastplay, game.gamekey)
 
         if game.playing():
-            query = 'select id from nfl_live_game where nfl_schedule_gsis = %s' % (livestatus['gamekey'])
+            query = 'select id, play_id from nfl_live_game where nfl_schedule_gsis = %s' % (livestatus['gamekey'])
             cur.execute(query)
             ls = livestatus
             if ls['def'] == 'JAC': ls['def'] = 'JAX'
@@ -159,16 +160,21 @@ def update_nfl_statistics(year, week, weektype, update_all):
             if ls['off'] == 'JAC': ls['off'] = 'JAX'
             if ls['off'] == 'STL': ls['off'] = 'LA'
             if cur.rowcount > 0:
-              query = (('update nfl_live_game set down = %s, to_go = %s, quarter = "%s", off_nfl_team_id = '+
-                '(select id from nfl_team where club_id = "%s"), def_nfl_team_id = '+
-                '(select id from nfl_team where club_id = "%s"), yard_line = %s, time="%s", home_score = %s, away_score = %s, note = "%s", details = "%s", play_id = %s '+
-                'where id = %s') % (ls['down'],ls['to_go'],ls['quarter'],ls['off'],ls['def'],str(ls['yardline']),ls['time'],str(game.score_home), str(game.score_away),ls['note'],MySQLdb.escape_string(ls['details']),str(lastplay.playid),str(cur.fetchone()['id'])))
+              lgrow = cur.fetchone()
+              if str(lastplay.playid) != str(lgrow['play_id']): #only update if it's a new play
+                  query = (('update nfl_live_game set update_key = %s, down = %s, to_go = %s, quarter = "%s", off_nfl_team_id = '+
+                    '(select id from nfl_team where club_id = "%s"), def_nfl_team_id = '+
+                    '(select id from nfl_team where club_id = "%s"), yard_line = %s, time="%s", home_score = %s, away_score = %s, note = "%s", details = "%s", play_id = %s '+
+                    'where id = %s') % (str(unix_timestamp), ls['down'],ls['to_go'],ls['quarter'],ls['off'],ls['def'],str(ls['yardline']),ls['time'],str(game.score_home), str(game.score_away),ls['note'],MySQLdb.escape_string(ls['details']),str(lastplay.playid),str(lgrow['id'])))
+                  cur.execute(query)
+                  live_changes_made = True
             else:
-              query = (('insert into nfl_live_game (nfl_schedule_gsis, down, to_go, quarter, off_nfl_team_id, def_nfl_team_id, yard_line, time, week, nfl_week_type_id, year, home_score, away_score, note, details, play_id) values ('+
-                '%s,%s,%s,"%s",(select id from nfl_team where club_id = "%s"),(select id from nfl_team where club_id = "%s"),%s,"%s",%s,(select id from nfl_week_type where text_id = "%s"),%s,%s,%s,"%s","%s",%s)') %
-                (ls['gamekey'],ls['down'],ls['to_go'],ls['quarter'],ls['off'],ls['def'],str(ls['yardline']),ls['time'],str(week),weektype,str(year), str(game.score_home), str(game.score_away),ls['note'],MySQLdb.escape_string(ls['details']),str(lastplay.playid)))
+              query = (('insert into nfl_live_game (update_key, nfl_schedule_gsis, down, to_go, quarter, off_nfl_team_id, def_nfl_team_id, yard_line, time, week, nfl_week_type_id, year, home_score, away_score, note, details, play_id) values ('+
+                '%s,%s,%s,%s,"%s",(select id from nfl_team where club_id = "%s"),(select id from nfl_team where club_id = "%s"),%s,"%s",%s,(select id from nfl_week_type where text_id = "%s"),%s,%s,%s,"%s","%s",%s)') %
+                (str(unix_timestamp), ls['gamekey'],ls['down'],ls['to_go'],ls['quarter'],ls['off'],ls['def'],str(ls['yardline']),ls['time'],str(week),weektype,str(year), str(game.score_home), str(game.score_away),ls['note'],MySQLdb.escape_string(ls['details']),str(lastplay.playid)))
 
-            cur.execute(query)
+              cur.execute(query)
+              live_changes_made = True
 
         #print "nfl_live_game status updated for "+str(game)+" - "+str(game.time.qtr)
 
@@ -319,6 +325,15 @@ def update_nfl_statistics(year, week, weektype, update_all):
         # commit all changes for this game
 
         db.commit()
+      query = 'select id, hs, vs, q from nfl_schedule where gsis = %s' % (game.gamekey)
+      cur.execute(query)
+      s_row = cur.fetchone()
+      if s_row['q'].lower() != game.time.qtr[0].lower() or s_row['hs'] != game.score_home or s_row['vs'] != game.score_away:
+          query = 'update nfl_schedule set q = "%s", hs = %s, vs = %s where gsis = %s' % (game.time.qtr[0], str(game.score_home), str(game.score_away), str(game.gamekey))
+          cur.execute(query)
+          live_changes_made = True
+
+
     # delete any rows that were not updated, they must not exist anymore, probably temp errors in live scoring
     if livegamecount > 0:
       updated_games = updated_games[:-1]
@@ -327,17 +342,27 @@ def update_nfl_statistics(year, week, weektype, update_all):
       deleted = cur.rowcount
       db.commit()
       print "Purged %s nfl_statistic rows." % str(deleted)
-      query = 'delete from nfl_live_player where gsis_id not in (%s)' % (updated_games)
-      cur.execute(query)
 
-      query = 'delete from nfl_live_game where nfl_schedule_gsis not in (%s)' % (updated_games)
-      cur.execute(query)
-    else:
+      # IF live changes were made, delete nfl_live_player lines that were not updated during this run
+      # query = 'delete from nfl_live_player where gsis_id not in (%s)' % (updated_games)
+      if live_changes_made:
+        query = 'delete from nfl_live_player where update_key != '+unix_timestamp
+        cur.execute(query)
+
+        # query = 'delete from nfl_live_game where nfl_schedule_gsis not in (%s)' % (updated_games)
+        query = 'delete from nfl_live_game where update_key != '+unix_timestamp
+        cur.execute(query)
+    else: # Nothing is in progress, delete all live data
       query = 'truncate nfl_live_player'
       cur.execute(query)
       query = 'truncate nfl_live_game'
       cur.execute(query)
     db.commit()
+
+    if live_changes_made:
+        query = 'update league_settings set live_scores_key = %s' % (str(unix_timestamp))
+        cur.execute(query)
+        db.commit()
     return livegamecount
     # Done looking for week_type spot through here
 
@@ -432,11 +457,6 @@ def update_fantasy_statistics(year, week, weektype):
           else:
             query = 'insert into fantasy_statistic (player_id, nfl_scoring_cat_id, points, week, nfl_week_type_id, year, league_id, nfl_statistic_id) values (%s,%s,%s,%s,(select id from nfl_week_type where text_id = "%s"),%s,%s,%s)' % (row['player_id'],row['nfl_scoring_cat_id'],str(points),str(week),weektype,str(year),leagueid,row['id'])
           cur.execute(query)
-
-      # Really should confirm changes where made somehow, before confirming the live_scores_key should be updated
-      query = 'update league_settings set live_scores_key = UNIX_TIMESTAMP() where league_settings.league_id = %s' % (str(leagueid))
-
-      cur.execute(query)
       db.commit()
 
   # Delete any stats that were no longer found in this update, they must have been retracted ?
@@ -559,16 +579,20 @@ def update_live_players(play, gamekey):
 
 
         if text != "":
-            query = 'select id from nfl_live_player where nfl_player_id = "%s"' % (event['playerid'])
+            query = 'select id, play_id from nfl_live_player where nfl_player_id = "%s"' % (event['playerid'])
             cur.execute(query)
             if cur.rowcount > 0:
-                query = ('update nfl_live_player set play_id = %s, text="%s" where nfl_player_id = "%s"'
-                        % (str(play.playid),text,event['playerid']))
+                lprow = cur.fetchone()
+                if str(lprow['play_id']) != str(play.playid):
+                    query = ('update nfl_live_player set update_key = %s, play_id = %s, text="%s" where nfl_player_id = "%s"'
+                            % (str(unix_timestamp),str(play.playid),text,event['playerid']))
+                    cur.execute(query)
             else:
-                query = (('insert into nfl_live_player (player_id, gsis_id, play_id, text, nfl_player_id)'+
-                    'values((select id from player where player_id = "%s"),%s,%s,"%s","%s")')
-                    % (event['playerid'],str(gamekey),str(play.playid),text,event['playerid']))
-            cur.execute(query)
+                query = (('insert into nfl_live_player (player_id, gsis_id, play_id, text, nfl_player_id, update_key)'+
+                    'values((select id from player where player_id = "%s"),%s,%s,"%s","%s",%s)')
+                    % (event['playerid'],str(gamekey),str(play.playid),text,event['playerid'],str(unix_timestamp)))
+
+                cur.execute(query)
 
 			#print key
 			#print value

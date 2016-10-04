@@ -345,7 +345,42 @@ function sse_stream_start()
 
 			if (d.live != undefined)
 			{
-				console.log(d.live);
+				//console.log(d.live);
+				// Update team scores
+				$.each(d.live.scores.teams,function(id, score){
+
+				});
+				// Update player scores
+				$.each(d.live.scores.players,function(id, score){
+					// check to see if live stat is available
+					// if(d.live.players_live.hasOwnProperty(id))
+					// {
+					// 	$('.p_'+id+" .ls-c-gamestatus").text(d.live.players_live[id].text);
+					// 	$('.p_'+id+" .ls-c-gamestatus").data('plive','1');
+					// 	playerEvent(id);
+					// }
+				});
+
+				// Go through each player in the dom because we need to set the live player text and team text
+				$.each($('.ls-c-playerbox'),function(){
+
+					var player_id = $(this).data('id');
+					// If player box is empty, don't do anything.
+					if (player_id == undefined){return;}
+					var team = $(this).data('team');
+					var delay = 0;
+					// Is this player in live player?
+					if (d.live.players_live.hasOwnProperty(player_id))
+					{
+
+						// Player has a live upate, show that text and delay showing team status
+						playerEvent(player_id, d.live.players_live[player_id].text);
+						delay = 10000;
+					}
+					playerTeamStatus(player_id,d.live.nfl_games[team],delay);
+
+
+				});
 			}
 
 			if (d.debug != undefined)
@@ -359,6 +394,94 @@ function sse_stream_start()
 		console.log("Already started sse stream.");
 	}
 }
+
+// Stuff used for live scoring
+function playerEvent(player_id, text)
+{
+	playerBoxFromTeam('p_'+player_id).addClass("ls-playerevent");
+	$(".p_"+player_id+" .ls-c-gamestatus").text(text);
+}
+
+// Classes a 'playerbox' can be: ls-playeractive, ls-gameinactive (default to active game inactive player)
+function playerTeamStatus(player_id,team,delay)
+{
+	// team.d = details
+
+	setTimeout(function(){
+		var id = "p_"+player_id;
+		// There are details we should show with settimeout
+
+		if (delay == 0 && team.d != undefined)
+		{
+			$(".p_"+player_id+" .ls-c-gamestatus").text(team.d);
+			setTimeout(function(){
+				$(".p_"+player_id+" .ls-c-gamestatus").text(team.s);
+			},10000);
+		}
+		else {
+			$(".p_"+player_id+" .ls-c-gamestatus").text(team.s);
+		}
+
+		$("."+id).removeClass("ls-playerevent");
+		// This game is not live
+		if (team.a == undefined)
+		{
+			gameInactive(id);
+		}
+		else
+		{
+			$("."+id+" .progress-meter").width(team.y+"%");
+			if(team.y > 50){team.y=Math.abs(team.y-100);}
+			$("."+id+" .progress-meter-text").text(team.y+" yl");
+			// Live game and team/def.off is active
+			if (team.a == 1)
+			{
+				playerActive(id);
+			}
+			else // Live game, but not active
+			{
+				playerInactive(id);
+			}
+		}
+	},delay);
+
+}
+
+
+function gameInactive(id)
+{
+	playerBoxFromTeam(id).removeClass("ls-playeractive");
+	playerBoxFromTeam(id).removeClass("ls-playerinactive");
+	playerBoxFromTeam(id).addClass("ls-gameinactive");
+	$("."+id+" .ls-c-drivebar").addClass("hide");
+
+}
+
+// Player is on the field
+function playerActive(id)
+{
+	playerBoxFromTeam(id).removeClass("ls-gameinactive");
+	playerBoxFromTeam(id).removeClass("ls-playerinactive");
+	playerBoxFromTeam(id).addClass('ls-playeractive');
+	$("."+id+" .progress").addClass('success');
+	$("."+id+" .progress").removeClass('secondary')
+}
+
+// This is the default, remove both classes
+function playerInactive(id)
+{
+	playerBoxFromTeam(id).removeClass("ls-gameinactive");
+	playerBoxFromTeam(id).removeClass('ls-playeractive');
+	playerBoxFromTeam(id).addClass("ls-playerinactive");
+	$("."+id+" .progress").removeClass('success');
+	$("."+id+" .progress").addClass('secondary')
+}
+
+function playerBoxFromTeam(id)
+{
+	return $("."+id+".ls-c-playerlight, ."+id+".ls-c-playerbox, ."+id+".ls-c-playerscore");
+}
+
 // #############################
 // Chat box stuff
 // #############################

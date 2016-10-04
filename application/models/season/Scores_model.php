@@ -159,6 +159,7 @@ class Scores_model extends MY_Model{
 
     function get_player_live_array()
     {
+        //$ls_key = $this->db->select('live_scores_key')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->live_scores_key;
         $players_array = array();
         $players = $this->db->select('l.player_id, l.gsis_id as game_id, l.play_id, l.text')
             ->from('starter')
@@ -186,12 +187,14 @@ class Scores_model extends MY_Model{
         $team_class_array = array();
 
         // First we fill all NFL team def and off keys with "bye"
+
         $teams = $this->db->select('club_id')->from('nfl_team')->where('club_id !=','NONE')->get()->result();
         foreach($teams as $t)
         {
             $team_class_array[$t->club_id.'_o']['s'] = "bye";
             $team_class_array[$t->club_id.'_d']['s'] = "bye";
         }
+
 
         // Next we get all NFL team def and off keys with the game status.
         $matchup = $this->db->select('gsis, h, v, t, eid, q, hs, vs, unix_timestamp(start_time) as start')
@@ -214,7 +217,7 @@ class Scores_model extends MY_Model{
         }
 
         $livegames = $this->db->select('nfl_schedule_gsis, down, to_go, quarter, off.club_id as off_club_id, def.club_id as def_club_id')
-            ->select('yard_line, time, h, v, home_score, away_score, note, details, nfl_live_game.id, play_id')
+            ->select('yard_line, time, h, v, home_score, away_score, note, details, nfl_live_game.id, play_id, nfl_live_game.update_key')
             ->from('nfl_schedule')
             ->join('nfl_live_game', 'nfl_schedule.gsis = nfl_live_game.nfl_schedule_gsis')
             ->join('nfl_team as off', 'off.id = nfl_live_game.off_nfl_team_id')
@@ -298,24 +301,36 @@ class Scores_model extends MY_Model{
             if ($game->details == "*** play under review ***")
                 $on_status.=' (under review)';
 
+            //$ls_key = $this->db->select('live_scores_key')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->live_scores_key;
+
             // Here's where we use the data collected and parsed and assign the status strings.
             // If fantasy defensive player's team is on defense - on the field
             $team_class_array[$game->def_club_id.'_d']['s'] = $on_status;
+            //if ($ls_key == $game->update_key) // Only if the details are from the most recent update
             $team_class_array[$game->def_club_id.'_d']['d'] = $game->details;
             $team_class_array[$game->def_club_id.'_d']['p'] = $game->play_id;
+            $team_class_array[$game->def_club_id.'_d']['y'] = $game->yard_line+50;
+            $team_class_array[$game->def_club_id.'_d']['a'] = 1;
 
             // If fantasy offensive player's team is on defense - off the field
             $team_class_array[$game->def_club_id.'_o']['s'] = $o_off_status;
             $team_class_array[$game->def_club_id.'_o']['p'] = $game->play_id;
+            $team_class_array[$game->def_club_id.'_o']['y'] = $game->yard_line+50;
+            $team_class_array[$game->def_club_id.'_o']['a'] = 0;
 
             // If fantasy offenseive player's team is on offense - on the field
             $team_class_array[$game->off_club_id.'_o']['s'] = $on_status;
+            //if ($ls_key == $game->update_key) // Only if the details are from the most recent update
             $team_class_array[$game->off_club_id.'_o']['d'] = $game->details;
             $team_class_array[$game->off_club_id.'_o']['p'] = $game->play_id;
+            $team_class_array[$game->off_club_id.'_o']['y'] = $game->yard_line+50;
+            $team_class_array[$game->off_club_id.'_o']['a'] = 1;
 
             // If fantasy defensive player's team is on offense - off the field
             $team_class_array[$game->off_club_id.'_d']['s'] = $d_off_status;
             $team_class_array[$game->off_club_id.'_d']['p'] = $game->play_id;
+            $team_class_array[$game->off_club_id.'_d']['y'] = $game->yard_line+50;
+            $team_class_array[$game->off_club_id.'_d']['a'] = 0;
         }
 
         return $team_class_array;

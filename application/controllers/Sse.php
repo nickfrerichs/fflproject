@@ -27,6 +27,8 @@ class Sse extends MY_User_Controller{
         $last_live_element_check = 0;
         $interval = $this->session->userdata('live_element_refresh_time');
 
+        $first = True;
+
         while($count > 0)
         {
             $start = microtime(True);
@@ -59,12 +61,13 @@ class Sse extends MY_User_Controller{
             }
 
             // If sse_live_scores is set and live_scores_key has changed, output stuff needed for live scores.
-            if (($settings->sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
+            if ($first || ($settings->sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
             {
                 $this->load->model('season/scores_model');
                 $data['live']['scores'] = $this->scores_model->get_fantasy_scores_array();
                 $data['live']['players_live'] = $this->scores_model->get_player_live_array();
                 $data['live']['nfl_games'] = $this->scores_model->get_nfl_game_live_array();
+                $this->sse_model->set_last_live_score($settings->last_live_score);
             }
 
             // Update things at a slower interval like live scoring icon, etc
@@ -95,11 +98,13 @@ class Sse extends MY_User_Controller{
             usleep(250000); //half a second
             //$count--;
             $last_keys = $keys;
+            $first = False;
         }
         echo "\n";
         echo $runtime;
         echo "\n";
         echo $runtime/$num;
+
     }
 
     // Update session varaible containing enabled SSE functions
