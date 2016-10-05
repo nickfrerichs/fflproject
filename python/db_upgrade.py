@@ -19,6 +19,25 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "0.2":
+        query = 'ALTER TABLE owner_setting ADD sse_chat BOOLEAN DEFAULT 0'
+        cur.execute(query)
+        query = 'ALTER TABLE owner_setting ADD sse_draft BOOLEAN DEFAULT 0'
+        cur.execute(query)
+        query = 'ALTER TABLE owner_setting ADD sse_live_scores BOOLEAN DEFAULT 0'
+        cur.execute(query)
+        query = 'ALTER TABLE nfl_live_player ADD update_key INT DEFAULT 0'
+        cur.execute(query)
+        query = 'ALTER TABLE nfl_live_game ADD update_key INT DEFAULT 0'
+        cur.execute(query)
+
+        # This was extra a loooong time ago.
+        query = 'ALTER TABLE fantasy_statistic_week DROP week_type_id'
+        cur.execute(query)
+        
+
+
     if version == "0.1":
         # scoring_def changes
         query = 'ALTER TABLE scoring_def ADD range_start INT DEFAULT 0'

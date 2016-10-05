@@ -113,6 +113,13 @@ class Chat_model extends MY_Model{
         {
             if($firstnames[strtolower($d->first_name)] > 1)
                 $d->chat_name = $d->first_name.' '.$d->last_name[0];
+            $d->message_text = auto_link($d->message_text,'url',True);
+
+            if (date("n/j/Y",$d->date) == date("n/j/Y",time()))
+                {$d->date = date("g:i a",$d->date);}
+            else
+                {$d->date = date("n/j g:i a",$d->date);}
+            $d->html = '<tr><td class="chat-row"><b>'.$d->chat_name.'</b> <i>'.$d->date.'</i><br>'.$d->message_text.'</td></tr>';
         }
         return array_reverse($data);
     }

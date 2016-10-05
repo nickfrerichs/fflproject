@@ -10,4 +10,5 @@
 <script src="<?=site_url('js/jBox.min.js')?>"></script>
 
 <!-- My custom JS, things that aren't imbedded in the page go here -->
+<script>window.BASE_URL = "<?=site_url()?>";</script>
 <script src="<?=site_url('js/fflproject.js')?>"></script>

@@ -269,3 +269,329 @@ $(document).on('click',"._message-close",function(){
 
 	$.post(ackurl);
 });
+
+
+// ###############################
+//  Server Sent events
+// ###############################
+
+function sse_on(sse_func)
+{
+	var url = BASE_URL+"sse/turn_on/"+sse_func
+	$.post(url, {}, function(){});
+	//console.log(sse_func+" on");
+}
+
+function sse_off(sse_func)
+{
+	var url = BASE_URL+"sse/turn_off/"+sse_func
+	$.post(url, {}, function(){});
+	//console.log(sse_func+" off");
+}
+
+function sse_stream_start()
+{
+	if (typeof(evtSource) == "undefined")
+    {
+		//console.log("Started sse stream.");
+		evtSource = new EventSource(BASE_URL+"sse/stream");
+        evtSource.onmessage = function(e)
+        {
+			var d = JSON.parse(e.data);
+
+			// Show/Hide live score url
+			if (d.ls != undefined)
+			{
+				if (d.ls == "on")
+					{$(".live-scores").removeClass('hide');}
+				else
+					{$(".live-scores").addClass('hide');}
+			}
+
+			// Update who's online text
+			if (d.wo != undefined)
+			{
+				var text = "Who's Here: ";
+				$.each(d.wo,function(index, owner){
+					if (owner.a == 1)
+						{text+='<span class="wo-admin">'+owner.n+'</span>';}
+					else
+						{text+=owner.n;}
+					if (d.wo.length-1 > index)
+					{text+=", ";}
+					$("#whos-online").html(text);
+				});
+			}
+
+			if (d.chat != undefined)
+			{
+				$.each(d.chat,function(i, msg){
+					// This is for the popup ballons.
+					// Don't show these for mobile view.
+					if (chatOpen() != true && $("#chat-button").is(":visible"))
+					{
+						var text = "<b>"+msg.chat_name+"</b><br><i>"+msg.message_text+"</i>";
+						var chat_jbox = new jBox('Tooltip', {
+							content: text,
+							target: $("#chat-button"),
+							width: 200,
+							addClass: 'Tooltip-chat',
+							stack: false
+						});
+						chat_jbox.open();
+						setTimeout(function(){chat_jbox.close();},4000);
+					}
+					// If chatbox exists, append the chats
+					if (typeof(cb) != undefined)
+					{
+						bottom = chatScrollBottom();
+						$(".chat-history-ajax").append(msg.html);
+						if(bottom){chatScrollBottom(true);}
+					}
+				});
+			}
+			if (d.ur != undefined)
+			{
+				if (parseInt(d.ur) > 0)
+					{$(".unread-count").text(" ("+d.ur+")");}
+				else{$(".unread-count").text("");}
+			}
+
+			if (d.live != undefined)
+			{
+				//console.log(d.live);
+				// Update team scores
+				$.each(d.live.scores.teams,function(id, score){
+
+				});
+				// Update player scores
+				$.each(d.live.scores.players,function(id, score){
+					// check to see if live stat is available
+					// if(d.live.players_live.hasOwnProperty(id))
+					// {
+					// 	$('.p_'+id+" .ls-c-gamestatus").text(d.live.players_live[id].text);
+					// 	$('.p_'+id+" .ls-c-gamestatus").data('plive','1');
+					// 	playerEvent(id);
+					// }
+				});
+
+				// Go through each player in the dom because we need to set the live player text and team text
+				$.each($('.ls-c-playerbox'),function(){
+
+					var player_id = $(this).data('id');
+					// If player box is empty, don't do anything.
+					if (player_id == undefined){return;}
+					var team = $(this).data('team');
+					var delay = 0;
+					// Is this player in live player?
+					if (d.live.players_live.hasOwnProperty(player_id))
+					{
+
+						// Player has a live upate, show that text and delay showing team status
+						playerEvent(player_id, d.live.players_live[player_id].text);
+						delay = 10000;
+					}
+					playerTeamStatus(player_id,d.live.nfl_games[team],delay);
+
+
+				});
+			}
+
+			if (d.debug != undefined)
+			{
+				console.log(d.debug);
+			}
+
+        }
+	}
+	else {
+		console.log("Already started sse stream.");
+	}
+}
+
+// Stuff used for live scoring
+function playerEvent(player_id, text)
+{
+	playerBoxFromTeam('p_'+player_id).addClass("ls-playerevent");
+	$(".p_"+player_id+" .ls-c-gamestatus").text(text);
+}
+
+// Classes a 'playerbox' can be: ls-playeractive, ls-gameinactive (default to active game inactive player)
+function playerTeamStatus(player_id,team,delay)
+{
+	// team.d = details
+
+	setTimeout(function(){
+		var id = "p_"+player_id;
+		// There are details we should show with settimeout
+
+		if (delay == 0 && team.d != undefined)
+		{
+			$(".p_"+player_id+" .ls-c-gamestatus").text(team.d);
+			setTimeout(function(){
+				$(".p_"+player_id+" .ls-c-gamestatus").text(team.s);
+			},10000);
+		}
+		else {
+			$(".p_"+player_id+" .ls-c-gamestatus").text(team.s);
+		}
+
+		$("."+id).removeClass("ls-playerevent");
+		// This game is not live
+		if (team.a == undefined)
+		{
+			gameInactive(id);
+		}
+		else
+		{
+			$("."+id+" .progress-meter").width(team.y+"%");
+			if(team.y > 50){team.y=Math.abs(team.y-100);}
+			$("."+id+" .progress-meter-text").text(team.y+" yl");
+			// Live game and team/def.off is active
+			if (team.a == 1)
+			{
+				playerActive(id);
+			}
+			else // Live game, but not active
+			{
+				playerInactive(id);
+			}
+		}
+	},delay);
+
+}
+
+
+function gameInactive(id)
+{
+	playerBoxFromTeam(id).removeClass("ls-playeractive");
+	playerBoxFromTeam(id).removeClass("ls-playerinactive");
+	playerBoxFromTeam(id).addClass("ls-gameinactive");
+	$("."+id+" .ls-c-drivebar").addClass("hide");
+
+}
+
+// Player is on the field
+function playerActive(id)
+{
+	playerBoxFromTeam(id).removeClass("ls-gameinactive");
+	playerBoxFromTeam(id).removeClass("ls-playerinactive");
+	playerBoxFromTeam(id).addClass('ls-playeractive');
+	$("."+id+" .progress").addClass('success');
+	$("."+id+" .progress").removeClass('secondary')
+	$("."+id+" .ls-c-drivebar").removeClass("hide");
+}
+
+// This is the default, remove both classes
+function playerInactive(id)
+{
+	playerBoxFromTeam(id).removeClass("ls-gameinactive");
+	playerBoxFromTeam(id).removeClass('ls-playeractive');
+	playerBoxFromTeam(id).addClass("ls-playerinactive");
+	$("."+id+" .progress").removeClass('success');
+	$("."+id+" .progress").addClass('secondary')
+	$("."+id+" .ls-c-drivebar").removeClass("hide");
+}
+
+function playerBoxFromTeam(id)
+{
+	return $("."+id+".ls-c-playerlight, ."+id+".ls-c-playerbox, ."+id+".ls-c-playerscore");
+}
+
+// #############################
+// Chat box stuff
+// #############################
+$(document).on('click','.chat-button',function(){
+    if (typeof(cb) == "undefined")
+    {
+        $("#chat-history-ajax").html("<i>Loading...</i>");
+        // onOpen Erase unread count on chat-button...we just read them.
+        // Create the jBox from the chat-modal element, then open it.
+        // onClose, scroll back to bottom
+        cb = new jBox('Modal',{
+            content: $("#chat-modal"),
+            blockScroll: false,
+            draggable: 'title',
+            overlay: false,
+            title: "League Chat",
+            addClass: 'jBox-chat',
+            position: {x: 'right', y:'bottom'},
+			onOpen: function(){
+				markChatsRead();
+			},
+            onClose: function() {
+                if (Foundation.MediaQuery.current == 'small')
+                {$(window).scrollTop(0);}
+                chatScrollBottom(true);
+            }
+        });
+        cb.open();
+        // Set the focus to the textarea.. only on non-small displays.
+        if (Foundation.MediaQuery.atLeast("medium")){$("#chat-message").focus();}
+        populateChat();
+    }
+    else {
+        cb.toggle();
+    }
+});
+
+// Post a new message to chat as long as there is non-whitespace in the textarea and you didn't press shift+enter
+$(document).on('keypress','#chat-message',function(event){
+
+    if(event.keyCode == 13 && !event.shiftKey){
+
+        if ($(this).val().trim() == "") {event.preventDefault(); return}
+        var url = BASE_URL+"league/chat/post";
+
+        $.post(url,{'message' : $(this).val()}, function(){
+			//console.log("Posted");
+            $("#chat-message").val('');
+
+            chatScrollBottom(true);
+        });
+        event.preventDefault();
+    }
+});
+
+// Add messages to empty chat.
+function populateChat()
+{
+    var url = BASE_URL+"league/chat/get_messages";
+    $.post(url,{}, function(data){
+        $(".chat-history-ajax").html(data);
+        $(".chat-history-table").each(function(){$(this).scrollTop($(this).prop('scrollHeight'));});
+    });
+
+}
+
+// return true if scrolled to bottom, false if not
+// if true passed in, set scroll to bottom
+function chatScrollBottom(set)
+{
+    // Return true if the currently active chat is near the bottom, false if not.
+    if(set == undefined)
+    {
+        var chat_history_table_id = "#chat-history-table";
+        var h = $(chat_history_table_id).height()+$(chat_history_table_id).scrollTop();
+        if (h > $(chat_history_table_id).prop('scrollHeight')-25)
+        {return true;}
+        return false;
+    }
+    else
+    {
+        $("#chat-history-table").scrollTop($("#chat-history-table").prop('scrollHeight'));
+    }
+}
+
+function chatOpen()
+{
+	return $('#chat-modal').is(':visible');
+}
+
+function markChatsRead()
+{
+	var url = BASE_URL+"league/chat/ajax_chats_read";
+	$.post(url,{},function(){
+		$(".unread-count").text("");
+	});
+}

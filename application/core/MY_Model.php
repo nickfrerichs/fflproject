@@ -12,7 +12,7 @@ class MY_Model extends CI_Model
     {
         parent::__construct();
 
-        // Initialize flexi auth (lite)
+        // Initialize flexi auth (lite)   CAN THIS BE REMOVED??? Seems like I shouldn't need it
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
 
