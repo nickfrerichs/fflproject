@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '0.2'
+CURRENT_VERSION = '0.3'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -16,6 +16,7 @@ def main():
     while version != CURRENT_VERSION:
         print "\nUpgrading database "+version+" to next version.\n"
         version = upgrade_db(version)
+    sys.exit('\nDatabase is now at the current version: ' % (CURRENT_VERSION))
 
 
 def upgrade_db(version):
@@ -35,6 +36,10 @@ def upgrade_db(version):
         # This was extra a loooong time ago.
         query = 'ALTER TABLE fantasy_statistic_week DROP week_type_id'
         cur.execute(query)
+
+        query = 'update site_settings set db_version = "%s"' % ("0.3")
+        cur.execute(query)
+        db.commit()
         
 
 
