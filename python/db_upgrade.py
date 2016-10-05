@@ -16,7 +16,7 @@ def main():
     while version != CURRENT_VERSION:
         print "\nUpgrading database "+version+" to next version.\n"
         version = upgrade_db(version)
-    sys.exit('\nDatabase is now at the current version: ' % (CURRENT_VERSION))
+    sys.exit('\nDatabase is now at the current version: %s' % (CURRENT_VERSION))
 
 
 def upgrade_db(version):
@@ -40,6 +40,7 @@ def upgrade_db(version):
         query = 'update site_settings set db_version = "%s"' % ("0.3")
         cur.execute(query)
         db.commit()
+        return get_db_version()
         
 
 
@@ -62,6 +63,9 @@ def upgrade_db(version):
         # alter table fantasy_statistic_week alter week_type_id set DEFAULT 0;
 
 
+    sys.exit('\nUnknown database version.\n')
+
+
 def get_db_version():
     query = 'show columns from site_settings like "db_version"'
     cur.execute(query)
@@ -73,6 +77,8 @@ def get_db_version():
         cur.execute(query)
         row = cur.fetchone()
         return row['db_version']
+    sys.exit('\nUnknown database version stored in the db.\n')
+
 
 
 main()
