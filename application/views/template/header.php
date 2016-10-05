@@ -91,7 +91,7 @@
         </table>
     </div>
     <div>
-        <textarea id="chat-message" rows="1" placeholder="You put your trash talk in here..."></textarea>
+        <textarea id="chat-message" rows="2" placeholder="You put your trash talk in here..." autofocus></textarea>
     </div>
 </div>
 <?php endif;?>

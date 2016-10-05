@@ -526,8 +526,8 @@ $(document).on('click','.chat-button',function(){
             }
         });
         cb.open();
-        // Set the focus to the textarea.. may change to only do this on large displays.
-        $("#chat-message").focus();
+        // Set the focus to the textarea.. only on non-small displays.
+        if (Foundation.MediaQuery.atLeast("medium")){$("#chat-message").focus();}
         populateChat();
     }
     else {
