@@ -96,6 +96,7 @@ class Chat_model extends MY_Model{
 
         $this->db->select('chat_message.id as message_id, message_text, unix_timestamp(message_date) as date, owner_id')
             ->select('owner.first_name, owner.last_name, owner.first_name as chat_name')
+            ->select('IF(owner_id ='.$this->ownerid.',1,0) as is_me')
             ->from('chat_message')
             ->where('league_id',$this->leagueid);
         if($show_owner == False)

@@ -291,10 +291,13 @@ function sse_off(sse_func)
 
 function sse_stream_start()
 {
+	var sse_func = "";
+	if (window.location.pathname == "/season/scores/live"){sse_func="sse_live_scores";}
 	if (typeof(evtSource) == "undefined")
     {
 		//console.log("Started sse stream.");
-		evtSource = new EventSource(BASE_URL+"sse/stream");
+		//if (typeof(sse_func) == 'undefined'){evtSource = new EventSource(BASE_URL+"sse/stream");}
+		evtSource = new EventSource(BASE_URL+"sse/stream/"+sse_func);
         evtSource.onmessage = function(e)
         {
 			var d = JSON.parse(e.data);
@@ -328,7 +331,7 @@ function sse_stream_start()
 				$.each(d.chat,function(i, msg){
 					// This is for the popup ballons.
 					// Don't show these for mobile view.
-					if (chatOpen() != true && $("#chat-button").is(":visible"))
+					if (chatOpen() != true && $("#chat-button").is(":visible") && msg.is_me == 0)
 					{
 						var text = "<b>"+msg.chat_name+"</b><br><i>"+msg.message_text+"</i>";
 						var chat_jbox = new jBox('Tooltip', {
@@ -344,6 +347,7 @@ function sse_stream_start()
 					// If chatbox exists, append the chats
 					if (typeof(cb) != undefined)
 					{
+
 						bottom = chatScrollBottom();
 						$(".chat-history-ajax").append(msg.html);
 						if(bottom){chatScrollBottom(true);}
@@ -542,8 +546,9 @@ $(document).on('keypress','#chat-message',function(event){
 
         if ($(this).val().trim() == "") {event.preventDefault(); return}
         var url = BASE_URL+"league/chat/post";
-
-        $.post(url,{'message' : $(this).val()}, function(){
+		var message_text = $(this).val();
+		$("#chat-message").val('');
+        $.post(url,{'message' : message_text}, function(){
 			//console.log("Posted");
             $("#chat-message").val('');
 

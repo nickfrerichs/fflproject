@@ -11,8 +11,11 @@ class Sse extends MY_User_Controller{
     }
 
     // The stream of data
-    function stream()
+    function stream($sse_func = "")
     {
+        $sse_live_scores = False;
+        if ($sse_func == 'sse_live_scores')
+            $sse_live_scores = True;
         //$this->session->set_userdata('sse')
         session_write_close();
         //$count = 10;
@@ -36,9 +39,10 @@ class Sse extends MY_User_Controller{
             $settings = $this->sse_model->get_sse_settings();
             $keys = $this->sse_model->keys();
             $data = array();
-
             // If the chat_key is new, output chats that occured since the last one.
-            if (($settings->sse_chat || $this->session->userdata('chat_balloon')) && $last_keys->chat_key != $keys->chat_key)
+            // Need a way to know to send chats if chat_balloon is disabled...ran into complications because two windows could be open.
+            // So for now, I'm always sending chats, they will get ignored if not needed.
+            if ((1==1 || $this->session->userdata('chat_balloon')) && $last_keys->chat_key != $keys->chat_key)
             {
                 $this->load->model('league/chat_model');
                 // If chat is open, include the owners messages too, otherwise we don't want balloons for ourself
@@ -58,7 +62,7 @@ class Sse extends MY_User_Controller{
             }
 
             // If sse_live_scores is set and live_scores_key has changed, output stuff needed for live scores.
-            if (($ls_first && $settings->sse_live_scores) || ($settings->sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
+            if (($ls_first && $sse_live_scores) || ($sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
             {
                 $this->load->model('season/scores_model');
                 $data['live']['scores'] = $this->scores_model->get_fantasy_scores_array();
@@ -96,10 +100,10 @@ class Sse extends MY_User_Controller{
             //$count--;
             $last_keys = $keys;
         }
-        echo "\n";
-        echo $runtime;
-        echo "\n";
-        echo $runtime/$num;
+        // echo "\n";
+        // echo $runtime;
+        // echo "\n";
+        // echo $runtime/$num;
 
     }
 
@@ -115,9 +119,5 @@ class Sse extends MY_User_Controller{
         $this->sse_model->turn_off($function);
     }
 
-    function test()
-    {
-        $settings = $this->sse_model->get_sse_settings();
-    }
 }
 ?>

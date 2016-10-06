@@ -66,7 +66,7 @@
 
 <script>
 adjustDots();
-sse_on("sse_live_scores");
+//sse_on("sse_live_scores");
 
 $(".ls-c-dot-arrow").on('click',function(event){
     var matches = [];
