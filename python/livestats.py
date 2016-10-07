@@ -346,11 +346,11 @@ def update_nfl_statistics(year, week, weektype, update_all):
       # IF live changes were made, delete nfl_live_player lines that were not updated during this run
       # query = 'delete from nfl_live_player where gsis_id not in (%s)' % (updated_games)
       if live_changes_made:
-        query = 'delete from nfl_live_player where update_key != '+unix_timestamp
+        query = 'delete from nfl_live_player where update_key != '+str(unix_timestamp)
         cur.execute(query)
 
         # query = 'delete from nfl_live_game where nfl_schedule_gsis not in (%s)' % (updated_games)
-        query = 'delete from nfl_live_game where update_key != '+unix_timestamp
+        query = 'delete from nfl_live_game where update_key != '+str(unix_timestamp)
         cur.execute(query)
     else: # Nothing is in progress, delete all live data
       query = 'truncate nfl_live_player'
