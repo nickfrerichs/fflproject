@@ -363,13 +363,13 @@ function sse_stream_start()
 
 			if (d.live != undefined)
 			{
-				//console.log(d.live);
 				// Update team scores
 				$.each(d.live.scores.teams,function(id, score){
 					$("#team-"+id).text(score);
 				});
 				// Update player scores
 				$.each(d.live.scores.players,function(id, score){
+					//console.log(".playerscore-"+id);
 					$(".playerscore-"+id).text(score);
 					// check to see if live stat is available
 					// if(d.live.players_live.hasOwnProperty(id))
@@ -425,7 +425,6 @@ function playerEvent(player_id, text)
 function playerTeamStatus(player_id,team,delay)
 {
 	// team.d = details
-
 	setTimeout(function(){
 		var id = "p_"+player_id;
 		// There are details we should show with settimeout
@@ -449,9 +448,10 @@ function playerTeamStatus(player_id,team,delay)
 		}
 		else
 		{
-			$("."+id+" .progress-meter").width(team.y+"%");
-			if(team.y > 50){team.y=Math.abs(team.y-100);}
-			$("."+id+" .progress-meter-text").text(team.y+" yl");
+			var yl = team.y;
+			$("."+id+" .progress-meter").width(yl+"%");
+			if(yl > 50){yl=Math.abs(yl-100);}
+			$("."+id+" .progress-meter-text").text(yl+" yl");
 			// Live game and team/def.off is active
 			if (team.a == 1)
 			{
