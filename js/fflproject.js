@@ -366,10 +366,11 @@ function sse_stream_start()
 				//console.log(d.live);
 				// Update team scores
 				$.each(d.live.scores.teams,function(id, score){
-
+					$("#team-"+id).text(score);
 				});
 				// Update player scores
 				$.each(d.live.scores.players,function(id, score){
+					$(".playerscore-"+id).text(score);
 					// check to see if live stat is available
 					// if(d.live.players_live.hasOwnProperty(id))
 					// {

@@ -16,9 +16,9 @@
                 <thead>
                     <th class="ls-c-playerlight"></th>
                     <th class="text-center"><?=$matchup['home_team']['team']->team_name?></th>
-                    <th class="ls-c-teamscore text-left"><?=$matchup['home_team']['points']?></th>
+                    <th class="ls-c-teamscore text-left" id="team-<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['points']?></th>
                     <th class="text-center ls-c-position">vs</th>
-                    <th class="ls-c-teamscore text-right"><?=$matchup['away_team']['points']?></th>
+                    <th class="ls-c-teamscore text-right" id="team-<?=$matchup['away_team']['team']->id?>"><?=$matchup['away_team']['points']?></th>
                     <th class="text-center"><?=$matchup['away_team']['team']->team_name?></th>
                     <th class="ls-c-playerlight"></th>
                 </thead>
@@ -34,7 +34,7 @@
                                     <td class="ls-c-playerbox ls-c-td-left<?=$hpclass?>" data-id="<?=$hp['player']->player_id?>" data-team="<?=$hp['teamclass']?>">
                                         <?php $this->load->view('user/season/scores/live/compact_player',array('p' => $hp)); ?>
                                     </td>
-                                    <td class="ls-c-playerscore text-center<?=$hpclass?>">
+                                    <td class="ls-c-playerscore text-center<?=$hpclass?> playerscore-<?php if($hp){echo $hp['player']->player_id;}?>">
                                         <?php if($hp){echo $hp['player']->points;}else{echo "-";}?>
                                     </td>
                                 <?php else: ?>
@@ -43,7 +43,7 @@
                                 <td class="text-center ls-c-position"><?=$s['pos_text']?></td>
 
                                 <?php if($ap): ?>
-                                    <td class="ls-c-playerscore text-center<?=$apclass?>">
+                                    <td class="ls-c-playerscore text-center<?=$apclass?> playerscore-<?php if($ap){echo $ap['player']->player_id;}?>">
                                         <?php if($ap){echo $ap['player']->points;}else{echo "-";}?>
                                     </td>
                                     <td class="text-right ls-c-playerbox ls-c-td-right<?=$apclass?>" data-id="<?=$ap['player']->player_id?>" data-team="<?=$ap['teamclass']?>">
