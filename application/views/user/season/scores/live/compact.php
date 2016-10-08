@@ -1,5 +1,6 @@
 <?php //print_r($nfl_opp);?>
 <?php //print_r($matchups);?>
+<?php $this->load->view('template/modals/stat_popup.php');?>
 <div class="row align-center">
     <div class="columns small-12 medium-12 large-6" style="padding:0">
         <div id="ls-c-matchup-dots" class="row">
@@ -15,11 +16,11 @@
             <table id="matchup-<?=$id?>" data-id="<?=$id?>" class="ls-c-matchup-table<?php if($id != 0){echo ' hide"';}?>" >
                 <thead>
                     <th class="ls-c-playerlight"></th>
-                    <th class="text-center"><?=$matchup['home_team']['team']->team_name?></th>
+                    <th class="text-center"><a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['team']->team_name?></a></th>
                     <th class="ls-c-teamscore text-left" id="team-<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['points']?></th>
                     <th class="text-center ls-c-position">vs</th>
                     <th class="ls-c-teamscore text-right" id="team-<?=$matchup['away_team']['team']->id?>"><?=$matchup['away_team']['points']?></th>
-                    <th class="text-center"><?=$matchup['away_team']['team']->team_name?></th>
+                    <th class="text-center"><a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['away_team']['team']->id?>"><?=$matchup['away_team']['team']->team_name?></a></th>
                     <th class="ls-c-playerlight"></th>
                 </thead>
                 <tbody>
@@ -67,6 +68,10 @@
 <script>
 adjustDots();
 //sse_on("sse_live_scores");
+
+$(".ls-c-playerbox").on('click',function(){
+    showStatsPopup($(this).data('id'),'player');
+});
 
 $(".ls-c-dot-arrow").on('click',function(event){
     var matches = [];
