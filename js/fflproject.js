@@ -429,9 +429,10 @@ function playerTeamStatus(player_id,team,delay,team_name)
 
 		var id = "p_"+player_id;
 		var last_play = $("."+id).data('team_playid');
-		if (last_play == team.p){return;}
-		$("."+id).data('team_playid',team.p);
 
+		if (last_play == team.p && team.p != undefined){return;}
+		$("."+id).data('team_playid',team.p);
+		//console.log(team);
 		// There are details we should show with settimeout
 
 		if (delay == 0 && team.d != undefined)
@@ -537,7 +538,7 @@ $(document).on('click','.chat-button',function(){
         });
         cb.open();
         // Set the focus to the textarea.. only on non-small displays.
-        if (Foundation.MediaQuery.atLeast("medium")){$("#chat-message").focus();}
+        $("#chat-message").focus();
         populateChat();
     }
     else {
