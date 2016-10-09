@@ -396,7 +396,7 @@ function sse_stream_start()
 						playerEvent(player_id, d.live.players_live[player_id].text);
 						delay = 10000;
 					}
-					playerTeamStatus(player_id,d.live.nfl_games[team],delay);
+					playerTeamStatus(player_id,d.live.nfl_games[team],delay,team);
 
 
 				});
@@ -422,11 +422,16 @@ function playerEvent(player_id, text)
 }
 
 // Classes a 'playerbox' can be: ls-playeractive, ls-gameinactive (default to active game inactive player)
-function playerTeamStatus(player_id,team,delay)
+function playerTeamStatus(player_id,team,delay,team_name)
 {
 	// team.d = details
 	setTimeout(function(){
+
 		var id = "p_"+player_id;
+		var last_play = $("."+id).data('team_playid');
+		if (last_play == team.p){return;}
+		$("."+id).data('team_playid',team.p);
+
 		// There are details we should show with settimeout
 
 		if (delay == 0 && team.d != undefined)
