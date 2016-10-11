@@ -65,9 +65,10 @@ class Sse extends MY_User_Controller{
             if (($ls_first && $sse_live_scores) || ($sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
             {
                 $this->load->model('season/scores_model');
-                $data['live']['scores'] = $this->scores_model->get_fantasy_scores_array();
                 $data['live']['players_live'] = $this->scores_model->get_player_live_array();
                 $data['live']['nfl_games'] = $this->scores_model->get_nfl_game_live_array();
+                $data['live']['scores'] = $this->scores_model->get_fantasy_scores_array();
+                $data['live']['key'] = $keys->live_scores_key;
                 $ls_first = False;
             }
 

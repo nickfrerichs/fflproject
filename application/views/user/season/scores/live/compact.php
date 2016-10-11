@@ -61,7 +61,7 @@
                 </tbody>
             </table>
         <?php endforeach;?>
-
+        <div id="lsdata" class="hide"></div>
     </div>
 </div>
 

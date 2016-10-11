@@ -363,10 +363,15 @@ function sse_stream_start()
 
 			if (d.live != undefined)
 			{
+				var last_key = $("#lsdata").data('last_key');
+				$("#lsdata").data('last_key',d.live.key);
+				console.log(d);
 				// Update team scores
 				$.each(d.live.scores.teams,function(id, score){
 					$("#team-"+id).text(score);
 				});
+				console.log(d.live.scores.players[4461]);
+
 				// Update player scores
 				$.each(d.live.scores.players,function(id, score){
 					//console.log(".playerscore-"+id);
@@ -382,23 +387,19 @@ function sse_stream_start()
 
 				// Go through each player in the dom because we need to set the live player text and team text
 				$.each($('.ls-c-playerbox'),function(){
-
 					var player_id = $(this).data('id');
 					// If player box is empty, don't do anything.
 					if (player_id == undefined){return;}
 					var team = $(this).data('team');
 					var delay = 0;
 					// Is this player in live player?
-					if (d.live.players_live.hasOwnProperty(player_id))
+					if (d.live.players_live.hasOwnProperty(player_id) && last_key != undefined)
 					{
-
 						// Player has a live upate, show that text and delay showing team status
 						playerEvent(player_id, d.live.players_live[player_id].text);
 						delay = 10000;
 					}
-					playerTeamStatus(player_id,d.live.nfl_games[team],delay,team);
-
-
+					playerTeamStatus(player_id,d.live.nfl_games[team],delay,team,last_key);
 				});
 			}
 
@@ -422,7 +423,7 @@ function playerEvent(player_id, text)
 }
 
 // Classes a 'playerbox' can be: ls-playeractive, ls-gameinactive (default to active game inactive player)
-function playerTeamStatus(player_id,team,delay,team_name)
+function playerTeamStatus(player_id,team,delay,team_name,last_key)
 {
 	// team.d = details
 	setTimeout(function(){
@@ -435,7 +436,7 @@ function playerTeamStatus(player_id,team,delay,team_name)
 		//console.log(team);
 		// There are details we should show with settimeout
 
-		if (delay == 0 && team.d != undefined)
+		if (delay == 0 && team.d != undefined && last_key != undefined)
 		{
 			$(".p_"+player_id+" .ls-c-gamestatus").text(team.d);
 			setTimeout(function(){

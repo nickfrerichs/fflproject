@@ -64,7 +64,7 @@ def update_games(year, week, weektype, update_all = False):
 
 
   print "Udpating NFL Statistics (%s)" % (sql_now)
-  livegamecount = update_nfl_statistics(year, week, weektype, update_all)
+  (live_changes_made, livegamecount) = update_nfl_statistics(year, week, weektype, update_all)
 
   if livegamecount == 0:
     print "No games currently in progress."
@@ -77,8 +77,12 @@ def update_games(year, week, weektype, update_all = False):
 
   print("--- %s seconds ---\n" % str(time.time()-start_time))
 
-  # This is to finalize scores, but I think there might be a better way
-  # update_schedule(year, week, weektype)
+  if live_changes_made:
+      query = 'update league_settings set live_scores_key = %s' % (str(unix_timestamp))
+      cur.execute(query)
+      db.commit()
+  else:
+      print "\n -No changes to live game data-\n"
 
   print("--- %s seconds ---\n" % str(time.time()-start_time))
 
@@ -152,6 +156,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
             update_live_players(lastplay, game.gamekey)
 
         if game.playing():
+
             query = 'select id, play_id from nfl_live_game where nfl_schedule_gsis = %s' % (livestatus['gamekey'])
             cur.execute(query)
             ls = livestatus
@@ -180,7 +185,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
 
       # This updates nfl_statistic table, by default, just for live games update_all forces all games to be updated
       if game != None and (game.playing() or update_all):
-        print str(game)+" - Q: "+str(game.time.qtr)
+        print str(game)+" - Q: "+str(game.time.qtr)+", "+game.time.clock
         livegamecount += 1
         # ----------------------------------------------
         # One Game - Create playerdict of stats
@@ -361,11 +366,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
       cur.execute(query)
     db.commit()
 
-    if live_changes_made:
-        query = 'update league_settings set live_scores_key = %s' % (str(unix_timestamp))
-        cur.execute(query)
-        db.commit()
-    return livegamecount
+    return (live_changes_made, livegamecount)
     # Done looking for week_type spot through here
 
 def update_fantasy_statistics(year, week, weektype):
