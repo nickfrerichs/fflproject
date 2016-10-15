@@ -200,7 +200,13 @@ def update_nfl_statistics(year, week, weektype, update_all):
         # --------------------------
         for player in game.players:
           add_other_player_stats(playerdict, player)
+        #   if game.away == "BUF" and player.name == "N.Robey-Coleman":
+        #       for stat in player.stats:
+        #           print stat
+        #           print player.stats[stat]
           for stat in player.stats:
+            #print game.home
+
             if playerdict.get(player.playerid) is None:
               playerdict[player.playerid] = {}
             playerdict[player.playerid][stat] = math.ceil(player.stats[stat])
@@ -266,6 +272,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
               if stat == "defense_int":
                 f.team_defint(event, game, playerdict)
               if stat == "defense_tds":
+                f.player_def_td(event, playerdict)
                 f.team_def_td(event, game, playerdict)
               if stat == "defense_safe":
                 f.team_def_saf(event, game, playerdict)
@@ -303,6 +310,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
 
         for player in playerdict:
           for stat in playerdict[player]:
+            #print stat
             query = ('select id, value from nfl_statistic where player_nfl_id = "%s" and nfl_scoring_cat_id = (select id from nfl_scoring_cat where text_id = "%s") '+
               'and nfl_schedule_gsis = %s') % (player, stat, str(game.gamekey))
             cur.execute(query)
@@ -421,7 +429,7 @@ def update_fantasy_statistics(year, week, weektype):
 
   for l in leagues:
       leagueid = l['id']
-      scoring_def = get_scoring_def_dict(leagueid)
+      scoring_def = get_scoring_def_dict(leagueid, year)
 
       # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']].append(row)
 
@@ -447,8 +455,6 @@ def update_fantasy_statistics(year, week, weektype):
               for one in s:
                   if row['value'] >= one['range_start'] and row['value'] <= one['range_end']:
                       points = int(one['points'])
-
-
           # query = (('select id from fantasy_statistic where nfl_statistic_id = %s') % (row['id']))
           query = (('select id, points from fantasy_statistic where week = %s and nfl_week_type_id = (select id from nfl_week_type where text_id = "%s") and year = %s and player_id = %s and league_id = %s and nfl_scoring_cat_id = %s')
             % (str(week),weektype,str(year),str(row['player_id']),leagueid,row['nfl_scoring_cat_id']))
@@ -495,9 +501,12 @@ def get_yard_line(yard_line, team = ""):
     else:
       return 50 - yd
 
-def get_scoring_def_dict(leagueid):
+def get_scoring_def_dict(leagueid, year):
+
+  def_year = get_scoring_def_year(leagueid, year)
+
   query = (('select scoring_def.nfl_scoring_cat_id, per, points, round, is_range, range_start, range_end, nfl_position_id from scoring_def '+
-  'join nfl_scoring_cat on nfl_scoring_cat.id = scoring_def.nfl_scoring_cat_id where league_id = %s') % str(leagueid))
+  'join nfl_scoring_cat on nfl_scoring_cat.id = scoring_def.nfl_scoring_cat_id where league_id = %s and year = %s') % (str(leagueid), str(year)))
 
   cur.execute(query)
 
@@ -600,6 +609,11 @@ def update_live_players(play, gamekey):
 			#print key
 			#print value
     db.commit()
+
+def get_scoring_def_year(league_id, year):
+    query = "select max(year) as y from scoring_def where league_id = %s and year <= %s" %(str(league_id), str(year))
+    cur.execute(query)
+    return cur.fetchone()['y']
 
 def get_pos_dict():
   cur.execute('select id, text_id from nfl_position')

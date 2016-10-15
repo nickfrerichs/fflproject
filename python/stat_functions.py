@@ -164,7 +164,15 @@ def team_st_td(event, game, playerdict):
       playerdict[away+"_D"]["team_st_td"] = 0
     playerdict[away+"_D"]["team_st_td"] += 1
 
-#Done
+
+def player_def_td(event, playerdict):
+    player_id = event["playerid"]
+    if playerdict.get(player_id) is None:
+        playerdict[player_id] = {}
+    if playerdict[player_id].get("defense_td") == None:
+        playerdict[player_id]["defense_td"] = 0
+    playerdict[player_id]["defense_td"] += 1
+
 def player_field_goal(event, playerdict):
 
   player_id = event["playerid"]
@@ -261,5 +269,3 @@ def AddPlayerTD(stat, event, playerdict):
     playerdict[player_id][stat_name] = 1
   else: # Otherwise check if it's an integer and add it.
     playerdict[player_id][stat_name] = playerdict[player_id][stat_name] + 1
-
-
