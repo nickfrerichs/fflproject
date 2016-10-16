@@ -439,7 +439,6 @@ def update_fantasy_statistics(year, week, weektype):
           s = scoring_def[row['pos_id']][row['nfl_scoring_cat_id']]
         elif scoring_def.get(0) is not None and scoring_def[0].get(row['nfl_scoring_cat_id']) is not None:
           s = scoring_def[0][row['nfl_scoring_cat_id']]
-
         # A scoring def for this category exists if not None
         if s is not None:
           # Calculate points, this is done different depending if this scoring def is a range or not
@@ -466,6 +465,7 @@ def update_fantasy_statistics(year, week, weektype):
           else:
             query = 'insert into fantasy_statistic (player_id, nfl_scoring_cat_id, points, week, nfl_week_type_id, year, league_id, nfl_statistic_id) values (%s,%s,%s,%s,(select id from nfl_week_type where text_id = "%s"),%s,%s,%s)' % (row['player_id'],row['nfl_scoring_cat_id'],str(points),str(week),weektype,str(year),leagueid,row['id'])
           cur.execute(query)
+
       db.commit()
 
   # Delete any stats that were no longer found in this update, they must have been retracted ?
@@ -506,7 +506,7 @@ def get_scoring_def_dict(leagueid, year):
   def_year = get_scoring_def_year(leagueid, year)
 
   query = (('select scoring_def.nfl_scoring_cat_id, per, points, round, is_range, range_start, range_end, nfl_position_id from scoring_def '+
-  'join nfl_scoring_cat on nfl_scoring_cat.id = scoring_def.nfl_scoring_cat_id where league_id = %s and year = %s') % (str(leagueid), str(year)))
+  'join nfl_scoring_cat on nfl_scoring_cat.id = scoring_def.nfl_scoring_cat_id where league_id = %s and year = %s') % (str(leagueid), str(def_year)))
 
   cur.execute(query)
 

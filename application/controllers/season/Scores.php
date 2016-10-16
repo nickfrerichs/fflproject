@@ -50,6 +50,7 @@ class Scores extends MY_User_Controller{
     {
         $data = array();
         $data['matchups'] = $this->scores_model->get_fantasy_matchups(null, $this->current_week);
+        $data['nfl_matchups'] = $this->scores_model->get_nfl_matchups_data();
         $this->user_view('user/season/scores/live/standard',$data);
     }
 

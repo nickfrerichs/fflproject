@@ -449,8 +449,11 @@ class Scores_model extends MY_Model{
                 ->order_by('game','asc')->get()->result();
     }
 
-    function get_nfl_matchups_data($week, $year, $week_type = "REG")
+    function get_nfl_matchups_data($week=0, $year=0, $week_type = 0)
     {
+        if ($week == 0){$week = $this->current_week;}
+        if ($year == 0){$year = $this->current_year;}
+        if ($week_type = 0){$week_type = $this->current_weektype;}
         return $this->db->select('gsis, h, v, t, eid, q, hs, vs')->from('nfl_schedule')->where('week',$week)->where('year',$year)
                 ->where('gt',$week_type)->get()->result();
     }
