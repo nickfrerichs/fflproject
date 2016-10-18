@@ -214,6 +214,10 @@ class Scores_model extends MY_Model{
             $team_class_array[$m->v.'_o']['s'] = $match;
             $team_class_array[$m->h.'_d']['s'] = $match;
             $team_class_array[$m->v.'_d']['s'] = $match;
+            if($m->vs != -1)
+                $team_class_array[$m->v.'_o']['pts'] = $m->vs;
+            if($m->hs != -1)
+                $team_class_array[$m->h.'_o']['pts'] = $m->hs;
         }
 
         $livegames = $this->db->select('nfl_schedule_gsis, down, to_go, quarter, off.club_id as off_club_id, def.club_id as def_club_id')
@@ -228,15 +232,11 @@ class Scores_model extends MY_Model{
 
         // Do some parsing to come up with a status string, then assign it to all combinations of fantasy player types and if they
         // are on or off the field.
+        $suffix = array(1 => 'st', 2=>'nd', 3=>'rd', 4=>'th', 5=>'th', 'Halftime' => '', '0' => '');
+        $downs = array(1=>'1st',2=>'2nd',3=>'3rd',4=>'4th');
+        $quarters = array(1=>'1st',2=>'2nd',3=>'3rd',4=>'4th','Halftime'=>'Halftime', 5=>'OT');
         foreach($livegames as $game)
         {
-            // Down suffix
-            if ($game->down == 1){$suffix = 'st';}
-            elseif ($game->down == 2){$suffix = 'nd';}
-            elseif ($game->down == 3){$suffix = 'rd';}
-            elseif ($game->down == 4){$suffix = 'th';}
-            else {$suffix = '';}
-
             // Yard line string
             if ($game->yard_line == 0){$yard_line = '50 ydln';}
             if ($game->yard_line > 0){$yard_line = $game->def_club_id.' '.(50-$game->yard_line);}
@@ -248,6 +248,8 @@ class Scores_model extends MY_Model{
             // Quarter string
             if ($game->quarter == 'Halftime')
                 $quarter = 'Halftime';
+            elseif($game->quarter == '5' || $game->quarter == '6')
+                $quarter = "OT";
             else
                 $quarter = $game->quarter.'Q';
 
@@ -262,7 +264,7 @@ class Scores_model extends MY_Model{
             }
             else
             {
-                $on_status = $gametime.' '.$game->down.$suffix.' & '.$game->to_go.' '.$yard_line;
+                $on_status = $gametime.' '.$game->down.$suffix[$game->down].' & '.$game->to_go.' '.$yard_line;
                 $o_off_status = $gametime.' '.$game->def_club_id.' on defense.';
                 $d_off_status = $gametime.' '.$game->off_club_id.' on offense.';
             }
@@ -301,6 +303,16 @@ class Scores_model extends MY_Model{
             if ($game->details == "*** play under review ***")
                 $on_status.=' (under review)';
 
+            // This is used for NFL games on standard view
+            $time = ltrim(substr($game->time,0,-3),'00');
+            if ($game->down == 0)
+                $down = '';
+            else
+                $down = $game->down.$suffix[$game->down].' & '.$game->to_go;
+            $gamedata = array('d' => $down,
+                              'q' => $game->quarter,
+                              't' => $time.' '.$quarters[$game->quarter],
+                              'y' => $yard_line);
             //$ls_key = $this->db->select('live_scores_key')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->live_scores_key;
 
             // Here's where we use the data collected and parsed and assign the status strings.
@@ -317,6 +329,7 @@ class Scores_model extends MY_Model{
             $team_class_array[$game->def_club_id.'_o']['p'] = $game->play_id;
             $team_class_array[$game->def_club_id.'_o']['y'] = $game->yard_line+50;
             $team_class_array[$game->def_club_id.'_o']['a'] = 0;
+            $team_class_array[$game->def_club_id.'_o']['data'] = $gamedata;
 
             // If fantasy offenseive player's team is on offense - on the field
             $team_class_array[$game->off_club_id.'_o']['s'] = $on_status;
@@ -325,6 +338,7 @@ class Scores_model extends MY_Model{
             $team_class_array[$game->off_club_id.'_o']['p'] = $game->play_id;
             $team_class_array[$game->off_club_id.'_o']['y'] = $game->yard_line+50;
             $team_class_array[$game->off_club_id.'_o']['a'] = 1;
+            $team_class_array[$game->off_club_id.'_o']['data'] = $gamedata;
 
             // If fantasy defensive player's team is on offense - off the field
             $team_class_array[$game->off_club_id.'_d']['s'] = $d_off_status;
@@ -453,9 +467,30 @@ class Scores_model extends MY_Model{
     {
         if ($week == 0){$week = $this->current_week;}
         if ($year == 0){$year = $this->current_year;}
-        if ($week_type = 0){$week_type = $this->current_weektype;}
+        if ($week_type = 0){$week_type = $this->week_type;}
         return $this->db->select('gsis, h, v, t, eid, q, hs, vs')->from('nfl_schedule')->where('week',$week)->where('year',$year)
                 ->where('gt',$week_type)->get()->result();
+    }
+
+    function get_live_nfl_matchups_data()
+    {
+        $data = array();
+        $matchups = $this->db->select('gsis, h, v, t, eid, q, hs, vs')->from('nfl_schedule')->where('week',$this->current_week)->where('year',$this->current_year)
+                ->where('gt',$this->week_type)->order_by('q','asc')->get()->result();
+
+        $final = array();
+        $pre = array();
+        foreach($matchups as $m)
+        {
+            if($m->q == "F")
+                $final[] = $m;
+            elseif($m->q == "P")
+                $pre[] = $m;
+            else
+                $data[] = $m;
+        }
+        $data = array_merge($data,$pre,$final);
+        return $data;
     }
 
     function get_live_game_data($week, $year, $week_type)
@@ -497,8 +532,6 @@ class Scores_model extends MY_Model{
 
         foreach ($matchup as $m)
         {
-
-
             $team_array[$m->h] = $m->v;
             $team_array[$m->v] = '@'.$m->h;
         }

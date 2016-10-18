@@ -92,10 +92,18 @@ class Quickstats extends MY_User_Controller{
         //Begin view
         ?>
         <div>
-            <h4>
-            <a href="<?=site_url('league/players/id/'.$player->player_id)?>" target="_blank"><?=$player->first_name.' '.$player->last_name?></a>
-            </h4>
-            <?php //print_r($stats); ?>
+            <div class="row">
+                <div class="columns small-12">
+                    <h4>
+                    <a href="<?=site_url('league/players/id/'.$player->player_id)?>" target="_blank"><?=$player->first_name.' '.$player->last_name?></a>
+                    </h4>
+                    <?php if($player->photo != ""): ?>
+                        <div>
+                            <img class="stat-popup-img" src="<?=site_url('images/'.$player->photo)?>">
+                        </div>
+                    <?php endif;?>
+                </div>
+            </div>
             <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -109,7 +117,7 @@ class Quickstats extends MY_User_Controller{
                                     <?=$s['cat_text']?>
                                 <?php endif;?>
                             </th>
-                        <?php endforeach;?>`
+                        <?php endforeach;?>
                     <?php endif;?>
                 </thead>
                 <tbody>

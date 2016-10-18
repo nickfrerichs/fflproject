@@ -2,7 +2,8 @@
 /* MAIN SITE STYLING */
 /* --------------------- */
 
-body{background-color:#FAFAFA; font-size:.9rem}
+/* body{background-color:#FAFAFA; font-size:.9rem} */
+body{background-color:#FAFAFA; font-size:.9rem} 
 
 /* wraps around the header, footer, and view */
 #body-wrap{
@@ -28,7 +29,7 @@ table{font-size:1em;}
 /* Foundation overrides */
 /* --------------------- */
 
-
+table.table-nostripe tr:nth-of-type(even) {background-color: transparent !important;}
 
 .button{margin-bottom:1px; margin-top:1px;}
 .table-condensed td, .table-condensed th{
@@ -47,7 +48,8 @@ div.switch{margin:0px;}
 td input{margin-bottom:0px !important;}
 td select{margin-bottom:0px !important;}
 
-.callout{border-color: #E1E1E1; border-radius:5px}
+/* .callout{border-color: #E1E1E1; border-radius:5px} */
+.callout{border-color: #C1C1C1; border-radius:5px}
 
 /* #eaeaea; */
 
@@ -65,7 +67,7 @@ td select{margin-bottom:0px !important;}
 #whos-online{color: #444; font-style:italic;}
 .wo-admin{color: #2199e8;}
 
-.live-scores{
+.livescores-link{
 	color: #2199e8;
 	font-size:.7rem;
 }
@@ -178,17 +180,28 @@ td select{margin-bottom:0px !important;}
 }
 
 /* ----------------------- */
+/* Site wide things
+/* ----------------------- */
+#stat-popup-html{
+	overflow-x: auto;
+}
+.stat-popup-img{
+	padding-left:10px;
+	width:100px;
+}
+
+/* ----------------------- */
 /* Live score stuff
 /* ----------------------- */
 
 /* COMPACT VIEW */
 
 /* Make the matchup table look better */
-table.ls-c-matchup-table tr:nth-of-type(even) {background-color: transparent !important;}
-table.ls-c-matchup-table tr{border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;}
-table.ls-c-matchup-table tr td.ls-c-td-left{padding-left: 2px;}
-table.ls-c-matchup-table tr td.ls-c-td-right{padding-right: 2px;}
-table.ls-c-matchup-table{table-layout: fixed;}
+table.ls-matchup-table tr:nth-of-type(even) {background-color: transparent !important;}
+table.ls-matchup-table tr{border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;}
+table.ls-matchup-table tr td.ls-c-td-left{padding-left: 2px;}
+table.ls-matchup-table tr td.ls-c-td-right{padding-right: 2px;}
+table.ls-matchup-table{table-layout: fixed;}
 
 #ls-c-matchup-dots{
 	font-size: 1.5em;
@@ -218,6 +231,7 @@ table.ls-c-matchup-table{table-layout: fixed;}
 	padding-top:1px;
 	padding-bottom:1px;
 	height: 44px;
+	cursor: pointer;
 }
 
 /* td that lights up to highlight a players status */
@@ -262,6 +276,51 @@ table.ls-c-matchup-table{table-layout: fixed;}
 	font-size: .8em;
 }
 
+.ls-s-nflgameactive{
+	background-color: #fffce5;
+	height: 50px;
+	/*vertical-align: top;*/
+}
+
+.ls-s-nflgameinactive{
+	background-color: transparent;
+	color: #AAA;
+}
+
+.ls-s-nflgame-lastplay{
+
+}
+
+.ls-s-nflgameactive .ls-s-nflgame-lastplay{
+	overflow-y: scroll;
+	font-size:.8em;
+	height: 49px;
+}
+
+.ls-s-nflgameinactive .ls-s-nflgame-lastplay{
+
+}
+
+.ls-s-nflgame{
+	font-size:.85em;
+}
+
+.ls-s-drivebar{
+	margin-bottom:0px;
+}
+
+.ls-s-drivebar-text{
+}
+
+.ls-s-nflgame-offense{
+	font-weight:bold;
+}
+
+.ls-s-row>.columns{
+	padding-left:10px;
+	padding-right:10px;
+}
+
 .ls-playeractive{
 	background-color: #fffce5;
 }
@@ -281,67 +340,26 @@ table.ls-c-matchup-table{table-layout: fixed;}
 	color: #AAA;
 }
 
-/* ----------------------- */
-/* Live score stuff OLD
-/* ----------------------- */
-
-.livescore-small-font{
-	font-size:.8em;
+.ls-c-playerphoto-box{
+	width: 60px;
+	text-align: center;
+	vertical-align: middle;
+	padding: 4px;
 }
 
-
-.livescore-status{
-    color:#337ab7;
-
+.ls-c-playerphoto-img{
+	max-width: 50px;
+	vertical-align: center;
 }
 
-.livescore-scheduled{
-    font-style: italic;
-
+.ls-s-matchup-score{
+	cursor:pointer;
 }
 
-.livescore-final{
-    color:#BBB;
-    font-style: italic;
-
-}
-td.player-score{
-    font-size:1.4em;
+.ls-s-matchup-selected{
+	border-color: #2199e8 !important;
 }
 
-.player-score-live{
-    font-weight: bold;
-    color:#337ab7;
-}
-
-.livescore-sleep{
-
-    color:#337ab7;
-    font-style: italic;
-}
-
-.livescore-detail
-{
-    font-size: 10px;
-    color:#337ab7;
-}
-
-.livescore-active
-{
-    color:#337ab7;
-}
-
-.livescore-player-update{
-    background-color:#EEEE8D!important;
-}
-
-tr.livescore-hide-player{
-    display:none;
-}
-
-@media only screen and (max-width: 480px)
-{
-    .livescore-small-screen-status{
-        font-size:.8em;
-    }
+.ls-s-nflgame-clock{
+	font-size:.9em;
 }

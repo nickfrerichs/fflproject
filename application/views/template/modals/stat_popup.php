@@ -1,4 +1,4 @@
-<div id="stat-popup-modal" class="reveal" data-reveal data-overlay="true" data-multiple-opened="true">
+<div id="stat-popup-modal" class="reveal large" data-reveal data-overlay="true" data-multiple-opened="true">
     <div id="stat-popup-html">
     </div>
     <button class="close-button" data-close aria-label="Close reveal" type="button">

@@ -278,7 +278,7 @@ $(document).on('click',"._message-close",function(){
 function sse_on(sse_func)
 {
 	var url = BASE_URL+"sse/turn_on/"+sse_func
-	$.post(url, {}, function(){});
+
 	//console.log(sse_func+" on");
 }
 
@@ -300,8 +300,9 @@ function sse_stream_start()
 		evtSource = new EventSource(BASE_URL+"sse/stream/"+sse_func);
         evtSource.onmessage = function(e)
         {
-			var d = JSON.parse(e.data);
 
+			var d = JSON.parse(e.data);
+			console.log(d);
 			// Show/Hide live score url
 			if (d.ls != undefined)
 			{
@@ -365,28 +366,19 @@ function sse_stream_start()
 			{
 				var last_key = $("#lsdata").data('last_key');
 				$("#lsdata").data('last_key',d.live.key);
-				console.log(d);
 				// Update team scores
 				$.each(d.live.scores.teams,function(id, score){
-					$("#team-"+id).text(score);
+					$(".teamscore-"+id).text(score);
 				});
-				console.log(d.live.scores.players[4461]);
 
 				// Update player scores
 				$.each(d.live.scores.players,function(id, score){
-					//console.log(".playerscore-"+id);
 					$(".playerscore-"+id).text(score);
-					// check to see if live stat is available
-					// if(d.live.players_live.hasOwnProperty(id))
-					// {
-					// 	$('.p_'+id+" .ls-c-gamestatus").text(d.live.players_live[id].text);
-					// 	$('.p_'+id+" .ls-c-gamestatus").data('plive','1');
-					// 	playerEvent(id);
-					// }
 				});
 
 				// Go through each player in the dom because we need to set the live player text and team text
 				$.each($('.ls-c-playerbox'),function(){
+
 					var player_id = $(this).data('id');
 					// If player box is empty, don't do anything.
 					if (player_id == undefined){return;}
@@ -400,6 +392,27 @@ function sse_stream_start()
 						delay = 10000;
 					}
 					playerTeamStatus(player_id,d.live.nfl_games[team],delay,team,last_key);
+				});
+
+				// Update NFL game status on standard view
+				$.each(d.live.nfl_games, function(id, game)
+				{
+					if (game.pts != undefined)
+					{
+						$("."+id+"-score").text(game.pts);
+						if (game.a != undefined)
+						{
+							nflGameActive(id, game);
+						}
+						else
+						{
+							nflGameInactive(id, game);
+						}
+					}
+					else{
+						nflGameInactive(id, game);
+					}
+
 				});
 			}
 
@@ -416,10 +429,46 @@ function sse_stream_start()
 }
 
 // Stuff used for live scoring
+function nflGameInactive(id, game)
+{
+	var gamerowid = "."+id+"-gamerow";
+	$(gamerowid).addClass("ls-s-nflgameinactive");
+	$(gamerowid).removeClass("ls-s-nflgameactive");
+	$(gamerowid+" .ls-s-nflgame-down").text('');
+	$(gamerowid+" .ls-s-nflgame-clock").text('');
+	$(gamerowid+" .ls-s-nflgame-lastplay").text(game.s);
+	$(gamerowid+" .ls-s-drivebar").addClass('hide');
+}
+
+function nflGameActive(id, game)
+{
+	var gamerowid = "."+id+"-gamerow";
+	$(gamerowid).addClass("ls-s-nflgameactive");
+	$(gamerowid).removeClass("ls-s-nflgameinactive");
+	$(gamerowid+" .ls-s-nflgame-down").text(game.data.d);
+	$(gamerowid+" .ls-s-nflgame-clock").text(game.data.t);
+	$(gamerowid+" .ls-s-nflgame-lastplay").text(game.d);
+
+	$(gamerowid+" .ls-s-drivebar").removeClass('hide');
+	var yl = game.y;
+	$(gamerowid+" .progress-meter").width(yl+"%");
+	if(yl > 50){yl=Math.abs(yl-100);}
+	$(gamerowid+" .progress-meter-text").text(yl+" yl");
+
+	if (game.a == 1)
+	{$(gamerowid+" ."+id+"-clubid").addClass('ls-s-nflgame-offense');}
+	else {$(gamerowid+" ."+id+"-clubid").removeClass('ls-s-nflgame-offense');}
+
+
+
+}
+
+
 function playerEvent(player_id, text)
 {
 	playerBoxFromTeam('p_'+player_id).addClass("ls-playerevent");
 	$(".p_"+player_id+" .ls-c-gamestatus").text(text);
+	$(".p_"+player_id+" .ls-s-gamestatus").text(text);
 }
 
 // Classes a 'playerbox' can be: ls-playeractive, ls-gameinactive (default to active game inactive player)
@@ -435,7 +484,6 @@ function playerTeamStatus(player_id,team,delay,team_name,last_key)
 		$("."+id).data('team_playid',team.p);
 		//console.log(team);
 		// There are details we should show with settimeout
-
 		if (delay == 0 && team.d != undefined && last_key != undefined)
 		{
 			$(".p_"+player_id+" .ls-c-gamestatus").text(team.d);
@@ -446,7 +494,7 @@ function playerTeamStatus(player_id,team,delay,team_name,last_key)
 		else {
 			$(".p_"+player_id+" .ls-c-gamestatus").text(team.s);
 		}
-
+		$(".p_"+player_id+" .ls-s-gamestatus").text(team.s);
 		$("."+id).removeClass("ls-playerevent");
 		// This game is not live
 		if (team.a == undefined)

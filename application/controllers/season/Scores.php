@@ -38,27 +38,32 @@ class Scores extends MY_User_Controller{
         $this->user_view('user/season/scores',$data);
     }
 
-    function live($teamid = 0)
+    function live($view = "")
     {
-            //$this->live_standard();
-            //return;
+        if ($view == 'standard')
+            $this->live_standard();
+        elseif ($view == 'compact')
             $this->compact();
-            return;
+        else
+        {
+            // Send them to a view that picks one
+            $this->load->view('user/season/scores/redirect');
+        }
     }
 
     function live_standard()
     {
         $data = array();
         $data['matchups'] = $this->scores_model->get_fantasy_matchups(null, $this->current_week);
-        $data['nfl_matchups'] = $this->scores_model->get_nfl_matchups_data();
+        $data['nfl_matchups'] = $this->scores_model->get_live_nfl_matchups_data();
         $this->user_view('user/season/scores/live/standard',$data);
     }
 
     function compact()
     {
-            $data = array();
-            $data['matchups'] = $this->scores_model->get_fantasy_matchups(null, $this->current_week);
-            $this->user_view('user/season/scores/live/compact',$data);
+        $data = array();
+        $data['matchups'] = $this->scores_model->get_fantasy_matchups(null, $this->current_week);
+        $this->user_view('user/season/scores/live/compact',$data);
     }
 
     function live_old($teamid = 0)

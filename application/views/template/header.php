@@ -5,7 +5,7 @@
             <?php if($this->session->userdata('league_id')): ?>
                 <?php if($this->session->userdata('live_scores')){$live="";$title="hide";}else{$live="hide";$title="";}?>
                 <span class="<?=$live?>">
-                    <a class="live-scores" href="<?=site_url('season/scores/live')?>">Games in progress</a>
+                    <a class="livescores-link" href="<?=site_url('season/scores/live')?>">Games in progress</a>
                 </span>
                 <span class="<?=$title?>">
                     <?=$this->session->userdata('site_name')?>
@@ -72,7 +72,7 @@
             <div class="columns medium-3 hide-for-small-only">
                 <?php if($this->session->userdata('league_id')): ?>
                     <?php if($this->session->userdata('live_scores')){$live="";}else{$live="hide";}?>
-                            <a class="live-scores <?=$live?>" href="<?=site_url('season/scores/live')?>">Games in progress</a>
+                            <a class="livescores-link <?=$live?>" href="<?=site_url('season/scores/live')?>">Games in progress</a>
                 <?php endif;?>
             </div>
             <div id="whos-online" class="columns text-right small-12 medium-9">

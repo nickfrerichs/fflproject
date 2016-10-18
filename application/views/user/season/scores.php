@@ -58,8 +58,8 @@
     <div class="row">
         <?php foreach($matchups as $m): ?>
             <div class="columns medium-6 small-12">
-                <table>
-                    <thead style="font-size:1.1em" >
+                <table class="table-condensed">
+                    <thead>
                         <th height="55px"><?=$m['home_team']['points']?></th>
                         <th class="text-right" style="width:40%"><?=$m['home_team']['team']->team_name?></th>
                         <th class="text-center"></th>
