@@ -14,6 +14,7 @@ class Quickstats extends MY_User_Controller{
     function team()
     {
         $team_id = $this->input->post('id');
+        $week = $this->input->post('week');
         $this->load->model('myteam/myteam_roster_model');
         $this->load->model('myteam/schedule_model');
         $this->load->model('league/teams_model');

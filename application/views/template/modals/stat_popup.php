@@ -54,12 +54,12 @@ $(document).on('click','.stat-popup',function(e){
     e.preventDefault();
     type = $(this).data('type');
     id = $(this).data('id');
-
+    week = $(this).data('week');
     console.log('stat pop up');
     var p = $(this).position();
     var url = "<?=site_url('quickstats')?>"+"/"+type;
     // console.log(url);
-    $.post(url,{'type' : type, 'id' : id},function(data)
+    $.post(url,{'type' : type, 'id' : id, 'week' : week},function(data)
     {
         $("#stat-popup-html").html(data);
         $("#stat-popup-modal").foundation('open');
@@ -69,7 +69,6 @@ $(document).on('click','.stat-popup',function(e){
 
 function showStatsPopup(id, type)
 {
-    console.log('stat pop up');
     //var p = $(this).position();
     var url = "<?=site_url('quickstats')?>"+"/"+type;
     // console.log(url);

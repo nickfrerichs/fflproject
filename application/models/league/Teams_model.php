@@ -51,17 +51,22 @@ class Teams_model extends MY_Model{
         return $query->result();
     }
 
-    function get_bench_quickstats_data($teamid)
+    function get_bench_quickstats_data($teamid, $week = "", $year="")
     {
+        if ($week == "")
+            $week = $this->current_week;
+        if ($year == "")
+            $year = $this->current_year;
+
         $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, '.
             'nfl_position.text_id as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points '.
             'from `roster` join `player` on `roster`.`player_id` = `player`.`id` '.
             'join nfl_position on nfl_position.id = player.nfl_position_id '.
             'join nfl_team on nfl_team.id = player.nfl_team_id '.
-            'left join fantasy_statistic on fantasy_statistic.player_id = roster.player_id and fantasy_statistic.year = '.$this->current_year.
-            ' and fantasy_statistic.league_id = roster.league_id and fantasy_statistic.week ='.$this->current_week.' where '.
-            '`roster`.`player_id` not in (SELECT `player_id` FROM `starter` where `week` = '.$this->current_week.
-            ' and `year` = '.$this->current_year.' and team_id = '.$teamid.') and `roster`.`league_id` = '.$this->leagueid.
+            'left join fantasy_statistic on fantasy_statistic.player_id = roster.player_id and fantasy_statistic.year = '.$year.
+            ' and fantasy_statistic.league_id = roster.league_id and fantasy_statistic.week ='.$week.' where '.
+            '`roster`.`player_id` not in (SELECT `player_id` FROM `starter` where `week` = '.$week.
+            ' and `year` = '.$year.' and team_id = '.$teamid.') and `roster`.`league_id` = '.$this->leagueid.
             ' and roster.team_id = '.$teamid.' '.
             ' group by roster.player_id order by nfl_position.display_order asc');
 

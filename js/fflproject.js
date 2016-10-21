@@ -292,7 +292,7 @@ function sse_off(sse_func)
 function sse_stream_start()
 {
 	var sse_func = "";
-	if (window.location.pathname == "/season/scores/live"){sse_func="sse_live_scores";}
+	if (window.location.pathname == "/season/scores/live/standard" || window.location.pathname == "/season/scores/live/compact"){sse_func="sse_live_scores";}
 	if (typeof(evtSource) == "undefined")
     {
 		//console.log("Started sse stream.");
