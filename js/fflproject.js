@@ -292,7 +292,9 @@ function sse_off(sse_func)
 function sse_stream_start()
 {
 	var sse_func = "";
-	if (window.location.pathname == "/season/scores/live/standard" || window.location.pathname == "/season/scores/live/compact"){sse_func="sse_live_scores";}
+	console.log(window.location.pathname);
+	if (window.location.pathname.indexOf("season/scores/live/standard") !== -1 || window.location.pathname.indexOf("season/scores/live/compact") !== -1){sse_func="sse_live_scores";}
+//	if (window.location.pathname == "/season/scores/live/standard" || window.location.pathname == "/season/scores/live/compact"){sse_func="sse_live_scores";}
 	if (typeof(evtSource) == "undefined")
     {
 		//console.log("Started sse stream.");
