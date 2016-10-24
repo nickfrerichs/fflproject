@@ -75,6 +75,48 @@ class Player_search extends MY_User_Controller{
         }
     }
 
+    function ajax_admin_start_get_player_list()
+    {
+        if ($this->session->userdata('is_league_admin'))
+        {
+            $nfl_players = $this->player_search_model->get_nfl_players($this->per_page, $this->data['page']*$this->per_page, $this->data['sel_pos'], $this->order_by, $this->data['search'], true);
+            $this->load->model('myteam/myteam_roster_model');
+            $this->data['total'] = $nfl_players['count'];
+            $this->data['players'] = $nfl_players['result'];
+            $this->data['per_page'] = $this->per_page;
+            $this->data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+
+            $year = $this->input->post('var1');
+
+            $pos_lookup = $this->common_model->get_leapos_lookup_array($year);
+        }
+
+        // BEGIN VIEW
+        ?>
+        <?php foreach ($this->data['players'] as $p): ?>
+            <tr>
+                <td><?=$p->first_name?> <?=$p->last_name?></td>
+                <td><?=$p->position?></td>
+                <td><?=$p->club_id?></td>
+                <td>
+                    <?php foreach($pos_lookup as $posid => $pl): ?>
+                        <?php if(in_array($p->nfl_position_id, explode(",",$pl['list']))): ?>
+                            <button class="button small admin-start-button" data-id="<?=$p->player_id?>" data-posid="<?=$posid?>"><?=$pl['pos_text']?></button>
+                        <?php endif;?>
+                    <?php endforeach;?>
+                </td>
+            </tr>
+        <?php endforeach;?>
+        <tr id="main-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$this->data['total']?>">
+        </tr>
+
+
+        <?php
+        // END VIEW
+        // **************************************
+        
+    }
+
     // for season/draft/live
     function ajax_draft_list()
     {

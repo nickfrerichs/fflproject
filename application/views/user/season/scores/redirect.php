@@ -9,12 +9,12 @@ $this->load->view('template/head_css.php');
 <?php
 $this->load->view('template/body_js.php');
 ?>
+
 <script>$(document).foundation();</script>
-</body>
+
 <script>
-	console.log(Foundation.MediaQuery.atLeast('medium'));
-	console.log(Foundation.MediaQuery.current);
-    if (Foundation.MediaQuery.atLeast('large')){window.location = "<?=site_url('season/scores/live/standard')?>"; console.log("standard")}
-    else{window.location = "<?=site_url('season/scores/live/compact')?>"; console.log("compact")}
+    if (Foundation.MediaQuery.atLeast('large')){window.location = "<?=site_url('season/scores/live/standard')?>";}
+    else{window.location = "<?=site_url('season/scores/live/compact')?>";}
 </script>
-</htmL>
+</body>
+</html>

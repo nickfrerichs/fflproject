@@ -51,8 +51,7 @@ class Teams extends MY_Admin_Controller
 
             <?php foreach ($teams as $team): ?>
             <tr>
-                <td><a href="<?=site_url('admin/teams/show/'.$team->id)?>"><?=$team->team_name?></a></td>
-                <td><a href="<?=site_url('admin/rosters/view/'.$team->id)?>">Roster</td>
+                <td><a href="<?=site_url('admin/rosters/view/'.$team->id)?>"><?=$team->team_name?></a></td>
                 <td><?=$team->division_name?></td>
                 <td><?=$team->first_name.' '.$team->last_name; ?></td>
                 <td class="text-center">

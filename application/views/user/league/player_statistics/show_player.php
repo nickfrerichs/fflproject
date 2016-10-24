@@ -2,12 +2,12 @@
 <div class="row">
     <div class="columns">
         <div class="row">
-            <div class="columns small-2">
+            <div class="columns hide-for-small-only medium-2">
                 <?php if($player->photo):?>
                     <img src="<?=site_url('images/'.$player->photo)?>" class="table-border" style="width:125px;">
                 <?php endif;?>
             </div>
-            <div class="columns small-10">
+            <div class="columns small-12 medium-10">
                 <h4><a target="_blank" href="<?=$player->profile_url?>">
                     <?=$player->first_name.' '.$player->last_name?> - <?=$player->pos?> <?php if($player->number){echo "#".$player->number;}?>
                 </a></h4>
@@ -24,13 +24,15 @@
         </div>
         <div class="row">
             <div class="columns">
-                <table class="table table-condensed table-striped">
-                    <th>Week</th>
-                    <th>Opponent</th>
-                    <th>Total</th>
-                    <?php foreach($cats as $cat): ?>
-                    <th><?=$cat?></th>
-                    <?php endforeach;?>
+                <table class="table table-condensed table-striped text-left">
+                    <thead>
+                        <th>Week</th>
+                        <th>Opponent</th>
+                        <th>Total</th>
+                        <?php foreach($cats as $cat): ?>
+                        <th><?=$cat?></th>
+                        <?php endforeach;?>
+                    </thead>
                 <?php foreach($stats as $week => $w): ?>
                     <?php if ($week == $this->session->userdata('current_week')): ?>
                         <tr style="background-color:#E0ECF8">

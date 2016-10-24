@@ -9,7 +9,7 @@
         </div>
         <table class="table table-condensed">
             <thead>
-                <th>Team</th><th>Roster</th><th>Division</th><th>Owner</th><th class="text-center" style="width:200px">Active</th>
+                <th>Team</th><th>Division</th><th>Owner</th><th class="text-center" style="width:200px">Active</th>
             </thead>
             <tbody id="team-list">
             </tbody>
@@ -20,10 +20,6 @@
 <script>
 $(document).ready(function(){
     update_teams();
-});
-
-$(document).on('click','.blah',function(e){
-    console.log("Blah clicked");
 });
 
 function update_teams()

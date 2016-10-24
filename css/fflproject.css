@@ -292,7 +292,7 @@ table.ls-matchup-table{table-layout: fixed;}
 }
 
 .ls-s-nflgameactive .ls-s-nflgame-lastplay{
-	overflow-y: scroll;
+	overflow-y: auto;
 	font-size:.8em;
 	height: 49px;
 }

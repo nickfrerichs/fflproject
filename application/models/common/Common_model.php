@@ -97,6 +97,18 @@ class Common_model extends CI_Model{
         return $pos_list;
     }
 
+    function nfl_position_lookup_array()
+    {
+        $data = array();
+        $positions = $this->db->select('id,text_id')->from('nfl_position')->get()->result();
+
+        foreach($positions as $p)
+        {
+            $data[$p->id] = $p->text_id;
+        }
+        return $data;
+    }
+
     function league_position_year($year = 0)
     {
         $this->load->model('common/common_noauth_model');
@@ -237,6 +249,26 @@ class Common_model extends CI_Model{
         if ($text == "")
             $text = $this->current_weektype;
         return $this->db->select('id')->from('nfl_week_type')->where('text_id',strtoupper($text))->get()->row()->id;
+    }
+
+    // An array indexed by league positions containing the csv field of NFL positions for that league position
+    function get_leapos_lookup_array($year = "")
+    {
+        if ($year == "")
+            $year = $this->current_year;
+        $data = array();
+        $pos_year = $this->common_model->league_position_year($year);
+
+        $positions = $this->db->select('id, nfl_position_id_list, text_id as pos_text')->from('position')->where('league_id',$this->leagueid)
+            ->where('year',$pos_year)->get()->result();
+
+        foreach($positions as $p)
+        {
+            $data[$p->id]['list'] = $p->nfl_position_id_list;
+            $data[$p->id]['pos_text'] = $p->pos_text;
+        }
+
+        return $data;
     }
 }
 

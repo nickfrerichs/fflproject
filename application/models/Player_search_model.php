@@ -25,9 +25,9 @@ class Player_search_model extends CI_Model{
                 $owned[] = $row->player_id;
         }
         $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
-        $this->db->select('player.id, player.first_name, player.last_name')
+        $this->db->select('player.id as player_id, player.id, player.first_name, player.last_name, player.nfl_position_id')
                 ->select('IFNULL(sum(fantasy_statistic.points),0) as points',false)
-                ->select('nfl_position.short_text as position')
+                ->select('nfl_position.short_text as position,')
                 ->select('IFNULL(nfl_team.club_id,"NONE") as club_id')
                 ->select('team.team_name')
                 ->from('player')

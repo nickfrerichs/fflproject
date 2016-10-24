@@ -1,6 +1,6 @@
 <?php $this->load->view('template/modals/stat_popup'); ?>
 
-<!-- Drop modal -->
+<!-- Add modal -->
 <div class="reveal large" id="add-modal" data-reveal data-overlay="true" data-multiple-opened-"true">
     <div>
             <div>
@@ -59,21 +59,25 @@
     </div>
 </div>
 
+<!-- End Modals -->
+
 <div class="row">
     <div class="columns">
         <h5><?=$team_name?></h5>
     </div>
 </div>
 
-<div class="row">
+<div class="row callout">
     <div class="columns">
     <div id='teamlist'>
         <?php //print_r($roster); ?>
-        <a href="#" data-open="add-modal">Add player </a>
+        <a href="#" data-open="add-modal">Add player </a><br>
+        <a href="<?=site_url('admin/rosters/lineup/'.$teamid)?>">Edit Starting Lineup</a><br><br>
+        <h6>Current Roster</h6>
         <table class="table-condensed table-striped">
-            <tr>
-                <td>Player</td><td>Team</td><td>Position</td>
-            </tr>
+            <thead>
+                <th>Player</th><th>Team</th><th>Position</th><th></th>
+            </thead>
             <?php foreach ($roster as $player){ ?>
             <tr>
                 <td><?php echo $player->short_name; ?></td>
@@ -115,4 +119,5 @@
     $("#add-modal").on("closed.zf.reveal",function(){
         location.reload();
     });
+
 </script>

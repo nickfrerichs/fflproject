@@ -38,6 +38,9 @@
                         </td>
                     <?php else: ?>
                         <td></td><td class="ls-c-playerbox"></td><td></td>
+                        <?php if(!$compact):?>
+                            <td></td>
+                        <?php endif;?>
                     <?php endif;?>
                     <td class="text-center ls-c-position"><?=$s['pos_text']?></td>
 
@@ -58,6 +61,9 @@
                         <td class="ls-c-playerlight<?=$apclass?>"></td>
                     <?php else: ?>
                         <td></td><td class="ls-c-playerbox"></td><td></td>
+                        <?php if(!$compact):?>
+                            <td></td>
+                        <?php endif;?>
                     <?php endif;?>
 
                 </tr>
