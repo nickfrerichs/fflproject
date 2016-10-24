@@ -307,9 +307,9 @@ function sse_stream_start()
 			if (d.ls != undefined)
 			{
 				if (d.ls == "on")
-					{$(".live-scores").removeClass('hide');}
+					{$(".livescores-link").removeClass('hide');}
 				else
-					{$(".live-scores").addClass('hide');}
+					{$(".livescores-link").addClass('hide');}
 			}
 
 			// Update who's online text

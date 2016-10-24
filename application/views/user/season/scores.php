@@ -61,9 +61,9 @@
                 <table class="table-condensed">
                     <thead>
                         <th height="55px"><?=$m['home_team']['points']?></th>
-                        <th class="text-right" style="width:40%"><?=$m['home_team']['team']->team_name?></th>
+                        <th class="text-right" style="width:40%"><a href="<?=site_url('league/teams/view/'.$m['home_team']['team']->id)?>"><?=$m['home_team']['team']->team_name?></a></th>
                         <th class="text-center"></th>
-                        <th style="width:40%"><?=$m['away_team']['team']->team_name?></th>
+                        <th style="width:40%"><a href="<?=site_url('league/teams/view/'.$m['away_team']['team']->id)?>"><?=$m['away_team']['team']->team_name?></a></th>
                         <th class="text-right"><?=$m['away_team']['points']?></th>
                     </thead>
                     <tbody>

@@ -51,7 +51,7 @@ class Standings extends MY_User_Controller{
                                 $avgopp = round($t->opp_points/$t->total_games,1);
                             }?>
                         <tr>
-                            <td><?=isset($t->notation_symbol) ? $t->notation_symbol.' ' : ''?><?=$t->team_name?></td>
+                            <td><?=isset($t->notation_symbol) ? $t->notation_symbol.' ' : ''?><a href="<?=site_url('league/teams/view/'.$t->team_id)?>"><?=$t->team_name?></a></td>
                             <td><?=str_replace('0.','.',number_format($winptc,3))?></td>
                             <td><?=$t->wins?>-<?=$t->losses?>-<?=$t->ties?></td>
                             <td><?=$t->points?> <span style="font-size:.8em">(<?=$avgpts?>)</span></td>
