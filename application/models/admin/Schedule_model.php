@@ -158,9 +158,10 @@ class Schedule_model extends MY_Model{
         {
             foreach($week as $game_id => $game)
             {
+                if (array_key_exists('type',$game)){$game_type = $game['type'];}else{$game_type = 0;}
                 $data = array('home_team_id' => $game['home'],
                               'away_team_id' => $game['away'],
-                              'game_type_id' => $game['type']);
+                              'game_type_id' => $game_type);
                 $this->db->where('week',$week_id)->where('game', $game_id)
                         ->where('league_id', $this->leagueid)->where('year', $this->current_year)
                         ->update('schedule', $data);
