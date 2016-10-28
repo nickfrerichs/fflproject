@@ -53,12 +53,22 @@ class Schedule_model extends MY_Model{
                 ->order_by('week','asc')
                 ->order_by('game','asc')
                 ->get()->result();
+        $data = array();
         $weeks = array();
         foreach ($schedule as $s)
         {
             $weeks[$s->week][] = $s;
         }
-        return $weeks;
+
+        if(array_key_exists($this->current_week,$weeks))
+            $data['current_week'] = $weeks[$this->current_week];
+        if(array_key_exists($this->current_week-1,$weeks))
+            $data['previous_week'] = $weeks[$this->current_week-1];
+        if(array_key_exists($this->current_week+1,$weeks))
+            $data['next_week'] = $weeks[$this->current_week+1];
+
+        $data['weeks'] = $weeks;
+        return $data;
 
     }
 }
