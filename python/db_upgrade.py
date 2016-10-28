@@ -22,20 +22,26 @@ def main():
 def upgrade_db(version):
 
     if version == "0.2":
-        query = 'ALTER TABLE owner_setting ADD sse_chat BOOLEAN DEFAULT 0'
-        cur.execute(query)
-        query = 'ALTER TABLE owner_setting ADD sse_draft BOOLEAN DEFAULT 0'
-        cur.execute(query)
-        query = 'ALTER TABLE owner_setting ADD sse_live_scores BOOLEAN DEFAULT 0'
-        cur.execute(query)
-        query = 'ALTER TABLE nfl_live_player ADD update_key INT DEFAULT 0'
-        cur.execute(query)
-        query = 'ALTER TABLE nfl_live_game ADD update_key INT DEFAULT 0'
-        cur.execute(query)
+        if column_exists('sse_chat','owner_setting') == False:
+            query = 'ALTER TABLE owner_setting ADD sse_chat BOOLEAN DEFAULT 0'
+            cur.execute(query)
+        if column_exists('sse_draft','owner_setting')  == False:
+            query = 'ALTER TABLE owner_setting ADD sse_draft BOOLEAN DEFAULT 0'
+            cur.execute(query)
+        if column_exists('sse_live_scores','owner_setting')  == False:
+            query = 'ALTER TABLE owner_setting ADD sse_live_scores BOOLEAN DEFAULT 0'
+            cur.execute(query)
+        if column_exists('update_key','nfl_live_player')  == False:
+            query = 'ALTER TABLE nfl_live_player ADD update_key INT DEFAULT 0'
+            cur.execute(query)
+        if column_exists('update_key','nfl_live_game')  == False:
+            query = 'ALTER TABLE nfl_live_game ADD update_key INT DEFAULT 0'
+            cur.execute(query)
 
         # This was extra a loooong time ago.
-        query = 'ALTER TABLE fantasy_statistic_week DROP week_type_id'
-        cur.execute(query)
+        if column_exists('week_type_id','fantasy_statistic_week'):
+            query = 'ALTER TABLE fantasy_statistic_week DROP week_type_id'
+            cur.execute(query)
 
         query = 'update site_settings set db_version = "%s"' % ("0.3")
         cur.execute(query)
@@ -79,6 +85,14 @@ def get_db_version():
         return row['db_version']
     sys.exit('\nUnknown database version stored in the db.\n')
 
+def column_exists(column, table):
+    query = 'show columns from '+table+' like "'+column+'"'
+    cur.execute(query)
+    row = cur.fetchone()
+    if row is None:
+        return False
+    else:
+        return True
 
 
 main()
