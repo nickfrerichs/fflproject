@@ -302,7 +302,7 @@ function sse_stream_start()
         {
 
 			var d = JSON.parse(e.data);
-			//console.log(d);
+			console.log(d);
 			// Show/Hide live score url
 			if (d.ls != undefined)
 			{
@@ -380,6 +380,7 @@ function sse_stream_start()
 				$.each($('.ls-c-playerbox'),function(){
 
 					var player_id = $(this).data('id');
+
 					// If player box is empty, don't do anything.
 					if (player_id == undefined){return;}
 					var team = $(this).data('team');
@@ -387,9 +388,16 @@ function sse_stream_start()
 					// Is this player in live player?
 					if (d.live.players_live.hasOwnProperty(player_id) && last_key != undefined)
 					{
-						// Player has a live upate, show that text and delay showing team status
-						playerEvent(player_id, d.live.players_live[player_id].text);
-						delay = 10000;
+						var last_play = $(this).data('playid');
+						var this_play = d.live.players_live[player_id].play_id
+						// Check if the update for this playid was already shown.
+						if (last_play != this_play)
+						{
+							// Player has a live upate, show that text and delay showing team status
+							playerEvent(player_id, d.live.players_live[player_id].text);
+							delay = 10000;
+							$(this).data('playid',this_play);
+						}
 					}
 					playerTeamStatus(player_id,d.live.nfl_games[team],delay,team,last_key);
 				});

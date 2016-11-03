@@ -55,7 +55,6 @@ $(document).on('click','.stat-popup',function(e){
     type = $(this).data('type');
     id = $(this).data('id');
     week = $(this).data('week');
-    console.log('stat pop up');
     var p = $(this).position();
     var url = "<?=site_url('quickstats')?>"+"/"+type;
     // console.log(url);
