@@ -32,3 +32,6 @@ $fflp_smtp_newline = "\r\n";
 // Show debug and profiler data
 $fflp_debug = False;
 $fflp_log_threshold = 0;
+
+// Session exire Time (1 week)
+$fflp_session_expire = 60*60*24*7;

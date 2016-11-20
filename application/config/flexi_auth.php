@@ -367,7 +367,11 @@ include(FCPATH.'config.php');
 	 *   There are then functions within the library to check whether a user is logged in via entering a password, or via a cookie - typically sensitive data should
 	 *   only be available to users logged in via a password, and less sensitive data to users logged in via 'Remember me' cookies.
 	*/
-	$config['security']['login_session_expire'] = 60*60*3;
+
+	if (isset($fflp_session_expire))
+	    $config['security']['login_session_expire'] = $fflp_session_expire;
+	else
+	    $config['security']['login_session_expire']  = 7200;
 
 	/**
 	 * Set whether a users login time is extended when their session token is validated (On every page load).
