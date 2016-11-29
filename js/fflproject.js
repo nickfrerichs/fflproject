@@ -201,6 +201,10 @@ $(document).on('click',".player-list-a-sort", function(e){
 
 function updatePlayerList(tbody)
 {
+	// Set an ajax wait key to prevent flashing of empty tables.
+	var aw_key = 'upL'+tbody;
+	ajax_waits[aw_key] = true;
+
 	var page = $('#'+tbody+'-data').data('page');
 	var pos = $('.player-list-position-select[data-for="'+tbody+'"]').val();
 	var year = $('.player-list-year-select[data-for="'+tbody+'"]').val();
@@ -234,6 +238,10 @@ function updatePlayerList(tbody)
 		if(pagehigh+1 > total)
 		{$('.player-list-next[data-for="'+tbody+'"]').attr('disabled',true); $('.player-list-next[data-for="'+tbody+'"]').addClass("disabled");}
 		else{$('.player-list-next[data-for="'+tbody+'"]').attr('disabled',false); $('.player-list-next[data-for="'+tbody+'"]').removeClass("disabled");}
+
+		// Clear the ajax wait
+		ajax_waits[aw_key] = false;
+
 	})
 }
 
@@ -302,7 +310,7 @@ function sse_stream_start()
         {
 
 			var d = JSON.parse(e.data);
-			console.log(d);
+			debug_out(d);
 			// Show/Hide live score url
 			if (d.ls != undefined)
 			{
@@ -663,4 +671,9 @@ function markChatsRead()
 	$.post(url,{},function(){
 		$(".unread-count").text("");
 	});
+}
+
+function debug_out(o)
+{
+	if (window.DEBUG_ENABLED){console.log(o);}
 }

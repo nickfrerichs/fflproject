@@ -18,6 +18,7 @@ class Security_model extends CI_Model
             ->select('session_refresh_time, live_element_refresh_time')
             ->from('site_settings')->get()->row();
         $this->userid = $this->flexi_auth->get_user_id();
+        $this->session->set_userdata('user_id',$this->userid);
         if ($this->db->from('owner')->where('user_accounts_id',$this->userid)->count_all_results() > 0)
             $this->is_owner = True;
     }

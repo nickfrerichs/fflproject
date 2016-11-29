@@ -14,6 +14,7 @@ class Roster extends MY_User_Controller{
 
     function index()
     {
+        $data['ajax_wait'] = true;
         //$roster = $this->myteam_roster_model->get_roster_data();
         //$nfl_pos = $this->myteam_roster_model->get_nfl_positions_array();
         //$lea_pos = $this->myteam_roster_model->get_league_positions_data();

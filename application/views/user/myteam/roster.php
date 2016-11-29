@@ -180,14 +180,16 @@ $(document).ready(function(){
     function loadTables(){
         //alert('loadtables');
         var week = $("#selected-week").val();
-
+        ajax_waits['roster_st'] = true; ajax_waits['roster_bt'] = true;
         url = "<?=site_url('myteam/roster/ajax_starter_table')?>";
         $.post(url,{'week':week}, function(data){
             $("#starter-tbody").html(data);
+            ajax_waits['roster_st'] = false;
         });
         url = "<?=site_url('myteam/roster/ajax_bench_table')?>";
         $.post(url,{'week':week}, function(data){
             $("#bench-tbody").html(data);
+            ajax_waits['roster_bt'] = false;
         });
     }
 

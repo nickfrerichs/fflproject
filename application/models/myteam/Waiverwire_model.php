@@ -27,7 +27,7 @@ class Waiverwire_model extends MY_Model{
     		->get()->result();
     }
 
-    function get_nfl_players($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',$show_owned = false)
+    function get_nfl_players_old($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',$show_owned = false)
     {
         $pos_list = $this->common_model->league_nfl_position_id_array();
 
@@ -48,6 +48,53 @@ class Waiverwire_model extends MY_Model{
                 ->from('player')
                 ->join('fantasy_statistic','fantasy_statistic.player_id = player.id and fantasy_statistic.year = '.
                         $this->current_year.' and fantasy_statistic.league_id = '.$this->leagueid,'left')
+                ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
+                ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
+                ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
+                ->join('waiver_wire_log as wwlog_drop','wwlog_drop.drop_player_id = player.id and wwlog_drop.league_id = '.
+                        $this->leagueid.' and wwlog_drop.approved = 1 and UNIX_TIMESTAMP(transaction_date)>'.(time()-$clear_time),'left')
+                ->join('waiver_wire_log as wwlog_request','wwlog_request.pickup_player_id = player.id and wwlog_request.team_id = '.
+                        $this->teamid.' and wwlog_request.approved = 0 and wwlog_request.transaction_date = 0', 'left')
+                ->where('roster.id IS NULL',null,false)
+                ->where_in('nfl_position_id', $pos_list);
+        if (count($owned_list) > 0 && $show_owned == false)
+            $this->db->where_not_in('player.id',$owned_list);
+        $this->db->where('active', true);
+        if ($search != '')
+            $this->db->where('(`last_name` like "%'.$search.'%" or `first_name` like "%'.$search.'%")',NULL,FALSE);
+        if (($nfl_pos != 0) && (is_numeric($nfl_pos)))
+            $this->db->where('nfl_position.id', $nfl_pos);
+        $this->db->group_by('player.id')
+                ->order_by($order_by[0],$order_by[1])
+                ->limit($limit, $start);
+        $data = $this->db->get();
+
+        $returndata['count'] = $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;
+        $returndata['result'] = $data->result();
+        return $returndata;
+    }
+
+    function get_nfl_players($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',$show_owned = false)
+    {
+        $pos_list = $this->common_model->league_nfl_position_id_array();
+
+        $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
+            ->get()->row()->waiver_wire_clear_time;
+        //echo $pos_list;
+        if (count($pos_list) < 1)
+            $pos_list = array(-1);
+        $owned_list = $this->get_owned_players_array();
+
+        $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
+        $this->db->select('player.id, player.first_name, player.last_name, player.short_name')
+                ->select('IFNULL(sum(fs_w.points),0) as points',false)
+                ->select('nfl_position.short_text as position')
+                ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
+                ->select('UNIX_TIMESTAMP(wwlog_drop.transaction_date)+'.$clear_time.' as clear_time')
+                ->select('IF(wwlog_request.approved=0,1,0) as requested')
+                ->from('player')
+                ->join('fantasy_statistic_week as fs_w','fs_w.player_id = player.id and fs_w.year = '.
+                        $this->current_year.' and fs_w.league_id = '.$this->leagueid,'left')
                 ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
                 ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
@@ -97,19 +144,6 @@ class Waiverwire_model extends MY_Model{
         return $data->num_rows();
     }
 
-    // function get_league_nfl_position_id_array()
-    // {
-    //     $data = $this->db->select('position.nfl_position_id_list')
-    //             ->from('position')
-    //             ->where('position.league_id', $this->leagueid)
-    //             ->get();
-    //     $pos_list = array();
-    //
-    //     foreach ($data->result() as $posrow)
-    //         $pos_list = array_merge($pos_list,explode(',',$posrow->nfl_position_id_list));
-    //     return $pos_list;
-    // }
-
     function get_owned_players_array()
     {
         $owned = array();
@@ -124,30 +158,6 @@ class Waiverwire_model extends MY_Model{
         if ($teamid == 0)
             $teamid = $this->teamid;
         return $this->common_waiverwire_model->drop_player($player_id, $teamid, $this->current_year, $this->current_week, $this->week_type);
-
-        // if ($player_id == 0)
-        //     return;
-        //
-        // if ($teamid == 0)
-        //     $teamid = $this->teamid;
-        //
-        // $gamestart = $this->common_model->player_game_start_time($player_id);
-        // // Delete player from roster
-        // $this->db->where('player_id',$player_id)
-        //     ->where('team_id',$teamid)
-        //     ->where('league_id',$this->leagueid)
-        //     ->delete('roster');
-        //
-        // // Delete any starter rows for current team with this player
-        // $this->db->where('player_id', $player_id)
-        //         ->where('team_id', $teamid)
-        //         ->where('league_id', $this->leagueid);
-        // if ($gamestart > time()) // game is in the future, include this week
-        //     $this->db->where('week >=', $this->current_week);
-        // else // this week's game has started, don't drop from this weeks starting lineup
-        //     $this->db->where('week >', $this->current_week);
-        // $this->db->where('year', $this->current_year)
-        //         ->delete('starter');
     }
 
     function pickup_player($player_id, $teamid = 0)
@@ -155,12 +165,6 @@ class Waiverwire_model extends MY_Model{
         if ($teamid == 0)
             $teamid = $this->teamid;
         $this->common_waiverwire_model->pickup_player($player_id, $teamid, $this->leagueid);
-
-        // $data['league_id'] = $this->leagueid;
-        // $data['team_id'] = $teamid;
-        // $data['player_id'] = $player_id;
-        // $data['starting_position_id'] = 0;
-        // $this->db->insert('roster',$data);
     }
 
     function waiverwire_open()
@@ -170,7 +174,6 @@ class Waiverwire_model extends MY_Model{
         if ($deadline_open > 0)
             return True;
         return False;
-
     }
 
 
@@ -313,12 +316,6 @@ class Waiverwire_model extends MY_Model{
     function cancel_request($id)
     {
         $this->common_waiverwire_model->cancel_request($id, $this->teamid);
-
-        // $now = t_mysql();
-        // $data = array('transaction_date' => $now,
-        //       'approved' => 0);
-        // $this->db->where('team_id',$this->teamid)->where('id',$id);
-        // $this->db->update('waiver_wire_log',$data);
     }
 
     function log_transaction($pickup_id, $drop_id, $approve = true)
@@ -414,55 +411,7 @@ class Waiverwire_model extends MY_Model{
 
     function get_priority_data_array()
     {
-
         return $this->common_waiverwire_model->get_ww_priority_data_array($this->leagueid, $this->current_year, $this->current_weektype);
-        // $data = array();
-        // $standings = $this->db->select('team.team_name, owner.first_name, owner.last_name')
-        //     ->select('sum(schedule_result.team_score) as points, sum(schedule_result.opp_score) as opp_points')
-        //     ->select('(sum(win=1)+(sum(tie=1)/2))/count(schedule_result.id) as winpct')
-        //     ->select('sum(schedule_result.team_score) as points, sum(schedule_result.opp_score) as opp_points')
-        //     ->select('sum(win=1) as wins, sum(loss=1) as losses, sum(tie=1) as ties')
-        //     ->select('count(schedule_result.id) as total_games')
-        //     ->from('schedule')
-        //     ->join('schedule_result','schedule_result.schedule_id = schedule.id')
-        //     ->join('team','team.id = schedule_result.team_id')
-        //     ->join('owner','owner.id = team.owner_id')
-        //     ->join('nfl_week_type','nfl_week_type.id = schedule.nfl_week_type_id')
-        //     ->where('schedule.year',$this->current_year)
-        //     ->where('nfl_week_type.text_id',$this->current_weektype)
-        //     ->group_by('team.id')
-        //     ->order_by('winpct','asc')
-        //     ->order_by('points','asc')
-        //     ->order_by('opp_points','desc')
-        //     ->get()->result();
-        //
-        //
-        // $draft_order = $this->db->select('team.team_name, owner.first_name, owner.last_name')
-        //         ->from('draft_order')
-        //         ->join('team','team.id = draft_order.team_id')
-        //         ->join('owner','owner.id = team.owner_id')
-        //         ->where('draft_order.round',1)
-        //         ->where('draft_order.league_id',$this->leagueid)
-        //         ->where('draft_order.year',$this->current_year)
-        //         ->order_by('draft_order.pick','desc')
-        //         ->get()->result();
-        //
-        // $data['priority'] = array();
-        // if(count($standings) == 0)
-        // {
-        //     $data['type'] = 'draft_order';
-        //     foreach($draft_order as $key => $d)
-        //         $data['priority'][$key] = $d;
-        // }
-        // else
-        // {
-        //     $data['type'] = 'standings';
-        //     foreach($standings as $key => $s)
-        //         $data['priority'][$key] = $s;
-        // }
-        //
-        // return $data;
-
     }
 
     function get_pending_requests()

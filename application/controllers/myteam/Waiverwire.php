@@ -16,7 +16,7 @@ class Waiverwire extends MY_User_Controller{
 
     function index()
     {
-        $data = array();
+        $data = array('ajax_wait'=>true);
         if ($this->waiverwire_model->waiverwire_open())
         {
             $data['pos'] = $this->player_search_model->get_nfl_positions_data();

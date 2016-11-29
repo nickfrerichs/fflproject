@@ -11,4 +11,7 @@
 
 <!-- My custom JS, things that aren't imbedded in the page go here -->
 <script>window.BASE_URL = "<?=site_url()?>";</script>
+<?php if($this->session->userdata('debug') == 1): ?>
+	<script>window.DEBUG_ENABLED = true;</script>
+<?php endif;?>
 <script src="<?=site_url('js/fflproject.js')?>"></script>
