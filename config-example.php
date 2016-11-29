@@ -33,5 +33,5 @@ $fflp_smtp_newline = "\r\n";
 $fflp_debug = False;
 $fflp_log_threshold = 0;
 
-// Session exire Time (1 week)
+// Log user out (expire session) after this many seconds of of inactivity (1 week default)
 $fflp_session_expire = 60*60*24*7;

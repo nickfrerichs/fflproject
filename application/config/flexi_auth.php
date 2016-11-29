@@ -368,9 +368,9 @@ include(FCPATH.'config.php');
 	 *   only be available to users logged in via a password, and less sensitive data to users logged in via 'Remember me' cookies.
 	*/
 
-	if (isset($fflp_session_expire))
-	    $config['security']['login_session_expire'] = $fflp_session_expire;
-	else
+	// if (isset($fflp_session_expire))
+	//     $config['security']['login_session_expire'] = $fflp_session_expire;
+	// else
 	    $config['security']['login_session_expire']  = 7200;
 
 	/**
@@ -390,7 +390,7 @@ include(FCPATH.'config.php');
 	 * Note: Only used when $config['security']['validate_login_onload'] = TRUE
 	 * !IMPORTANT: 'logout_user_onclose' will also void any 'Remember me' cookies and so both features should not be used together.
 	*/
-	$config['security']['logout_user_onclose'] = TRUE;
+	$config['security']['logout_user_onclose'] = FALSE;
 
 	/**
 	 * Set whether a user has their 'logged in via password' status removed as soon as the browser is closed.
@@ -414,7 +414,12 @@ include(FCPATH.'config.php');
 	 *
 	 * Example: 60*60*24 = 24 hours, 60*60*24*14 = 14 days, 86400 = 1 day
 	*/
-	$config['security']['user_cookie_expire'] = 60*60*24*14;
+	//$config['security']['user_cookie_expire'] = 60*60*24*14;
+
+	if (isset($fflp_session_expire))
+	    $config['security']['user_cookie_expire'] = $fflp_session_expire;
+	else
+	    $config['security']['user_cookie_expire']  = 7200;
 
 	/**
 	 * Set whether a users 'Remember me' login cookies have their lifetime extended when their session token is validated.

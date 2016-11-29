@@ -48,7 +48,8 @@ class Auth extends CI_Controller{
                     $remember_user = ($this->input->post('remember_me') == 1);
                     // Verify login data.
 
-                    $this->flexi_auth->login($this->input->post('login_identity'), $this->input->post('login_password'), $remember_user);
+                    //$this->flexi_auth->login($this->input->post('login_identity'), $this->input->post('login_password'), $remember_user);
+                    $this->flexi_auth->login($this->input->post('login_identity'), $this->input->post('login_password'), True);
 
                     $this->session->set_userdata('user_id', $this->flexi_auth->get_user_id());
                     $this->load->model('security_model');

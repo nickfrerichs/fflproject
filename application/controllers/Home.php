@@ -6,7 +6,8 @@ class Home extends MY_Basic_Controller{
     {
         parent::__construct();
         $this->auth = new stdClass;
-        $this->load->library('Flexi_auth');
+        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+//        $this->load->library('Flexi_auth');
         $this->load->helper('form');
     }
 
@@ -19,15 +20,17 @@ class Home extends MY_Basic_Controller{
         }
         // If 'Login' form has been submited, attempt to log the user in.
 
-        if ($this->flexi_auth->ip_login_attempts_exceeded())
-	    {
-            $this->config->load('fflproject');
-            $data['use_recaptcha'] = $this->config->item('use_recaptcha');
-            if ($data['use_recaptcha'])
-                $data['captcha'] = $this->flexi_auth->recaptcha(FALSE);
-            else
-                $data['captcha'] = $this->flexi_auth->math_captcha();
-        }
+        // Removing this 11/27/16 -- this is not neccessary (i think), it's checked in the Auth controller.. allows me to use flexi_auth_lite
+        // I think it was originally copied from the core controller
+        // if ($this->flexi_auth->ip_login_attempts_exceeded())
+	    // {
+        //     $this->config->load('fflproject');
+        //     $data['use_recaptcha'] = $this->config->item('use_recaptcha');
+        //     if ($data['use_recaptcha'])
+        //         $data['captcha'] = $this->flexi_auth->recaptcha(FALSE);
+        //     else
+        //         $data['captcha'] = $this->flexi_auth->math_captcha();
+        // }
 
         if (!$this->flexi_auth->is_logged_in())
         {

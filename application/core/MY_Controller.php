@@ -1,20 +1,45 @@
 <?php
 
 class MY_User_Controller extends MY_Basic_Controller{
-    protected $userid;
-    protected $leagueid;
-    protected $current_week;
-    protected $current_year;
-    protected $teamid;
+    // I think these can go away 11-28-16
+    // protected $userid;
+    // protected $leagueid;
+    // protected $current_week;
+    // protected $current_year;
+    // protected $teamid;
     function __construct()
     {
+        // Parent loads common_noauth_model and noauth session variables.
         parent::__construct();
-        // Initialize flexi auth (lite)
+        // 1. Initialize flexi auth (lite) and see if we're logged in.
         $this->auth = new stdClass;
         $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->load->model('common/common_model');
 
-        // Turn debugging on, if enabled.
+        // If not logged in redirect to login page
+        if (!$this->flexi_auth->is_logged_in() && !$this->input->is_ajax_request())
+        {
+             redirect('');
+        }
+
+        // 2. Make sure session variables exist and current.
+        // User is logged in, but session variables don't exist.  When the flexi_auth_lite library is initialized above, it checks for
+        // remember me tokens and "logs in".  If that happens, the session data will have disappeared, this reloads it.
+        if ($this->session->userdata('user_id') == "")
+        {
+            $this->load->model('security_model');
+            $this->security_model->set_session_variables();
+        }
+
+        // This is to make sure the user session gets these vars if so much time has passed
+        // since they were first set.
+        if ($this->session->userdata('expire_league_vars') < time())
+        {
+            $this->load->model('security_model');
+            $this->security_model->set_dynamic_session_variables();
+        }
+
+        // 3. Turn debugging on, if enabled.
         if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
         {
                 $sections = array(
@@ -26,12 +51,8 @@ class MY_User_Controller extends MY_Basic_Controller{
                 $this->output->enable_profiler(TRUE);
         }
 
-        // If not logged in redirect to login page
-        if (!$this->flexi_auth->is_logged_in() && !$this->input->is_ajax_request())
-        {
-             redirect('');
-        }
-        //Load session variables
+        // 4. Set some local variables for easier access, sort of regret doing this since I depend on them now.
+        // Load session variables
         $this->userid = $this->session->userdata('user_id');
         $this->is_site_admin = $this->session->userdata('is_site_admin');
         $this->is_league_admin = $this->session->userdata('is_league_admin');
@@ -55,19 +76,11 @@ class MY_User_Controller extends MY_Basic_Controller{
             redirect('admin');
         }
 
-        // Breadcrumbs
+        // 5. Initialize array for use with breadcrumbs
         $this->bc = array();
-
-        // This is to make sure the user session gets these vars if so much time has passed
-        // since they were first set.
-        if ($this->session->userdata('expire_league_vars') < time())
-        {
-            $this->load->model('security_model');
-            $this->security_model->set_dynamic_session_variables();
-        }
-
     }
 
+    // View for logged in user who has an ownerid, leagueid, teamid, etc.
     function user_view($viewname, $d=null)
     {
         $this->load->model('menu_model');
@@ -155,6 +168,7 @@ class MY_Basic_Controller extends CI_Controller{
         }
     }
 
+    // Basic view not requiring a user to be logged in.  Includes CSS and JS files, but little else.
     function basic_view($viewname, $d=null)
     {
         $d['v'] = $viewname;
