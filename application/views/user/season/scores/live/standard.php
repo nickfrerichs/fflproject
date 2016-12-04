@@ -14,7 +14,7 @@
         <?php $cnt=0;?>
         <?php foreach($matchups as $id => $matchup): ?>
         <?php if($cnt % 6 == 0): ?>
-        </div><div class="row align-center callout">
+        <div class="row align-center callout">
         <?php endif;?>
         <div class="columns small-2" style="font-size:.8em">
             <div class="row ls-s-matchup-score <?php if($id == 0){echo 'ls-s-matchup-selected"';}?>" style="background-color: white;border-style:solid;border-color:#DDD;border-width:1px;" data-id="<?=$id?>">
