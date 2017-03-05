@@ -55,6 +55,12 @@ class Schedule extends MY_Admin_Controller{
                     $type = explode("_",str_replace('type','',$key));
                     $data[$type[0]][$type[1]]['type'] = $value;
                 }
+                if (stripos($key,'title') !== false && $value != '')
+                {
+                    $title = explode("_",str_replace('title','',$key));
+                    $data[$title[0]][$title[1]]['title'] = $value;
+                }
+
             }
             $this->schedule_model->save_schedule($data);
             redirect('admin/schedule');
@@ -63,6 +69,7 @@ class Schedule extends MY_Admin_Controller{
         $schedule = $this->schedule_model->get_schedule_data();
         $game_types = $this->schedule_model->get_game_types_data();
         $team_list = $this->schedule_model->get_teams_data();
+        $titles = $this->schedule_model->get_titles_data();
         $schedule_array = array();
         foreach ($schedule as $s)
         {
@@ -71,7 +78,8 @@ class Schedule extends MY_Admin_Controller{
                                                         'away' => $s->away_team,
                                                         'away_id' => $s->away_team_id,
                                                         'home_id' => $s->home_team_id,
-                                                        'type_id' => $s->game_type_id);
+                                                        'type_id' => $s->game_type_id,
+                                                        'title_id' => $s->schedule_title_id);
         }
 
         $this->load->helper('form');
@@ -81,7 +89,8 @@ class Schedule extends MY_Admin_Controller{
 
         $this->admin_view('admin/schedule/schedule_edit', array('schedule' => $schedule_array,
                                                            'game_types' => $game_types,
-                                                           'team_list' => $team_list));
+                                                           'team_list' => $team_list,
+                                                           'titles' => $titles));
     }
 
     function delete_game($week, $game)

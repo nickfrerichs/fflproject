@@ -6,6 +6,7 @@
 <div class="row">
     <div class="columns">
         <a href="<?=site_url('admin/schedule_templates/gametypes')?>">Manage Game Types</a> <br>
+        <a href="<?=site_url('admin/schedule_templates/titles')?>">Manage Titles</a> <br>
         <table>
             <th>Name</th>
             <th>Teams</th>

@@ -11,10 +11,33 @@ class History extends MY_User_Controller{
     }
 
 
-    public function index()
+    public function index($selected_year = 0)
     {
-        $this->load->model('player_search_model');
+        redirect('league/history/year/'.$this->session->userdata('current_year'));
         $data = array();
+        $data['selected_year'] = $selected_year;
+        if ($selected_year == 0)
+            $data['selected_year'] = $this->session->userdata('current_year');
+
+
+        $this->load->model('player_search_model');
+
+        $data['years'] = $this->player_search_model->get_league_years();
+        $this->user_view('user/league/history', $data);
+    }
+
+    public function year($selected_year = 0)
+    {
+        if ($selected_year == 0)
+            redirect('league/history/year/'.$this->session->userdata('current_year'));
+        $data = array();
+        $data['selected_year'] = $selected_year;
+        if ($selected_year == 0)
+            $data['selected_year'] = $this->session->userdata('current_year');
+
+
+        $this->load->model('player_search_model');
+
         $data['years'] = $this->player_search_model->get_league_years();
         $this->user_view('user/league/history', $data);
     }

@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '0.3'
+CURRENT_VERSION = '0.4'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -21,6 +21,42 @@ def main():
 
 def upgrade_db(version):
 
+    if version == "0.3":
+        # These were somehow dropped from 0.2 to 0.3
+        if column_exists("desription", "money_list_type"):
+            query = 'ALTER TABLE `money_list_type` CHANGE COLUMN `desription` `description` VARCHAR(500) NOT NULL'
+            cur.execute(query)
+        if not column_exists("title_game", "schedule_game_type"):
+            query = 'ALTER TABLE `schedule_game_type` ADD `title_game` BOOLEAN DEFAULT 0'
+            cur.execute(query)
+        if not column_exists("league_id","schedule_template"):
+            query = 'ALTER TABLE `schedule_template` ADD `league_id` INT(11) DEFAULT 0'
+            cur.execute(query)
+
+        # Create schedule_title table & add schedule_title_id to schedule table
+        if not table_exists("schedule_title"):
+            query = ('CREATE TABLE `schedule_title` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                                                    +'text VARCHAR(50) NOT NULL,'
+                                                    +'display_order INT(11) DEFAULT 0,'
+                                                    +'league_id INT(11) DEFAULT 0)')
+
+            cur.execute(query)
+
+        if not column_exists("schedule_title_id", "schedule"):
+            query = 'ALTER TABLE `schedule` ADD `schedule_title_id` INT(11) DEFAULT 0'
+            cur.execute(query)
+
+        # New menu item in admin section
+        query = ('insert into menu_item (menu_bar_id, text, url, `order`, hide, show_noleague) VALUES'
+                + '(5, "Past Seasons","admin/past_seasons",7,0,0)')
+
+        cur.execute(query)
+
+        query = 'update site_settings set db_version = "%s"' % ("0.4")
+        cur.execute(query)
+        db.commit()
+        return get_db_version()
+        
     if version == "0.2":
         if column_exists('sse_chat','owner_setting') == False:
             query = 'ALTER TABLE owner_setting ADD sse_chat BOOLEAN DEFAULT 0'
@@ -87,6 +123,15 @@ def get_db_version():
 
 def column_exists(column, table):
     query = 'show columns from '+table+' like "'+column+'"'
+    cur.execute(query)
+    row = cur.fetchone()
+    if row is None:
+        return False
+    else:
+        return True
+
+def table_exists(table):
+    query = 'SHOW TABLES LIKE "%s"' % (table)
     cur.execute(query)
     row = cur.fetchone()
     if row is None:

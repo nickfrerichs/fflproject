@@ -149,5 +149,72 @@ class Schedule_templates extends MY_Admin_Controller{
 
     }
 
+
+    function titles()
+    {
+        $data = array();
+        $this->bc['Schedule Templates'] = site_url('admin/schedule_templates');
+        $this->bc['Titles'] = "";
+
+        $data['titles'] = $this->schedule_model->get_titles_data();
+        
+        $this->admin_view('admin/schedule/schedule_titles',$data);
+    }
+
+    function ajax_edit_title()
+    {
+        $result = array('success' => false);
+        if ($this->input->post('id'))
+        {
+            // Code to edit existing title
+        }
+        else
+        {
+            $text = $this->input->post('text');
+            // Add a new title, no ID supplied
+            $this->schedule_model->add_title($text);
+            $result['success'] = True;
+        }
+
+        echo json_encode($result);
+
+    }
+
+    function ajax_title_text_edit()
+    {
+
+        $response = array('success' => false);
+        $id = $this->input->post('var1');
+        $value = $this->input->post('value');
+
+        $this->schedule_model->set_title_text($id, $value);
+        $response['success'] = True;
+
+        echo json_encode($response);
+    }
+    
+
+    function ajax_title_order_edit()
+    {
+        $response = array('success' => false);
+        $id = $this->input->post('var1');
+        $value = $this->input->post('value');
+
+        $this->schedule_model->set_title_display_order($id, $value);
+        $response['success'] = True;
+
+        echo json_encode($response);
+    }
+
+    function ajax_delete_title()
+    {
+        $result = array('success' => false);
+        $id = $this->input->post('id');
+        $this->schedule_model->delete_title($id);
+        $result['success'] = True;
+
+        echo json_encode($result);
+    }
+
 }
 ?>

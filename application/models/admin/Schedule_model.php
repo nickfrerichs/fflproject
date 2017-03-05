@@ -4,7 +4,7 @@ class Schedule_model extends MY_Model{
 
     function get_schedule_data()
     {
-        $data = $this->db->select('home.team_name as home_team, away.team_name as away_team')
+        $data = $this->db->select('home.team_name as home_team, away.team_name as away_team, schedule_title_id')
                 ->select('schedule.week, schedule.year, schedule.game')
                 ->select('schedule.home_team_id, schedule.away_team_id, schedule.game_type_id')
                 ->select('schedule_game_type.text_id as game_type')
@@ -159,9 +159,11 @@ class Schedule_model extends MY_Model{
             foreach($week as $game_id => $game)
             {
                 if (array_key_exists('type',$game)){$game_type = $game['type'];}else{$game_type = 0;}
+                if (array_key_exists('title',$game)){$game_title = $game['title'];}else{$game_title = 0;}
                 $data = array('home_team_id' => $game['home'],
                               'away_team_id' => $game['away'],
-                              'game_type_id' => $game_type);
+                              'game_type_id' => $game_type,
+                              'schedule_title_id' => $game_title);
                 $this->db->where('week',$week_id)->where('game', $game_id)
                         ->where('league_id', $this->leagueid)->where('year', $this->current_year)
                         ->update('schedule', $data);
@@ -179,6 +181,12 @@ class Schedule_model extends MY_Model{
     {
         return $this->db->select('id, text_id, default, for_title')->from('schedule_game_type')
                 ->where('league_id',$this->leagueid)->where('id',$id)->get()->row();
+    }
+
+    function get_titles_data()
+    {
+        return $this->db->select('id, text, display_order')
+            ->from('schedule_title')->where('league_id',$this->leagueid)->get()->result();
     }
 
     function add_gametype($id, $title_game)
@@ -203,11 +211,39 @@ class Schedule_model extends MY_Model{
                                                   'id' => $id));
     }
 
+    function delete_title($id)
+    {
+        $this->db->delete('schedule_title', array('league_id' => $this->leagueid,
+                                                    'id' => $id));
+    }
+
+    function set_title_text($id, $value)
+    {
+        $data = array('text' => $value);
+        $this->db->where('league_id',$this->leagueid)->where('id',$id);
+        $this->db->update('schedule_title', $data);
+    }
+
+    function  set_title_display_order($id, $value)
+    {
+        $data = array('display_order' => $value);
+        $this->db->where('league_id',$this->leagueid)->where('id',$id);
+        $this->db->update('schedule_title',$data);
+    }
+
     function set_gametype_name($id, $name)
     {
         $data = array('text_id' => $name);
         $this->db->where('league_id',$this->leagueid)->where('id',$id);
         $this->db->update('schedule_game_type',$data);
+    }
+
+    function add_title($text)
+    {
+        $data = array(  'text' => $text, 
+                        'league_id' => $this->leagueid);
+
+        $this->db->insert('schedule_title',$data);
     }
 
 }
