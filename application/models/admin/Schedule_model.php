@@ -2,23 +2,44 @@
 
 class Schedule_model extends MY_Model{
 
-    function get_schedule_data()
+    function get_schedule_data($year = 0)
     {
+        if ($year == 0)
+            $year = $this->current_year;
         $data = $this->db->select('home.team_name as home_team, away.team_name as away_team, schedule_title_id')
                 ->select('schedule.week, schedule.year, schedule.game')
                 ->select('schedule.home_team_id, schedule.away_team_id, schedule.game_type_id')
                 ->select('schedule_game_type.text_id as game_type')
+                ->select('schedule.id as schedule_id')
                 ->from('schedule')
                 ->join('team as home', 'home.id = schedule.home_team_id', 'left')
                 ->join('team as away', 'away.id = schedule.away_team_id', 'left')
                 ->join('schedule_game_type', 'schedule_game_type.id = schedule.game_type_id', 'left')
                 ->where('schedule.league_id', $this->leagueid)
-                ->where('schedule.year', $this->current_year)
+                ->where('schedule.year', $year)
                 ->order_by('schedule.week', 'asc')
                 ->order_by('schedule.game', 'asc')
                 ->get();
 
         return $data->result();
+    }
+
+    function get_schedule_array($year)
+    {
+        $schedule = $this->get_schedule_data($year);
+        $schedule_array = array();
+        foreach ($schedule as $s)
+        {
+            $schedule_array[$s->week][$s->game] = array('type' => $s->game_type,
+                                                        'home' => $s->home_team,
+                                                        'away' => $s->away_team,
+                                                        'away_id' => $s->away_team_id,
+                                                        'home_id' => $s->home_team_id,
+                                                        'type_id' => $s->game_type_id,
+                                                        'title_id' => $s->schedule_title_id,
+                                                        'id' => $s->schedule_id);
+        }
+        return $schedule_array;
     }
 
     function get_game_types_data()
@@ -27,16 +48,20 @@ class Schedule_model extends MY_Model{
                 ->where('league_id', $this->leagueid)->get()->result();
     }
 
-    function get_teams_data()
+    function get_teams_data($year = 0)
     {
-        $data = $this->db->select('team.id as team_id, team.team_name')
+        // Could only select teams active that year by first getting array from that year's schedule.'
+        if ($year == 0)
+            $year = $this->current_year;
+        $this->db->select('team.id as team_id, team.team_name')
                 ->select('division.id as division_id, division.name as division_name')
                 ->from('team')
-                ->join('team_division','team_division.team_id = team.id and team_division.year='.$this->current_year,'left')
+                ->join('team_division','team_division.team_id = team.id and team_division.year='.$year,'left')
                 ->join('division','team_division.division_id = division.id', 'left')
-                ->where('team.league_id',$this->leagueid)
-                ->where('team.active',1)
-                ->order_by('division.id','asc')
+                ->where('team.league_id',$this->leagueid);
+        if ($year == $this->current_year)
+            $this->db->where('team.active',1);
+        $data = $this->db->order_by('division.id','asc')
                 ->get();
 
         return $data->result();
@@ -92,19 +117,19 @@ class Schedule_model extends MY_Model{
         $this->db->delete('schedule_template', array('id' => $id));
     }
 
-    function delete_game($week, $game)
+    function delete_game($id)
     {
-        $this->db->delete('schedule', array('week' => $week,
-                                            'game' => $game,
+        $this->db->delete('schedule', array('id' => $id,
                                             'league_id' => $this->leagueid));
-        redirect('admin/schedule/edit');
     }
 
-    function add_games($week, $count)
+    function add_games($week, $count, $year=0)
     {
+        if ($year == 0)
+            $year = $this->current_year;
         $data = array();
         $game = $this->db->select('(max(game) +1) as next')->from('schedule')
-                ->where('week', $week)->where('league_id',$this->leagueid)
+                ->where('week', $week)->where('year',$year)->where('league_id',$this->leagueid)
                 ->get()->row()->next;
         if ($game == null)
             $game = 1;
@@ -112,7 +137,7 @@ class Schedule_model extends MY_Model{
         {
             $data[] = array('week' => $week,
                             'game' => $game,
-                            'year' => $this->current_year,
+                            'year' => $year,
                             'league_id' => $this->leagueid,
                             'nfl_week_type_id' => $this->common_model->get_week_type_id());
             $game++;
@@ -152,8 +177,10 @@ class Schedule_model extends MY_Model{
     }
 
 
-    function save_schedule($schedule)
+    function save_schedule($schedule, $year=0)
     {
+        if ($year == 0)
+            $year = $this->current_year;
         foreach($schedule as $week_id => $week)
         {
             foreach($week as $game_id => $game)
@@ -165,9 +192,22 @@ class Schedule_model extends MY_Model{
                               'game_type_id' => $game_type,
                               'schedule_title_id' => $game_title);
                 $this->db->where('week',$week_id)->where('game', $game_id)
-                        ->where('league_id', $this->leagueid)->where('year', $this->current_year)
+                        ->where('league_id', $this->leagueid)->where('year', $year)
                         ->update('schedule', $data);
             }
+        }
+    }
+
+    function save_schedule_array($schedule)
+    {
+        $data = array();
+        foreach($schedule as $s)
+        {
+            $data = array('home_team_id' => $s['home'],
+                            'away_team_id' => $s['away'],
+                            'game_type_id' => $s['type'],
+                            'schedule_title_id' => $s['title']);
+            $this->db->update('schedule',$data,array('id' => $s['id'], 'league_id' => $this->leagueid));
         }
     }
 

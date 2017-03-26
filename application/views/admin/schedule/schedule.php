@@ -1,10 +1,14 @@
 <?php //print_r($schedule); ?>
-
+	
 
 	<div class="row">
 		<div class="columns small-12">
-			<a href="<?=site_url('admin/schedule/edit')?>">Manage schedule</a> <br>
-			<a href="<?=site_url('admin/schedule/create')?>">Create schedule from template</a> <br>
+		<?php $this->load->view('admin/schedule/year_bar'); ?>
+		<br>
+				<a href="<?=site_url('admin/schedule/edit/'.$selected_year)?>">Manage schedule</a> <br>
+				<?php if($selected_year == $this->session->userdata('current_year')): ?>
+					<a href="<?=site_url('admin/schedule/create')?>">Create schedule from template</a> <br>
+				<?php endif; ?>
 		</div>
 	</div>
 	<br>

@@ -1,7 +1,7 @@
 <?php foreach($years as $i => $y): ?>
     <?php if ($y->year == $this->session->userdata('current_year')):?>
         <?php continue; ?>
-    <?php elseif ($y->year == $selected_year): ?>
+    <?php elseif (isset($selected_year) && $y->year == $selected_year): ?>
         <?=$y->year?>
     <?php else:?>
         <a href="<?=site_url('admin/past_seasons/year/'.$y->year)?>"><?=$y->year?></a>

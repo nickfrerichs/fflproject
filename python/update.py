@@ -194,6 +194,10 @@ def update_standings(year, week ,weektype):
 
             db.commit()
 
+            query = ('delete from schedule_result where schedule_id not in (select schedule.id from schedule)')
+            cur.execute(query)
+            db.commit()
+
 
 def update_team_photos():
     print "(Save team photos should be saved as T_<club_id>.ext)"
