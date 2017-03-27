@@ -2,9 +2,10 @@
 
 class Scoring_model extends MY_Model
 {
-    function get_scoring_cats_data($position_id = 0)
+    function get_scoring_cats_data($position_id = 0, $year = 0)
     {
-        $def_year = $this->common_model->scoring_def_year();
+
+        $def_year = $this->common_model->scoring_def_year($year);
 
         // Get array of existing defined_values to be omitted from next query
         $v = array();
@@ -30,9 +31,9 @@ class Scoring_model extends MY_Model
 
     }
 
-    function get_values_data()
+    function get_values_data($year = 0)
     {
-        $def_year = $this->common_model->scoring_def_year();
+        $def_year = $this->common_model->scoring_def_year($year);
 
         $data = $this->db->select('scoring_def.id, scoring_def.nfl_scoring_cat_id, scoring_def.per, '
                 . 'scoring_def.points, scoring_def.league_id, scoring_def.round, scoring_def.range_start, scoring_def.range_end, scoring_def.is_range')
@@ -86,9 +87,33 @@ class Scoring_model extends MY_Model
         return false;
     }
 
-    function add_stat_value_entry($stat_id, $position_id, $is_range = False)
+    function add_stat_value_entry($stat_id, $position_id, $is_range = False, $year=0)
     {
-        $year = $this->reconcile_scoring_def_year();
+        if ($year == 0)
+            $year = $this->current_year;
+        $def_range = $this->common_model->scoring_def_range($year);
+        $def_year = $this->common_model->scoring_def_year($year);
+
+
+        // start 2006   end 2016
+        // If year is less than end year (2016<2016)
+        // Copy to year+1
+        if ($year < $def_range['end'])
+        {
+            $this->copy_scoring_def(False,False,False,$def_year,$year+1);
+        }
+
+        // If year is greater than start year (2006<2016)
+        // Copy def_year to year year
+        if ($year > $def_range['start'])
+        {
+            $this->copy_scoring_def(False,False,False,$def_year,$year);
+        }
+
+        if ($year == $def_range['start'])
+            $year = $def_year;
+
+        // Add the new category to $year
         $data = array('nfl_scoring_cat_id' => $stat_id,
                     'per' => 0,
                     'points' => 0,
@@ -116,20 +141,11 @@ class Scoring_model extends MY_Model
         ->delete('scoring_def');
     }
 
-    function reconcile_scoring_def_year($deleteid = False, $saveid = False, $savevalues = False)
+    // Copy all defs from one year to another, delete skips a record, save changes a record
+    function copy_scoring_def($deleteid=False, $saveid=False, $savevalues=False, $from_year, $to_year)
     {
-        // get current scoring_def year
-        // check fantasy statistic for entries prior to the current year with this scoring_def_year
-        $current_def_year = $this->common_model->scoring_def_year($this->current_year);
-        $num = $this->db->from('starter')->where('league_id',$this->leagueid)->where('year >= ',$current_def_year)
-            ->where('year <> ',$this->current_year)->count_all_results();
-
-        // There are prior year fantasy_statistic rows using the current scoring def year, so we must fork a copy with
-        // the current year as the scoring_def year
-        if ($num > 0)
-        {
             $scoring_defs = $this->db->select('id, nfl_scoring_cat_id, per, points, round, range_start, range_end, league_id, nfl_position_id')
-                    ->from('scoring_def')->where('league_id',$this->leagueid)->where('year',$current_def_year)->get()->result();
+                    ->from('scoring_def')->where('league_id',$this->leagueid)->where('year',$from_year)->get()->result();
 
             foreach($scoring_defs as $def)
             {
@@ -144,27 +160,51 @@ class Scoring_model extends MY_Model
                               'range_end' => $def->range_end,
                               'nfl_position_id' => $def->nfl_position_id,
                               'league_id' => $this->leagueid,
-                              'year' => $this->current_year);
+                              'year' => $to_year);
 
                 if ($saveid && $def->id == $saveid)
-                {
                     $data = $savevalues + $data;
-                }
-
+                
                 $this->db->insert('scoring_def',$data);
             }
-            $current_def_year = $this->current_year;
-        }
-        elseif($deleteid)
+    }
+
+    function reconcile_scoring_def_year($deleteid = False, $saveid = False, $savevalues = False, $year = 0)
+    {
+        if ($year == 0)
+            $year = $this->current_year;
+        $def_range = $this->common_model->scoring_def_range($year);
+
+        $def_year = $this->common_model->scoring_def_year($year);
+        
+        // start 2006   end 2016
+        // If year is less than end year (2016<2016)
+        // Copy to year+1
+        if ($year < $def_range['end'])
         {
-            $this->delete($deleteid);
-        }
-        elseif($saveid)
-        {
-            $this->db->where('id', $saveid);
-            $this->db->update('scoring_def',$savevalues);
+            $this->copy_scoring_def(False,False,False,$def_year,$year+1);
         }
 
-        return $current_def_year;
+        // If year is greater than start year (2006<2016)
+        // Copy and make change to year (2016)
+        if ($year > $def_range['start'])
+        {
+            $this->copy_scoring_def($deleteid,$saveid,$savevalues,$def_year,$year);
+        }
+
+        // If year is equal to start year (2006==2016)
+        // Make change to def_year
+        if ($year == $def_range['start'])
+        {
+            if($deleteid)
+            {
+                $this->delete($deleteid);
+            }
+            if($saveid)
+            {
+                $this->db->where('id', $saveid);
+                $this->db->update('scoring_def',$savevalues);
+            }
+        }
     }
 }

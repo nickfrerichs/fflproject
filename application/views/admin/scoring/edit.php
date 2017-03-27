@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="columns">
-		<h5><?=$this->session->userdata('current_year')?> Season</h5>
+		<h5><?=$selected_year?> Season</h5>
 	</div>
 </div>
 <div class="row">

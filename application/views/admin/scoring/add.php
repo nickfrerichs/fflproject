@@ -6,7 +6,7 @@ function SetStatID(stat_id) {
 
 <div class="row">
     <div class="columns">
-        <h5><?=$this->session->userdata('current_year')?> Season</h5>
+        <h5><?=$selected_year?> Season</h5>
     </div>
 </div>
 <div class="row align-center">
@@ -24,7 +24,7 @@ function SetStatID(stat_id) {
                         <?php if ($selected_pos == $p->id): ?>
                             <?=$p->text_id?>
                         <?php else: ?>
-                            <a href='<?=site_url('admin/scoring/add/'.$p->id)?>'><?=$p->text_id?></a>
+                            <a href='<?=site_url('admin/scoring/add/'.$selected_year.'/'.$p->id)?>'><?=$p->text_id?></a>
                         <?php endif; ?>
                     <?php endforeach;?>
                 </td>

@@ -13,8 +13,17 @@ class Scoring extends MY_Admin_Controller
 
     function index()
     {
-        $categories = $this->scoring_model->get_scoring_cats_data();
-        $scoring_defs_data = $this->scoring_model->get_values_data();
+        $this->year();
+    }
+
+    function year($selected_year = 0)
+    {
+        if($selected_year == 0)
+            $selected_year = $this->current_year;
+
+        $data = array();
+        $categories = $this->scoring_model->get_scoring_cats_data($selected_year);
+        $scoring_defs_data = $this->scoring_model->get_values_data($selected_year);
 
         $scoring_defs = array();
         foreach ($scoring_defs_data as $s)
@@ -30,14 +39,23 @@ class Scoring extends MY_Admin_Controller
             $scoring_defs[$s->type_text][$s->pos_text][$s->id]['cat_id'] = $s->nfl_scoring_cat_id;
             $scoring_defs[$s->type_text][$s->pos_text][$s->id]['pos_id'] = $s->pos_id;
         }
+        $data['def_range'] = $this->common_model->scoring_def_range($selected_year);
+        $data['selected_year'] = $selected_year;
+        $data['categories'] = $categories;
+        $data['scoring_defs'] = $scoring_defs;
+        $data['years'] = $this->common_model->get_league_years();
+
+        $this->bc['Scoring'] = site_url('admin/scoring');
+        $this->bc[$selected_year] = '';
 
 
-        $this->admin_view('admin/scoring/scoring.php', array('categories' => $categories,
-                                                            'scoring_defs' => $scoring_defs));
+        $this->admin_view('admin/scoring/scoring.php', $data);
     }
 
-    function add($position_id = 0)
+    function add($year, $position_id = 0)
     {
+        $data = array();
+        $data['selected_year'] = $year;
         // SECURITY: league
         $stat_id = $this->input->post('stat_id');
 
@@ -48,11 +66,11 @@ class Scoring extends MY_Admin_Controller
         {
             if ($type == "Unit range")
             {
-                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, true);
+                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, true, $year);
             }
             elseif (!$this->scoring_model->stat_value_exists($position_id,$stat_id))
             {
-                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, false);
+                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, false, $year);
             }
         }
 
@@ -62,16 +80,22 @@ class Scoring extends MY_Admin_Controller
         $nfl_positions = $this->scoring_model->get_nfl_positions_data();
 
         $this->bc['Scoring'] = site_url('admin/scoring');
+        $this->bc[$year] = site_url('admin/scoring/year/'.$year);
         $this->bc['Add Definitions'] = "";
 
-        $this->admin_view('admin/scoring/add.php', array('cats'=>$categories,
-                                                        'nfl_positions' => $nfl_positions,
-                                                        'selected_pos' => $position_id));
+        $data['cats'] = $categories;
+        $data['nfl_positions'] = $nfl_positions;
+        $data['selected_pos'] = $position_id;
+        $this->admin_view('admin/scoring/add.php', $data);
 
     }
 
-    function edit()
+    function edit($year=0)
     {
+        $data = array();
+        if ($year == 0)
+            $year = $this->current_year;
+        $data['selected_year'] = $year;
         if ($this->input->post('save'))
         {
             $values = array();
@@ -96,24 +120,30 @@ class Scoring extends MY_Admin_Controller
                                                                                         'per' => $val['per'],
                                                                                         'range_start' => $val['start'],
                                                                                         'range_end' => $val['end'],
-                                                                                        'round' => $val['round']));
+                                                                                        'round' => $val['round']),
+                                                                                        $year);
             }
             redirect(site_url('admin/scoring'));
         }
 
         $this->load->helper('form');
-        $values = $this->scoring_model->get_values_data();
+        $values = $this->scoring_model->get_values_data($year);
 
         $this->bc['Scoring'] = site_url('admin/scoring');
+        $this->bc[$year] = site_url('admin/scoring/year/'.$year);
         $this->bc['Edit Values'] = "";
 
-        $this->admin_view('admin/scoring/edit.php', array('values' => $values));
+        $data['values'] = $values;
+
+        $this->admin_view('admin/scoring/edit.php', $data);
     }
 
-    function delete($value_id)
+    function delete($year=0, $value_id)
     {
+        if ($year == 0)
+            $year = $this->current_year;
         //SECURITY: league
-        $this->scoring_model->delete($value_id);
+        $this->scoring_model->reconcile_scoring_def_year($value_id,False,False,$year);
         redirect(site_url('admin/scoring'));
     }
 }

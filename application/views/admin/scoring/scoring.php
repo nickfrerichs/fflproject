@@ -2,14 +2,21 @@
 
 <div class="row">
     <div class="columns">
-        <h5><?=$this->session->userdata('current_year')?> Season</h5>
+        <?php $this->load->view('admin/scoring/year_bar.php');?>
+        <br><br>
+    </div>
+</div>
+<div class="row">
+    <div class="columns">
+        <h5><?=$selected_year?> Season</h5>
+        Scoring definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
     </div>
 </div>
 
 <div class="row">
     <div class="columns">
-        <span>(<a href="<?=site_url('admin/scoring/add')?>">Add More</a>)</span>
-        <span>(<a href="<?=site_url('admin/scoring/edit')?>">Edit Values</a>)</span>
+        <span>(<a href="<?=site_url('admin/scoring/add/'.$selected_year)?>">Add More</a>)</span>
+        <span>(<a href="<?=site_url('admin/scoring/edit/'.$selected_year)?>">Edit Values</a>)</span>
         <table class="table table-condensed table-striped text-center">
             <th class="text-left">Statistic</th><th>Position</th><th>Points</th><th>Per</th><th>Round</th><th>Range Start</th><th>Range End</th><th>delete</th>
             <?php foreach ($scoring_defs as $type_text => $type_def): ?>
@@ -31,7 +38,7 @@
                 <td><?php if ($def['round'] == 0){echo 'down';}else{echo 'up';} ?></td>
                 <td><?php if($def['is_range']){echo $def['range_start'];}?></td>
                 <td><?php if($def['is_range']){echo $def['range_end'];}?></td>
-                <td><a href="<?=site_url('admin/scoring/delete/'.$id)?>">X</a>
+                <td><a href="<?=site_url('admin/scoring/delete/'.$selected_year.'/'.$id)?>">X</a>
             </tr>
             <?php endforeach;?>
 

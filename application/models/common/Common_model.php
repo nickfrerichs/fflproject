@@ -135,6 +135,34 @@ class Common_model extends CI_Model{
         return 0;
     }
 
+    // Returns the range a scoring def year was effective for
+    function scoring_def_range($year = 0)
+    {
+        
+        if ($year == 0)
+            $year = $this->current_year;
+        $start_year = $this->scoring_def_year($year);
+        $end_year = $this->db->select('min(year) as y')->from('scoring_def')->where('scoring_def.league_id',$this->leagueid)
+            ->where('year > ',$start_year)->get()->row()->y;
+        $data['db_start'] = $start_year;
+        $data['db_end'] = $end_year;
+        // If never changed, look up the first year the league existed
+        if ($start_year == 0)
+        {
+            $start_year = $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
+            ->order_by('year','asc')->limit(1)->get()->row()->year;
+        }
+        // If never changed, it's through the current year... if it has, the def doesn't include the last changed year, so decrement 1.
+        if ($end_year == 0)
+            $end_year = $this->session->userdata('current_year');
+        else
+            $end_year--;
+
+        $data['start'] = $start_year;
+        $data['end'] = $end_year;
+        return $data;
+    }
+
 
     function twitter_post($text)
     {
