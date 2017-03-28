@@ -14,10 +14,27 @@ class Positions extends MY_Admin_Controller{
 
     function index()
     {
-        $league_positions = $this->positions_model->get_league_positions_data();
+        $this->year($this->session->userdata('current_year'));
+        // $data = array();
+        // $league_positions = $this->positions_model->get_league_positions_data();
+        // $nfl_positions = $this->positions_model->get_nfl_positions_array();
+        // $data['years'] = $this->common_model->get_league_years();
+        // $data['league_positions'] = $league_positions;
+        // $data['nfl_positions'] = $nfl_positions;
+        // $this->admin_view('admin/positions/positions', $data);
+    }
+
+    function year($selected_year)
+    {
+        $data = array();
+        $league_positions = $this->positions_model->get_league_positions_data($selected_year);
         $nfl_positions = $this->positions_model->get_nfl_positions_array();
-        $this->admin_view('admin/positions/positions', array('league_positions' => $league_positions,
-                                                    'nfl_positions' => $nfl_positions));
+        $data['years'] = $this->common_model->get_league_years();
+        $data['league_positions'] = $league_positions;
+        $data['nfl_positions'] = $nfl_positions;
+        $data['selected_year'] = $selected_year;
+        $data['def_range'] = $this->common_model->league_position_range($selected_year);
+        $this->admin_view('admin/positions/positions', $data);
     }
 
 
@@ -151,7 +168,7 @@ class Positions extends MY_Admin_Controller{
     function save($posid = null)
     {
 
-        $pos_year = $this->positions_model->reconcile_current_positions_year();
+        //$pos_year = $this->positions_model->reconcile_current_positions_year();
 
         $posid = $this->input->post('posid');
         $edit = false;
@@ -165,20 +182,20 @@ class Positions extends MY_Admin_Controller{
             'min_roster' => $this->input->post('min_roster'),
             'max_start' => $this->input->post('max_start'),
             'min_start' => $this->input->post('min_start'),
-            'year' => $pos_year);
+            'year' => $this->input->post('year'));
         if($edit)
             $values['id'] = $posid;
-
-        $this->positions_model->save_position($values);
+        $this->positions_model->reconcile_current_positions_year(False,$values,$values['year']);
+        //$this->positions_model->save_position($values);
 
     }
 
-    function delete($var)
+    function delete($year,$var)
     {
         if ($this->admin_security_model->is_position_in_league($var))
         {
-            $this->positions_model->reconcile_current_positions_year($var);
-            redirect('admin/positions');
+            $this->positions_model->reconcile_current_positions_year($var,False,$year);
+            redirect('admin/positions/year/'.$year);
         }
     }
 

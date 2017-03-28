@@ -2,9 +2,12 @@
 
 class Positions_model extends MY_Model
 {
-    function get_league_positions_data()
+    function get_league_positions_data($year=0)
     {
-        $pos_year = $this->common_model->league_position_year($this->current_year);
+
+        if ($year == 0)
+            $year = $this->current_year;
+        $pos_year = $this->common_model->league_position_year($year);
         $position_data = $this->db->select('position.id, position.text_id, position.long_text, position.nfl_position_id_list')
                 ->select('position.max_roster, position.min_roster, position.max_start, position.min_start')
                 ->from('position')
@@ -23,7 +26,6 @@ class Positions_model extends MY_Model
         return $this->db->select('roster_max')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->roster_max;
     }
 
-    // MOVE TO USER_MODEL?
     function get_league_position_data($posid)
     {
 
@@ -66,23 +68,26 @@ class Positions_model extends MY_Model
 
     function save_position($values)
     {
-        $data = array('text_id' => $values['text_id'],
-            'long_text' => $values['long_text'],
-            'league_id' => $this->leagueid,
-            'nfl_position_id_list' => $values['league_positions'],
-            'max_roster' => $values['max_roster'],
-            'min_roster' => $values['min_roster'],
-            'max_start' => $values['max_start'],
-            'min_start' => $values['min_start'],
-            'year' => $values['year']);
+        // $def_year = $this->common_model->league_position_year($values['year']);
+        // $this->reconcile_current_positions_year(False,$values,$values['year']);     
+           
+        // $data = array('text_id' => $values['text_id'],
+        //     'long_text' => $values['long_text'],
+        //     'league_id' => $this->leagueid,
+        //     'nfl_position_id_list' => $values['league_positions'],
+        //     'max_roster' => $values['max_roster'],
+        //     'min_roster' => $values['min_roster'],
+        //     'max_start' => $values['max_start'],
+        //     'min_start' => $values['min_start'],
+        //     'year' => $def_year);
 
-        if(isset($values['id']))
-        {
-            $this->db->where('id', $values['id']);
-            $this->db->update('position',$data);
-        }
-        else
-          $this->db->insert('position',$data);
+        // if(isset($values['id']))
+        // {
+        //     $this->db->where('id', $values['id']);
+        //     $this->db->update('position',$data);
+        // }
+        // // else
+        // //   $this->db->insert('position',$data);
     }
 
     function position_exists($id)
@@ -118,55 +123,151 @@ class Positions_model extends MY_Model
         return $pos_list;
     }
 
-    function reconcile_current_positions_year($deleteid = False)
+    function copy_position_def($deleteid, $savevalues, $from_year, $to_year)
     {
+        $positions = $this->db->select('id, text_id, long_text, nfl_position_id_list, max_roster, min_roster, max_start, min_start')
+            ->select('display_order')->from('position')->where('league_id',$this->leagueid)
+            ->where('year',$from_year)->get()->result();
+
+        foreach($positions as $pos)
+        {
+            if ($deleteid && $pos->id == $deleteid)
+                continue;
+            $data = array('text_id' => $pos->text_id,
+                            'long_text' => $pos->long_text,
+                            'nfl_position_id_list' => $pos->nfl_position_id_list,
+                            'max_roster' => $pos->max_roster,
+                            'min_roster' => $pos->min_roster,
+                            'max_start' => $pos->max_start,
+                            'min_start' => $pos->min_start,
+                            'display_order' => $pos->display_order,
+                            'league_id' => $this->leagueid,
+                            'year' => $to_year);
+
+            if ($savevalues && isset($savevalues['id']) && $pos->id == $savevalues['id'])
+            {
+                $data = array('text_id' => $savevalues['text_id'],
+                    'long_text' => $savevalues['long_text'],
+                    'league_id' => $this->leagueid,
+                    'nfl_position_id_list' => $savevalues['league_positions'],
+                    'max_roster' => $savevalues['max_roster'],
+                    'min_roster' => $savevalues['min_roster'],
+                    'max_start' => $savevalues['max_start'],
+                    'min_start' => $savevalues['min_start'],
+                    'year' => $to_year);
+            }
+
+            $this->db->insert('position',$data);
+            $pos_id = $this->db->insert_id();
+
+            // Also update entries in starter table for the affected year to use this new position id.
+            $starter_data = array('starting_position_id' => $pos_id);
+            $this->db->where('starting_position_id',$pos->id)->where('year',$to_year)->where('league_id',$this->leagueid);
+            $this->db->update('starter',$starter_data);
+            
+        }
+        // If savevalues doesn't have an id, it must be a new one, so add it.'
+        if ($savevalues && !isset($savevalues['id']))
+        {
+            $data = array('text_id' => $savevalues['text_id'],
+                    'long_text' => $savevalues['long_text'],
+                    'league_id' => $this->leagueid,
+                    'nfl_position_id_list' => $savevalues['league_positions'],
+                    'max_roster' => $savevalues['max_roster'],
+                    'min_roster' => $savevalues['min_roster'],
+                    'max_start' => $savevalues['max_start'],
+                    'min_start' => $savevalues['min_start'],
+                    'year' => $to_year);
+            $this->db->insert('position',$data);
+        }
+   //     $current_pos_year = $this->current_year;
+
+    }
+
+    function reconcile_current_positions_year($deleteid = False, $savevalues = False, $year=0)
+    {
+        if ($year ==0)
+            $year = $this->current_year;
+        $def_range = $this->common_model->league_position_range($year);
+        $def_year = $this->common_model->league_position_year($year);
         // get current league_position_year
         // check starter table for entries prior to the current year with that league_position_year
-        $current_pos_year = $this->common_model->league_position_year($this->current_year);
-        $num = $this->db->from('starter')->where('league_id',$this->leagueid)->where('year >= ',$current_pos_year)
-            ->where('year <> ',$this->current_year)->count_all_results();
 
-        // There are prior year starter rows using the current position year, so we must make a copy with
-        // the current year as the position year
-        if ($num > 0)
+        if ($year < $def_range['end'])
         {
-            $positions = $this->db->select('id, text_id, long_text, nfl_position_id_list, max_roster, min_roster, max_start, min_start')
-                     ->select('display_order')->from('position')->where('league_id',$this->leagueid)
-                     ->where('year',$current_pos_year)->get()->result();
+            $this->copy_position_def(False,False,$def_year,$year+1);
+        }
 
-            foreach($positions as $pos)
+        if ($year > $def_range['start'])
+        {
+            $this->copy_position_def($deleteid,$savevalues,$def_year,$year);
+        }
+
+        // $num = $this->db->from('starter')->where('league_id',$this->leagueid)->where('year >= ',$current_pos_year)
+        //     ->where('year <> ',$this->current_year)->count_all_results();
+
+        // // There are prior year starter rows using the current position year, so we must make a copy with
+        // // the current year as the position year
+        // if ($num > 0)
+        // {
+        //     $this->copy_position_def($deleteid, $from_year, $to_year);
+        //     // $positions = $this->db->select('id, text_id, long_text, nfl_position_id_list, max_roster, min_roster, max_start, min_start')
+        //     //          ->select('display_order')->from('position')->where('league_id',$this->leagueid)
+        //     //          ->where('year',$current_pos_year)->get()->result();
+
+        //     // foreach($positions as $pos)
+        //     // {
+        //     //     if ($deleteid && $pos->id == $deleteid)
+        //     //         continue;
+        //     //     $data = array('text_id' => $pos->text_id,
+        //     //                   'long_text' => $pos->long_text,
+        //     //                   'nfl_position_id_list' => $pos->nfl_position_id_list,
+        //     //                   'max_roster' => $pos->max_roster,
+        //     //                   'min_roster' => $pos->min_roster,
+        //     //                   'max_start' => $pos->max_start,
+        //     //                   'min_start' => $pos->min_start,
+        //     //                   'display_order' => $pos->display_order,
+        //     //                   'league_id' => $this->leagueid,
+        //     //                   'year' => $this->current_year);
+
+        //     //     $this->db->insert('position',$data);
+        //     //     $pos_id = $this->db->insert_id();
+
+        //     //     // Also update any current year entries in starter table using this new position id.
+        //     //     $starter_data = array('starting_position_id' => $pos_id);
+        //     //     $this->db->where('starting_position_id',$pos->id)->where('year',$this->current_year)->where('league_id',$this->leagueid);
+        //     //     $this->db->update('starter',$starter_data);
+
+        //     }
+        //     $current_pos_year = $this->current_year;
+        // }
+        if ($year == $def_range['start'])
+        {
+            if($deleteid)
             {
-                if ($deleteid && $pos->id == $deleteid)
-                    continue;
-                $data = array('text_id' => $pos->text_id,
-                              'long_text' => $pos->long_text,
-                              'nfl_position_id_list' => $pos->nfl_position_id_list,
-                              'max_roster' => $pos->max_roster,
-                              'min_roster' => $pos->min_roster,
-                              'max_start' => $pos->max_start,
-                              'min_start' => $pos->min_start,
-                              'display_order' => $pos->display_order,
-                              'league_id' => $this->leagueid,
-                              'year' => $this->current_year);
-
-                $this->db->insert('position',$data);
-                $pos_id = $this->db->insert_id();
-
-                // Also update any current year entries in starter table using this new position id.
-                $starter_data = array('starting_position_id' => $pos_id);
-                $this->db->where('starting_position_id',$pos->id)->where('year',$this->current_year)->where('league_id',$this->leagueid);
-                $this->db->update('starter',$starter_data);
-
+                $this->delete_position($deleteid);
             }
-            $current_pos_year = $this->current_year;
-        }
-        elseif($deleteid)
-        {
-            $this->delete_position($deleteid);
-        }
+            if($savevalues)
+            {
+                $data = array('text_id' => $savevalues['text_id'],
+                    'long_text' => $savevalues['long_text'],
+                    'league_id' => $this->leagueid,
+                    'nfl_position_id_list' => $savevalues['league_positions'],
+                    'max_roster' => $savevalues['max_roster'],
+                    'min_roster' => $savevalues['min_roster'],
+                    'max_start' => $savevalues['max_start'],
+                    'min_start' => $savevalues['min_start'],
+                    'year' => $def_year);
 
-        return $current_pos_year;
-
+                if(isset($savevalues['id']))
+                {
+                    $this->db->where('id', $savevalues['id']);
+                    $this->db->update('position',$data);
+                }
+                else
+                    $this->db->insert('position',$data);
+            }
+        }
 
     }
 }

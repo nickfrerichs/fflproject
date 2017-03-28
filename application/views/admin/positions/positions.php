@@ -34,12 +34,20 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="columns">
+        <?php $this->load->view('admin/positions/year_bar.php'); ?>
+    </div>
+</div>
+<br>
 
 <div class="row">
     <div class="columns">
-        <h5><?=$this->session->userdata('current_year')?> Season</h5>
+        <h5><?=$selected_year?> Season</h5>
+        Pos. definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
     </div>
 </div>
+<br>
 <div class="row">
     <div class="columns">
         <h6><a id="show-add-button">Add Position</a></h6>
@@ -68,7 +76,7 @@
                 <td><?=$lp->min_start == -1 ? "No min" : $lp->min_start?></td>
                 <td>
                     <a class="show-edit-button" data-id="<?=$lp->id?>">edit</a>
-                    <a href='<?php echo site_url('admin/positions/delete/'.$lp->id); ?>'>delete</a>
+                    <a href='<?php echo site_url('admin/positions/delete/'.$selected_year.'/'.$lp->id); ?>'>delete</a>
                 </td>
             </tr>
         <?php endforeach;?>
@@ -91,11 +99,12 @@ $("#save-button").on("click",function(){
     var min_start = $("#start-min").val();
     var max_start = $("#start-max").val();
     var league_positions = []
+    var year = <?=$selected_year?>
 
     $("#league-positions option").each(function(){
         league_positions.push($(this).val());
     });
-    $.post(url,{"posid":id,"text_id":text_id,"long_text":long_text,"league_positions":league_positions,
+    $.post(url,{"posid":id,"text_id":text_id,"long_text":long_text,"league_positions":league_positions,"year":year,
                 "max_roster":max_roster,"min_roster":min_roster,"min_start":min_start,"max_start":max_start},function(data){
                     location.reload();
     });

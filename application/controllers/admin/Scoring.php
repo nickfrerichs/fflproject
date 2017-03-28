@@ -144,7 +144,7 @@ class Scoring extends MY_Admin_Controller
             $year = $this->current_year;
         //SECURITY: league
         $this->scoring_model->reconcile_scoring_def_year($value_id,False,False,$year);
-        redirect(site_url('admin/scoring'));
+        redirect(site_url('admin/scoring/year/'.$year));
     }
 }
 ?>
