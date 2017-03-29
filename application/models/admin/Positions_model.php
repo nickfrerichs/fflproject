@@ -123,7 +123,7 @@ class Positions_model extends MY_Model
         return $pos_list;
     }
 
-    function copy_position_def($deleteid, $savevalues, $from_year, $to_year)
+    function copy_position_def($deleteid, $savevalues, $from_year, $to_year, $adjust_future_pos_ids)
     {
         $positions = $this->db->select('id, text_id, long_text, nfl_position_id_list, max_roster, min_roster, max_start, min_start')
             ->select('display_order')->from('position')->where('league_id',$this->leagueid)
@@ -161,9 +161,14 @@ class Positions_model extends MY_Model
             $pos_id = $this->db->insert_id();
 
             // Also update entries in starter table for the affected year to use this new position id.
+            // Have to do with for to_year through 
             $starter_data = array('starting_position_id' => $pos_id);
-            $this->db->where('starting_position_id',$pos->id)->where('year',$to_year)->where('league_id',$this->leagueid);
-            $this->db->update('starter',$starter_data);
+            $this->db->where('starting_position_id',$pos->id);
+            if ($adjust_future_pos_ids)
+                $this->db->where('year>=',$to_year);
+            else
+                $this->db->where('year',$to_year);
+            $this->db->where('league_id',$this->leagueid)->update('starter',$starter_data);
             
         }
         // If savevalues doesn't have an id, it must be a new one, so add it.'
@@ -193,14 +198,18 @@ class Positions_model extends MY_Model
         // get current league_position_year
         // check starter table for entries prior to the current year with that league_position_year
 
+        // Future years exist, Make exact copy so future years aren't changed, need to update starters to match to new pos_ids
+        // for all future years ($year and any newer years with the pos_ids)
         if ($year < $def_range['end'])
         {
-            $this->copy_position_def(False,False,$def_year,$year+1);
+            $this->copy_position_def(False,False,$def_year,$year+1,True);
         }
 
+        // We aren't editing the '0' year definition, so make a copy, need to update starters to match new pos_ids for
+        // the new year only ($year)
         if ($year > $def_range['start'])
         {
-            $this->copy_position_def($deleteid,$savevalues,$def_year,$year);
+            $this->copy_position_def($deleteid,$savevalues,$def_year,$year,False);
         }
 
         // $num = $this->db->from('starter')->where('league_id',$this->leagueid)->where('year >= ',$current_pos_year)
