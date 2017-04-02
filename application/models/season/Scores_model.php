@@ -48,8 +48,17 @@ class Scores_model extends MY_Model{
             ->get()->result();
 
         // 1. Fill all starts spots with empty positions
-        $teams = $this->db->select('team.id, team.team_name')->from('team')
-            ->where('league_id',$this->leagueid, 'team.active',1)->get()->result();
+        if ($year == $this->current_year)
+        {
+            $teams = $this->db->select('team.id, team.team_name')->from('team')
+                ->where('league_id',$this->leagueid, 'team.active',1)->get()->result();
+        }
+        else
+        {
+            $team_ids = $this->common_model->team_id_array($year);
+            $teams = $this->db->select('team.id, team.team_name')->from('team')
+                ->where('league_id',$this->leagueid)->where_in('team.id',$team_ids)->get()->result();
+        }
         $teams_array = array();
         $teams_array[0] = $this->get_empty_team();
         foreach($teams as $t)
@@ -69,7 +78,6 @@ class Scores_model extends MY_Model{
             }
         }
 
-
         // 2. Fill all start spots with players, if they are started.
         foreach($started_players as $p)
         {
@@ -88,6 +96,7 @@ class Scores_model extends MY_Model{
             }
             $teams_array[$p->team_id]['points']+=$p->points;
         }
+
 
         $schedule = $this->db->select('home_team_id as home_id, away_team_id as away_id, game')
             ->select('home.team_name as home_name, away.team_name as away_name')

@@ -41,7 +41,7 @@
                         </td>
                     <?php elseif($w->week <= $this->session->userdata('current_week') && $selected_year <= $this->session->userdata['current_year']):?>
                         <td class="week-link">
-                            <a href="<?=site_url('season/scores/week/'.$w->week)?>"><?=$w->week?></a>
+                            <a href="<?=site_url('league/history/scores/'.$selected_year.'/'.$w->week)?>"><?=$w->week?></a>
                         </td>
                     <?php else:?>
                         <td class="week-future">

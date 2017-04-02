@@ -42,6 +42,23 @@ class History extends MY_User_Controller{
         $this->user_view('user/league/history', $data);
     }
 
+    public function scores($year=0, $week=0)
+    {
+        $this->load->model('season/scores_model');
+        if ($year == 0)
+            $year = $this->current_year;
+        if ($week == 0)
+            $week = 1;
+        $data = array();
+
+        $data['matchups'] = $this->scores_model->get_fantasy_matchups(null,$week,$year);
+        $data['weeks'] = $this->scores_model->get_weeks($year);
+        $data['selected_week'] = $week;
+        $data['selected_year'] = $year;
+
+        $this->user_view('user/league/history/weekly_scores',$data);
+    }
+
     public function player_records()
     {
         $this->load->model('player_search_model');
