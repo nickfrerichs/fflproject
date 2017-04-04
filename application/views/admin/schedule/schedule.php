@@ -9,6 +9,7 @@
 				<?php if($selected_year == $this->session->userdata('current_year')): ?>
 					<a href="<?=site_url('admin/schedule/create')?>">Create schedule from template</a> <br>
 				<?php endif; ?>
+				<a href="<?=site_url('admin/schedule/titles/'.$selected_year)?>">Assign titles</a> <br>
 		</div>
 	</div>
 	<br>

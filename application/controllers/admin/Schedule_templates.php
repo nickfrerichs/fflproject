@@ -154,7 +154,7 @@ class Schedule_templates extends MY_Admin_Controller{
     {
         $data = array();
         $this->bc['Schedule Templates'] = site_url('admin/schedule_templates');
-        $this->bc['Titles'] = "";
+        $this->bc['Titles Definitions'] = "";
 
         $data['titles'] = $this->schedule_model->get_titles_data();
         

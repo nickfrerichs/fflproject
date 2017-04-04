@@ -10,15 +10,6 @@
 			<div id="standings-table" class="columns">
 			</div>
 		</div>
-		<div class="row align-center">
-			<div class="columns medium-2 small-8">
-				<select id="year-select">
-					<?php foreach($years as $y): ?>
-						<option value="<?=$y->year?>"><?=$y->year?></option>
-					<?php endforeach; ?>
-				</select>
-			</div>
-		</div>
 	</div>
 </div>
 
@@ -35,6 +26,7 @@ $("#year-select").on("change",function(){
 function load_standings()
 {
 	var year = $("#year-select").val();
+	year = <?=$selected_year?>;
 	var url = "<?=site_url('season/standings/ajax_get_standings')?>";
 	$.post(url,{'year' : year},function(data){
 		$("#standings-table").html(data);

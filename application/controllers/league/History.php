@@ -8,12 +8,13 @@ class History extends MY_User_Controller{
         parent::__construct();
         $this->bc['League'] = "";
         $this->bc['History'] = "";
+        $this->load->model('league/history_model');
     }
 
 
     public function index($selected_year = 0)
     {
-        redirect('league/history/year/'.$this->session->userdata('current_year'));
+        //redirect('league/history/year/'.$this->session->userdata('current_year'));
         $data = array();
         $data['selected_year'] = $selected_year;
         if ($selected_year == 0)
@@ -45,6 +46,7 @@ class History extends MY_User_Controller{
     public function scores($year=0, $week=0)
     {
         $this->load->model('season/scores_model');
+        
         if ($year == 0)
             $year = $this->current_year;
         if ($week == 0)
@@ -55,6 +57,9 @@ class History extends MY_User_Controller{
         $data['weeks'] = $this->scores_model->get_weeks($year);
         $data['selected_week'] = $week;
         $data['selected_year'] = $year;
+        $data['years'] = $this->common_model->get_league_years();
+        $this->bc['History'] = site_url('league/history');
+        $this->bc['Weekly Scores'] = "";
 
         $this->user_view('user/league/history/weekly_scores',$data);
     }
@@ -70,6 +75,27 @@ class History extends MY_User_Controller{
         $this->bc['Player Records'] = "";
         $this->user_view('user/league/history/player_records', $data);
 
+    }
+
+    public function results($year=0)
+    {
+        $this->load->model('season/standings_model');
+        $data = array();
+        if ($year == 0)
+            $year = $this->current_year;
+        
+        $data = array();
+
+        $data['current_year'] = $year;
+        $data['year'] = $year;        
+
+        $data['years'] = $this->common_model->get_league_years();
+        $data['selected_year'] = $year;
+        $data['titles'] = $this->history_model->get_titles($year);
+        $this->bc['History'] = site_url('league/history');
+        $this->bc['Schedule & Results'] = "";
+
+        $this->user_view('user/league/history/results', $data);
     }
 }
 ?>

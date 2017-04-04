@@ -77,6 +77,27 @@ class Schedule extends MY_Admin_Controller{
         $this->admin_view('admin/schedule/schedule_edit', $data);
     }
 
+    function titles($year=0)
+    {
+        $data = array();
+        if ($year == 0)
+            $year = $this->current_year;
+
+        $data['titles'] = $this->schedule_model->get_title_games($year);
+        $data['other_titles'] = $this->schedule_model->get_other_assigned_titles($year);
+        $data['title_defs'] = $this->schedule_model->get_title_defs();
+        $data['teams'] = $this->schedule_model->get_teams_data($year);
+        $data['selected_year'] = $year;
+
+        $this->bc['Schedule'] = site_url('admin/schedule');
+        $this->bc[$year] = site_url('admin/schedule/year/'.$year);
+        $this->bc['Titles'] = "";
+
+        $this->admin_view('admin/schedule/assign_titles', $data);
+        
+        
+    }
+
     function delete_game($week, $game)
     {
         $this->schedule_model->delete_game($week, $game);
@@ -159,6 +180,47 @@ class Schedule extends MY_Admin_Controller{
         echo json_encode($result);
        
 
+    }
+
+    function ajax_assign_title()
+    {
+        $result = array('success' => False);
+
+        $title_def_id = $this->input->post('title_def_id');
+        $schedule_id = $this->input->post('schedule_id');
+        $team_id = $this->input->post('team_id');
+        $year = $this->input->post('year');
+        if ($team_id == 0)
+        {
+            $this->schedule_model->delete_title(null,$title_def_id,$year);
+            echo json_encode($result);
+            return;
+        }
+
+        if ($schedule_id == "")
+            $schedule_id = 0;
+
+//        if ($schedule_id)
+//        {
+            $this->schedule_model->assign_title($team_id, $schedule_id, $title_def_id, $year);
+//        }
+        // else
+        // {
+        //     $this->schedule_model->assign_team_title($team_id,$title_id,$year);
+        // }
+        $result['success'] = True;
+
+        echo json_encode($result);
+    }
+
+    function ajax_delete_title()
+    {
+        $result = array('success' => False);
+        $title_id = $this->input->post('title_id');
+        $this->schedule_model->delete_title($title_id);
+
+        $result['success'] = True;
+        echo json_encode($result);
     }
 
 }

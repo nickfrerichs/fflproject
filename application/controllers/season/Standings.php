@@ -13,8 +13,7 @@ class Standings extends MY_User_Controller{
     function index()
     {
         $data = array();
-        $data['current_year'] = $this->current_year;
-        $data['years'] = $this->standings_model->get_years();
+        $data['selected_year'] = $this->current_year;
         $data['year'] = $this->current_year;
         $this->user_view('user/season/standings.php', $data);
         # By default, show top scores?

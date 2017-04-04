@@ -30,8 +30,14 @@
     </div>
 <?php else:?>
     <div class="row">
+        <div class="columns text-center">
+            <?php $this->load->view('user/league/history/year_bar.php', array('section' => 'scores'));?>
+        </div>
+    </div>
+    <br>
+    <div class="row">
         <div class="columns">
-            <h4 class='text-center'>Week <?=$selected_week?> Scores</h4>
+            <h4 class='text-center'>Week <?=$selected_week?></h4>
             <table class="text-center table-condensed">
                 <tr>
                 <?php foreach($weeks as $num => $w): ?>

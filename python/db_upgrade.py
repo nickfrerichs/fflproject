@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '0.4'
+CURRENT_VERSION = '0.5'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,32 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "0.4":
+        query = 'RENAME TABLE schedule_title TO title_def'
+        cur.execute(query)
+
+        #Rename column schedule_title_id to title_def_id in schedule table
+        query = 'ALTER TABLE schedule CHANGE COLUMN schedule_title_id title_def_id int(11) DEFAULT 0'
+        cur.execute(query)
+
+        #Add title table
+        if not table_exists('title'):
+            query = ('CREATE TABLE `title` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                                        +'team_id INT(11) DEFAULT 0,'
+                                        +'title_def_id INT(11) DEFAULT 0,'
+                                        +'year INT(11) DEFAULT 0,'
+                                        +'schedule_id INT(11) DEFAULT 0,'
+                                        +'league_id INT(11) DEFAULT 0)')
+
+            cur.execute(query)
+            
+        query = 'update site_settings set db_version = "%s"' % ("0.5")
+        cur.execute(query)
+        db.commit()
+        return get_db_version()
+
+
 
     if version == "0.3":
         # These were somehow dropped from 0.2 to 0.3
