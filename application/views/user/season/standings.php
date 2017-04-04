@@ -3,7 +3,8 @@
 	<div class="columns callout">
 		<div class="row">
 			<div class="columns">
-				<h5><span id="year"><?=$year?></span> Standings</h5>
+				<!-- <h5><span id="year"><?=$year?></span> Standings</h5> -->
+				<h5>Standings</h5>
 			</div>
 		</div>
 		<div class="row">
