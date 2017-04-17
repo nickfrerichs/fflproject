@@ -274,9 +274,9 @@ class Player_search extends MY_User_Controller{
         // ******************************
     }
 
-    function ajax_avg_week()
+    function ajax_career()
     {
-        $players = $this->player_search_model->get_avg_week_data($this->year, $this->starter, $this->data['sel_pos']);
+        $players = $this->player_search_model->get_career_data($this->year, $this->starter, $this->data['sel_pos'], $this->order_by);
 
         // ******************************
         //BEGIN VIEW
@@ -287,7 +287,8 @@ class Player_search extends MY_User_Controller{
                 <td><?=$num+1?></td>
                 <td><?=$p->first_name." ".$p->last_name?></td>
                 <td><?=$p->position?></td>
-                <td><?=number_format($p->points,1)?></td>
+                <td><?=number_format($p->avg_points,1)?></td>
+                <td><?=$p->total_points?></td>
                 <td><?=$p->games?></td>
                 <?php if($this->year == 0):?>
                     <td>-</td>

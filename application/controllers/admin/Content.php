@@ -40,6 +40,36 @@ class Content extends MY_Admin_Controller
 
     }
 
+    function postseason($year = 0)
+    {
+        $data = array();
+        $data['selected_year'] = $year;
+
+        if ($year == 0)
+            $year = $this->current_year;
+        
+
+        $data['content'] = $this->content_model->get_postseason_data($year);
+        $data['years'] = $this->common_model->get_league_years();
+
+
+        $this->bc['Content'] = site_url('admin/content');
+        $this->bc['Post Season'] = site_url('admin/content/postseason');
+        $this->bc[$year] = "";
+        $this->admin_view('admin/content/view_postseason',$data);
+
+    }
+
+    function edit_postseason($year = 0)
+    {
+        $data = array();
+        $data['selected_year'] = $year;
+        if($year == 0)
+            $year = $this->current_year;
+
+        
+    }
+
     function news()
     {
         $data = array();

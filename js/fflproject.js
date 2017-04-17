@@ -188,12 +188,12 @@ $(document).on("change",".player-list-custom-select",function(){
 // player sort using links: by, order  -- stored in tbody-player-list.data('by') and ('order')
 $(document).on('click',".player-list-a-sort", function(e){
 	var tbody = $(this).data('for');
-	// If we've already sorted on this "by", toggle the order
-	if ($("#"+tbody).data('by') == $(this).data('by'))
-		{$("#"+tbody).data('order', $("#"+tbody).data('order') == 'asc' ? 'desc' : 'asc');}
-	else
-		{$("#"+tbody).data('order','asc');}
-	$("#"+tbody).data('by',$(this).data('by'));
+
+	// If we've already sorted on this "by", and the order, toggle the order
+	if ($("#"+tbody).data('set-by') == $(this).data('by') && $("#"+tbody).data('set-order') == $(this).data('order'))
+		{$(this).data('order', $(this).data('order') == 'asc' ? 'desc' : 'asc');}
+	$("#"+tbody).data('set-order',$(this).data('order'));
+	$("#"+tbody).data('set-by',$(this).data('by'));
 
 	updatePlayerList(tbody);
 	e.preventDefault();
@@ -205,13 +205,17 @@ function updatePlayerList(tbody)
 	var aw_key = 'upL'+tbody;
 	ajax_waits[aw_key] = true;
 
+	// If set order and by to defaults if not yet set
+	if($("#"+tbody).data('set-by') == undefined){$("#"+tbody).data('set-by',$("#"+tbody).data('by'));}
+	if($("#"+tbody).data('set-order') == undefined){$("#"+tbody).data('set-order',$("#"+tbody).data('order'));}
+
 	var page = $('#'+tbody+'-data').data('page');
 	var pos = $('.player-list-position-select[data-for="'+tbody+'"]').val();
 	var year = $('.player-list-year-select[data-for="'+tbody+'"]').val();
 	var starter = $('.player-list-starter-select[data-for="'+tbody+'"]').val();
 	var custom = $('.player-list-custom-select[data-for="'+tbody+'"]').val();
-	var by = $("#"+tbody).data('by');
-	var order = $("#"+tbody).data('order');
+	var by = $("#"+tbody).data('set-by');
+	var order = $("#"+tbody).data('set-order');
 	var search = $('.player-list-text-input[data-for="'+tbody+'"]').val();
 	var per_page = $("#"+tbody+"-data").data('perpage');
 	var url = $("#"+tbody).data('url');
@@ -257,8 +261,8 @@ function resetPlayerSearch(tbody,text,pos)
 
 function resetPlayerSort(tbody)
 {
-	$("#"+tbody).data('by','last_name');
-	$("#"+tbody).data('order','asc');
+	$("#"+tbody).data('set-by',$("#"+tbody).data('by'));
+	$("#"+tbody).data('set-order',$("#"+tbody).data('order'));
 }
 
 function resetPlayerPage(tbody) // This is not being used right now

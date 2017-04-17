@@ -14,4 +14,4 @@
 <?php if($this->session->userdata('debug') == 1): ?>
 	<script>window.DEBUG_ENABLED = true;</script>
 <?php endif;?>
-<script src="<?=site_url('js/fflproject.js?1.0')?>"></script>
+<script src="<?=site_url('js/fflproject.js?1.02')?>"></script>

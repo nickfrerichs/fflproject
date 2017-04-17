@@ -29,7 +29,7 @@
 						<th><a href="#" data-order="asc" data-for="main-list" data-by="club_id" class="player-list-a-sort">NFL Team</a></th>
 						<th>Wk <?=$this->session->userdata('current_week')?> Opp.</th>
 						<th>Bye</th>
-						<th><a href="#" data-order="asc" data-for="main-list" data-by="points" class="player-list-a-sort">Points</a></th>
+						<th><a href="#" data-order="desc" data-for="main-list" data-by="points" class="player-list-a-sort">Points</a></th>
 						<th>Team</th>
 					</thead>
 					<tbody id="main-list" data-by="points" data-order="desc" data-url="<?=site_url('player_search/ajax_full_player_list')?>">

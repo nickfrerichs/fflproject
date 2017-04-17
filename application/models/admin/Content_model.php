@@ -17,6 +17,16 @@ class Content_model extends MY_Model
         return $row;
     }
 
+    function get_postseason_data($year=0)
+    {
+        if ($year == 0)
+            $year = $this->current_year;
+        $row = $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
+                ->where('text_id','playoffs')->where('year',$year)->get()->row();
+        return $row;
+        
+    }
+
     function get_news_data()
     {
         return $this->db->select('*')->from('content')->where('league_id',$this->leagueid)

@@ -86,16 +86,17 @@ class Player_search_model extends CI_Model{
         $this->db->order_by('points','desc')
             ->order_by('year','asc')
             ->order_by('week','asc')
-            ->limit(5);
+            ->limit(10);
             return $this->db->get()->result();
     }
 
-    function get_avg_week_data($year = 0, $starter="all", $nfl_pos = 0)
+    function get_career_data($year = 0, $starter="all", $nfl_pos = 0,$order_by = array('avg_points','desc'))
     {
         //$starter: all, starter, bench
         //$this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
         $this->db->select('player.id, player.first_name, player.last_name')
-            ->select('AVG(fantasy_statistic_week.points) as points, fantasy_statistic_week.year')
+            ->select('AVG(fantasy_statistic_week.points) as avg_points, fantasy_statistic_week.year')
+            ->select('SUM(fantasy_statistic_week.points) as total_points')
             ->select('nfl_position.short_text as position, count(player.id) as games')
             ->from('fantasy_statistic_week')
             ->join('player','fantasy_statistic_week.player_id = player.id')
@@ -110,9 +111,9 @@ class Player_search_model extends CI_Model{
         if($nfl_pos >0)
             $this->db->where('player.nfl_position_id',$nfl_pos);
         $this->db->group_by('player.id')
-            ->order_by('year','asc')
+            ->order_by($order_by[0],$order_by[1])
             ->having('count(player.id) > 3')
-            ->limit(5);
+            ->limit(10);
         return $this->db->get()->result();
     }
 

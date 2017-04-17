@@ -1,44 +1,46 @@
-<div class="row">
-	<div class="columns small-12">
-		<h5>League History</h5>
+
+	<div class="row callout">
+		<div class="columns small-12" style="max-width:200px">
+			<select id="selected-record">
+				<option value="career">Career</option>
+				<option value="best-week">Best Week</option>
+			</select>
+		</div>
 	</div>
-</div>
-
-
-
 
 	<!-- Player Records -->
 	<div class="row callout">
-		<div class="columns small-12">
-			<h5>Player Records</h5>
-		</div>
-		<div class="columns medium-6 small-12">
-			<div class="col-xs-3">
-				<span style="font-size:1.1em">Best Week </span>
-			</div>
-			<div class="col-xs-9">
-				<div class="form-inline text-left">
 
+		<div id="best-week-div" class="columns small-12 hide stat-div">
+			<div class="row">
+				<div class="columns column small-12 medium-4">
 					<select data-for="best-week" class="form-control player-list-position-select">
 						<option value="0">All Pos.</option>
 						<?php foreach($positions as $pos): ?>
 							<option value="<?=$pos->id?>"><?=$pos->text_id?></option>
 						<?php endforeach;?>
 					</select>
+				</div>
+
+
+				<div class="columns column small-12 medium-4">
 					<select class="form-control player-list-year-select" data-for="best-week">
 						<option value="0">All Years</option>
 						<?php foreach($years as $y): ?>
 							<option value="<?=$y->year?>"><?=$y->year?></option>
 						<?php endforeach;?>
 					</select>
+				</div>
+
+				<div class="columns column small-12 medium-4">
 					<select class="form-control player-list-starter-select" data-for="best-week">
 						<option value="all" selected>All Players</option>
 						<option value="starter">Starters</option>
 						<option value="bench">Bench</option>
 					</select>
-
 				</div>
 			</div>
+
 			<table class="table table-condensed table-striped">
 				<thead>
 					<th></th><th>Name</th><th>Pos.</th><th>Points</th><th>Week</th><th>Year</th><th>Owner</th>
@@ -49,46 +51,68 @@
 		</div>
 
 		<!-- Week Avg -->
-		<div class="columns medium-6 small-12">
-			<div class="col-xs-3">
-				<span style="font-size:1.1em">Week Avg</span>
-			</div>
-			<div class="col-xs-9">
-				<div class="form-inline text-left">
-
-					<select data-for="avg-week" class="form-control player-list-position-select">
+		<div id="career-div" class="columns hide small-12 stat-div">
+			<div class="row">
+				<div class="columns column small-12 medium-4">
+					<select data-for="career" class="form-control player-list-position-select">
 						<option value="0">All Pos.</option>
 						<?php foreach($positions as $pos): ?>
 							<option value="<?=$pos->id?>"><?=$pos->text_id?></option>
 						<?php endforeach;?>
 					</select>
-					<select class="form-control player-list-year-select" data-for="avg-week">
+				</div>
+				<div class="columns column small-12 medium-4">
+					<select class="form-control player-list-year-select" data-for="career">
 						<option value="0">All Years</option>
 						<?php foreach($years as $y): ?>
 							<option value="<?=$y->year?>"><?=$y->year?></option>
 						<?php endforeach;?>
 					</select>
-					<select class="form-control player-list-starter-select" data-for="avg-week">
+				</div>
+				<div class="columns column small-12 medium-4">
+					<select class="form-control player-list-starter-select" data-for="career">
 						<option value="all" selected>All Players</option>
 						<option value="starter">Starters</option>
 						<option value="bench">Bench</option>
 					</select>
-
 				</div>
 			</div>
+
+
 			<table class="table table-condensed table-striped">
 				<thead>
-					<th></th><th>Name</th><th>Pos.</th><th>Points</th><th>Games</th><th>Year</th>
+					<th></th>
+					<!-- <th><a href="#" data-order="asc" data-for="career" data-by="last_name" class="player-list-a-sort">Name</a></th> -->
+					<th>Name</th>
+					<th>Pos.</th>
+					<th><a href="#" data-order="desc" data-for="career" data-by="avg_points" class="player-list-a-sort">Avg</a></th>
+					<th><a href="#" data-order="desc" data-for="career" data-by="total_points" class="player-list-a-sort">Total</a></th>
+					<th><a href="#" data-order="desc" data-for="career" data-by="games" class="player-list-a-sort">Games</a></th>
+					<th>Year</th>
 				</thead>
-				<tbody id="avg-week" data-url="<?=site_url('player_search/ajax_avg_week')?>">
+				<tbody id="career" data-by="avg_points" 
+								   data-order="desc" 
+								   data-url="<?=site_url('player_search/ajax_career')?>">
 				</tbody>
 			</table>
 		</div>
-
 	</div>
 
 
 <script>
-$(updatePlayerList("best-week"));
-$(updatePlayerList("avg-week"));
+//$(updatePlayerList("best-week"));
+
+$('#selected-record').on('change',function(){
+	load_stat_div();
+});
+
+function load_stat_div()
+{
+	var stat = $('#selected-record').val();
+	$('#'+stat+'-div').removeClass('hide');
+	$('.stat-div:not(#'+stat+'-div)').addClass('hide');
+	$(updatePlayerList(stat));
+}
+
+load_stat_div();
 </script>
