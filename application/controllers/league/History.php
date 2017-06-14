@@ -122,7 +122,7 @@ class History extends MY_User_Controller{
         $data = array();
         if ($year == 0)
             $year = $this->current_year;
-         $data['years'] = $this->common_model->get_league_years();
+        $data['years'] = $this->common_model->get_league_years();
         $data['selected_year'] = $year;
 
         $this->bc['History'] = site_url('league/history');

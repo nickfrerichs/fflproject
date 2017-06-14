@@ -78,6 +78,30 @@ class History_model extends MY_Model{
             ->get()->result();
     }
 
+
+    function get_team_record($year=0)
+    {
+        $this->db->select('team.team_name')
+            ->select('owner.first_name, owner.last_name')
+            ->select('IFNULL(sum(schedule_result.team_score),0) as points, IFNULL(sum(schedule_result.opp_score),0) as opp_points')
+            ->select('IFNULL(sum(schedule_result.team_score),0) / count(schedule_result.id) as avg_points')
+            ->select('IFNULL(sum(schedule_result.opp_score),0) / count(schedule_result.id) as avg_opp_points')
+            ->select('(sum(schedule_result.team_score) / count(schedule_result.id)) - (sum(schedule_result.opp_score) / count(schedule_result.id)) as avg_diff')
+            ->select('IFNULL(sum(win=1),0) as wins, IFNULL(sum(loss=1),0) as losses, IFNULL(sum(tie=1),0) as ties')
+            ->select('count(schedule_result.id) as total_games')
+            ->select('(IFNULL(sum(win=1),0)/count(schedule_result.id)) as win_pct')
+            ->from('team')
+            ->join('owner','team.owner_id = owner.id')
+            ->join('schedule_result','team.id = schedule_result.team_id')
+            ->join('schedule','schedule.id = schedule_result.schedule_id')
+            ->where('team.league_id',$this->leagueid);
+        if ($year > 0)
+            $this->db->where('schedule_result.year',$year);
+        $this->db->group_by('team.id')
+            ->order_by('win_pct','desc');
+
+        return $this->db->get()->result();
+    }
     
 
 }
