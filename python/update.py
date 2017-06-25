@@ -18,6 +18,8 @@ from tzlocal import get_localzone
 import urllib2
 import urllib
 import os
+import json
+import pprint
 
 try:
 	import player_photo
@@ -74,6 +76,9 @@ def main():
 
   if(args.team_photos):
     update_team_photos()
+
+  if(args.player_news):
+    update_player_news()
 
 
 def update_standings(year, week ,weektype):
@@ -537,6 +542,43 @@ def player_info(player):
 #
 #   return playerdict
 
+
+def update_player_news():
+    news_url = 'http://api.fantasy.nfl.com/v1/players/news?format=json'
+
+    response = urllib.urlopen(news_url)
+    data = json.loads(response.read())
+
+    added = 0
+
+    for row in data['news']:
+
+        # Check if news ID already exists in player_news table
+        query = 'select id from player_news where news_id = %s' % (str(row['id']))
+        cur.execute(query)
+        if cur.rowcount > 0: continue
+
+        # Check if the player's gsisPlayerId is in the player table
+        query = 'select id from player where player_id = "%s"' % (row['gsisPlayerId'])
+        cur.execute(query)
+        if cur.rowcount == 0: continue
+        
+        player_id = cur.fetchone()['id']
+
+        query = (('insert into player_news (news_id,gsisPlayerId,news_date,source,headline,body,analysis,player_id) values (%s,"%s","%s","%s","%s","%s","%s",%s)') 
+                % (row['id'],row['gsisPlayerId'],str(row['timestamp']),MySQLdb.escape_string(row['source']),MySQLdb.escape_string(row['headline']),
+                   MySQLdb.escape_string(row['body']),MySQLdb.escape_string(row['analysis']),str(player_id)))
+
+        cur.execute(query)
+        db.commit()
+
+        added += 1
+        
+    if added > 0:
+        print "New news items added: " + str(added)
+    else:
+        print "No new news items to add."
+
 parser = argparse.ArgumentParser(description='FFLProject: Update various parts of the database')
 
 parser.add_argument('-schedule', action="store_true", default=False, help="Update NFL schedule")
@@ -551,6 +593,7 @@ parser.add_argument('-week', action="store", default="0", required=False, help="
 parser.add_argument('-weektype', action="store", default="none", required=False, help="Type: REG, POST, PRE")
 parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
 parser.add_argument('-team_photos', action="store_true", default=False, help="Update generic team photos for defenses, offensive lines, and other non-players.")
+parser.add_argument('-player_news', action="store_true", default=False, help="Update player news from NFL Fantasy api.")
 
 start_time = time.time()
 args = parser.parse_args()

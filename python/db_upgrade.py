@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '0.5'
+CURRENT_VERSION = '0.6'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,25 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "0.5":
+        if not table_exists('player_news'):
+            query = ('CREATE TABLE `player_news` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                                        +'news_id INT(11) DEFAULT 0,'
+                                        +'gsisPlayerId VARCHAR(12) NOT NULL,'
+                                        +'news_date DATETIME NOT NULL,'
+                                        +'source VARCHAR(25) NOT NULL,'
+                                        +'headline VARCHAR(100) NOT NULL,'
+                                        +'body TEXT NOT NULL,'
+                                        +'analysis TEXT NOT NULL,'
+                                        +'player_id INT(11))')
+            cur.execute(query)
+
+
+            query = 'update site_settings set db_version = "%s"' % ("0.6")
+            cur.execute(query)
+            db.commit()
+            return get_db_version()
 
     if version == "0.4":
         query = 'RENAME TABLE schedule_title TO title_def'

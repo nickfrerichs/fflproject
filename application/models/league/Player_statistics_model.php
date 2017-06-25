@@ -147,5 +147,12 @@ class Player_statistics_model extends MY_Model{
         return $stats;
     }
 
+    function get_player_news_from_id($id)
+    {
+        return $this->db->select('player_news.body, player_news.analysis')
+            ->from('player_news')
+            ->where('id',$id)->get()->row();
+    }
+
 
 }

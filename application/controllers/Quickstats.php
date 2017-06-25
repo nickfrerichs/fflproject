@@ -157,4 +157,17 @@ class Quickstats extends MY_User_Controller{
         </div>
         <?php // end view
     }
+
+    function player_news()
+    {
+        $id = $this->input->post('id');
+        $news_item = $this->player_statistics_model->get_player_news_from_id($id);
+
+        // Begin view
+        ?>
+
+        <?=$news_item->analysis?>
+
+        <?php // end view
+    }
 }

@@ -1,6 +1,6 @@
 <?php //print_r($years); ?>
 <?php $this->load->view('template/modals/stat_popup'); ?>
-
+<?php $this->load->view('template/modals/player_news_popup'); ?>
 <div class="row callout">
 	<div class="columns">
 		<div class="row">

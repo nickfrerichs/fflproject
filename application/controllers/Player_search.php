@@ -233,7 +233,12 @@ class Player_search extends MY_User_Controller{
 
         <?php foreach($this->data['players'] as $p):?>
             <tr>
-                <td><a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a></td>
+                <td>
+                    <a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a>
+                    <?php if($p->news): ?>
+                        (<a href="#" class="player-news-popup" data-id="<?=$p->news_id?>">N</a>)
+                    <?php endif; ?>
+                </td>
                 <td><?=$p->position?></td>
                 <td><?=$p->club_id?></td>
                 <td><?=$this->data['matchups'][$p->club_id]['opp']?></td>
