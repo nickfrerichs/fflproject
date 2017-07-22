@@ -49,7 +49,13 @@ class End_season_model extends MY_Model
 
 		// Update league_settings
 		$this->db->where('league_id',$this->leagueid);
-		$this->db->update('league_settings',array('draft_end'=>$year-1));
+		$this->db->update('league_settings',array('draft_end' => $year-1,
+												  'draft_start_time' => '0000-00-00 00:00:00',
+												  'scheduled_draft_start_time' => '0000-00-00 00:00:00',
+												  'draft_update_key' => 0,
+												  'draft_team_id' => 0,
+												  'draft_pick_id' => 0,
+												  'draft_paused' => 0));
 	}
 
 	function clear_player_transactions($year)

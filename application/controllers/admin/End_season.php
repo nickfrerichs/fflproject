@@ -36,6 +36,9 @@ class End_season extends MY_Admin_Controller
             $this->load->model('security_model');
             $this->security_model->set_dynamic_session_variables();
 
+            // Reset draft stuff
+            $this->end_season_model->clear_draft_order($next_season);
+
             redirect('admin/end_season');
         }
     }
