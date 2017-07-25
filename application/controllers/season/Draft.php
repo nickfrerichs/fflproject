@@ -54,12 +54,52 @@ class Draft extends MY_User_Controller{
 
     function live()
     {
+        $this->load->model('myteam/myteam_settings_model');
         $data = array();
+        $current_time = time();
         $settings = $this->draft_model->get_settings();
+
+        // Recent/current pick data
+        $data['current_pick'] = $this->draft_model->get_current_pick_data();
+        $data['picks'] = $this->draft_model->get_recent_picks_data();
+
+        // if($settings->draft_start_time <= $current_time) // Draft has started
+        // {
+        //     $current_pick = $this->draft_model->get_current_pick_data();
+        // }
+
         $data['start_time'] = $settings->scheduled_draft_start_time;
         $data['per_page'] = $this->per_page;
         $data['sort'] = array('a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');
         $data['pos'] = $this->player_search_model->get_nfl_positions_data();
+
+        $data['scheduled_start_time'] = $settings->scheduled_draft_start_time;
+        $data['start_time'] = $settings->draft_start_time;
+        $data['current_time'] = $current_time;
+        $data['paused'] = false;
+        if ($settings->draft_paused > 0)
+            $data['paused'] = true;
+
+        if(($settings->scheduled_draft_start_time > $current_time && ($settings->draft_start_time == 0 || $settings->draft_start_time > $current_time)))
+            $data['block_title'] = 'Draft Begins';
+        elseif(empty($data['current_pick']))
+            $data['block_title'] = 'End of Draft';
+        else
+        {
+            $data['seconds_left'] = $settings->draft_update_key - $current_time;
+            if($data['paused'])
+            {
+                $data['seconds_left'] = $this->draft_model->draft_paused();
+            }
+            $data['block_title'] = 'Now Picking';
+            if ($data['current_pick']->logo)
+                $data['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_logo_url($data['current_pick']->team_id,'thumb');
+            else
+                $data['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_default_logo_url();
+        }
+
+
+
         $this->bc['Draft'] = site_url('season/draft');
         $this->bc[$this->current_year.' Live'] = "";
         $this->user_view('user/season/draft/live',$data);
@@ -79,6 +119,7 @@ class Draft extends MY_User_Controller{
     //         $this->user_view('user/league/draft/live',$data);
     // }
 
+/*
     function ajax_get_block_info()
     {
         $data = array();
@@ -112,7 +153,7 @@ class Draft extends MY_User_Controller{
         }
         $this->load->view('user/season/draft/ajax_get_block_info',$data);
     }
-
+*/
     function pause()
     {
         if($this->is_league_admin)
@@ -145,27 +186,27 @@ class Draft extends MY_User_Controller{
         $this->draft_model->get_update_key();
     }
 
-    function test()
-    {
-        print_r($this->draft_model->undo_last_pick());
-    }
+    // function test()
+    // {
+    //     print_r($this->draft_model->undo_last_pick());
+    // }
 
-    function stream_get_update_key()
-    {
-        session_write_close();
-        $count = 10;
-        header("Content-Type: text/event-stream\n\n");
-        header("Cache-Control: no-cache\n\n");
-        while(1)
-        {
-            $data = $this->draft_model->get_update_key();
-            echo "data: ".$data['p']."-".$data['k']."\n\n";
-            ob_flush(); // Needed to add this after moving to centos, no idea why.
-            flush();
-            usleep(500000); //half a second
-            $count--;
-        }
-    }
+    // function stream_get_update_key()
+    // {
+    //     session_write_close();
+    //     $count = 10;
+    //     header("Content-Type: text/event-stream\n\n");
+    //     header("Cache-Control: no-cache\n\n");
+    //     while(1)
+    //     {
+    //         $data = $this->draft_model->get_update_key();
+    //         echo "data: ".$data['p']."-".$data['k']."\n\n";
+    //         ob_flush(); // Needed to add this after moving to centos, no idea why.
+    //         flush();
+    //         usleep(500000); //half a second
+    //         $count--;
+    //     }
+    // }
 
     // function ajax_get_watch_list()
     // {

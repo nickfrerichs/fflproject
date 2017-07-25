@@ -6,7 +6,9 @@
 			<div><?=$p->club_id?> - <?=$p->position?> <span style="font-size: .7em">(bye <?=$byeweeks[$p->club_id]?>)</span></div>
 		</td>
 		<?php if($p->team_name == ""): ?>
-		<td style="vertical-align:middle">
+		<td style="vertical-align:middle" class="draft-avail-<?=$p->id?>">
+		<div class="row">
+			<div class="columns">
 			<?php if($p->watched == ""): ?>
 			<!-- <a href="#" class="btn-draft glyphicon glyphicon-eye-open" style:"font-size:2em" value="watch_<?=$p->id?>" data-value="watch_<?=$p->id?>"></a> -->
 			<!-- <a href="#" class="btn-draft" style:"font-size:2em" value="watch_<?=$p->id?>" data-value="watch_<?=$p->id?>">watch</a> -->
@@ -14,17 +16,20 @@
 			<?php else:?>
 				<span style='font-size:.8em;color:#AAAAAA'>Watching</span>
 			<?php endif; ?>
+			</div>
 
-		</td>
-		<td>
+			<div class="columns">
+
 			<?php if(($draft_team_id == $team_id && !$paused) || $admin_pick): ?>
 			<button class="button btn-draft tiny" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>">Draft</button>
 			<?php else: ?>
 			<button class="button btn-draft tiny" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>" disabled>Draft</button>
 			<?php endif; ?>
+			</div>
+		</div>
 		</td>
 		<?php else: ?>
-		<td colspan="2" class="vert"><?=$p->team_name?></td>
+		<td class="vert"><?=$p->team_name?></td>
 		<?php endif; ?>
 	</tr>
 <?php endforeach; ?>

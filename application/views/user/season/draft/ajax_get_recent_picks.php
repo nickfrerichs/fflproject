@@ -1,4 +1,4 @@
-<?php //print_r($current_pick); ?>
+<?php //This file is no Longer needed?? ?>
 <?php if (!empty($current_pick)): ?>
 <tr id="recent-top-row" data-pickid="<?=$current_pick->pick_id?>">
 	<td>#<?=$current_pick->actual_pick?></td>

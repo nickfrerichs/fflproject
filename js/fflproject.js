@@ -305,6 +305,10 @@ function sse_stream_start()
 {
 	var sse_func = "";
 	if (window.location.pathname.indexOf("season/scores/live/standard") !== -1 || window.location.pathname.indexOf("season/scores/live/compact") !== -1){sse_func="sse_live_scores";}
+	if (window.location.pathname.indexOf("season/draft/live") !== -1){sse_func="sse_live_draft";}
+	
+	//http://fftestweb.mylanparty.net:90/season/draft/live
+	
 	if (typeof(evtSource) == "undefined")
     {
 		//console.log("Started sse stream.");
@@ -374,6 +378,90 @@ function sse_stream_start()
 				else{$(".unread-count").text("");}
 			}
 
+			// Live draft updates
+			if (d.live_draft != undefined && d.live_draft.update)
+			{
+				// First, refresh recent picks table data				
+				function add_one_pick(pick_data, clear)
+				{
+					var tr_html = '<tr>';
+					if (clear == true)
+					{$('#recent-picks').html('');}
+					tr_html += '<td>'+pick_data.actual_pick+'</td>';
+					tr_html += '<td>'+pick_data.round+'-'+pick_data.pick+'</td>';
+					if (clear == true)
+					{tr_html += '<td>???</td>';}
+					else
+					{tr_html += '<td>'+pick_data.first_name+' '+pick_data.last_name+' ('+pick_data.club_id+' - '+pick_data.position+')</td>';}
+					tr_html += '<td>'+pick_data.team_name+'</td>';
+					tr_html += '<td>'+pick_data.owner+'</td>';
+					tr_html += '</tr>';
+
+					$('#recent-picks').append(tr_html);
+				}
+				add_one_pick(d.live_draft.current_pick, true);
+				$.each(d.live_draft.recent_picks,function(id,player){
+					// Update draft table to hide draft/watch buttons for recently drafted players
+					$('.draft-avail-'+player.player_id).text(player.team_name);
+					// Update watch table to remove recently drafted players
+					$('.watch-avail-'+player.player_id).remove();
+					add_one_pick(player);
+				});
+
+				// Disable/enable draft buttons if pause status changed
+				if ((d.live_draft.current_pick.team_id == TEAM_ID && d.live_draft.paused <= 0) || (LEAGUE_ADMIN && $("#admin-picks").data('on')))
+					{$(".btn-draft:contains('Draft')").attr("disabled",false);}
+				else
+					{$(".btn-draft:contains('Draft')").attr("disabled",true);}
+				
+				// Next, refresh on-the-block data
+				if (d.live_draft.paused > 0)
+				{
+					$('#countdown').data('paused', 1);
+				}
+				else
+				{$('#countdown').data('paused', 0);}
+				$('#countdown').data('seconds', d.live_draft.current_pick.seconds_left);
+				$('#countdown').data('deadline', d.live_draft.current_pick.deadline);
+				$('#countdown').data('currenttime', d.live_draft.current_time);
+				$('#countdown').data('teamid', d.live_draft.current_pick.team_id);
+				$('.d-block-round').text("Round "+d.live_draft.current_pick.round+" Pick "+d.live_draft.current_pick.pick);
+				$('#d-block-team-logo').attr("src", d.live_draft.current_pick.logo_url);
+				$('.d-block-team-name').text(d.live_draft.current_pick.team_name);
+
+				// Also update some admin stuff in on-the-block
+				if (d.live_draft.start_time == "" || d.live_draft.start_time > d.live_draft.current_time)
+					{$("#admin-pause-button").text("Start Draft");}
+				else if ((d.live_draft.start_time < d.live_draft.current_time) && d.live_draft.paused <= 0)
+					{$("#admin-pause-button").text("Pause Draft");}
+				else if ((d.live_draft.start_time < d.live_draft.current_time) && d.live_draft.paused > 0)
+					{$("#admin-pause-button").text("Resume Draft");}
+				$("#admin-undo").attr("disabled",(d.live_draft.paused <= 0));
+
+				// Next refresh My Team table
+				function add_one_myteam(player)
+				{
+					var tr_html = '<tr>';
+					tr_html += '<td><strong>'+player.first_name+' '+player.last_name+'</strong></td>';
+					tr_html += '<td>'+player.club_id+' - '+player.position+'</td>';
+					tr_html += '<td>Week '+d.live_draft.byeweeks[player.club_id]+'</td>';
+					tr_html += '<td>'+player.actual_pick+'</td>';
+					tr_html += '<td class="hide-for-extra-small">Rd: '+player.round+' Pick: '+player.pick+'</td>';
+
+					tr_html += '</tr>';
+
+					$('#myteam-list').append(tr_html);
+				}
+				$('#myteam-list').html('');
+				$.each(d.live_draft.myteam,function(id,player){
+					add_one_myteam(player);
+				});
+				
+				console.log("Update draft data.");
+			}
+
+
+			// Live scoring updates
 			if (d.live != undefined)
 			{
 				var last_key = $("#lsdata").data('last_key');

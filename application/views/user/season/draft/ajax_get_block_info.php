@@ -27,9 +27,11 @@
         <img id="d-block-team-logo" class="hide-for-small-only" src="<?=$temp_logo_url?>">
     </div>
 
-    <div class="d-block-round">Round <?=$current_pick->round?>
+    <div class="d-block-round">
+        Round <?=$current_pick->round?>
 
-    Pick <?=$current_pick->pick?></div>
+        Pick <?=$current_pick->pick?>
+    </div>
 
     <div id="countdown" class="d-block-clock" data-deadline="<?=$current_pick->deadline?>"
         data-currenttime="<?=$current_time?>" data-seconds="<?=$seconds_left?>"

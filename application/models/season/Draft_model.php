@@ -146,6 +146,7 @@ class Draft_model extends MY_Model{
 
         if ($settings->draft_paused)
         {
+   
             $return_vals['p'] = 1;
             $return_vals['k'] = $settings->draft_update_key;
             //return -1;

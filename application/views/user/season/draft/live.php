@@ -32,23 +32,56 @@ line-height: 60px;
 </div>
 <?php endif;?>
 
-
-
 	<!-- Top row with Now Picking and Recent picks -->
 <div class="row callout">
 	<div class="columns medium-expand small-12 text-center">
+		<div class="text-center">
+			<h5>
+				<?=$block_title?>
+			</h5>
+		</div>
 		<div id="on-the-block">
+			<!-- moved stuff from old ajax here -->
+			<?php if(($scheduled_start_time > $current_time) && ($start_time == 0 || $start_time > $current_time)): // Draft is in the future?>
+				<div class="d-block-team-name"><?=date('D M j - g:i a',$scheduled_start_time)?></div>
+				<div id="countdown" class="d-block-clock" data-deadline=""
+					data-currenttime="<?=$current_time?>" data-seconds="-1"
+					data-paused="" data-starttime="<?=$start_time?>" data-teamid="">
+				</div>
+			<?php elseif (empty($current_pick)): // Draft is over??>
+				<div class="d-block-team-name">Draft is over.</div>
+			<?php else: // Draft is in progress?>
+				<div class="d-block-team-name"><?=$current_pick->team_name?></div>
+				<div>
+					<img id="d-block-team-logo" class="hide-for-small-only" src="<?=$current_pick->logo_url?>">
+				</div>
+
+				<div class="d-block-round">
+					Round <?=$current_pick->round?>
+
+					Pick <?=$current_pick->pick?>
+				</div>
+
+				<div id="countdown" class="d-block-clock" data-deadline="<?=$current_pick->deadline?>"
+					data-currenttime="<?=$current_time?>" data-seconds="<?=$seconds_left?>"
+					data-paused="<?=$paused?>" data-starttime="<?=$start_time?>" data-teamid ="<?=$current_pick->team_id?>">...
+				</div>
+			<?php endif; ?>
+			<!-- end move stuff from old ajax -->
 		</div>
 	</div>
 	<div class="columns medium-9 hide-for-small-only">
-		<div class="text-center"><h5><a href="<?=site_url('season/draft')?>" target="_blank">Recent Picks</a></h5></div>
-			<table class="table-condensed">
-				<thead>
-					<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
-				</thead>
-				<tbody id="recent-picks">
-				</tbody>
-			</table>
+		<div class="text-center"><h5><a href="<?=site_url('season/draft')?>" target="_blank">
+			Recent Picks</a></h5>
+		</div>
+		<table class="table-condensed">
+			<thead>
+				<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
+			</thead>
+			<tbody id="recent-picks">
+
+			</tbody>
+		</table>
 	</div>
 	<div class="columns small-12 text-center show-for-small-only">
 		<a href="#" class="show-for-small-only">Recent Picks</a>
@@ -136,7 +169,6 @@ line-height: 60px;
 							<a href="#" data-order="asc" data-for="draft-list" data-by="position" class="player-list-a-sort">Pos</a>
 						</th>
 						<th></th>
-						<th></th>
 						</tr>
 		            </thead>
 		            <tbody id="draft-list" data-by="last_name" data-order="asc" data-url="<?=site_url('player_search/ajax_draft_list')?>" data-var1=false>
@@ -186,28 +218,33 @@ line-height: 60px;
 
 $(document).ready(function(){
 
-	$.post("<?=site_url('season/draft/ajax_get_update_key')?>"); // in case of stale key, force update on load
+	//$.post("<?=site_url('season/draft/ajax_get_update_key')?>"); // in case of stale key, force update on load
+	
 	updatePlayerList("draft-list");
-	loadWatchList();
-	updateBlock();
-	loadMyTeam();
-	updateRecentPicks();
+	updatePlayerList("watch-list");
+	updateTimer();
+	//loadWatchList();
+
+	//updateBlock();
+	//loadMyTeam();
+	//updateRecentPicks();
 
 	// This doesnt work in IE, need to check for that and use ajax instead at a longer interval
 	// Also, may want to add a variable to check if draft is live or not.
-	var evtSource = new EventSource("<?=site_url('season/draft/stream_get_update_key')?>");
-	evtSource.onmessage = function(e){
-		if($("#debug").text() != e.data)
-		{
-			updatePlayerList("draft-list");
-			loadWatchList();
-			updateRecentPicks();
-			updateBlock();
-			$("#debug").text(e.data);
-		}
 
-		$("#debug").text(e.data);
-	}
+	// var evtSource = new EventSource("<?=site_url('season/draft/stream_get_update_key')?>");
+	// evtSource.onmessage = function(e){
+	// 	if($("#debug").text() != e.data)
+	// 	{
+	// 		updatePlayerList("draft-list");
+	// 		loadWatchList();
+	// 		updateRecentPicks();
+	// 		updateBlock();
+	// 		$("#debug").text(e.data);
+	// 	}
+
+	// 	$("#debug").text(e.data);
+	// }
 });
 
 
@@ -221,6 +258,7 @@ function updateTimer()
 {
 	var timer = $("#countdown").data('seconds');
 	var paused = $("#countdown").data('paused');
+
 	hr = parseInt(timer / 60 / 60);
 	min = parseInt((timer-(hr*60*60)) / 60);
 	sec = parseInt((timer-(hr*60*60)-(min*60)));
@@ -265,51 +303,54 @@ $("#draft-list, #watch-list").on("click",".btn-draft",function(event){
 		{
 			//var e = "a[data-value='"+vals[0]+"_"+vals[1]+"']";
 			e = "."+vals[0]+"-"+vals[1];
-			loadWatchList(e);
+			updatePlayerList("watch-list");
 			return;
 		}
-		loadWatchList();
+		<?php if($this->is_league_admin): ?>
+		set_admin_picks(false);
+		<?php endif;?>
+		updatePlayerList("watch-list");
 		updatePlayerList("draft-list");
 		if(vals[0] == "draft"){loadMyTeam();}
 	});
 })
 
 
-function loadWatchList()
-{
-	updatePlayerList("watch-list");
-}
+// function loadWatchList()
+// {
+// 	updatePlayerList("watch-list");
+// }
 
-function updateBlock()
-{
-	url = "<?=site_url('season/draft/ajax_get_block_info')?>";
-	$.post(url,{},function(data){
-	//	$("#on-the-block").css('background-color','');
-		$("#countdown").css('color','');
-		$("#on-the-block").html(data);
-		//flash($("#on-the-block"))
-		<?php if ($this->is_league_admin)
-		{
-			echo "$('#admin-picks').data('on',false);\n";
-			echo "$('#draft-list').data('var1',false);\n";
-			echo "updateAdminButtons();\n";
-		}
-		?>
-	});
-}
+// function updateBlock()
+// {
+// 	url = "<?=site_url('season/draft/ajax_get_block_info')?>";
+// 	$.post(url,{},function(data){
+// 	//	$("#on-the-block").css('background-color','');
+// 		$("#countdown").css('color','');
+// 		$("#on-the-block").html(data);
+// 		//flash($("#on-the-block"))
+// 		<?php if ($this->is_league_admin)
+// 		{
+// 			echo "$('#admin-picks').data('on',false);\n";
+// 			echo "$('#draft-list').data('var1',false);\n";
+// 			echo "updateAdminButtons();\n";
+// 		}
+// 		?>
+// 	});
+// }
 
-function updateRecentPicks()
-{
-	var old_pick = $("#recent-top-row").data('pickid');
-	url ="<?=site_url('season/draft/ajax_get_recent_picks')?>";
-	$.post(url,{},function(data){
+// function updateRecentPicks()
+// {
+// 	var old_pick = $("#recent-top-row").data('pickid');
+// 	url ="<?=site_url('season/draft/ajax_get_recent_picks')?>";
+// 	$.post(url,{},function(data){
 
-		$("#recent-picks").html(data);
-		var new_pick = $("#recent-top-row").data('pickid');
-		if (old_pick != new_pick){flash($("#recent-top-row"));}
+// 		$("#recent-picks").html(data);
+// 		var new_pick = $("#recent-top-row").data('pickid');
+// 		if (old_pick != new_pick){flash($("#recent-top-row"));}
 
-	});
-}
+// 	});
+// }
 
 function flash(element, fadetime)
 {
@@ -340,19 +381,37 @@ function pad(n) {
 <?php if($this->is_league_admin): // All the admin javascript?>
 	<script>
 
+
+	function set_admin_picks(setting)
+	{
+		$("#admin-picks").data('on',setting);
+		$("#draft-list").data('var1',setting);
+		if (setting == true){$("#admin-picks").text("Cancel user Pick");}
+		else {$("#admin-picks").text("Pick for User");}
+		updatePlayerList("draft-list");
+	}
 	$("#admin-picks").on('click',function(){
 
 		if($("#admin-picks").data('on'))
 		{
-			$("#admin-picks").data('on',false);
-			$("#draft-list").data('var1',false);
+			set_admin_picks(false);
+			// $("#admin-picks").data('on',false);
+			// $("#draft-list").data('var1',false);
+			// $("#admin-picks").text("Pick for User");
+			
+			// updatePlayerList("draft-list");
 		}
 		else
 		{
-			$("#admin-picks").data('on',true);
-			$("#draft-list").data('var1',true);
+			set_admin_picks(true);
+			// $("#admin-picks").data('on',true);
+			// $("#draft-list").data('var1',true);
+			// $("#admin-picks").text("Cancel user Pick");
+			
+			// updatePlayerList("draft-list");
 		}
-		updateAdminButtons();
+
+		//updateAdminButtons();
 	});
 
 	$("#admin-undo").on('click',function(){
@@ -383,38 +442,39 @@ function pad(n) {
 
 			});
 		}
-		updateAdminButtons();
+		//updateAdminButtons();
 	});
 
-	function updateAdminButtons()
-	{
-		var paused = $("#countdown").data('paused');
-		var currenttime = $("#countdown").data('currenttime');
-		var starttime = $("#countdown").data('starttime');
 
-		if (starttime == "" || starttime > currenttime)
-		{$("#admin-pause-button").text("Start Draft");}
-		else if ((starttime < currenttime) && (!paused))
-		{$("#admin-pause-button").text("Pause Draft");}
-		 else if ((starttime < currenttime) && (paused))
-		{$("#admin-pause-button").text("Resume Draft");}
+	// function updateAdminButtons()
+	// {
+	// 	var paused = $("#countdown").data('paused');
+	// 	var currenttime = $("#countdown").data('currenttime');
+	// 	var starttime = $("#countdown").data('starttime');
 
-		$("#admin-undo").attr("disabled",!paused);
+	// 	if (starttime == "" || starttime > currenttime)
+	// 	{$("#admin-pause-button").text("Start Draft");}
+	// 	else if ((starttime < currenttime) && (!paused))
+	// 	{$("#admin-pause-button").text("Pause Draft");}
+	// 	 else if ((starttime < currenttime) && (paused))
+	// 	{$("#admin-pause-button").text("Resume Draft");}
 
-		if($("#admin-picks").data('on'))
-		{
-			$("#admin-picks").text("Cancel user Pick");
-			updatePlayerList("draft-list");
-			//$(".btn-draft:contains('Draft')").attr('disabled',false);
-		}
-		else
-		{
-			$("#admin-picks").text("Pick for User");
-			updatePlayerList("draft-list");
-			//$(".btn-draft:contains('Draft')").attr('disabled',true);
-		}
+	// 	$("#admin-undo").attr("disabled",!paused);
 
-	}
+	// 	if($("#admin-picks").data('on'))
+	// 	{
+	// 		$("#admin-picks").text("Cancel user Pick");
+	// 		updatePlayerList("draft-list");
+	// 		//$(".btn-draft:contains('Draft')").attr('disabled',false);
+	// 	}
+	// 	else
+	// 	{
+	// 		$("#admin-picks").text("Pick for User");
+	// 		updatePlayerList("draft-list");
+	// 		//$(".btn-draft:contains('Draft')").attr('disabled',true);
+	// 	}
+
+	// }
 
 	</script>
 <?php endif;?>

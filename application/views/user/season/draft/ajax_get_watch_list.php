@@ -2,7 +2,7 @@
 	<tr><td class="text-center" style="padding-top:160px; padding-bottom:160px;">You aren't watching any players</td></tr>
 <?php else: ?>
 <?php foreach ($players as $key => $p): ?>
-	<tr>
+	<tr class="watch-avail-<?=$p->id?>">
 		<td class="text-center">
 			<?=$p->order?>
 		</td>

@@ -14,8 +14,16 @@ class Sse extends MY_User_Controller{
     function stream($sse_func = "")
     {
         $sse_live_scores = False;
+        $sse_live_draft = False;
         if ($sse_func == 'sse_live_scores')
             $sse_live_scores = True;
+        if ($sse_live_draft || $sse_func == 'sse_live_draft')
+        {
+            $this->load->model('season/draft_model');
+            $this->load->model('myteam/myteam_settings_model');
+            $last_draft_key_update = 0;
+            $sse_live_draft = True;
+        }
         //$this->session->set_userdata('sse')
         session_write_close();
         //$count = 10;
@@ -31,12 +39,13 @@ class Sse extends MY_User_Controller{
         $interval = $this->session->userdata('live_element_refresh_time');
 
         $ls_first = True;
+        $draft_first = True;
 
         while($count > 0)
         {
             $start = microtime(True);
             $now = time();
-            $settings = $this->sse_model->get_sse_settings();
+            $settings = $this->sse_model->get_sse_settings();  // Is this even used??
             $keys = $this->sse_model->keys();
             $data = array();
             // If the chat_key is new, output chats that occured since the last one.
@@ -55,10 +64,41 @@ class Sse extends MY_User_Controller{
 
             }
 
-            // If sse_draft is set, and the draft_update_key has changed, output stuff needed for the draft.
-            if (($settings->sse_draft && $last_keys->draft_update_key != $keys->draft_update_key))
+            if ($sse_live_draft)
             {
-                echo "New Draft\n";
+                // If sse_draft is set, and the draft_update_key has changed, output stuff needed for the draft.
+                //if (($settings->sse_draft && $last_keys->draft_update_key != $keys->draft_update_key))
+                if (($draft_first) || ($last_keys->draft_update_key != $keys->draft_update_key) || ($last_keys->draft_paused != $keys->draft_paused))
+                {
+                    $draft_first = false;
+                    $draft_settings = $this->draft_model->get_settings();
+                    $data['live_draft']['update'] = True;
+                    $data['live_draft']['paused'] = $keys->draft_paused;
+                    // Get last X players picked: playerid & drafted team text
+                    $data['live_draft']['recent_picks'] = $this->draft_model->get_recent_picks_data();
+                    $data['live_draft']['current_pick'] = $this->draft_model->get_current_pick_data();
+                    $data['live_draft']['start_time'] = $draft_settings->draft_start_time;
+                    $data['live_draft']['current_time'] = $now;
+
+                    if ($data['live_draft']['paused'] > 0)
+                        $data['live_draft']['current_pick']->{'seconds_left'} = $data['live_draft']['paused'];
+                    else
+                        $data['live_draft']['current_pick']->{'seconds_left'} = $keys->draft_update_key - $now;
+
+                    if ($data['live_draft']['current_pick']->logo)
+                        $data['live_draft']['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_logo_url($data['live_draft']['current_pick']->team_id,'thumb');
+                    else
+                        $data['live_draft']['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_default_logo_url();
+    
+                    $data['live_draft']['update'] = True;
+
+                    $data['live_draft']['myteam'] = $this->draft_model->get_myteam();
+                    $data['live_draft']['byeweeks'] = $this->common_model->get_byeweeks_array();
+                }
+
+                // In case of stale key (no one is watching the draft), do a refresh on first load. 
+                if ($keys->draft_update_key < $now)
+                    $this->draft_model->get_update_key();
             }
 
             // If sse_live_scores is set and live_scores_key has changed, output stuff needed for live scores.
