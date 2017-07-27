@@ -12,6 +12,21 @@ line-height: 60px;
 	<?php $this->load->view('user/offseason');?>
 <?php else: ?>
 
+<!-- Confirm rank reset modal -->
+<div class="reveal" id="confirm-rank-reset-modal" data-reveal data-overlay="true">
+	<h5 class="text-center">Are you sure?</h5>
+	<div class="text-center">This will clear your current watch list!</div>
+	<br>
+    <div class="text-center">
+        <button class="button" type="button" id="confirm-rank-reset">
+            Confirm
+        </button>
+        <button class="button" type-"button" id="cancel-rank-reset" data-close aria-label="Close modal">
+            Cancel
+        </button>
+    </div>
+</div>
+
 <?php if($this->is_league_admin):?>
 <div class="row callout">
 	<div class="columns">
@@ -95,6 +110,7 @@ line-height: 60px;
 	<div id="watch-panel" class="columns medium-6 small-12 draft-box" data-toggler data-animate="hinge-in-from-top spin-out">
 		<h5 class="text-center">Prospects</h5>
 
+
 		<!-- Position dropdown for watch list -->
 		<div class="row align-center">
 			<div class='columns small-12 medium-4'>
@@ -106,6 +122,11 @@ line-height: 60px;
 				</select>
 			</div>
 		</div>
+		<?php if($this->session->userdata('use_draft_ranks')): ?>
+		<div class="text-center">
+				<small><a onclick='$("#confirm-rank-reset-modal").foundation("open");'>(reset to NFL fantasy ranks)</a></small>
+		</div>
+		<?php endif;?>
 		<div>
 			<table class="table-condensed">
 				<thead>
@@ -115,7 +136,6 @@ line-height: 60px;
 				</tbody>
 			</table>
 		</div>
-
 		<div class="row align-center">
 			<div class="columns text-right">
 				<ul class="pagination" role="navigation" aria-label="Pagination">
@@ -132,6 +152,7 @@ line-height: 60px;
 				</ul>
 			</div>
 		</div>
+
 	</div>
 
 
@@ -245,6 +266,19 @@ $(document).ready(function(){
 
 	// 	$("#debug").text(e.data);
 	// }
+});
+
+$('#confirm-rank-reset').on('click',function(){
+	$('#confirm-rank-reset-modal').foundation('close');
+	var url="<?=site_url('season/draft/ajax_reset_player_ranks')?>"
+	$.post(url,{}, function(data){
+		console.log(data);
+		if (data.success)
+		{
+			updatePlayerList("watch-list");
+			updatePlayerList("draft-list");
+		}
+	},'json');
 });
 
 

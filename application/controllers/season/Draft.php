@@ -219,6 +219,16 @@ class Draft extends MY_User_Controller{
     //     $this->load->view('user/season/draft/ajax_get_watch_list', $data);
     // }
 
+
+    function ajax_reset_player_ranks()
+    {
+        $response = array('success' => false);
+        $this->draft_model->reset_player_ranks();
+        $response['success'] = true;
+
+        echo json_encode($response);
+    }
+
     function ajax_get_myteam()
     {
         $data = array();

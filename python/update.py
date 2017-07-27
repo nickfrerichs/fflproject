@@ -80,6 +80,9 @@ def main():
   if(args.player_news):
     update_player_news()
 
+  if(args.player_ranks):
+    update_player_ranks()
+
 
 def update_standings(year, week ,weektype):
 
@@ -579,6 +582,59 @@ def update_player_news():
     else:
         print "No new news items to add."
 
+def update_player_ranks():
+    ranks_url = 'http://api.fantasy.nfl.com/v1/players/userdraftranks?format=json&count=100'
+    players = list()
+    
+    for i in range(0,5):
+        response = urllib.urlopen(ranks_url+'&offset='+str(i*100))
+        data = json.loads(response.read())
+        players += data['players']
+
+    for p in players:
+
+        # Get the gsisPlayerId from this rank, either a player or defense
+        if p['gsisPlayerId'] == False and p['position'] == 'DEF':
+            gsisPlayerId = p['teamAbbr']+'_D'
+        elif p['gsisPlayerId'] != '':
+            gsisPlayerId = p['gsisPlayerId']
+        else:
+            continue
+
+        # Look up an id in the player table for this gsisPlayerId
+        query = 'select id from player where player_id = "%s"' % (gsisPlayerId)
+        cur.execute(query)
+
+        if cur.rowcount < 1: continue
+        player_id = cur.fetchone()['id']
+
+        # Sometimes aav is None, but we're expecting a float
+        if p['aav'] == None:
+            p['aav'] = 0.0
+
+        # Check to see if that player_id is already in the rank table
+        query = 'select * from draft_player_rank where player_id = %s' % (str(player_id))
+        cur.execute(query)
+
+        # Player is already ranked, update the record with new data
+        if cur.rowcount == 1:
+            rank_id = cur.fetchone()['id']
+            query = (('update draft_player_rank set rank=%s, aav=%s, last_updated="%s" where id = %s') 
+                    % (str(p['rank']),str(p['aav']),sql_now,str(rank_id)))
+            cur.execute(query)
+        # Else, player is not yet ranked, add the new record
+        else:
+            query = (('insert into draft_player_rank (player_id, rank, aav, gsisPlayerId, last_updated) VALUES (%s,%s,%s,"%s","%s")')
+                    % (str(player_id),str(p['rank']),str(p['aav']),gsisPlayerId,sql_now))
+            cur.execute(query)
+        db.commit()
+
+    # Lastly, delete any records for players who haven't been updated, they are not ranked any longer.
+    query = 'delete from draft_player_rank where last_updated != "%s"' % (sql_now)
+    cur.execute(query)
+    db.commit()
+        
+
 parser = argparse.ArgumentParser(description='FFLProject: Update various parts of the database')
 
 parser.add_argument('-schedule', action="store_true", default=False, help="Update NFL schedule")
@@ -594,6 +650,7 @@ parser.add_argument('-weektype', action="store", default="none", required=False,
 parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
 parser.add_argument('-team_photos', action="store_true", default=False, help="Update generic team photos for defenses, offensive lines, and other non-players.")
 parser.add_argument('-player_news', action="store_true", default=False, help="Update player news from NFL Fantasy api.")
+parser.add_argument('-player_ranks', action="store_true", default=False, help="Update player draft rankings from NFL Fantasy api.")
 
 start_time = time.time()
 args = parser.parse_args()

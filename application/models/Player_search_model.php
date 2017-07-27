@@ -31,6 +31,7 @@ class Player_search_model extends CI_Model{
                 ->select('IFNULL(nfl_team.club_id,"NONE") as club_id')
                 ->select('team.team_name')
                 ->select('player_news.body as news, player_news.id as news_id')
+                ->select('TRUNCATE(IFNULL(draft_player_rank.rank,999),2) as draft_rank')
                 ->from('player')
                 ->join('fantasy_statistic_week as fs_w','fs_w.player_id = player.id and fs_w.year = '.
                         $this->session->userdata('current_year').' and fs_w.league_id = '.$this->leagueid,'left')
@@ -38,6 +39,7 @@ class Player_search_model extends CI_Model{
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id')
                 ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
                 ->join('team','team.id = roster.team_id','left')
+                ->join('draft_player_rank','draft_player_rank.player_id = player.id','left')
                 ->join('player_news','player.id = player_news.player_id','left');
                // ->where('fantasy_statistic.year',$this->current_year,'left');
         if ($search != '')

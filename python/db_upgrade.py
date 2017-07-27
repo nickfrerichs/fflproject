@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '0.6'
+CURRENT_VERSION = '0.7'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,29 @@ def main():
 
 
 def upgrade_db(version):
+    if version == "0.6":
+        if not table_exists('draft_player_rank'):
+            query = ('CREATE TABLE `draft_player_rank` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                            +'player_id INT(11),'
+                            +'gsisPlayerId VARCHAR(12) NOT NULL,'
+                            +'rank FLOAT DEFAULT 0,'
+                            +'aav FLOAT DEFAULT 0,'
+                            +'last_updated DATETIME NOT NULL)')
+            cur.execute(query)
+            db.commit()
+
+            query = ('ALTER TABLE `draft_player_rank` ADD INDEX (`player_id`)')
+            cur.execute(query)
+
+            if not column_exists("use_draft_ranks", "league_settings"):
+            query = 'ALTER TABLE `league_settings` ADD `use_draft_ranks` BOOLEAN DEFAULT 0'
+            cur.execute(query)
+
+            query = 'update site_settings set db_version = "%s"' % ("0.7")
+            cur.execute(query)
+            db.commit()
+            return get_db_version()
+
 
     if version == "0.5":
         if not table_exists('player_news'):

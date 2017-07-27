@@ -307,12 +307,14 @@ class Draft_model extends MY_Model{
             $team_id = $this->teamid;
         $rows = $this->db->select('id')->from('draft_watch')->where('team_id',$team_id)
             ->order_by('order','asc')->get()->result();
+        $batch_update = array();
         foreach($rows as $count => $p)
         {
-            $data = array('order' => $count+1);
-            $this->db->where('id',$p->id);
-            $this->db->update('draft_watch',$data);
+            $batch_update[] = array(
+                'id'    => $p->id,
+                'order' => $count+1);
         }
+        $this->db->update_batch('draft_watch',$batch_update,'id');
     }
 
     function watch_player_order_change($player_id, $updn)
@@ -617,6 +619,33 @@ class Draft_model extends MY_Model{
             ->where('draft_order.year',$year)
             ->order_by('overall_pick','asc')
             ->get()->result();
+    }
+
+    function reset_player_ranks()
+    {
+        $this->db->where('team_id',$this->teamid)->delete('draft_watch');
+        $league_pos = $this->common_model->league_nfl_position_id_array();
+
+        $players = $this->db->select('player.id')
+            ->from('player')
+            ->join('draft_player_rank','draft_player_rank.player_id = player.id')
+            ->where_in('nfl_position_id',$league_pos)
+            ->order_by('draft_player_rank.rank','asc')
+            ->get()->result();
+
+        $insert_batch = array();
+        $order = 1;
+        foreach ($players as $p)
+        {
+            $insert_batch[] = array('league_id' => $this->leagueid,
+                                    'team_id'   => $this->teamid,
+                                    'player_id' => $p->id,
+                                    'order'     => $order);
+            $order++;
+        }
+        if (!empty($insert_batch))
+            $this->db->insert_batch('draft_watch',$insert_batch);
+        
     }
 
 }

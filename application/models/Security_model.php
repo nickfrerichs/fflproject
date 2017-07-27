@@ -51,7 +51,7 @@ class Security_model extends CI_Model
     {
         $owner = $this->db->select('owner.id as owner_id, owner.active_league, owner.first_name, owner.last_name')
                 ->select('team.id as team_id, team_name, owner.active_league, team.active, league.league_name, league.season_year')
-                ->select('league_settings.offseason, owner_setting.chat_balloon, league_settings.show_whos_online')
+                ->select('league_settings.offseason, owner_setting.chat_balloon, league_settings.show_whos_online, league_settings.use_draft_ranks')
                 ->from('owner')
                 ->join('team','team.owner_id = owner.id and team.league_id = owner.active_league and team.active = 1','left')
                 ->join('league','league.id = owner.active_league','left')
@@ -68,6 +68,7 @@ class Security_model extends CI_Model
         $this->session->set_userdata('league_name', $owner->league_name);
         $this->session->set_userdata('offseason', $owner->offseason);
         $this->session->set_userdata('chat_balloon', $owner->chat_balloon);
+        $this->session->set_userdata('use_draft_ranks', $owner->use_draft_ranks);
 
 
         if ($this->db->from('league_admin')->where('league_id',$owner->active_league)->where('league_admin_id',$this->userid)->get()->num_rows() > 0)

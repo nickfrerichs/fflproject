@@ -45,6 +45,21 @@
                     <td></td>
                     <td class="text-center"><a href="#" id="clear-keepers">Clear</a></td>
                 </tr>
+
+                <tr>
+                    <td><span data-tooltip class="has-tip top" title="Display draft rank data collected from NFL fantasy api.  Enable this to display rank data in player tables.">Display draft ranks</span></td>
+                    <td></td>
+                    <td class="text-center">
+                        <div class="switch tiny">
+                        <input  class="switch-input toggle-control" data-item="draftranks" data-url="<?=site_url('admin/leaguesettings/ajax_toggle_item')?>"
+                            id="draftranks" type="checkbox" <?php if($settings->use_draft_ranks == "1"){echo "checked";}?>>
+                        <label class="switch-paddle" for="draftranks">
+                        </label>
+                        </div>
+                    </td>
+                </tr>
+
+
                 <tr>
                     <td><span data-tooltip class="has-tip top" title="Allow teams to trade future draft picks along with players.">Allow draft pick trading</span></td>
                     <td></td>

@@ -245,6 +245,9 @@ class Player_search extends MY_User_Controller{
                 <td><span class="hide-for-small-only">Week </span><?=$this->data['byeweeks'][$p->club_id]?></td>
                 <td><?=$p->points?></td>
                 <td><?=$p->team_name?></td>
+                <?php if($this->session->userdata('use_draft_ranks')): ?>
+                <td><?=$p->draft_rank?></td>
+                <?php endif;?>
             </tr>
         <?php endforeach; ?>
         <tr id="main-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$this->data['total']?>">

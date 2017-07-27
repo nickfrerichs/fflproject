@@ -31,6 +31,9 @@
 						<th>Bye</th>
 						<th><a href="#" data-order="desc" data-for="main-list" data-by="points" class="player-list-a-sort">Points</a></th>
 						<th>Team</th>
+						<?php if($this->session->userdata('use_draft_ranks')):?>
+						<th><a href="#" data-order="asc" data-for="main-list" data-by="draft_rank" class="player-list-a-sort">Rank</a></th>
+						<?php endif; ?>
 					</thead>
 					<tbody id="main-list" data-by="points" data-order="desc" data-url="<?=site_url('player_search/ajax_full_player_list')?>">
 
