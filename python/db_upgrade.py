@@ -20,6 +20,7 @@ def main():
 
 
 def upgrade_db(version):
+
     if version == "0.6":
         if not table_exists('draft_player_rank'):
             query = ('CREATE TABLE `draft_player_rank` (id INT NOT NULL AUTO_INCREMENT KEY,'
@@ -32,6 +33,12 @@ def upgrade_db(version):
             db.commit()
 
             query = ('ALTER TABLE `draft_player_rank` ADD INDEX (`player_id`)')
+            cur.execute(query)
+
+            query = ('ALTER TABLE `draft_watch` ADD INDEX (`player_id`)')
+            cur.execute(query)
+
+            query = ('ALTER TABLE `draft_watch` ADD INDEX (`team_id`)')
             cur.execute(query)
 
             if not column_exists("use_draft_ranks", "league_settings"):

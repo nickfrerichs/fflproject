@@ -17,5 +17,7 @@
 <script>window.TEAM_ID = <?=$this->session->userdata('team_id')?>;</script>
 <?php if($this->session->userdata('is_league_admin')): ?>
 	<script>window.LEAGUE_ADMIN = true;</script>
+<?php else: ?>
+	<script>window.LEAGUE_ADMIN = false;</script>
 <?php endif;?>
 <script src="<?=site_url('js/fflproject.js?1.09')?>"></script>
