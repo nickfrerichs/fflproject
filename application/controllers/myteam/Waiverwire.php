@@ -25,6 +25,7 @@ class Waiverwire extends MY_User_Controller{
         }
         else
         {
+            $data['ajax_wait'] = false;
             $this->user_view('user/myteam/waiverwire/closed.php',$data);
         }
 

@@ -290,15 +290,12 @@ $(document).on('click',"._message-close",function(){
 function sse_on(sse_func)
 {
 	var url = BASE_URL+"sse/turn_on/"+sse_func
-
-	//console.log(sse_func+" on");
 }
 
 function sse_off(sse_func)
 {
 	var url = BASE_URL+"sse/turn_off/"+sse_func
 	$.post(url, {}, function(){});
-	//console.log(sse_func+" off");
 }
 
 function sse_stream_start()
@@ -307,18 +304,15 @@ function sse_stream_start()
 	if (window.location.pathname.indexOf("season/scores/live/standard") !== -1 || window.location.pathname.indexOf("season/scores/live/compact") !== -1){sse_func="sse_live_scores";}
 	if (window.location.pathname.indexOf("season/draft/live") !== -1){sse_func="sse_live_draft";}
 	
-	//http://fftestweb.mylanparty.net:90/season/draft/live
-	
 	if (typeof(evtSource) == "undefined")
     {
-		//console.log("Started sse stream.");
 		//if (typeof(sse_func) == 'undefined'){evtSource = new EventSource(BASE_URL+"sse/stream");}
 		evtSource = new EventSource(BASE_URL+"sse/stream/"+sse_func);
         evtSource.onmessage = function(e)
         {
 
 			var d = JSON.parse(e.data);
-			debug_out(d);
+			debug_out('SSE Stream data',d);
 			// Show/Hide live score url
 			if (d.ls != undefined)
 			{
@@ -457,7 +451,7 @@ function sse_stream_start()
 					add_one_myteam(player);
 				});
 				
-				console.log("Update draft data.");
+				debug_out("Update draft data.");
 			}
 
 
@@ -520,19 +514,18 @@ function sse_stream_start()
 					else{
 						nflGameInactive(id, game);
 					}
-
 				});
 			}
 
 			if (d.debug != undefined)
 			{
-				console.log(d.debug);
+				debug_out(d.debug);
 			}
 
         }
 	}
 	else {
-		console.log("Already started sse stream.");
+		debug_out("Already started sse stream.");
 	}
 }
 
@@ -590,7 +583,7 @@ function playerTeamStatus(player_id,team,delay,team_name,last_key)
 
 		if (last_play == team.p && team.p != undefined){return;}
 		$("."+id).data('team_playid',team.p);
-		//console.log(team);
+
 		// There are details we should show with settimeout
 		if (delay == 0 && team.d != undefined && last_key != undefined)
 		{
@@ -713,7 +706,6 @@ $(document).on('keypress','#chat-message',function(event){
 		var message_text = $(this).val();
 		$("#chat-message").val('');
         $.post(url,{'message' : message_text}, function(){
-			//console.log("Posted");
             $("#chat-message").val('');
 
             chatScrollBottom(true);
@@ -765,7 +757,10 @@ function markChatsRead()
 	});
 }
 
-function debug_out(o)
+function debug_out(o,o2)
 {
-	if (window.DEBUG_ENABLED){console.log(o);}
+	if (window.DEBUG_ENABLED){
+		if (o != undefined){console.log(o);}
+		if (o2 != undefined){console.log(o2);}
+	}
 }
