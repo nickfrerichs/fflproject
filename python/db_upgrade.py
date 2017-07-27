@@ -35,8 +35,8 @@ def upgrade_db(version):
             cur.execute(query)
 
             if not column_exists("use_draft_ranks", "league_settings"):
-            query = 'ALTER TABLE `league_settings` ADD `use_draft_ranks` BOOLEAN DEFAULT 0'
-            cur.execute(query)
+	            query = 'ALTER TABLE `league_settings` ADD `use_draft_ranks` BOOLEAN DEFAULT 0'
+        	    cur.execute(query)
 
             query = 'update site_settings set db_version = "%s"' % ("0.7")
             cur.execute(query)
