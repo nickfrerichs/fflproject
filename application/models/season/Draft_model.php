@@ -568,6 +568,7 @@ class Draft_model extends MY_Model{
 
 
         // Update deadlines for all remaining picks
+        // Should use batch update to do these all at once
         foreach($picks as $pick)
         {
             $this->db->where('id',$pick->id);
@@ -629,7 +630,9 @@ class Draft_model extends MY_Model{
         $players = $this->db->select('player.id')
             ->from('player')
             ->join('draft_player_rank','draft_player_rank.player_id = player.id')
+            ->join('roster','roster.player_id = player.id and roster.league_id='.$this->leagueid,'left')
             ->where_in('nfl_position_id',$league_pos)
+            ->where('roster.player_id is NULL',null,false)
             ->order_by('draft_player_rank.rank','asc')
             ->get()->result();
 
