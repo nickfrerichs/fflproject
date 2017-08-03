@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '0.7'
+CURRENT_VERSION = '1.0'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,42 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "0.7":
+        # Add player_injury table
+        if not table_exists('player_injury'):
+            query = ('CREATE TABLE `player_injury` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                        +'player_id INT(11),'
+                        +'player_injury_type_id INT(11),'
+                        +'description VARCHAR(200),'
+                        +'last_updated DATETIME NOT NULL)')
+            cur.execute(query)
+
+        # Add player_injury_type table
+        if not table_exists('player_injury_type'):
+            query = ('CREATE TABLE `player_injury_type` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                        +'text_id VARCHAR(2) NOT NULL,'
+                        +'short_text VARCHAR(20) NOT NULL,'
+                        +'description VARCHAR(100) NOT NULL)')
+            cur.execute(query)
+
+        # Add waiver_wire_disable_gt
+        if not column_exists("waiver_wire_disable_gt", "league_settings"):
+	            query = 'ALTER TABLE `league_settings` ADD `waiver_wire_disable_gt` BOOLEAN DEFAULT 0'
+        	    cur.execute(query)
+
+
+        # Add waiver_wire_disable_days
+        if not column_exists("waiver_wire_disable_days", "league_settings"):
+	            query = 'ALTER TABLE `league_settings` ADD `waiver_wire_disable_days` BOOLEAN DEFAULT 0'
+        	    cur.execute(query)
+        
+        db.commit()
+        query = 'update site_settings set db_version = "%s"' % ("1.0")
+        cur.execute(query)
+        db.commit()
+        return get_db_version()
+
 
     if version == "0.6":
         if not table_exists('draft_player_rank'):
@@ -41,14 +77,14 @@ def upgrade_db(version):
             query = ('ALTER TABLE `draft_watch` ADD INDEX (`team_id`)')
             cur.execute(query)
 
-            if not column_exists("use_draft_ranks", "league_settings"):
-	            query = 'ALTER TABLE `league_settings` ADD `use_draft_ranks` BOOLEAN DEFAULT 0'
-        	    cur.execute(query)
-
-            query = 'update site_settings set db_version = "%s"' % ("0.7")
+        if not column_exists("use_draft_ranks", "league_settings"):
+            query = 'ALTER TABLE `league_settings` ADD `use_draft_ranks` BOOLEAN DEFAULT 0'
             cur.execute(query)
-            db.commit()
-            return get_db_version()
+
+        query = 'update site_settings set db_version = "%s"' % ("0.7")
+        cur.execute(query)
+        db.commit()
+        return get_db_version()
 
 
     if version == "0.5":
@@ -65,10 +101,10 @@ def upgrade_db(version):
             cur.execute(query)
 
 
-            query = 'update site_settings set db_version = "%s"' % ("0.6")
-            cur.execute(query)
-            db.commit()
-            return get_db_version()
+        query = 'update site_settings set db_version = "%s"' % ("0.6")
+        cur.execute(query)
+        db.commit()
+        return get_db_version()
 
     if version == "0.4":
         query = 'RENAME TABLE schedule_title TO title_def'

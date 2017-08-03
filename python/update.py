@@ -576,11 +576,21 @@ def update_player_news():
         db.commit()
 
         added += 1
+
+    query = ('delete from player_news where news_date < NOW() - INTERVAL 90 DAY')
+    cur.execute(query)
+    deleted = cur.rowcount
+    db.commit()
         
     if added > 0:
         print "New news items added: " + str(added)
     else:
         print "No new news items to add."
+
+    if deleted > 0:
+        print "Deleted "+str(deleted)+" news items older than 90 days."
+    else:
+        print "No news items older than 90 days to delete."
 
 def update_player_ranks():
     ranks_url = 'http://api.fantasy.nfl.com/v1/players/userdraftranks?format=json&count=100'

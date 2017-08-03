@@ -77,6 +77,7 @@ class Sse extends MY_User_Controller{
                     // Get last X players picked: playerid & drafted team text
                     $data['live_draft']['recent_picks'] = $this->draft_model->get_recent_picks_data();
                     $data['live_draft']['current_pick'] = $this->draft_model->get_current_pick_data();
+                    $data['live_draft']['upcoming_picks'] = $this->draft_model->get_upcoming_picks_data();
                     $data['live_draft']['start_time'] = $draft_settings->draft_start_time;
                     $data['live_draft']['current_time'] = $now;
 

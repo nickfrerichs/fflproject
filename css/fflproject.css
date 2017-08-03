@@ -3,7 +3,7 @@
 /* --------------------- */
 
 /* body{background-color:#FAFAFA; font-size:.9rem} */
-body{background-color:#FAFAFA; font-size:.9rem}
+body{background-color:#FAFAFA; font-size:.85rem}
 
 /* wraps around the header, footer, and view */
 #body-wrap{
@@ -194,6 +194,14 @@ td select{margin-bottom:0px !important;}
 	padding-left:10px;
 	width:100px;
 }
+
+/* ----------------------- */
+/* Live draft stuff        */
+/* ----------------------- */
+/*.d-rp-futurepick td{background-color:#FAFAFA;}*/
+/* .d-rp-currentpick td{background-color:#fc0;} */
+.d-rp-currentpick td{background-color:#ffe266;font-weight:bold}
+.d-rp-recentpick td{color:#888;}
 
 /* ----------------------- */
 /* Live score stuff

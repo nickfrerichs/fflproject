@@ -6,4 +6,4 @@
 <link href="<?=site_url('/css/jBox.css')?>" rel="stylesheet">
 
 <!-- My custom CSS -->
-<link href="<?=site_url('/css/fflproject.css')?>" rel="stylesheet">
+<link href="<?=site_url('/css/fflproject.css?2')?>" rel="stylesheet">

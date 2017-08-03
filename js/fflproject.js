@@ -376,14 +376,22 @@ function sse_stream_start()
 			if (d.live_draft != undefined && d.live_draft.update)
 			{
 				// First, refresh recent picks table data				
-				function add_one_pick(pick_data, clear)
+				function add_one_pick(pick_data, no_player)
 				{
-					var tr_html = '<tr>';
-					if (clear == true)
-					{$('#recent-picks').html('');}
+					var has_player = true;
+					var tr_html = '';
+					if(pick_data.player_id == undefined){has_player = false;}
+
+					if (pick_data.pick_id != undefined)
+					{tr_html = '<tr class="d-rp-currentpick">'; console.log('has pick_id');}
+					else if(has_player)
+					{tr_html = '<tr class="d-rp-recentpick">';}
+					else
+					{tr_html = '<tr class="d-rp-futurepick">';}
+	
 					tr_html += '<td>'+pick_data.actual_pick+'</td>';
 					tr_html += '<td>'+pick_data.round+'-'+pick_data.pick+'</td>';
-					if (clear == true)
+					if (no_player == true)
 					{tr_html += '<td>???</td>';}
 					else
 					{tr_html += '<td>'+pick_data.first_name+' '+pick_data.last_name+' ('+pick_data.club_id+' - '+pick_data.position+')</td>';}
@@ -393,7 +401,13 @@ function sse_stream_start()
 
 					$('#recent-picks').append(tr_html);
 				}
-				add_one_pick(d.live_draft.current_pick, true);
+				{$('#recent-picks').html('');}
+				$.each(d.live_draft.upcoming_picks,function(id, player){
+					add_one_pick(player,true);
+				});
+				
+				add_one_pick(d.live_draft.current_pick,true);
+
 				$.each(d.live_draft.recent_picks,function(id,player){
 					// Update draft table to hide draft/watch buttons for recently drafted players
 					$('.draft-avail-'+player.player_id).text(player.team_name);

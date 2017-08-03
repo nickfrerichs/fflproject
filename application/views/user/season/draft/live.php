@@ -86,18 +86,22 @@ line-height: 60px;
 		</div>
 	</div>
 	<div class="columns medium-9 hide-for-small-only">
-		<div class="text-center"><h5><a href="<?=site_url('season/draft')?>" target="_blank">
-			Recent Picks</a></h5>
-		</div>
-		<table class="table-condensed">
-			<thead>
-				<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
-			</thead>
-			<tbody id="recent-picks">
+		<div id="d-recent-picks-div" style="max-height:190px;overflow-Y:hidden">
+			<div class="text-center hide"><a href="<?=site_url('season/draft')?>" target="_blank">
+				Recent Picks</a>
+			</div>
+			<table class="table-condensed table-nostripe">
+				<thead>
+					<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
+				</thead>
+				<tbody id="recent-picks">
 
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
+		<div class="text-center" style="font-size:.9em;cursor:pointer"><a id="d-scroll-link">scroll</a></div>
 	</div>
+
 	<div class="columns small-12 text-center show-for-small-only">
 		<a href="#" class="show-for-small-only">Recent Picks</a>
 	</div>
@@ -266,6 +270,19 @@ $(document).ready(function(){
 
 	// 	$("#debug").text(e.data);
 	// }
+});
+
+$('#d-scroll-link').on('click',function(){
+	if ($(this).text() == 'scroll')
+	{
+		$('#d-recent-picks-div').css('overflowY','auto');
+		$(this).text('lock');
+	}
+	else
+	{
+		$('#d-recent-picks-div').css('overflowY','hidden');
+		$(this).text('scroll');
+	}
 });
 
 $('#confirm-rank-reset').on('click',function(){

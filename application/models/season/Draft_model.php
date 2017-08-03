@@ -314,7 +314,8 @@ class Draft_model extends MY_Model{
                 'id'    => $p->id,
                 'order' => $count+1);
         }
-        $this->db->update_batch('draft_watch',$batch_update,'id');
+	if (!empty($batch_update))
+	        $this->db->update_batch('draft_watch',$batch_update,'id');
     }
 
     function watch_player_order_change($player_id, $updn)
@@ -428,8 +429,26 @@ class Draft_model extends MY_Model{
             ->where('draft_order.player_id !=',0)
             ->where('draft_order.year',$this->current_year)
             ->order_by('draft_order.actual_pick','desc')
-            ->limit(5)->get()->result();
+            ->limit(500)->get()->result();
 
+    }
+    function get_upcoming_picks_data()
+    {
+        $data = $this->db->select('draft_order.actual_pick, draft_order.round, draft_order.pick')
+            ->select('team.team_name')
+            ->select('owner.first_name as owner')
+            ->from('draft_order')
+            ->join('team','team.id = draft_order.team_id')
+            ->join('owner','owner.id = team.owner_id')
+            ->where('draft_order.league_id',$this->leagueid)
+            ->where('draft_order.player_id',0)
+            ->where('draft_order.year',$this->current_year)
+            ->order_by('draft_order.actual_pick','asc')
+            ->limit(3)->get()->result();
+
+        unset($data[0]);
+
+        return array_reverse($data);
     }
 
     function player_available($player_id)
