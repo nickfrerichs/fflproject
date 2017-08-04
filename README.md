@@ -18,6 +18,6 @@ Features:
 
 
 Screenshots
-!(https://user-images.githubusercontent.com/5790350/28981867-39c5f292-7919-11e7-923b-a04bc563b514.png)
-!(https://user-images.githubusercontent.com/5790350/28981874-3d2f88ee-7919-11e7-9a1c-28bd49ec6863.png)
-!(https://user-images.githubusercontent.com/5790350/28981883-408012c0-7919-11e7-91fc-4c1b41caad53.png)
+![News](https://user-images.githubusercontent.com/5790350/28981867-39c5f292-7919-11e7-923b-a04bc563b514.png)
+![My Team](https://user-images.githubusercontent.com/5790350/28981874-3d2f88ee-7919-11e7-9a1c-28bd49ec6863.png)
+![Player Search](https://user-images.githubusercontent.com/5790350/28981883-408012c0-7919-11e7-91fc-4c1b41caad53.png)
