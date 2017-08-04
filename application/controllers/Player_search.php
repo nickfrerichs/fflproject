@@ -235,7 +235,7 @@ class Player_search extends MY_User_Controller{
             <tr>
                 <td>
                     <a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a>
-                    <?php if($p->news): ?>
+                    <?php if($p->news && 1==2): ?>
                         (<a href="#" class="player-news-popup" data-id="<?=$p->news_id?>">N</a>)
                     <?php endif; ?>
                 </td>
@@ -429,19 +429,29 @@ class Player_search extends MY_User_Controller{
 
         // The view
         ?>
-        <?php foreach($news as $n): ?>
-        <div class="section callout">
+        <?php if(count($news) == 0): ?>
+            <div class="section callout" style="min-height:313px;">
+               <h5 class="title"> League News </h5>
 
-          <h5 class="title">
-              <?=$n->title?>
-          </h5>
-          <div class="date"><?=date("M j g:i a",$n->date_posted)?></div>
+            <div class="news-body">
+                Nothing to report.
+            </div>
+            </div>
+        <?php else: ?>
+            <?php foreach($news as $n): ?>
+            <div class="section callout">
 
-          <div class="news-body">
-            <?=$n->data?>
-          </div>
-        </div>
-        <?php endforeach; ?>
+            <h5 class="title">
+                <?=$n->title?>
+            </h5>
+            <div class="date"><?=date("M j g:i a",$n->date_posted)?></div>
+
+            <div class="news-body">
+                <?=$n->data?>
+            </div>
+            </div>
+            <?php endforeach; ?>
+        <?php endif;?>
         <div id="news-news-list-data" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$result['total']?>"></div>
 
         <?php
