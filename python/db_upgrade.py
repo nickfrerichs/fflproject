@@ -20,6 +20,18 @@ def main():
 
 
 def upgrade_db(version):
+ #   if version == "1.0":
+        # waiver_wire_disable_days should be a varchar
+
+        # add waiver_wire_oops_time, integer, seconds allowed to pick up same player just dropped
+        # query = "ALTER TABLE  `league_settings` CHANGE  `waiver_wire_disable_days`  `waiver_wire_disable_days` VARCHAR( 7 ) NOT NULL"
+        # cur.execute(query)
+        # db.commit()
+
+        # query = 'update site_settings set db_version = "%s"' % ("1.1")
+        # cur.execute(query)
+        # db.commit()
+        # return get_db_version()
 
     if version == "0.7":
         # Add player_injury table
@@ -47,7 +59,7 @@ def upgrade_db(version):
 
         # Add waiver_wire_disable_days
         if not column_exists("waiver_wire_disable_days", "league_settings"):
-	            query = 'ALTER TABLE `league_settings` ADD `waiver_wire_disable_days` BOOLEAN DEFAULT 0'
+	            query = 'ALTER TABLE `league_settings` ADD `waiver_wire_disable_days` VARCHAR(7) NOT NULL'
         	    cur.execute(query)
         
         db.commit()

@@ -2,7 +2,6 @@
 <link href="<?=site_url('/css/foundation-datepicker.min.css')?>" rel="stylesheet">
 <div class="row">
 	<div class="columns">
-		<?php //print_r($approvals); ?>
 		<div class="row align-center">
 			<div class="columns small-12">
 				<h5>Waiver wire approvals</h5>
