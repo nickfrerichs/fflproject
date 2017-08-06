@@ -11,6 +11,7 @@ class Leaguesettings_model extends MY_Model{
             ->select('s.twitter_player_moves, s.twitter_chat_updates, league.league_name, s.offseason, s.waiver_wire_deadline')
             ->select('s.trade_deadline, s.waiver_wire_clear_time, s.trade_draft_picks, s.keepers_num, s.lock_lineups_first_game')
             ->select('s.waiver_wire_approval_type, s.show_whos_online, s.use_draft_ranks')
+            ->select('s.waiver_wire_disable_gt, s.waiver_wire_disable_days')
             ->from('league')->join('league_settings as s','s.league_id = league.id')
             ->where('league.id',$leagueid)
             ->get()->row();
@@ -23,7 +24,8 @@ class Leaguesettings_model extends MY_Model{
                         'offseason' => 'offseason',
                         'tradepicks' => 'trade_draft_picks',
                         'locklineups' => 'lock_lineups_first_game',
-                        'draftranks' => 'use_draft_ranks');
+                        'draftranks' => 'use_draft_ranks',
+                        'disablegt' => 'waiver_wire_disable_gt');
         $val = !$this->db->select($lookup[$item])->from('league_settings')->where('league_id',$leagueid)
             ->get()->row()->{$lookup[$item]};
         $this->db->where('league_id',$leagueid);
@@ -45,7 +47,8 @@ class Leaguesettings_model extends MY_Model{
               'wwdeadline' => 'waiver_wire_deadline',
               'wwcleartime' => 'waiver_wire_clear_time',
               'tdeadline' => 'trade_deadline',
-              'keepersnum' => 'keepers_num');
+              'keepersnum' => 'keepers_num',
+              'wwdays' => 'waiver_wire_disable_days');
 
         $this->db->where('league_id',$leagueid);
         $this->db->update('league_settings', array($lookup[$type] => $value));
@@ -66,6 +69,27 @@ class Leaguesettings_model extends MY_Model{
 
         $this->db->where('year',$year)->where('league_id',$this->leagueid);
         $this->db->delete('team_keeper');
+    }
+
+    function wwdays_is_valid($wwdays)
+    {
+        if ($wwdays == "")
+            return True;
+        $temp  = str_split($wwdays);
+        $valid = str_split('0123456');
+        if (count($wwdays) > 7)
+        {
+            return False;
+        }
+        foreach($temp as $i)
+        {
+            if (!in_array($i,$valid))
+            {
+                return False;
+            }
+        }
+
+        return True;
     }
 
 }

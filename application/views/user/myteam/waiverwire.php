@@ -4,10 +4,10 @@
 
 <!-- Confirm modal -->
 <div class="reveal" id="confirm-modal" data-reveal data-overlay="true">
-    <div id="notclear" class="hide text-center">Players waivers have not cleared, you'll be notified when they do.</div>
+    <div id="notclear" class="hide text-center" style="padding-bottom:10px;">Players waivers have not cleared, you'll be notified when they do.</div>
     <div class="text-center">
             <div class="drop-text">Drop: No One</div>
-            <div class="pickup-text">Pick up: No One</div>
+            <div class="pickup-text" style="padding-bottom:10px;">Pick up: No One</div>
         <button class="button" type="button" id="confirm-drop">
             Confirm
         </button>
@@ -69,7 +69,6 @@
                 {
 
                     $remaining = $a->clear_time - time();
-                    echo "Remaining: ".$remaining;
                     $hr = (int)($remaining / (60*60));
                     $min = (int)(($remaining - $hr*(60*60)) / 60);
                     $sec = (int)(($remaining - $hr*(60*60) - $min*60));
@@ -90,7 +89,7 @@
         </table>
         </div>
     </div>
-</div>
+
 
 <?php endif;?>
 
@@ -235,6 +234,7 @@
 
 		$.post(url,{'pickup_id':pickup_id,'drop_id':drop_id},function(data){
 			var d = jQuery.parseJSON(data);
+            console.log(d);
 			if (d.success == true)
 			{
                 $("#notclear").addClass('hide');
@@ -245,7 +245,8 @@
                 if (d.status_code == 1)
                 {
                     pickup_name = $("#ww-list").data("playername");
-                    $("#notclear").text("You'll be notified when "+pickup_name+"'s waivers clear.");
+                    // $("#notclear").text("You'll be notified when "+pickup_name+"'s waivers clear.");
+                    $("#notclear").html("<b>"+d.error+"</b>");
                     $("#notclear").removeClass('hide');
                     $("#confirm-drop").text('Request player');
                     $("#confirm-modal").foundation('open');

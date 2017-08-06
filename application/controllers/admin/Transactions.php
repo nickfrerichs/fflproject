@@ -26,6 +26,13 @@ class Transactions extends MY_Admin_Controller{
         $value = $this->input->post('value');
         if ($type == 'wwcleartime')
             $value = $value*60*60;
+        if ($type == 'wwdays' && !$this->leaguesettings_model->wwdays_is_valid($value))
+        {
+            $response['success'] = False;
+            echo json_encode($response);
+            return;
+        }
+
         $this->leaguesettings_model->change_setting(0,$type,$value);
 
         $response['success'] = True;

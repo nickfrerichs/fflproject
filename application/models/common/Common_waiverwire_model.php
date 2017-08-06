@@ -188,29 +188,6 @@ class Common_waiverwire_model extends CI_Model{
     function drop_player($player_id, $teamid, $year, $week, $weektype)
     {
         $this->common_noauth_model->drop_player($player_id, $teamid, $year, $week, $weektype);
-
-        //
-        // if ($player_id == 0)
-        //     return;
-        //
-        // $gamestart = $this->common_noauth_model->player_game_start_time($player_id, $year, $week, $weektype);
-        // // Delete player from roster
-        // $this->db->where('player_id',$player_id)
-        //     ->where('team_id',$teamid)
-        //     ->delete('roster');
-        //
-        // // Delete any starter rows for current team with this player
-        // $this->db->where('player_id', $player_id)
-        //         ->where('team_id', $teamid);
-        // if ($gamestart > time()) // game is in the future, include this week
-        //     $this->db->where('week >=', $week);
-        // else // this week's game has started, don't drop from this weeks starting lineup
-        //     $this->db->where('week >', $week);
-        // $this->db->where('year', $year)
-        //         ->delete('starter');
-        //
-        // // Delete any keeper rows for current team with this player for this year
-        // $this->db->where('player_id',$player_id)->where('team_id',$teamid)->where('year',$year)->delete('team_keeper');
     }
 
     function pickup_player($player_id, $teamid = 0, $leagueid)
@@ -304,7 +281,56 @@ class Common_waiverwire_model extends CI_Model{
     function get_approval_settings($leagueid)
     {
         return $this->db->select('waiver_wire_approval_type as type, UNIX_TIMESTAMP(waiver_wire_approval_last_check) as last_check')
+            ->select('waiver_wire_disable_gt, waiver_wire_disable_days')
             ->from('league_settings')->where('league_id',$leagueid)->get()->row();
+    }
+
+    function is_player_locked($player_id, $year=0, $week=0, $weektype="", $leagueid=0)
+    {
+
+        if ($year == 0)
+            $year = $this->session->userdata('current_year');
+        if ($week == 0)
+            $week = $this->session->userdata('current_week');
+        if ($weektype == "")
+            $weektype = $this->session->userdata('week_type');
+        if ($leagueid == 0)
+            $leagueid = $this->session->userdata('league_id');
+
+        $settings = $this->db->select('waiver_wire_disable_gt, waiver_wire_disable_days')->from('league_settings')->where('league_id',$leagueid)
+            ->get()->row();
+
+        $current_time = time();
+        if ($settings->waiver_wire_disable_gt)
+        {
+            $start_time  = $this->common_noauth_model->player_game_start_time($player_id,$year,$week,$weektype);
+            $end_time = $this->common_noauth_model->final_game_start_time($year,$week,$weektype);
+            
+            // If it's past the start time and 8 hours haven't passed since the final game started
+            if (($current_time > $start_time) && ($current_time < $end_time+(60*8)))
+            {
+                return True;
+            }
+        }
+
+        // Checks passed, player not locked.
+        return False;
+        
+    }
+
+    function today_is_disabled_day($leagueid)
+    {
+        $settings = $this->db->select('waiver_wire_disable_gt, waiver_wire_disable_days')->from('league_settings')->where('league_id',$leagueid)
+            ->get()->row();
+        if ($settings->waiver_wire_disable_days != "")
+        {
+            $day_of_week = date('w',time());  //0=sunday, 6=saturday
+            $days = str_split($settings->waiver_wire_disable_days);
+            if (in_array($day_of_week,$days))
+                return True;
+            
+        }
+        return False;
     }
 
     function update_last_check($leagueid)

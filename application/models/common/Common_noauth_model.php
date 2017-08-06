@@ -109,6 +109,7 @@ class Common_noauth_model extends CI_Model{
             else
                 return $most_recent;
         }
+        return False;
     }
 
     function league_position_year($leagueid, $year = 0)
@@ -123,6 +124,17 @@ class Common_noauth_model extends CI_Model{
         if($pos_year != "")
             return $pos_year;
         return 0;
+    }
+
+    function final_game_start_time($year, $week, $weektype)
+    {
+        $row = $this->db->select('UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
+            ->where('year',$year)->where('week',$week)->where('gt',$weektype)
+            ->order_by('start_time','desc')->limit(1)->get()->row();
+
+        if (count($row) == 0)
+            return "";
+        return $row->start_time;
     }
 
     function player_game_start_time($playerid, $year, $week, $weektype)
@@ -155,7 +167,7 @@ class Common_noauth_model extends CI_Model{
         if ($player_id == 0)
             return;
 
-        $gamestart = $this->player_game_start_time($player_id, $year, $week, $weektype);
+        //$gamestart = $this->player_game_start_time($player_id, $year, $week, $weektype);
         $lineup_locked = $this->is_player_lineup_locked($player_id, $teamid, $year, $week, $weektype);
         // Delete player from roster
         $this->db->where('player_id',$player_id)
@@ -176,6 +188,7 @@ class Common_noauth_model extends CI_Model{
         $this->db->where('player_id',$player_id)->where('team_id',$teamid)->where('year',$year)->delete('team_keeper');
     }
 
+    // THIS FUNCTION SHOULDN'T BE IN NOAUTH, IT REQUIRES AUTH
     function is_player_lineup_locked($player_id, $teamid, $year, $week, $weektype)
     {
         $leagueid = $this->db->select('league_id')->from('team')->where('id',$teamid)->get()->row()->league_id;
@@ -220,5 +233,6 @@ class Common_noauth_model extends CI_Model{
             return $game->v;
 
     }
+
 }
 ?>

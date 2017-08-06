@@ -18,7 +18,8 @@ class Cli extends CI_Controller{
     }
 
     function ww_approve()
-    {
+    {   
+
         $this->load->model('common_noauth_model');
         $leagues = $this->common_noauth_model->get_leagues_data();
         foreach($leagues as $l)

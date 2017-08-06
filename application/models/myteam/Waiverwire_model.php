@@ -188,28 +188,8 @@ class Waiverwire_model extends MY_Model{
         if ($pickup_id == 0 && $drop_id > 0)
             return True;
 
-        // Check pick up player waivers are clear, do this first in case they want to be on the waiting list
-        $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
-            ->get()->row()->waiver_wire_clear_time;
-        $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('drop_player_id',$pickup_id)
-            ->where('UNIX_TIMESTAMP(transaction_date)+'.$clear_time.'>'.time())->count_all_results();
-        if($num >0)
-        {
-            $ret = "This player has not cleared waivers.";
-            $status_code = 1;
-            return False;
-        }
 
-        // Check if an approval is pending
-        $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('pickup_player_id',$pickup_id)
-            ->where('transaction_date',0)->count_all_results();
-        if($num > 0 && $settings->type != "manual")
-        {
-            $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the league admin.";
-            return False;
-        }
-
-        // Check roster limit
+        // 1. Check roster limit
         $roster_num = $this->db->from('roster')->where('team_id',$this->teamid)->count_all_results();
         $roster_max = $this->get_roster_max();
         if ($roster_max != -1)
@@ -221,7 +201,7 @@ class Waiverwire_model extends MY_Model{
             }
         }
 
-        // Check position limit, this is a tad complicated
+        // 2. Check position limit, this is a tad complicated
         $pos_year = $this->common_model->league_position_year();
         $positions = $this->db->select('nfl_position_id_list, max_roster, text_id')->from('position')->where('league_id',$this->leagueid)
             ->where('position.year',$pos_year)->get()->result();
@@ -274,7 +254,7 @@ class Waiverwire_model extends MY_Model{
             return False;
         }
 
-        // Check drop player is owned by this team
+        // 3. Check drop player is owned by this team
         $num = $this->db->from('roster')->where('league_id',$this->leagueid)
             ->where('player_id',$drop_id)->where('team_id',$this->teamid)->count_all_results();
         if($drop_id != 0 && $num==0)
@@ -284,7 +264,7 @@ class Waiverwire_model extends MY_Model{
         }
 
 
-        // Check if pick up player is already on a team.
+        // 4. Check if pick up player is already on a team.
         $num = $this->db->from('roster')->where('player_id',$pickup_id)->where('league_id',$this->leagueid)->count_all_results();
 
         if ($num > 0)
@@ -293,7 +273,53 @@ class Waiverwire_model extends MY_Model{
             return False;
         }
 
-        // All checks passed, return True;
+
+        // 5. If manual approvals, check if an approval is pending.
+        if($settings->type != "manual")
+        {
+            $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('pickup_player_id',$pickup_id)
+            ->where('transaction_date',0)->count_all_results();
+            if ($num > 0)
+            {
+                $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the league admin.";
+                return False;
+            }
+        }
+
+        // 6. Check if waiver wire disable gt is, return status 1 if so..queue the request
+        if ($this->common_waiverwire_model->is_player_locked($pickup_id))
+        {
+            $ret = "Request will be queued until week is complete, at least one of the players games has already started.";
+            $status_code = 1;
+            return False;
+        }
+
+        // 7. Check if waiver_wire_disable_day is on and disabled for current day.
+        if ($settings->waiver_wire_disable_days != "")
+        {
+            $day_of_week = date('w',time());  //0=sunday, 6=saturday
+            $days = str_split($settings->waiver_wire_disable_days);
+            if (in_array($day_of_week,$days))
+            {
+                $ret = "Request will be queued, waiver wire is not available today.";
+                $status_code = 1;
+                return False;
+            }
+        }
+
+        // 8. Check pick up player waivers are cleared, if they haven't return status 1, it's not a complete failure
+        $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
+            ->get()->row()->waiver_wire_clear_time;
+        $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('drop_player_id',$pickup_id)
+            ->where('UNIX_TIMESTAMP(transaction_date)+'.$clear_time.'>'.time())->count_all_results();
+        if($num >0)
+        {
+            $ret = "Request will be queued, you'll be notified once the player clears waivers.";
+            $status_code = 1;
+            return False;
+        }
+
+        // 8. All checks passed, return True;
         return True;
 
     }
