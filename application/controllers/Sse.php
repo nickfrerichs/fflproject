@@ -66,6 +66,7 @@ class Sse extends MY_User_Controller{
 
             if ($sse_live_draft)
             {
+                $data['debug']['seconds_left'] = $keys->draft_update_key - $now;
                 // If sse_draft is set, and the draft_update_key has changed, output stuff needed for the draft.
                 //if (($settings->sse_draft && $last_keys->draft_update_key != $keys->draft_update_key))
                 if (($draft_first) || ($last_keys->draft_update_key != $keys->draft_update_key) || ($last_keys->draft_paused != $keys->draft_paused))

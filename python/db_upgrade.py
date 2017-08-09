@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.0'
+CURRENT_VERSION = '1.1'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,18 +20,22 @@ def main():
 
 
 def upgrade_db(version):
- #   if version == "1.0":
+    if version == "1.0":
         # waiver_wire_disable_days should be a varchar
 
-        # add waiver_wire_oops_time, integer, seconds allowed to pick up same player just dropped
-        # query = "ALTER TABLE  `league_settings` CHANGE  `waiver_wire_disable_days`  `waiver_wire_disable_days` VARCHAR( 7 ) NOT NULL"
-        # cur.execute(query)
-        # db.commit()
+        query = "ALTER TABLE  `league_settings` CHANGE  `waiver_wire_disable_days`  `waiver_wire_disable_days` VARCHAR( 7 ) NOT NULL"
+        cur.execute(query)
+        db.commit()
 
-        # query = 'update site_settings set db_version = "%s"' % ("1.1")
-        # cur.execute(query)
-        # db.commit()
-        # return get_db_version()
+        # update SD to LAC
+        query = "update nfl_team set club_id = 'LAC', team_name = 'Los Angeles Chargers' where club_id = 'SD'"
+        cur.execute(query)
+        db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.1")
+        cur.execute(query)
+        db.commit()
+        return get_db_version()
 
     if version == "0.7":
         # Add player_injury table

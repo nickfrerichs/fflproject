@@ -328,6 +328,11 @@ function updateTimer()
 			$("#countdown").data('warning',true);
 			flash($("#countdown"));
 		}
+		else
+		{
+			$("#countdown").css('color','#000000');
+			$("#countdown").data('warning',false);
+		}
 		$("#countdown").text(clocktext);
 		$("#countdown").data('seconds',(timer-1));
 	}

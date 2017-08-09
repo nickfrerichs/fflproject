@@ -429,7 +429,7 @@ function sse_stream_start()
 				}
 				else
 				{$('#countdown').data('paused', 0);}
-				$('#countdown').data('seconds', d.live_draft.current_pick.seconds_left);
+				$('#countdown').data('seconds', d.live_draft.current_pick.seconds_left-1);
 				$('#countdown').data('deadline', d.live_draft.current_pick.deadline);
 				$('#countdown').data('currenttime', d.live_draft.current_time);
 				$('#countdown').data('teamid', d.live_draft.current_pick.team_id);
