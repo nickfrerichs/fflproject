@@ -100,6 +100,19 @@ class Draft extends MY_Admin_Controller
 
     }
 
+
+
+    function ajax_delete_pick()
+    {
+        $response = array('success' => False);
+        $pick_id = $this->input->post('pick_id');
+
+        $this->draft_model->delete_draft_pick($pick_id);
+        $response['success'] = True;
+
+        echo json_encode($response);
+    }
+
     function future()
     {
         $data = array();

@@ -17,6 +17,7 @@
 		<h5 class="text-center">Round <span id="round-num">1</span></h5>
 		<table>
 			<thead>
+			<th></th><th>Pick</th><th>Overall</th><th>Team</th><th>Player</th>
 			</thead>
 			<tbody id="draft-table">
 			</tbody>
@@ -71,6 +72,19 @@ $(document).ready(function(){
 			$("#next").val(next);
 			$("#prev").val(prev);
 		}
+	});
+
+	$("#draft-table").on('click','.delete-pick',function(){
+		var url = "<?=site_url('admin/draft/ajax_delete_pick')?>";
+		console.log(url);
+		var pick_id = $(this).data('id');
+		$.post(url,{'pick_id':pick_id},function(data){
+			if (data.success)
+			{
+				load_draft_table(getround());
+				 {notice('Pick deleted.','success');}
+			}
+		},'json');
 	});
 
 

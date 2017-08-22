@@ -77,7 +77,7 @@ class Draft_model extends MY_Model
 
     function get_draft_round_data($round)
     {
-    	return $this->db->select('round, pick, overall_pick')
+    	return $this->db->select('draft_order.id, round, pick, overall_pick')
     		->select('team.team_name, owner.first_name, owner.last_name')
     		->select('player.first_name as p_first_name, player.last_name as p_last_name, player.id as p_id')
     		->from('draft_order')
@@ -245,6 +245,45 @@ class Draft_model extends MY_Model
             ->where('draft_future.league_id',$this->leagueid)
             ->where('draft_future.year',$year)
             ->order_by('round','asc')->get()->result();
+    }
+
+    function delete_draft_pick($id)
+    {
+        $year = $this->db->select('year')->from('draft_order')->where('id',$id)->where('league_id',$this->leagueid)
+            ->get()->row()->year;
+
+        $this->db->where('id',$id)->where('league_id',$this->leagueid)
+            ->delete('draft_order');
+
+
+        // Reorder the picks
+        $picks = $this->db->select('id,round,pick,overall_pick,actual_pick')->from('draft_order')
+            ->where('league_id',$this->leagueid)->where('year',$year)
+            ->order_by('round','asc')->order_by('pick','asc')->get()->result();
+
+        $update_batch = array();
+        $rnd = 0;
+        $pick = 1;
+        $overall = 1;
+        foreach($picks as $p)
+        {
+            if ($rnd != $p->round)
+            {
+                $rnd = $p->round;
+                $pick = 1;
+            }
+            $update_batch[] = array('id' => $p->id,
+                                    'round' => $rnd,
+                                    'pick' => $pick,
+                                    'overall_pick' => $overall,
+                                    'actual_pick' => $overall);
+            $overall++;
+            $pick++;
+
+        }
+
+        $this->db->update_batch('draft_order',$update_batch,'id');
+
     }
 
 }

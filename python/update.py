@@ -648,7 +648,7 @@ def update_player_ranks():
 parser = argparse.ArgumentParser(description='FFLProject: Update various parts of the database')
 
 parser.add_argument('-schedule', action="store_true", default=False, help="Update NFL schedule")
-parser.add_argument('-schedule_clear', action="store_true", default=False, help="Add this to delete exiting schedule records for the week and re-add them.")
+parser.add_argument('-schedule_clear', action="store_true", default=False, help="Add this to delete existing schedule records for the week and re-add them.")
 #parser.add_argument('-g', action="store_true", default=False, help="Update NFL game stats and recalculate fantasy stats")
 parser.add_argument('-players', action="store_true", default=False, help="Update NFL players")
 parser.add_argument('-photos', action="store_true", default=False, help="Check for photos for players that don't have one.")

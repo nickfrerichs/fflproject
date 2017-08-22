@@ -34,7 +34,7 @@
 								Beginning a new season will:
 								<ul>
 									<li>Automatically enable "Offseason"/read-only mode for owners</li>
-									<li>Clear all team rosters (except players designated as keepers)/li>
+									<li>Clear all team rosters (except players designated as keepers)</li>
 									<li>Archive: draft, waiver wire, scores, results, schedule, etc</li>
 									<li>Not change: Scoring definitions, position definitions, owners/team names</li>
 								</ul>
