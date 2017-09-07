@@ -51,7 +51,7 @@ line-height: 60px;
 <div class="row callout">
 	<div class="columns medium-expand small-12 text-center">
 		<div class="text-center">
-			<h5>
+			<h5 id="d-block-title">
 				<?=$block_title?>
 			</h5>
 		</div>
@@ -59,6 +59,13 @@ line-height: 60px;
 			<!-- moved stuff from old ajax here -->
 			<?php if(($scheduled_start_time > $current_time) && ($start_time == 0 || $start_time > $current_time)): // Draft is in the future?>
 				<div class="d-block-team-name"><?=date('D M j - g:i a',$scheduled_start_time)?></div>
+				<div>
+					<img id="d-block-team-logo" class="hide-for-small-only" src="">
+				</div>
+
+				<div class="d-block-round">
+				</div>
+				
 				<div id="countdown" class="d-block-clock" data-deadline=""
 					data-currenttime="<?=$current_time?>" data-seconds="-1"
 					data-paused="" data-starttime="<?=$start_time?>" data-teamid="">

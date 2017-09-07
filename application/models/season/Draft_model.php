@@ -134,7 +134,7 @@ class Draft_model extends MY_Model{
     // This function is for clients to check if the draft has progressed or not.
     function get_update_key()
     {
-    	$settings = $this->db->select('draft_update_key, draft_time_limit')
+    	$settings = $this->db->select('draft_update_key, draft_time_limit, draft_pick_id')
             ->select('draft_paused, UNIX_TIMESTAMP(draft_start_time) as draft_start_time')->from('league_settings')
     		->where('league_id',$this->leagueid)->get()->row();
 
@@ -167,14 +167,25 @@ class Draft_model extends MY_Model{
                 ->where('year',$this->current_year)
                 ->get()->num_rows();
 
+            $current_pick = $this->db->select('id, overall_pick')->from('draft_order')->where('id',$settings->draft_pick_id)->get()->row();
+            $current_overall_pick = 0;
+            if ($current_pick)
+                $current_overall_pick = $current_pick->overall_pick;
+
             // Get the pick that comes after the current_time, this is important in case more than 1 person missed their
             // pick and no one was viewing the draft page.  Makes us look like we kept track.
     		$row = $this->db->select('id, player_id, UNIX_TIMESTAMP(deadline) as deadline, team_id')->from('draft_order')
     			->where('league_id',$this->leagueid)->where('deadline >', $this->t($current_time))
                 ->where('year',$this->current_year)->where('player_id',0)
-    			->order_by('actual_pick','asc')->get()->row();
-    		if (isset($row->deadline))
-    			$newkey = $row->deadline;
+                ->where('overall_pick>',$current_overall_pick)
+                ->order_by('actual_pick','asc')->get()->row();
+            // Found a pick with a deadline in the future, this is the "current pick".
+            // Adjust the order and put this pick ahead of anyone who missed their pick.
+            if (isset($row->deadline))
+            {
+                $newkey = $row->deadline;
+                $this->adjust_pick_deadlines($row->id);
+            }
     		elseif($picks_left > 0) // end of draft but still skipped picks left, adjust deadlines, get new key
             {
                 $newkey = $this->adjust_pick_deadlines();
@@ -413,6 +424,7 @@ class Draft_model extends MY_Model{
 
     function get_recent_picks_data()
     {
+
         return $this->db->select('draft_order.actual_pick, draft_order.round, draft_order.pick')
             ->select('player.id as player_id, player.first_name, player.last_name')
             ->select('nfl_position.text_id as position')
@@ -434,7 +446,7 @@ class Draft_model extends MY_Model{
     }
     function get_upcoming_picks_data()
     {
-        $data = $this->db->select('draft_order.actual_pick, draft_order.round, draft_order.pick')
+        $data = $this->db->select('draft_order.actual_pick, draft_order.round, draft_order.pick, draft_order.id as pick_id')
             ->select('team.team_name')
             ->select('owner.first_name as owner')
             ->from('draft_order')
@@ -443,7 +455,7 @@ class Draft_model extends MY_Model{
             ->where('draft_order.league_id',$this->leagueid)
             ->where('draft_order.player_id',0)
             ->where('draft_order.year',$this->current_year)
-            ->order_by('draft_order.actual_pick','asc')
+            ->order_by('draft_order.deadline','asc')
             ->limit(3)->get()->result();
 
         unset($data[0]);
@@ -524,7 +536,7 @@ class Draft_model extends MY_Model{
 
         $pick_time = $settings->draft_time_limit;
 
-        // Get the last actual pick numer
+        // Get the last actual pick number
         $actual_pick = 1;
         $row = $this->db->select('actual_pick')->from('draft_order')
             ->where('league_id',$this->leagueid)->where('year',$this->current_year)->where('player_id !=',0)
@@ -541,6 +553,8 @@ class Draft_model extends MY_Model{
 
         // Get all remaining picks to get current pick, if pick_id was passed, that's the current pick
 
+
+
         if($pick_id == 0)   //Either end of draft with skipped picks, or draft pick made.
         {                   //No pick passed in, used lowest deadline and all picks that follow.
             $picks = $this->db->select('id, team_id')->from('draft_order')->where('league_id',$this->leagueid)
@@ -552,11 +566,23 @@ class Draft_model extends MY_Model{
         }
         else // Next pick was passed in, use that and only select picks that come after it to reorder
         {    //
+            $nextpick = $this->db->select('id, team_id, overall_pick')->from('draft_order')->where('id',$pick_id)->get()->row();
             $picks = $this->db->select('id, team_id')->from('draft_order')->where('league_id',$this->leagueid)
-                ->where('player_id',0)->where('year',$this->current_year)->where('actual_pick >=',$actual_pick)
-                ->order_by('actual_pick','asc')->get()->result();
-            $nextpick = $this->db->select('id, team_id')->from('draft_order')->where('id',$pick_id)->get()->row();
-            $new_deadline = time() + $settings->draft_paused;
+                ->where('player_id',0)->where('id!=',$pick_id)->where('overall_pick>',$nextpick->overall_pick)->where('year',$this->current_year)
+                ->order_by('deadline','asc')->get()->result();
+
+            $skipped_picks = $this->db->select('id, team_id')->from('draft_order')->where('league_id',$this->leagueid)
+            ->where('player_id',0)->where('id!=',$pick_id)->where('overall_pick<',$nextpick->overall_pick)->where('year',$this->current_year)
+            ->order_by('overall_pick','desc')->get()->result();
+            
+            if ($settings->draft_paused > 0)
+                $new_deadline = time() + $settings->draft_paused;
+            else
+                $new_deadline = time() + $pick_time;
+
+            foreach($skipped_picks as $pick)
+                array_unshift($picks,$pick);
+            array_unshift($picks,$nextpick);
         }
 
         // Use next pick to get values for league_settings
@@ -587,14 +613,19 @@ class Draft_model extends MY_Model{
 
 
         // Update deadlines for all remaining picks
-        // Should use batch update to do these all at once
+        $update_batch = array();
         foreach($picks as $pick)
         {
-            $this->db->where('id',$pick->id);
-            $this->db->update('draft_order',array('deadline' => $this->t($new_deadline),'actual_pick' => $actual_pick));
+            $update_batch[] = array('id' => $pick->id,
+                                    'deadline' => $this->t($new_deadline),
+                                    'actual_pick' => $actual_pick);
             $new_deadline+=$pick_time;
             $actual_pick++;
         }
+
+        $this->db->update_batch('draft_order',$update_batch,'id');
+        // $this->db->where('id',$pick->id);
+        // $this->db->update('draft_order',array('deadline' => $this->t($new_deadline),'actual_pick' => $actual_pick));
 
         return $new_key; //return in case being called by get_update_key
     }

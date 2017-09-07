@@ -382,8 +382,8 @@ function sse_stream_start()
 					var tr_html = '';
 					if(pick_data.player_id == undefined){has_player = false;}
 
-					if (pick_data.pick_id != undefined)
-					{tr_html = '<tr class="d-rp-currentpick">'; console.log('has pick_id');}
+					if (pick_data.pick_id == d.live_draft.current_pick.pick_id)
+					{tr_html = '<tr class="d-rp-currentpick">';}
 					else if(has_player)
 					{tr_html = '<tr class="d-rp-recentpick">';}
 					else
@@ -403,6 +403,8 @@ function sse_stream_start()
 				}
 				{$('#recent-picks').html('');}
 				$.each(d.live_draft.upcoming_picks,function(id, player){
+					if (d.live_draft.current_pick.pick_id == player.pick_id)
+						{return;}
 					add_one_pick(player,true);
 				});
 				
@@ -422,13 +424,12 @@ function sse_stream_start()
 				else
 					{$(".btn-draft:contains('Draft')").attr("disabled",true);}
 				
+				
+				if (d.live_draft.paused > 0){$('#countdown').data('paused', 1);}
+				else{$('#countdown').data('paused', 0);}
+
 				// Next, refresh on-the-block data
-				if (d.live_draft.paused > 0)
-				{
-					$('#countdown').data('paused', 1);
-				}
-				else
-				{$('#countdown').data('paused', 0);}
+				$('#d-block-title').text('Now Picking');
 				$('#countdown').data('seconds', d.live_draft.current_pick.seconds_left-1);
 				$('#countdown').data('deadline', d.live_draft.current_pick.deadline);
 				$('#countdown').data('currenttime', d.live_draft.current_time);
@@ -439,10 +440,12 @@ function sse_stream_start()
 
 				// Also update some admin stuff in on-the-block
 				if (d.live_draft.start_time == "" || d.live_draft.start_time > d.live_draft.current_time)
-					{$("#admin-pause-button").text("Start Draft");}
-				else if ((d.live_draft.start_time < d.live_draft.current_time) && d.live_draft.paused <= 0)
+					{$("#admin-pause-button").text("Start Draft");
+						console.log("adsfasfasdfasdfas");
+						}
+				else if ((d.live_draft.start_time <= d.live_draft.current_time) && d.live_draft.paused <= 0)
 					{$("#admin-pause-button").text("Pause Draft");}
-				else if ((d.live_draft.start_time < d.live_draft.current_time) && d.live_draft.paused > 0)
+				else if ((d.live_draft.start_time <= d.live_draft.current_time) && d.live_draft.paused > 0)
 					{$("#admin-pause-button").text("Resume Draft");}
 				$("#admin-undo").attr("disabled",(d.live_draft.paused <= 0));
 

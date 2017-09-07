@@ -10,6 +10,12 @@ class Sse extends MY_User_Controller{
         $this->load->model('sse_model');
     }
 
+    function test()
+    {
+        $this->load->model('season/draft_model');
+        $this->draft_model->get_update_key();
+    }
+
     // The stream of data
     function stream($sse_func = "")
     {
@@ -48,6 +54,7 @@ class Sse extends MY_User_Controller{
             $settings = $this->sse_model->get_sse_settings();  // Is this even used??
             $keys = $this->sse_model->keys();
             $data = array();
+
             // If the chat_key is new, output chats that occured since the last one.
             // Need a way to know to send chats if chat_balloon is disabled...ran into complications because two windows could be open.
             // So for now, I'm always sending chats, they will get ignored if not needed.
@@ -66,7 +73,17 @@ class Sse extends MY_User_Controller{
 
             if ($sse_live_draft)
             {
-                $data['debug']['seconds_left'] = $keys->draft_update_key - $now;
+                //
+                $seconds_left = $keys->draft_update_key - $now;
+                if ($seconds_left < 0)
+                    $seconds_left = -1;
+                if (!isset($last_seconds_left) || ($last_seconds_left != $seconds_left && $seconds_left % 5 == 0))
+                {   
+                    $last_seconds_left = $seconds_left;
+                   // $adadsf = "";
+                    //$seconds_left = $keys->draft_update_key - $now;
+                    $data['live_draft']['seconds_left'] = $seconds_left;
+                }
                 // If sse_draft is set, and the draft_update_key has changed, output stuff needed for the draft.
                 //if (($settings->sse_draft && $last_keys->draft_update_key != $keys->draft_update_key))
                 if (($draft_first) || ($last_keys->draft_update_key != $keys->draft_update_key) || ($last_keys->draft_paused != $keys->draft_paused))
@@ -98,7 +115,8 @@ class Sse extends MY_User_Controller{
                     $data['live_draft']['byeweeks'] = $this->common_model->get_byeweeks_array();
                 }
 
-                // In case of stale key (no one is watching the draft), do a refresh on first load. 
+                // In case of stale key (no one is watching the draft), do a refresh on first load.
+                // This also handles when a player misses a pick
                 if ($keys->draft_update_key < $now)
                     $this->draft_model->get_update_key();
             }

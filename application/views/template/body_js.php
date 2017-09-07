@@ -22,4 +22,4 @@
 <?php else: ?>
 	<script>window.LEAGUE_ADMIN = false;</script>
 <?php endif;?>
-<script src="<?=site_url('js/fflproject.js?1.13')?>"></script>
+<script src="<?=site_url('js/fflproject.js?1.15')?>"></script>

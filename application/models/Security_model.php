@@ -89,7 +89,7 @@ class Security_model extends CI_Model
         $names = $this->chat_model->get_firstnames();
 
         if ($names[strtolower($owner->first_name)] > 1)
-            $chatname = $owner->first_name+' '+$owner->last_name[0];
+            $chatname = $owner->first_name.' '.$owner->last_name[0];
         else
             $chatname = $owner->first_name;
         $this->session->set_userdata('chat_name',$chatname);

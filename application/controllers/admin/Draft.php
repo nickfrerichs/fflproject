@@ -100,8 +100,6 @@ class Draft extends MY_Admin_Controller
 
     }
 
-
-
     function ajax_delete_pick()
     {
         $response = array('success' => False);
