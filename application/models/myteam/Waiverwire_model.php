@@ -274,19 +274,7 @@ class Waiverwire_model extends MY_Model{
         }
 
 
-        // 5. If manual approvals, check if an approval is pending.
-        if($settings->type != "manual")
-        {
-            $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('pickup_player_id',$pickup_id)
-            ->where('transaction_date',0)->count_all_results();
-            if ($num > 0)
-            {
-                $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the league admin.";
-                return False;
-            }
-        }
-
-        // 6. Check if waiver wire disable gt is, return status 1 if so..queue the request
+        // 5. Check if waiver wire disable gt is, return status 1 if so..queue the request
         if ($this->common_waiverwire_model->is_player_locked($pickup_id))
         {
             $ret = "Request will be queued until week is complete, at least one of the players games has already started.";
@@ -294,7 +282,7 @@ class Waiverwire_model extends MY_Model{
             return False;
         }
 
-        // 7. Check if waiver_wire_disable_day is on and disabled for current day.
+        // 6. Check if waiver_wire_disable_day is on and disabled for current day.
         if ($settings->waiver_wire_disable_days != "")
         {
             $day_of_week = date('w',time());  //0=sunday, 6=saturday
@@ -307,7 +295,7 @@ class Waiverwire_model extends MY_Model{
             }
         }
 
-        // 8. Check pick up player waivers are cleared, if they haven't return status 1, it's not a complete failure
+        // 7. Check pick up player waivers are cleared, if they haven't return status 1, it's not a complete failure
         $clear_time = $this->db->select('waiver_wire_clear_time')->from('league_settings')->where('league_id',$this->leagueid)
             ->get()->row()->waiver_wire_clear_time;
         $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('drop_player_id',$pickup_id)
@@ -317,6 +305,18 @@ class Waiverwire_model extends MY_Model{
             $ret = "Request will be queued, you'll be notified once the player clears waivers.";
             $status_code = 1;
             return False;
+        }
+
+        // 8. If manual approvals, check if an approval is pending.
+        if($settings->type != "manual")
+        {
+            $num = $this->db->from('waiver_wire_log')->where('league_id',$this->leagueid)->where('pickup_player_id',$pickup_id)
+            ->where('transaction_date',0)->count_all_results();
+            if ($num > 0)
+            {
+                $ret = "The player you are picking up has a pending request that<br> needs to be resolved by the league admin.";
+                return False;
+            }
         }
 
         // 8. All checks passed, return True;
