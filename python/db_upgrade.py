@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.1'
+CURRENT_VERSION = '1.2'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,28 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "1.1":
+        # Add priority_used column
+        if not column_exists("priority_used", "waiver_wire_log"):
+            query = 'ALTER TABLE `waiver_wire_log` ADD `priority_used` BOOLEAN DEFAULT 0'
+            cur.execute(query)
+
+        # Add transaction_week column
+        if not column_exists("transaction_week", "waiver_wire_log"):
+            query = 'ALTER TABLE `waiver_wire_log` ADD `transaction_week` INT(11)'
+            cur.execute(query)
+
+        # LA Rams are now abbreviated LAR
+        query = 'update nfl_team set club_id = "LAR" where team_name = "Los Angeles Rams"'
+        cur.execute(query)
+        db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.2")
+        cur.execute(query)
+        db.commit()
+        return get_db_version()       
+
     if version == "1.0":
         # waiver_wire_disable_days should be a varchar
 
