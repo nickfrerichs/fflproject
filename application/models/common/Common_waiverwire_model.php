@@ -20,7 +20,7 @@ class Common_waiverwire_model extends CI_Model{
             ->get()->row()->waiver_wire_clear_time;
     }
 
-    function get_ww_priority_data_array($leagueid, $year, $weektype)
+    function get_ww_priority_data_array($leagueid, $year, $weektype, $week=0)
     {
         $data = array();
         $standings = $this->db->select('team.team_name, owner.first_name, owner.last_name, team.id as team_id')
@@ -73,7 +73,27 @@ class Common_waiverwire_model extends CI_Model{
             foreach($standings as $key => $s)
                 $data['priority'][$key] = $s;
         }
+        if ($week > 0)
+        {
 
+            // get each users most recent "collision" win and move them to the end
+            $priority_used = $this->db->select('team_id')->from('waiver_wire_log')->where('league_id',$leagueid)
+                ->where('year',$year)->where('transaction_week',$week)->where('priority_used',1)
+                ->order_by('transaction_date','asc')->get()->result();
+
+            foreach($priority_used as $p)
+            {
+                foreach($data['priority'] as $priority => $team)
+                {
+                    if($p->team_id == $team->team_id)
+                    {
+                        unset($data['priority'][$priority]);
+                        $data['priority'][]=$team;
+                    }
+
+                }
+            }
+        }
         return $data;
 
     }
@@ -203,7 +223,8 @@ class Common_waiverwire_model extends CI_Model{
     {
         $now = t_mysql();
         $data = array('transaction_date' => $now,
-              'approved' => 0);
+              'approved' => 0,
+              'transaction_week',$this->current_week);
         $this->db->where('team_id',$teamid)->where('id',$id);
         $this->db->update('waiver_wire_log',$data);
     }
@@ -307,7 +328,7 @@ class Common_waiverwire_model extends CI_Model{
             $end_time = $this->common_noauth_model->final_game_start_time($year,$week,$weektype);
             
             // If it's past the start time and 8 hours haven't passed since the final game started
-            if (($current_time > $start_time) && ($current_time < $end_time+(60*8)))
+            if (($current_time > $start_time) && ($current_time < $end_time+(60*60*8)))
             {
                 return True;
             }

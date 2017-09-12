@@ -38,7 +38,7 @@ class Transactions_model extends MY_Model
             ->where('league_id',$this->leagueid)->get()->row();
 
         // Update the log
-        $data = array('transaction_date' => $now, 'approved' => 0);
+        $data = array('transaction_date' => $now, 'approved' => 0, 'transaction_week' => $this->current_week);
         $this->db->where('id',$id);
         $this->db->update('waiver_wire_log',$data);
 
@@ -66,7 +66,7 @@ class Transactions_model extends MY_Model
 
             foreach($rows as $row)
             {
-                $data = array('transaction_date'=>$now, 'approved' => 0);
+                $data = array('transaction_date'=>$now, 'approved' => 0, 'transaction_week' => $this->current_week);
                 $this->db->where('id',$row->id);
                 $this->db->update('waiver_wire_log',$data);
                 $this->common_waiverwire_model->send_email_notice($row->id,'rejected');
@@ -77,7 +77,7 @@ class Transactions_model extends MY_Model
             $this->waiverwire_model->pickup_player($log->pickup_player_id, $log->team_id);
 
             // Update the log
-            $data = array('transaction_date' => $now, 'approved' => 1);
+            $data = array('transaction_date' => $now, 'approved' => 1, 'transaction_week' => $this->current_week);
             $this->db->where('id',$id);
             $this->db->update('waiver_wire_log',$data);
 

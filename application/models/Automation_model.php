@@ -11,6 +11,7 @@ class Automation_model extends CI_Model{
 
     function approve_waiver_wire_requests($leagueid)
     {
+        print "Leagueid: ".$leagueid."\n";
         $week_year = $this->common_noauth_model->get_current_week($leagueid);
         if (!$week_year)
             return;
@@ -51,7 +52,7 @@ class Automation_model extends CI_Model{
             {
                 if ($this->common_waiverwire_model->is_player_locked($r->player_id, $week_year->year, $week_year->week, $week_type, $leagueid))
                 {
-                    print "Player locked. ".$r->player_id;
+                    print "Player locked. ".$r->player_id."\n";
                     continue;
                 }
             }
@@ -64,7 +65,7 @@ class Automation_model extends CI_Model{
                 $priority[$t->team_id]['data'] = $t;
                 $priority[$t->team_id]['priority'] = $p;
             }
-
+            
             // Check if the clear_time has passed since when this player was dropped,
             $dropped_time = $this->db->select('UNIX_TIMESTAMP(transaction_date) as transaction_date')
                 ->from('waiver_wire_log')->where('league_id',$leagueid)->where('drop_player_id',$r->player_id)
@@ -93,6 +94,10 @@ class Automation_model extends CI_Model{
                 }
             }
 
+            $priority_used = false;
+            if (count($teams > 1))
+                $priority_used = true;
+
             // If contention and semi automation, time to exit.
             if ($approval_type == "semiauto" && count($teams) > 1)
             {
@@ -118,7 +123,7 @@ class Automation_model extends CI_Model{
                 $this->common_waiverwire_model->pickup_player($log->pickup_player_id, $log->team_id, $leagueid);
 
                 // Update the log
-                $data = array('transaction_date' => $now, 'approved' => 1);
+                $data = array('transaction_date' => $now, 'approved' => 1, 'transaction_week' => $week_year->week, 'priority_used' => $priority_used);
                 $this->db->where('id',$ww_winner['data']->ww_id);
                 $this->db->update('waiver_wire_log',$data);
 
@@ -131,7 +136,7 @@ class Automation_model extends CI_Model{
 
                 foreach($rows as $row)
                 {
-                    $data = array('transaction_date'=>$now, 'approved' => 0);
+                    $data = array('transaction_date'=>$now, 'approved' => 0, 'transaction_week' => $week_year->week);
                     $this->db->where('id',$row->id);
                     $this->db->update('waiver_wire_log',$data);
                     $this->common_waiverwire_model->send_email_notice($row->id,'priority');

@@ -358,6 +358,7 @@ class Waiverwire_model extends MY_Model{
                       'transaction_date' => $trans_date,
                       'request_date' => $request_date,
                       'year' => $this->current_year,
+                      'transaction_week' => $this->current_week,
                       'approved' => $approve);
 
         $this->db->insert('waiver_wire_log',$data);
@@ -437,7 +438,7 @@ class Waiverwire_model extends MY_Model{
 
     function get_priority_data_array()
     {
-        return $this->common_waiverwire_model->get_ww_priority_data_array($this->leagueid, $this->current_year, $this->current_weektype);
+        return $this->common_waiverwire_model->get_ww_priority_data_array($this->leagueid, $this->current_year, $this->current_weektype, $this->current_week);
     }
 
     function get_pending_requests()

@@ -31,6 +31,11 @@ class Waiverwire extends MY_User_Controller{
 
     }
 
+    function test()
+    {
+        print_r($this->waiverwire_model->get_priority_data_array());
+    }
+
     function log()
     {
         $data = array();
