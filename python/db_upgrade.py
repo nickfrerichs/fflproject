@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.2'
+CURRENT_VERSION = '1.21'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,17 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "1.2":
+        # Really NFL? You still use LA, fine, changing back
+        query = 'update nfl_team set club_id = "LA" where team_name = "Los Angeles Rams"'
+        cur.execute(query)
+        db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.21")
+        cur.execute(query)
+        db.commit()
+        return get_db_version() 
 
     if version == "1.1":
         # Add priority_used column

@@ -153,8 +153,11 @@ class Common_noauth_model extends CI_Model{
 
     function player_club_id($playerid)
     {
-        return $this->db->select('nfl_team.club_id')->from('player')->join('nfl_team','nfl_team.id = player.nfl_team_id')
-            ->where('player.id',$playerid)->get()->row()->club_id;
+        $row = $this->db->select('nfl_team.club_id')->from('player')->join('nfl_team','nfl_team.id = player.nfl_team_id')
+            ->where('player.id',$playerid)->get()->row();
+        if ($row)
+            return $row->club_id;
+        return "None";
     }
 
     function get_leagues_data()

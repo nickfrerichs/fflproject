@@ -219,12 +219,14 @@ class Common_waiverwire_model extends CI_Model{
         $this->db->insert('roster',$data);
     }
 
-    function cancel_request($id, $teamid)
+    function cancel_request($id, $teamid, $week=0)
     {
+        if ($week == 0)
+            $week = $this->session->userdata('current_week');
         $now = t_mysql();
         $data = array('transaction_date' => $now,
               'approved' => 0,
-              'transaction_week',$this->current_week);
+              'transaction_week' => $week);
         $this->db->where('team_id',$teamid)->where('id',$id);
         $this->db->update('waiver_wire_log',$data);
     }

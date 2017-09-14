@@ -465,7 +465,7 @@ def update_schedule(season_year, week, weektype="REG"):
       p = g.getAttribute('p')
       rz = g.getAttribute('rz')
       ga = g.getAttribute('ga')
-      (hour, minute) = time.split(":");
+      (hour, minute) = time.split(":")
 
       # Ugh, this timezone stuff is ugly since it's in 12-hour with no AM/PM and there are games
       # in London before noon.  Just sort of guessing for now.
