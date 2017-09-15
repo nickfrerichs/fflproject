@@ -2,7 +2,7 @@
     <thead>
         <th class="ls-c-playerlight"></th>
         <?php if(!$compact):?>
-            <th class="ls-c-playerphoto-box"></th>
+            <th class="ls-c-playerphoto-box"><img src="<?=$matchup['home_team']['thumb']?>"></th>
         <?php endif;?>
         <th class="text-center"><a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['team']->team_name?></a></th>
         <th class="ls-c-teamscore text-left teamscore-<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['points']?></th>
@@ -10,7 +10,7 @@
         <th class="ls-c-teamscore text-right teamscore-<?=$matchup['away_team']['team']->id?>"><?=$matchup['away_team']['points']?></th>
         <th class="text-center"><a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['away_team']['team']->id?>"><?=$matchup['away_team']['team']->team_name?></a></th>
         <?php if(!$compact):?>
-            <th class="ls-c-playerphoto-box"></th>
+            <th class="ls-c-playerphoto-box"><img src="<?=$matchup['away_team']['thumb']?>"></th>
         <?php endif;?>
         <th class="ls-c-playerlight"></th>
     </thead>

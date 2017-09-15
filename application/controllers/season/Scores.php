@@ -53,8 +53,23 @@ class Scores extends MY_User_Controller{
 
     function live_standard()
     {
+        $this->load->model('myteam/myteam_settings_model');
         $data = array();
         $data['matchups'] = $this->scores_model->get_fantasy_matchups(null, $this->current_week);
+
+        foreach($data['matchups'] as $key => $m)
+        {
+
+            if ($m['home_team']['team']->logo)
+                $data['matchups'][$key]['home_team']['thumb'] = $this->myteam_settings_model->get_logo_url($m['home_team']['team']->id,'thumb');
+            else
+                $data['matchups'][$key]['home_team']['thumb'] = $this->myteam_settings_model->get_default_logo_url('thumb');
+            if ($m['away_team']['team']->logo)
+                $data['matchups'][$key]['away_team']['thumb'] = $this->myteam_settings_model->get_logo_url($m['away_team']['team']->id,'thumb');
+            else
+                $data['matchups'][$key]['away_team']['thumb'] = $this->myteam_settings_model->get_default_logo_url('thumb');
+        }
+
         $data['nfl_matchups'] = $this->scores_model->get_live_nfl_matchups_data();
         $this->user_view('user/season/scores/live/standard',$data);
     }
