@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.3'
+CURRENT_VERSION = '1.31'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,9 +20,38 @@ def main():
 
 
 def upgrade_db(version):
+    if version == "1.3":
+        # Forgot to populate player_injury_type table
+        add = [{'text_id':'IA',
+                'short_text':'Inactive',
+                'description':'Players are officially inactive for the current game and will not play'},
+                {'text_id':'O',
+                'short_text':'Out',
+                'description':'Not scheduled to play'},
+                {'text_id':'D',
+                'short_text':'Doubtful',
+                'description':'Players have approximately a 25% chance of playing'},
+                {'text_id':'Q',
+                'short_text':'Questionable',
+                'description':'Players have approximately a 50% chance of playing'},
+                {'text_id':'P',
+                'short_text':'Probable',
+                'description':'Players are very likely to start in the upcoming week'}]
+        for a in add:
+            query = 'select id from player_injury_type where short_text = "%s"' % (a['short_text'])
+            cur.execute(query)
+            if cur.rowcount > 0: continue
+            query = (('insert into player_injury_type (text_id,short_text,description) values("%s","%s","%s")')
+                    %(a['text_id'],a['short_text'],a['description']))
+            cur.execute(query)
+            db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.31")
+        cur.execute(query)
+        db.commit()
+        return get_db_version() 
 
     if version == "1.21":
-        pass
         # player_rank table
         if not table_exists('player_rank'):
             query = ('CREATE TABLE `player_rank` (id INT NOT NULL AUTO_INCREMENT KEY,'
