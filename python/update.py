@@ -78,10 +78,16 @@ def main():
     update_team_photos()
 
   if(args.player_news):
-    update_player_news()
+    update_player_news(year, week, weektype)
 
-  if(args.player_ranks):
-    update_player_ranks()
+  if(args.player_draft_ranks):
+    update_player_draft_ranks()
+
+  if(args.player_injuries):
+    update_player_injuries()
+
+  if(args.backfill_esbids):
+    backfill_esbids(year)
 
 
 def update_standings(year, week ,weektype):
@@ -259,7 +265,7 @@ def update_players(year, week, weektype):
 
 
     # First, update nflgame
-    if not args.photos:
+    if not args.photos and 1==2:
         if args.year == "0" and args.week == "0" and args.weektype == "none":
             subprocess.call(c.PLAYER_UPDATE_CMD.split(' '))
         else:
@@ -307,6 +313,7 @@ def update_players(year, week, weektype):
         team = str(team_dict[players[p].team])
         status = players[p].status
         active = (1 if status != "" else 0)
+
 
         cur.execute("select id, short_name, photo from player where player_id = '"+str(player_id)+"'")
         if cur.rowcount < 1: # Not found, must be a new player
@@ -369,6 +376,37 @@ def update_players(year, week, weektype):
     db.commit()
     print "Added: " + str(add_count) + " players."
     print "Updated: " + str(update_count) + " players."
+
+    update_esbids(year,week)
+
+
+def update_esbids(year, week):
+    print 'Updating esbids from api.fantasy.nfl.com using year '+year+', week '+week
+
+    stats_url = 'http://api.fantasy.nfl.com/v1/players/stats?statType=seasonStats&season=%s&week=%s&format=json' % (year, week)
+    players = list()
+    
+    response = urllib.urlopen(stats_url)
+    data = json.loads(response.read())
+    esbid_count = 0
+    for one in data['players']:
+        gsis_id = one['gsisPlayerId']
+        query = 'select id from player where player_id = "%s" and (esbid is null or esbid="" or esbid="None")' %(gsis_id)
+        cur.execute(query)
+        player_row = cur.fetchone()
+
+
+        if player_row:
+            query = 'update player set esbid = "%s" where id = %s' % (one['esbid'],str(player_row['id']))
+            cur.execute(query)
+            db.commit()
+            esbid_count+=1
+    if esbid_count > 0:
+        print "Added "+str(esbid_count)+" esbids"
+
+def backfill_esbids(year):
+    for year in range(int(year)-4,int(year)+1):
+        update_esbids(str(year),"1")
 
 def update_statistic_summaries(year, week, weektype):
 
@@ -518,36 +556,120 @@ def player_info(player):
     name += " ("+player.team+" - "+player.position+")"
     return name
 
-# I THINK THESE ARE USED FOR LIVE STATS ONLY
-# def get_pos_dict():
-#   cur.execute('select id, text_id from nfl_position')
-#   pos_dict = collections.defaultdict(lambda: 0, {})
-#   for row in cur.fetchall():
-#     pos_dict[row['text_id']] = row['id']
-#
-#   return pos_dict
-#
-# def get_team_dict():
-#   cur.execute('select id, club_id from nfl_team')
-#   team_dict = collections.defaultdict(lambda: 0, {})
-#   for row in cur.fetchall():
-#     team_dict[row['club_id']] = row['id']
-#
-#   return team_dict
-#
-# def init_playerdict(team_id):
-#   playerdict = dict()
-#   playerdict[team_id+"_D"] = {}
-#   playerdict[team_id+"_DST"] = {}
-#   playerdict[team_id+"_OL"] = {}
-#   playerdict[team_id+"_ST"] = {}
-#   #query = ("insert into player (player_id, nfl_position_id, nfl_team_id, status) values ('"+team_id+"_DST', (select id from nfl_position where text_id = 'T_DST'),(select id from nfl_team where club_id = '"+team_id+"'), 'ACT')")
-#
-#   return playerdict
-
-
-def update_player_news():
+def update_player_news(year,week,weektype):
     news_url = 'http://api.fantasy.nfl.com/v1/players/news?format=json'
+    editor_rank_url = 'http://api.fantasy.nfl.com/v1/players/editorweekranks?format=json&season=%s&week=%s&count=75' % (str(year),str(week))
+    researchinfo_url = 'http://api.fantasy.nfl.com/v1/players/researchinfo?format=json&season=%s&week=%s&count=200' % (str(year),str(week))
+
+    # Update player researchinfo
+
+    response = urllib.urlopen(researchinfo_url)
+    data = json.loads(response.read())
+    research_last_updated = data['lastUpdated']
+
+    added = 0
+    updated = 0
+
+    for row in data['players']:
+        # Get the gsisPlayerId from this rank, either a player or defense
+        if row['gsisPlayerId'] == False and row['position'] == 'DEF':
+            gsisPlayerId = row['teamAbbr']+'_D'
+        elif row['gsisPlayerId'] != '':
+            gsisPlayerId = row['gsisPlayerId']
+        else:
+            continue
+        if row['depthChartOrder'] is None: row['depthChartOrder'] = 0
+
+        query = 'select id, lastUpdated from player_researchinfo where gsisPlayerId="%s"' % (gsisPlayerId)
+        cur.execute(query)
+        if cur.rowcount > 0:
+            research_row = cur.fetchone()
+            if str(research_row['lastUpdated']) == str(research_last_updated): continue
+            query = (('update player_researchinfo set percentOwned=%s,percentOwnedChange=%s,depthChartOrder=%s,percentStartedChange=%s,'
+                     +'numAdds=%s,percentStarted=%s,numDrops=%s,lastUpdated="%s" where id=%s') 
+                %(row['percentOwned'],row['percentOwnedChange'],row['depthChartOrder'],row['percentStartedChange'],
+                  row['numAdds'],row['percentStarted'],row['numDrops'],str(research_last_updated),str(research_row['id'])))
+            cur.execute(query)
+            updated+=1
+        else:
+            query = (('insert into player_researchinfo (gsisPlayerId,percentOwned,percentOwnedChange,depthChartOrder,percentStartedChange,'
+                     +'numAdds,percentStarted,numDrops,lastUpdated) VALUES("%s",%s,%s,%s,%s,%s,%s,%s,"%s")') 
+                %(gsisPlayerId,row['percentOwned'],row['percentOwnedChange'],row['depthChartOrder'],row['percentStartedChange'],
+                  row['numAdds'],row['percentStarted'],row['numDrops'],str(research_last_updated)))
+
+            cur.execute(query)
+            added+=1
+    db.commit()
+    query = ('delete from player_researchinfo where lastUpdated < "%s"' %(research_last_updated))
+    cur.execute(query)
+    deleted = cur.rowcount
+    db.commit()
+
+    if added > 0:
+        print "Researchinfo players added: " + str(added)
+    elif updated >0:
+        print "Researchinfo players updated: " + str(updated)
+    else:
+        print "No new researchinfo players"
+
+    if deleted > 0:
+        print "Deleted "+str(deleted)+" researchinfo players."
+    else:
+        print "No researchinfo players to delete"
+
+
+    # Update editor player ranks
+    editor_rank_positions = ['QB','RB','WR','TE','K','DEF']
+    added = 0
+    updated = 0
+    for pos in editor_rank_positions:
+        temp_url = editor_rank_url+'&position='+pos
+
+        response = urllib.urlopen(temp_url)
+        data = json.loads(response.read())
+        rank_last_updated = data['lastUpdated']
+        for row in data['players']:
+            # Get the gsisPlayerId from this rank, either a player or defense
+            if row['gsisPlayerId'] == False and row['position'] == 'DEF':
+                gsisPlayerId = row['teamAbbr']+'_D'
+            elif row['gsisPlayerId'] != '':
+                gsisPlayerId = row['gsisPlayerId']
+            else:
+                continue
+            query = 'select id, lastUpdated from player_rank where gsisPlayerId="%s"' % (gsisPlayerId)
+            cur.execute(query)
+            if cur.rowcount > 0:
+                rank_row = cur.fetchone()
+                if str(rank_row['lastUpdated']) == str(rank_last_updated): continue
+
+                rank_id = rank_row['id']
+                query = (('update player_rank set rank=%s,rank_pos="%s",lastUpdated="%s" where id=%s')
+                    %(row['rank'],row['position'],str(rank_last_updated),str(rank_id)))
+                cur.execute(query)
+                updated+=1
+            else:
+                query = (('insert into player_rank (gsisPlayerId,rank,rank_pos,lastUpdated) VALUES ("%s",%s,"%s","%s")') 
+                    %(gsisPlayerId,row['rank'],row['position'],str(rank_last_updated)))
+                cur.execute(query)
+                added+=1
+    db.commit()
+    query = ('delete from player_rank where lastUpdated < "%s"' %(rank_last_updated))
+    cur.execute(query)
+    deleted = cur.rowcount
+    db.commit()
+
+    if added > 0:
+        print "Ranked players added: " + str(added)
+    elif updated >0:
+        print "Ranked players updated: " + str(updated)
+    else:
+        print "No new ranked players"
+
+    if deleted > 0:
+        print "Deleted "+str(deleted)+" ranked players."
+    else:
+        print "No ranked players to delete"
+
 
     response = urllib.urlopen(news_url)
     data = json.loads(response.read())
@@ -592,7 +714,9 @@ def update_player_news():
     else:
         print "No news items older than 90 days to delete."
 
-def update_player_ranks():
+    
+
+def update_player_draft_ranks():
     ranks_url = 'http://api.fantasy.nfl.com/v1/players/userdraftranks?format=json&count=100'
     players = list()
     
@@ -643,7 +767,75 @@ def update_player_ranks():
     query = 'delete from draft_player_rank where last_updated != "%s"' % (sql_now)
     cur.execute(query)
     db.commit()
-        
+
+def update_player_injuries():
+    # Get the injury types
+    query = 'select text_id, short_text from player_injury_type'
+    cur.execute(query)
+    injury_type_results = cur.fetchall()
+    injury_types = list()
+    for i in injury_type_results:
+        injury_types.append(i['short_text'])
+
+    injury_url = 'http://www.nfl.com/injuries'
+
+    response = urllib.urlopen(injury_url)
+    data = response.read()
+    
+    prefix='{player: '
+    suffix='}'
+    player_start = data.split(prefix)
+    updated_count = 0
+    added_count = 0
+    for p in player_start[1:]:
+        player_json_like = prefix+p.split(suffix)[0].strip()+suffix
+        player_parts_list = player_json_like.replace('{','').replace('}','').split(',')
+        player_dict = dict()
+        for p in player_parts_list:
+            (key, val) = p.split(':')
+            player_dict[key.strip()] = val.replace('"',"").strip()
+        if player_dict['gameStatus'] not in injury_types: continue
+        query = 'select id from player where esbid = "%s"' % (player_dict['esbId'])
+        cur.execute(query)
+        if cur.rowcount > 0:
+            player_db_id = cur.fetchone()['id']
+        else:
+            continue
+        query = 'select id from player_injury where player_id = %s' % (player_db_id)
+        cur.execute(query)
+        if cur.rowcount > 0:
+            row_id = cur.fetchone()['id']
+            query = (('update player_injury set injury="%s", practiceStatus="%s", last_updated="%s", player_injury_type_id='
+                     +'(select id from player_injury_type where short_text="%s") where id=%s')
+                     %(player_dict['injury'],player_dict['practiceStatus'],sql_now,player_dict['gameStatus'],str(row_id)))
+            cur.execute(query)
+            updated_count+=1
+        else:
+            query = (('insert into player_injury (player_id,injury,practiceStatus,last_updated,player_injury_type_id,description)'+
+                    'values(%s,"%s","%s","%s",(select id from player_injury_type where short_text="%s"),"")')
+                    %(str(player_db_id),player_dict['injury'],player_dict['practiceStatus'],sql_now,player_dict['gameStatus']))
+            cur.execute(query)
+            added_count+=1
+        db.commit()
+
+    query = ('delete from player_injury where last_updated < "%s"' %(sql_now))
+    cur.execute(query)
+    deleted = cur.rowcount
+    db.commit()
+
+    if added_count > 0:
+        print "Injured players added: " + str(added_count)
+    elif updated_count >0:
+        print "Injured players updated: " + str(updated_count)
+    else:
+        print "No new injured players"
+
+    if deleted > 0:
+        print "Deleted "+str(deleted)+" injured players."
+    else:
+        print "No injured players to delete"
+
+            
 
 parser = argparse.ArgumentParser(description='FFLProject: Update various parts of the database')
 
@@ -660,7 +852,10 @@ parser.add_argument('-weektype', action="store", default="none", required=False,
 parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
 parser.add_argument('-team_photos', action="store_true", default=False, help="Update generic team photos for defenses, offensive lines, and other non-players.")
 parser.add_argument('-player_news', action="store_true", default=False, help="Update player news from NFL Fantasy api.")
-parser.add_argument('-player_ranks', action="store_true", default=False, help="Update player draft rankings from NFL Fantasy api.")
+parser.add_argument('-player_draft_ranks', action="store_true", default=False, help="Update player draft rankings from NFL Fantasy api.")
+parser.add_argument('-player_injuries', action="store_true", default=False, help="Update player injury data from nfl.com/injuries.")
+parser.add_argument('-backfill_esbids', action="store_true", default=False, help="Some NFL.com feeds use esbid's, attempt to go back 5 years and find them.")
+
 
 start_time = time.time()
 args = parser.parse_args()

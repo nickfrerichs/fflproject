@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.21'
+CURRENT_VERSION = '1.3'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,53 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "1.21":
+        pass
+        # player_rank table
+        if not table_exists('player_rank'):
+            query = ('CREATE TABLE `player_rank` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                        +'player_id INT(11),'
+                        +'gsisPlayerId VARCHAR(12),'
+                        +'rank FLOAT,'
+                        +'rank_pos VARCHAR(5),'
+                        +'lastUpdated DATETIME NOT NULL)')
+            cur.execute(query)
+
+
+        # player_researchinfo table
+        if not table_exists('player_researchinfo'):
+            query = ('CREATE TABLE `player_researchinfo` (id INT NOT NULL AUTO_INCREMENT KEY,'
+                        +'player_id INT(11),'
+                        +'gsisPlayerId VARCHAR(12),'
+                        +'percentOwned FLOAT,'
+                        +'percentOwnedChange FLOAT,'
+                        +'percentStarted FLOAT,'
+                        +'percentStartedChange FLOAT,'
+                        +'depthChartOrder INT(11),'
+                        +'numAdds INT(11),'
+                        +'numDrops INT(11),'
+                        +'lastUpdated DATETIME NOT NULL)')
+            cur.execute(query)
+
+        # player.esbid varchar(10)
+        if not column_exists("esbid", "player"):
+            query = 'ALTER TABLE `player` ADD `esbid` VARCHAR(10)'
+            cur.execute(query)
+
+        # player_injury injury, practicestatus
+        if not column_exists("injury", "player_injury"):
+            query = 'ALTER TABLE `player_injury` ADD `injury` VARCHAR(50)'
+            cur.execute(query) 
+
+        if not column_exists("practiceStatus", "player_injury"):
+            query = 'ALTER TABLE `player_injury` ADD `practiceStatus` VARCHAR(100)'
+            cur.execute(query)
+
+        query = 'update site_settings set db_version = "%s"' % ("1.3")
+        cur.execute(query)
+        db.commit()
+        return get_db_version() 
 
     if version == "1.2":
         # Really NFL? You still use LA, fine, changing back
