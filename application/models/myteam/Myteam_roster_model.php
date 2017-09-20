@@ -52,9 +52,13 @@ class Myteam_roster_model extends MY_Model{
     {
         $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, '.
             'nfl_position.short_text as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points, '.
-            'team_keeper.id IS NOT NULL as keeper '.
+            'team_keeper.id IS NOT NULL as keeper, '.
+            'player_injury.injury, player_injury_type.text_id as injury_text_id, player_injury_type.short_text as injury_short_text, '.
+            'player_injury.id IS NOT NULL as injured, player_injury.week as injury_week '.
             'from `roster` join `player` on `roster`.`player_id` = `player`.`id` '.
             'join nfl_position on nfl_position.id = player.nfl_position_id '.
+            'left join `player_injury` on `roster`.`player_id` = `player_injury`.`player_id` '.
+            'left join `player_injury_type` on `player_injury`.`player_injury_type_id` = `player_injury_type`.`id` '.
             'left join nfl_team on nfl_team.id = player.nfl_team_id '.
             ' left join team_keeper on team_keeper.team_id = '.$this->teamid.' and team_keeper.year='.$this->current_year.
             ' and team_keeper.player_id=player.id'.
@@ -79,8 +83,13 @@ class Myteam_roster_model extends MY_Model{
             ->select('nfl_position.short_text as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id',false)
             ->select('IFNULL(sum(fantasy_statistic.points),0) as points',false)
             ->select('team_keeper.id IS NOT NULL as keeper',false)
+            ->select('player_injury.injury, player_injury_type.text_id as injury_text_id,player_injury_type.short_text as injury_short_text')
+            ->select('player_injury.id IS NOT NULL as injured',false)
+            ->select('player_injury.week as injury_week')
             ->from('starter')
-            ->join('player','player.id = starter.player_id')
+            ->join('player','player.id = starter.player_id','left')
+            ->join('player_injury','player_injury.player_id = player.id','left')
+            ->join('player_injury_type','player_injury_type.id = player_injury.player_injury_type_id','left')
             ->join('nfl_position','nfl_position.id = player.nfl_position_id')
             ->join('nfl_team','nfl_team.id = player.nfl_team_id','left')
             ->join('fantasy_statistic','fantasy_statistic.player_id = starter.player_id and fantasy_statistic.year = '.$this->current_year.

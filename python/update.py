@@ -586,16 +586,16 @@ def update_player_news(year,week,weektype):
             research_row = cur.fetchone()
             if str(research_row['lastUpdated']) == str(research_last_updated): continue
             query = (('update player_researchinfo set percentOwned=%s,percentOwnedChange=%s,depthChartOrder=%s,percentStartedChange=%s,'
-                     +'numAdds=%s,percentStarted=%s,numDrops=%s,lastUpdated="%s" where id=%s') 
+                     +'numAdds=%s,percentStarted=%s,numDrops=%s,lastUpdated="%s",player_id=(select id from player where player_id="%s") where id=%s') 
                 %(row['percentOwned'],row['percentOwnedChange'],row['depthChartOrder'],row['percentStartedChange'],
-                  row['numAdds'],row['percentStarted'],row['numDrops'],str(research_last_updated),str(research_row['id'])))
+                  row['numAdds'],row['percentStarted'],row['numDrops'],str(research_last_updated),gsisPlayerId,str(research_row['id'])))
             cur.execute(query)
             updated+=1
         else:
             query = (('insert into player_researchinfo (gsisPlayerId,percentOwned,percentOwnedChange,depthChartOrder,percentStartedChange,'
-                     +'numAdds,percentStarted,numDrops,lastUpdated) VALUES("%s",%s,%s,%s,%s,%s,%s,%s,"%s")') 
+                     +'numAdds,percentStarted,numDrops,lastUpdated,player_id) VALUES("%s",%s,%s,%s,%s,%s,%s,%s,"%s",(select id from player where player_id="%s"))') 
                 %(gsisPlayerId,row['percentOwned'],row['percentOwnedChange'],row['depthChartOrder'],row['percentStartedChange'],
-                  row['numAdds'],row['percentStarted'],row['numDrops'],str(research_last_updated)))
+                  row['numAdds'],row['percentStarted'],row['numDrops'],str(research_last_updated),gsisPlayerId))
 
             cur.execute(query)
             added+=1
@@ -643,13 +643,13 @@ def update_player_news(year,week,weektype):
                 if str(rank_row['lastUpdated']) == str(rank_last_updated): continue
 
                 rank_id = rank_row['id']
-                query = (('update player_rank set rank=%s,rank_pos="%s",lastUpdated="%s" where id=%s')
-                    %(row['rank'],row['position'],str(rank_last_updated),str(rank_id)))
+                query = (('update player_rank set rank=%s,rank_pos="%s",player_id=(select id from player where player_id="%s"),lastUpdated="%s" where id=%s')
+                    %(row['rank'],row['position'],str(gsisPlayerId),str(rank_last_updated),str(rank_id)))
                 cur.execute(query)
                 updated+=1
             else:
-                query = (('insert into player_rank (gsisPlayerId,rank,rank_pos,lastUpdated) VALUES ("%s",%s,"%s","%s")') 
-                    %(gsisPlayerId,row['rank'],row['position'],str(rank_last_updated)))
+                query = (('insert into player_rank (gsisPlayerId,rank,rank_pos,lastUpdated,player_id) VALUES ("%s",%s,"%s","%s",(select id from player where player_id="%s"))') 
+                    %(gsisPlayerId,row['rank'],row['position'],str(rank_last_updated),gsisPlayerId))
                 cur.execute(query)
                 added+=1
     db.commit()
@@ -781,6 +781,9 @@ def update_player_injuries():
 
     response = urllib.urlopen(injury_url)
     data = response.read()
+
+    # Figure out what week this injury data is from
+    injury_week = data.split('<h3>NFL Injuries Week ')[1].split('</h3>')[0]
     
     prefix='{player: '
     suffix='}'
@@ -806,14 +809,14 @@ def update_player_injuries():
         if cur.rowcount > 0:
             row_id = cur.fetchone()['id']
             query = (('update player_injury set injury="%s", practiceStatus="%s", last_updated="%s", player_injury_type_id='
-                     +'(select id from player_injury_type where short_text="%s") where id=%s')
-                     %(player_dict['injury'],player_dict['practiceStatus'],sql_now,player_dict['gameStatus'],str(row_id)))
+                     +'(select id from player_injury_type where short_text="%s"), week=%s where id=%s')
+                     %(player_dict['injury'],player_dict['practiceStatus'],sql_now,player_dict['gameStatus'],str(injury_week),str(row_id)))
             cur.execute(query)
             updated_count+=1
         else:
-            query = (('insert into player_injury (player_id,injury,practiceStatus,last_updated,player_injury_type_id,description)'+
-                    'values(%s,"%s","%s","%s",(select id from player_injury_type where short_text="%s"),"")')
-                    %(str(player_db_id),player_dict['injury'],player_dict['practiceStatus'],sql_now,player_dict['gameStatus']))
+            query = (('insert into player_injury (player_id,injury,practiceStatus,last_updated,player_injury_type_id,description,week)'+
+                    'values(%s,"%s","%s","%s",(select id from player_injury_type where short_text="%s"),"",%s)')
+                    %(str(player_db_id),player_dict['injury'],player_dict['practiceStatus'],sql_now,player_dict['gameStatus'],str(injury_week)))
             cur.execute(query)
             added_count+=1
         db.commit()
@@ -822,6 +825,8 @@ def update_player_injuries():
     cur.execute(query)
     deleted = cur.rowcount
     db.commit()
+
+    print "Injury report for week "+str(injury_week)
 
     if added_count > 0:
         print "Injured players added: " + str(added_count)

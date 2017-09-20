@@ -92,6 +92,9 @@ class Waiverwire_model extends MY_Model{
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('UNIX_TIMESTAMP(wwlog_drop.transaction_date)+'.$clear_time.' as clear_time')
                 ->select('IF(wwlog_request.approved=0,1,0) as requested')
+                ->select('player_injury.injury, player_injury_type.text_id as injury_text_id,player_injury_type.short_text as injury_short_text')
+                ->select('player_injury.id IS NOT NULL as injured',false)
+                ->select('player_injury.week as injury_week')
                 ->from('player')
                 ->join('fantasy_statistic_week as fs_w','fs_w.player_id = player.id and fs_w.year = '.
                         $this->current_year.' and fs_w.league_id = '.$this->leagueid,'left')
@@ -102,6 +105,8 @@ class Waiverwire_model extends MY_Model{
                         $this->leagueid.' and wwlog_drop.approved = 1 and UNIX_TIMESTAMP(transaction_date)>'.(time()-$clear_time),'left')
                 ->join('waiver_wire_log as wwlog_request','wwlog_request.pickup_player_id = player.id and wwlog_request.team_id = '.
                         $this->teamid.' and wwlog_request.approved = 0 and wwlog_request.transaction_date = 0', 'left')
+                ->join('player_injury','player_injury.player_id = player.id','left')
+                ->join('player_injury_type','player_injury_type.id = player_injury.player_injury_type_id','left')
                 ->where('roster.id IS NULL',null,false)
                 ->where_in('nfl_position_id', $pos_list);
         if (count($owned_list) > 0 && $show_owned == false)

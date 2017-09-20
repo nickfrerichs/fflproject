@@ -52,6 +52,7 @@ class Waiverwire extends MY_User_Controller{
     {
         $data = array();
         $data['data'] = $this->waiverwire_model->get_priority_data_array();
+        $data['settings'] = $this->common_waiverwire_model->get_approval_settings($this->leagueid);
         $this->bc['Waiver Wire'] = site_url('myteam/waiverwire');
         $this->bc['Priority'] = "";
         $this->user_view('user/myteam/waiverwire/showpriority.php',$data);

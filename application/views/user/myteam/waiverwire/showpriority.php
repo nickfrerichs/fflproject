@@ -3,14 +3,18 @@
 <div class="row">
     <div class="column">
         <a href="<?=site_url('myteam/waiverwire')?>">Back to Waiver Wire</a>
-        <h4>Waiver Wire Priority</h4>
-        <p>If more than one team claims a player before waivers have cleared, first listed team wins.</p>
+
     </div>
 </div>
-<div class="row">
+<div class="row callout">
     <div class="column">
+    <h5>Waiver Wire Priority</h5>
+        <p>
+            - If more than one team claims a player before waivers have cleared, the first listed team wins.<br>
+            - The team winning the claim immediately moves to the last priority position.
+        </p>
         <?php if(count($data['priority']) > 0 && ($data['type'] == "standings" || $data['type'] == "draft_order")): ?>
-            <table>
+            <table class="table-condensed">
                 <thead>
                     <th>Priority</th>
                     <th>Team Name</th>
@@ -30,5 +34,30 @@
             No waiver wire priority set.
             <br><br>
         <?php endif; ?>
+    </div>
+</div>
+<div class="row callout">
+    <div class="column">
+        <h5>Waiver Wire Rules</h5>
+        <?php if ($settings->type == "auto"):?>
+        - Waiver wire approvals are automatic and the priority list will be used when contention for the same player occurs.
+        <?php elseif($settings->type == "semi-automatic"): ?>
+        - Waiver wire approvals are automatic unless contention for the same player occurs.
+        <?php else: ?>
+        - League admins approve all waiver wire requests.
+        <?php endif;?>
+        <?php if($settings->waiver_wire_disable_gt):?>
+        <br>
+        - Once a player's game time has started, any waiver wire requests will be held until after the week's final game is complete.
+        <?php endif;?>
+        <?php if($settings->waiver_wire_disable_days):?>
+        <?php $dow = array(0=>'Sun',1=>'Mon',2=>'Tue',3=>'Wed',4=>'Thu',5=>'Fri',6=>'Sat');?>
+        <br>
+        - The Waiver wire is disabled on the following days: 
+        <?php foreach(str_split($settings->waiver_wire_disable_days) as $i => $d):?>
+            <?=$dow[$d]?>.
+        <?php endforeach;?>
+    <?php endif;?>
+
     </div>
 </div>

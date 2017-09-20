@@ -9,7 +9,15 @@
                 <?php if($b['data']->keeper){echo "<strong>";} ?>
                 <a href="#" class="stat-popup" data-type="player" data-id="<?=$b['data']->player_id?>"><?=$name?></a>
                 <?php if($b['data']->keeper){echo "</strong>";} ?>
+                <?php if($b['data']->injured):?>
+                    <?php $this->load->view('common/injury_icon.php',array('short_text' => $b['data']->injury_short_text,
+                                                                           'injury' => $b['data']->injury,
+                                                                           'text_id' => $b['data']->injury_text_id,
+                                                                           'week'   => $b['data']->injury_week));?>
+  
+                <?php endif;?>
             </div>
+           
             <div>
                 <?=$b['data']->pos_text.' - '.$b['data']->club_id?>
             </div>
@@ -48,3 +56,7 @@
     </tr>
 
 <?php endforeach;?>
+
+<script>
+$(".has-tip").foundation();
+</script>

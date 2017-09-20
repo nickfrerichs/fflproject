@@ -16,6 +16,14 @@
             <?php if($p->keeper){echo "<strong>";} ?>
             <a href="#" class="stat-popup" data-type="player" data-id="<?=$p->player_id?>"><?=$name?></a>
             <?php if($p->keeper){echo "</strong>";} ?>
+
+            <?php if($p->injured):?>
+                    <?php $this->load->view('common/injury_icon.php',array('short_text' => $p->injury_short_text,
+                                                                           'injury' => $p->injury,
+                                                                           'text_id' => $p->injury_text_id,
+                                                                           'week' => $p->injury_week));?>
+  
+                <?php endif;?>
         </div>
         <div>
             <?=$p->pos_text?> - <?=$p->club_id?>
@@ -65,3 +73,7 @@
 <?php endif; ?>
 <?php endforeach; ?>
 <?php endforeach; ?>
+
+<script>
+$(".has-tip").foundation();
+</script>

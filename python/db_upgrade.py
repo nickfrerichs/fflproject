@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.31'
+CURRENT_VERSION = '1.32'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,28 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "1.31":
+        # Add player_id index for player_injury, player_rank, player_researchinfo, player_news
+        query = ('ALTER TABLE `player_injury` ADD INDEX (`player_id`)')
+        cur.execute(query)
+        query = ('ALTER TABLE `player_rank` ADD INDEX (`player_id`)')
+        cur.execute(query)
+        query = ('ALTER TABLE `player_researchinfo` ADD INDEX (`player_id`)')
+        cur.execute(query)
+        query = ('ALTER TABLE `player_news` ADD INDEX (`player_id`)')
+        cur.execute(query)
+
+        # Add week column to player_injury table
+        if not column_exists("week", "player_injury"):
+            query = 'ALTER TABLE `player_injury` ADD `week` INT'
+            cur.execute(query)
+
+        query = 'update site_settings set db_version = "%s"' % ("1.32")
+        cur.execute(query)
+        db.commit()
+        return get_db_version() 
+
     if version == "1.3":
         # Forgot to populate player_injury_type table
         add = [{'text_id':'IA',

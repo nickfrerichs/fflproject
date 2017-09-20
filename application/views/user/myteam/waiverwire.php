@@ -46,20 +46,19 @@
         <h5>Waiver wire</h5>
     </div>
     <div class="columns small-12 medium-8 text-center">
-        <a href="<?=site_url('myteam/waiverwire/priority')?>">Waiver Wire Priority</a> |
-        <a href="<?=site_url('myteam/waiverwire/log')?>">Waiver Wire Log</a>
+        <a href="<?=site_url('myteam/waiverwire/priority')?>">Priority & Rules</a> |
+        <a href="<?=site_url('myteam/waiverwire/log')?>">Log</a>
         <?php if(!$this->session->userdata('offseason')): ?>
             | <a href="#" id="drop-only">Drop Player</a>
-        <?php endif;?>
-
+        <?php endif;?>   
     </div>
+    
 </div>
-
 <?php if(count($pending) > 0): ?>
     <div class="row callout">
         <div class="columns">
             <h6>Pending Requests</h6>
-            <table>
+            <table class="table-condensed">
                 <thead>
                     <th>Clear Time</th><th>Pick Up</th><th>Drop</th>
                 </thead>
@@ -79,7 +78,7 @@
                 ?>
                 <tr>
                     <td>
-                        <button class="button small cancel-request" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
+                        <button class="button tiny cancel-request" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
                     </td>
                     <td><?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)</td>
                     <td><?=$a->d_first.' ',$a->d_last?> (<?=$a->d_pos.' - '.$a->d_club_id?>)</td>
