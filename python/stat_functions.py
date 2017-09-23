@@ -21,8 +21,6 @@ def get_key(stat):
   if stat == "passing_twoptm": return "2-ptP"
   if stat == "rushing_twoptm": return "2-ptR"
   if stat == "receiving_twoptm": return "2-ptR"
-  #if stat == "rushing_twopta": return "2-ptR"
-  #if stat == "receiving_twopta": return "2-ptR"
   if stat == "kickret_yds": return "KR Yds"
   if stat == "puntret_yds": return "PR Yds"
   if stat == "kickret_tds": return "TD-S"
@@ -31,7 +29,6 @@ def get_key(stat):
   if stat == "final overtime": return "Final"
   return stat
 
-#Done
 def team_sack(event, game, playerdict):
   home = str(game.home)
   away = str(game.away)
@@ -56,7 +53,6 @@ def team_sack(event, game, playerdict):
       playerdict[away+"_DST"]["team_sack"] = 0.0
     playerdict[away+"_DST"]["team_sack"] += event["passing_sk"]
 
-#Done
 def team_fumble(event, game, playerdict):
   home = str(game.home)
   away = str(game.away)
@@ -75,7 +71,6 @@ def team_fumble(event, game, playerdict):
       playerdict[away+"_DST"]["team_fumble"] = 0
     playerdict[away+"_DST"]["team_fumble"] = playerdict[away+"_DST"]["team_fumble"] + event["fumbles_lost"]
 
-#Done
 def team_defint(event, game, playerdict):
 
   home = str(game.home)
@@ -96,7 +91,6 @@ def team_defint(event, game, playerdict):
       playerdict[away+"_DST"]["team_int"] = 0
     playerdict[away+"_DST"]["team_int"] += event["defense_int"]
 
-#Done
 def team_def_td(event, game, playerdict):
 
   home = str(game.home)
@@ -117,7 +111,6 @@ def team_def_td(event, game, playerdict):
       playerdict[away+"_DST"]["team_def_td"] = 0
     playerdict[away+"_DST"]["team_def_td"] += 1
 
-#Done
 def team_def_saf(event, game, playerdict):
 
   home = str(game.home)
@@ -138,7 +131,6 @@ def team_def_saf(event, game, playerdict):
       playerdict[away+"_DST"]["team_safe"] = 0
     playerdict[away+"_DST"]["team_safe"] += event["defense_safe"]
 
-#Done
 def team_st_td(event, game, playerdict):
   home = str(game.home)
   away = str(game.away)
@@ -215,19 +207,16 @@ def player_field_goal(event, playerdict):
        playerdict[player_id]["fg_55"] = 0
     playerdict[player_id]["fg_55"] = playerdict[player_id]["fg_55"] + 1
 
-#Done
 def AddPlayerStat(stat,event,playerdict):
   player_id = event["playerid"]
   if playerdict.get(player_id) is None:  # new player, initialize
     playerdict[player_id] = {}
 
-#  phpfflkey = get_key(stat)
   if playerdict[player_id].get(stat) is None:  # If first time seeing this stat, add it.
     playerdict[player_id][stat] = event[stat]
   else: # Otherwise check if it's an integer and add it.
     playerdict[player_id][stat] = playerdict[player_id][stat] + event[stat]
 
-#Done
 def AddPlayerTD(stat, event, playerdict):
   player_id = event["playerid"]
   if playerdict.get(player_id) is None:  # new player, initialize

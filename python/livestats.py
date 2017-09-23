@@ -128,7 +128,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
         livestatus['down'] = game.down
         lastplay = None;
 
-#      if game.gamekey == "56300":
         for drive in game.drives:
           if drive.team == "JAC": drive.team="JAX"
           if drive.team == "STL": drive.team="LA"
@@ -145,8 +144,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
             livestatus['yardline'] = get_yard_line(drive.field_start.add_yards(drive.total_yds+drive.penalty_yds))
           else:
             livestatus['yardline'] = 0
-
-          #print str(drive.field_start)+" "+str(drive.total_yds)
 
           for play in drive.plays:
             livestatus['note'] = play.data['note']
@@ -181,8 +178,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
               cur.execute(query)
               live_changes_made = True
 
-        #print "nfl_live_game status updated for "+str(game)+" - "+str(game.time.qtr)
-
       # This updates nfl_statistic table, by default, just for live games update_all forces all games to be updated
       if game != None and (game.playing() or update_all):
         print str(game)+" - Q: "+str(game.time.qtr)+", "+game.time.clock
@@ -192,7 +187,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
         # ----------------------------------------------
 
         # Playerdict to hold player_ids and scoring_cats/values for one game
-        # playerdict = {}
         playerdict = dict(init_playerdict(str(game.home)).items() + init_playerdict(str(game.away)).items())
 
         # --------------------------
@@ -200,13 +194,8 @@ def update_nfl_statistics(year, week, weektype, update_all):
         # --------------------------
         for player in game.players:
           add_other_player_stats(playerdict, player)
-        #   if game.away == "BUF" and player.name == "N.Robey-Coleman":
-        #       for stat in player.stats:
-        #           print stat
-        #           print player.stats[stat]
-          for stat in player.stats:
-            #print game.home
 
+          for stat in player.stats:
             if playerdict.get(player.playerid) is None:
               playerdict[player.playerid] = {}
             playerdict[player.playerid][stat] = math.ceil(player.stats[stat])
@@ -241,24 +230,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
         # ADD STATS: custom stats calculated by cycling through plays
         # ---------------------------
 
-
-              #print str(play.data)+"\n"+game.time.qtr
-
-
-
-
-            #print "game.gamekey: "+str(game.gamekey)
-            #print "game.togo: "+str(game.togo)
-            #print "game.time: "+str(game.time)
-            #print "game.home: "+str(game.home)
-            #print "game.away: "+str(game.away)
-            #print "play.playid: "+str(play.playid)
-            #print "play.yards_togo: "+str(play.yards_togo)
-            #print "play.desc: "+str(play.desc)
-            #print "play.down: "+str(play.down)
-            #print "play.team: "+str(play.team)
-            #print "playu.home: "+str(play.home)
-            #print "\n"
         for play in game.drives.plays():
           for event in play.events:
             for stat in event:
@@ -284,8 +255,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
 
               # Stats for human players
               if stat == "kicking_fgm_yds": # Need yardages for each field goal
-                #if playerdict.get(event["playerid"]) is None:  # new player, initialize
-                #  playerdict[event["playerid"] = {}
                 f.player_field_goal(event, playerdict)
 
               if (stat == "kickret_yds" or stat == "puntret_yds") and play.note != "FUMBLE":
@@ -357,7 +326,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
       print "Purged %s nfl_statistic rows." % str(deleted)
 
       # IF live changes were made, delete nfl_live_player lines that were not updated during this run
-      # query = 'delete from nfl_live_player where gsis_id not in (%s)' % (updated_games)
       if live_changes_made:
         query = 'delete from nfl_live_player where update_key != '+str(unix_timestamp)
         cur.execute(query)
@@ -365,7 +333,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
         query = 'delete from nfl_live_game where nfl_schedule_gsis not in (%s)' % (updated_games)
         cur.execute(query)
         # Leave nfl_live_game rows so we know status is the same
-        # query = 'delete from nfl_live_game where update_key != '+str(unix_timestamp)
+
 
     else: # Nothing is in progress, delete all live data
       query = 'truncate nfl_live_player'
@@ -425,7 +393,6 @@ def update_fantasy_statistics(year, week, weektype):
   print '******'
   print
   nfl_stat_rows = cur.fetchall()
-  # for each league, get_scoring_def_dict
 
   for l in leagues:
       leagueid = l['id']
@@ -454,11 +421,10 @@ def update_fantasy_statistics(year, week, weektype):
               for one in s:
                   if row['value'] >= one['range_start'] and row['value'] <= one['range_end']:
                       points = int(one['points'])
-          # query = (('select id from fantasy_statistic where nfl_statistic_id = %s') % (row['id']))
+
           query = (('select id, points from fantasy_statistic where week = %s and nfl_week_type_id = (select id from nfl_week_type where text_id = "%s") and year = %s and player_id = %s and league_id = %s and nfl_scoring_cat_id = %s')
             % (str(week),weektype,str(year),str(row['player_id']),leagueid,row['nfl_scoring_cat_id']))
 
-          #query = (('select id from fantasy_statistic where nfl_statistic_id = %s') % (row['id']))
           cur.execute(query)
           if cur.rowcount > 0:
             query = 'update fantasy_statistic set points = %s, last_updated = now(), nfl_statistic_id = %s where id = %s' % (str(points),str(row['id']),str(cur.fetchone()['id']))
@@ -470,8 +436,6 @@ def update_fantasy_statistics(year, week, weektype):
 
   # Delete any stats that were no longer found in this update, they must have been retracted ?
   # all fantasy_statistics are recaculated for the given week, even if not all games are live
-  #query = 'delete from fantasy_statistic where year = %s and week = %s and nfl_week_type_id = (select id from nfl_week_type where text_id = "%s") and last_updated < "%s"' % (str(year), str(week), weektype, last_updated)
-  #query = 'select * from fantasy_statistic where year = %s and week = %s and nfl_week_type_id = (select id from nfl_week_type where text_id = "%s") and last_updated < "%s"' % (str(year), str(week), weektype, last_updated)
   query = (('delete from fantasy_statistic where week = %s and year = %s and nfl_week_type_id = (select id from nfl_week_type where text_id = "%s") and '+
             'nfl_statistic_id not in (select id from nfl_statistic where week = %s and year = %s and '+
             'nfl_week_type_id = (select id from nfl_week_type where text_id = "%s"))') % (str(week),str(year),weektype,str(week),str(year),weektype))
@@ -504,13 +468,17 @@ def get_yard_line(yard_line, team = ""):
 def get_scoring_def_dict(leagueid, year):
 
   def_year = get_scoring_def_year(leagueid, year)
+  scoring_def = {}
+
+  # No scoring defs defined?
+  if def_year is None:
+    return scoring_def
 
   query = (('select scoring_def.nfl_scoring_cat_id, per, points, round, is_range, range_start, range_end, nfl_position_id from scoring_def '+
   'join nfl_scoring_cat on nfl_scoring_cat.id = scoring_def.nfl_scoring_cat_id where league_id = %s and year = %s') % (str(leagueid), str(def_year)))
 
   cur.execute(query)
 
-  scoring_def = {}
   for row in cur.fetchall():
     if scoring_def.get(row['nfl_position_id']) is None:
         scoring_def[row['nfl_position_id']] = {}
@@ -518,13 +486,7 @@ def get_scoring_def_dict(leagueid, year):
     if scoring_def[row['nfl_position_id']].get(row['nfl_scoring_cat_id']) is None:
         scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']] = list()
     scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']].append(row)
-    # newdef = {}
-    # newdef['per'] = row['per']
-    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['round'] = row['round']
-    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['points'] = row['points']
-    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['range_start'] = row['range_start']
-    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['range_end'] = row['range_end']
-    # scoring_def[row['nfl_position_id']][row['nfl_scoring_cat_id']]['is_range'] = row['is_range']
+
   return scoring_def
 
 def add_other_player_stats(playerdict, player):
@@ -586,10 +548,6 @@ def update_live_players(play, gamekey):
         if "fumbles_lost" in elist and text == "":
             text = "FUMBLE LOST!"
 
-
-
-
-
         if text != "":
             query = 'select id, play_id from nfl_live_player where nfl_player_id = "%s"' % (event['playerid'])
             cur.execute(query)
@@ -606,8 +564,6 @@ def update_live_players(play, gamekey):
 
                 cur.execute(query)
 
-			#print key
-			#print value
     db.commit()
 
 def get_scoring_def_year(league_id, year):
@@ -637,9 +593,9 @@ def init_playerdict(team_id):
   playerdict[team_id+"_DST"] = {}
   playerdict[team_id+"_OL"] = {}
   playerdict[team_id+"_ST"] = {}
-  #query = ("insert into player (player_id, nfl_position_id, nfl_team_id, status) values ('"+team_id+"_DST', (select id from nfl_position where text_id = 'T_DST'),(select id from nfl_team where club_id = '"+team_id+"'), 'ACT')")
 
   return playerdict
+
 parser = argparse.ArgumentParser(description='Update Game Statistics using NFL Game')
 
 parser.add_argument('-hello', action="store_true", default=False, help="Just tell me what the current Year, Week, and WeekType is!")
