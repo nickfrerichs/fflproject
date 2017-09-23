@@ -265,7 +265,7 @@ def update_players(year, week, weektype):
 
 
     # First, update nflgame
-    if not args.photos and 1==2:
+    if not args.photos:
         if args.year == "0" and args.week == "0" and args.weektype == "none":
             subprocess.call(c.PLAYER_UPDATE_CMD.split(' '))
         else:
