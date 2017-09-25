@@ -24,7 +24,12 @@
                     <?php else: ?>
                         <tr>
                     <?php endif; ?>
-                        <td><?=date("n/j/y g:i a",$l->transaction_date)?></td>
+                        <td>
+                            <?=date("n/j/y g:i a",$l->transaction_date)?>
+                            <?php if($l->priority_used): ?>
+                                <br><span style="font-size:.8em;font-style:italic">WW Priority</span>
+                            <?php endif;?>
+                        </td>
                         <td>
                             <div>
                                 <?php if($l->drop_id == ""): ?>

@@ -279,12 +279,26 @@ class Waiverwire_model extends MY_Model{
         }
 
 
-        // 5. Check if waiver wire disable gt is, return status 1 if so..queue the request
+        // 5a. Check if waiver wire disable gt is, return status 1 if so..queue the request
         if ($this->common_waiverwire_model->is_player_locked($pickup_id))
         {
-            $ret = "Request will be queued until week is complete, at least one of the players games has already started.";
+            $ret = "Request will be queued until week is complete, requested player's game has already started.";
             $status_code = 1;
             return False;
+        }
+
+        // 5b. If ww disable GT is enabled and player being dropped is lockeed AND was a starter
+        $started = $this->db->from('starter')->where('league_id',$this->leagueid)->where('team_id',$this->teamid)
+            ->where('week',$this->current_week)->where('year',$this->current_year)->where('player_id',$drop_id)
+            ->count_all_results();
+        if($started > 0)
+        {
+            if($this->common_waiverwire_model->is_player_locked($drop_id))
+            {
+                $ret = "Request will be queued until week is complete, drop player is a starter and his game has started.";
+                $status_code = 1;
+                return False;
+            }
         }
 
         // 6. Check if waiver_wire_disable_day is on and disabled for current day.
@@ -407,6 +421,7 @@ class Waiverwire_model extends MY_Model{
             ->select('UNIX_TIMESTAMP(waiver_wire_log.transaction_date) as transaction_date')
             ->select('team.team_name')
             ->select('owner.first_name as owner_first, owner.last_name as owner_last')
+            ->select('waiver_wire_log.priority_used')
             ->from('waiver_wire_log')
             ->join('player as d','d.id = waiver_wire_log.drop_player_id','left')
             ->join('player as p','p.id = waiver_wire_log.pickup_player_id','left')
