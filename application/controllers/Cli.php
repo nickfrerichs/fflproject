@@ -12,25 +12,14 @@ class Cli extends CI_Controller{
         $this->load->model('automation_model');
     }
 
-    function index()
-    {
-
-    }
-
     function ww_approve()
     {   
-
         $this->load->model('common_noauth_model');
         $leagues = $this->common_noauth_model->get_leagues_data();
         foreach($leagues as $l)
         {
             $this->automation_model->approve_waiver_wire_requests($l->id);
         }
-    }
-
-    function test()
-    {
-        $this->common_waiverwire_model->send_email_notice(20,"priority");
     }
 }
 

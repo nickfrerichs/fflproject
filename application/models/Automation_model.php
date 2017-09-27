@@ -95,7 +95,7 @@ class Automation_model extends CI_Model{
             }
 
             $priority_used = false;
-            if (count($teams > 1))
+            if (count($teams) > 1)
                 $priority_used = true;
 
             // If contention and semi automation, time to exit.

@@ -327,10 +327,12 @@ class Common_waiverwire_model extends CI_Model{
         if ($settings->waiver_wire_disable_gt)
         {
             $start_time  = $this->common_noauth_model->player_game_start_time($player_id,$year,$week,$weektype);
-            $end_time = $this->common_noauth_model->final_game_start_time($year,$week,$weektype);
-            
+            //$end_time = $this->common_noauth_model->final_game_start_time($year,$week,$weektype);
             // If it's past the start time and 8 hours haven't passed since the final game started
-            if (($current_time > $start_time) && ($current_time < $end_time+(60*60*8)))
+            // if (($current_time > $start_time) && ($current_time < $end_time+(60*60*8)))
+            // I no longer think I need to check the end_time... if a player is locked for the passed in week using waiver_wire_disable_gt, they
+            // stay locked until we roll into the next week.
+            if ($current_time > $start_time)
             {
                 return True;
             }
