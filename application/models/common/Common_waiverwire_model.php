@@ -73,6 +73,7 @@ class Common_waiverwire_model extends CI_Model{
             foreach($standings as $key => $s)
                 $data['priority'][$key] = $s;
         }
+
         if ($week > 0)
         {
 
@@ -89,6 +90,7 @@ class Common_waiverwire_model extends CI_Model{
                     {
                         unset($data['priority'][$priority]);
                         $data['priority'][]=$team;
+                        $data['priority'] = array_values($data['priority']);
                     }
 
                 }
@@ -332,6 +334,11 @@ class Common_waiverwire_model extends CI_Model{
             // if (($current_time > $start_time) && ($current_time < $end_time+(60*60*8)))
             // I no longer think I need to check the end_time... if a player is locked for the passed in week using waiver_wire_disable_gt, they
             // stay locked until we roll into the next week.
+
+            // Player has a bye this week, not locked.
+            if ($start_time == "")
+                return False;
+
             if ($current_time > $start_time)
             {
                 return True;

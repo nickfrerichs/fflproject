@@ -202,9 +202,6 @@ class Player_search extends MY_User_Controller{
             <tr>
                 <td>
                     <a href="#" class="stat-popup" data-type="player" data-id="<?=$p->id?>"><?=$p->last_name.", ".$p->first_name?></a>
-                    <?php if($p->news && 1==2): ?>
-                        (<a href="#" class="player-news-popup" data-id="<?=$p->news_id?>">N</a>)
-                    <?php endif; ?>
                 </td>
                 <td><?=$p->position?></td>
                 <td><?=$p->club_id?></td>

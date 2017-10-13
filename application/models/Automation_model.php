@@ -11,7 +11,6 @@ class Automation_model extends CI_Model{
 
     function approve_waiver_wire_requests($leagueid)
     {
-        print "Leagueid: ".$leagueid."\n";
         $week_year = $this->common_noauth_model->get_current_week($leagueid);
         if (!$week_year)
             return;
@@ -59,13 +58,14 @@ class Automation_model extends CI_Model{
 
             $priority = array();
 
-            $temp = $this->common_waiverwire_model->get_ww_priority_data_array($leagueid, $week_year->year, $week_type);
+            $temp = $this->common_waiverwire_model->get_ww_priority_data_array($leagueid, $week_year->year, $week_type, $week_year->week);
+
             foreach($temp['priority'] as $p => $t)
             {
                 $priority[$t->team_id]['data'] = $t;
                 $priority[$t->team_id]['priority'] = $p;
             }
-            
+
             // Check if the clear_time has passed since when this player was dropped,
             $dropped_time = $this->db->select('UNIX_TIMESTAMP(transaction_date) as transaction_date')
                 ->from('waiver_wire_log')->where('league_id',$leagueid)->where('drop_player_id',$r->player_id)
@@ -74,25 +74,31 @@ class Automation_model extends CI_Model{
 
             // clear time has not passed, keep waiting.
             if ($dropped_time+$clear_time >= time())
-            {
                 continue;
-            }
+            
 
+            // Teams attempting to claim this pickup_player_id
             $teams = $this->db->select('team_id, id as ww_id')->from('waiver_wire_log')->where('league_id',$leagueid)
                 ->where('pickup_player_id',$r->player_id)
                 ->where('transaction_date',0)->where('approved',0)->get()->result();
 
-            // If there is only 1 team, they will be the winner anyway.
-            $ww_winner = array('priority' => PHP_INT_MAX);
 
+            $ww_winner = array('priority' => PHP_INT_MAX);
             foreach ($teams as $t)
             {
+                // To complicate this further, a team could be invovled in more than one player contention and we need to decide
+                // which one they want to burn their priority on
+
+                if ($this->team_pass_on_player($t->team_id,$r->player_id,$leagueid, $week_year, $week_type))
+                    continue;
+                
                 if ($priority[$t->team_id]['priority'] < $ww_winner['priority'])
                 {
                     $ww_winner['priority'] = $priority[$t->team_id]['priority'];
                     $ww_winner['data'] = $t;
                 }
             }
+
 
             $priority_used = false;
             if (count($teams) > 1)
@@ -111,6 +117,7 @@ class Automation_model extends CI_Model{
                 }
                 continue;
             }
+
             // Approve the WW for this team, after checking that they still have the drop player,
             // If not, reject the transaction, email them either way.
 
@@ -150,9 +157,76 @@ class Automation_model extends CI_Model{
 
                 // maybe call this function recursively to move on to next winner??
             }
-            // Here is where you would adjust the priority, if you were keeping track of it.
-
         }
+    }
+
+    // Check to see if team is involved in multiple contentions, if so decide if it should pass
+    // on the current player
+    function team_pass_on_player($team_id, $player_id,$leagueid, $week_year, $week_type)
+    {
+        // Find out what "wins" this team has in all existing contentions
+
+        // First get an array of pickup_ids for the team, order by request date for preference
+        $team_pickups = array();
+        $temp = $this->db->select('pickup_player_id')->from('waiver_wire_log')->where('team_id',$team_id)->where('approved',0)
+            ->where('transaction_date','0000-00-00 00:00:00')->order_by('request_date','desc')->get()->result();
+        foreach($temp as $t)
+            $team_pickups[] = $t->pickup_player_id;
+
+        // Get priority array
+        $priority_lookup = array();
+        $temp = $this->common_waiverwire_model->get_ww_priority_data_array($leagueid, $week_year->year, $week_type);
+        foreach($temp['priority'] as $priority => $t)
+            $priority_lookup[$t->team_id] = $priority;
+
+        // Get all players under contention (even those not involving this team)
+        $contention_players = array();
+        $temp = $this->db->select('pickup_player_id, count(pickup_player_id) as pickups')->from('waiver_wire_log')->where('league_id',$leagueid)
+            ->where('approved',0)->where('transaction_date','0000-00-00 00:00:00')->group_by('pickup_player_id')->having('pickups>',1)->get()->result();
+        foreach($temp as $t)
+            $contention_players[] = $t->pickup_player_id;
+
+        // Go through all of this team's pickup_ids.  Find out which ones it will win as current priority stands (can't go down in priority)
+        $wins = array();
+        foreach($team_pickups as $p)
+        {
+            $teams = $this->db->select('team_id, id as ww_id')->from('waiver_wire_log')->where('league_id',$leagueid)
+            ->where('pickup_player_id',$p)->where('transaction_date',0)->where('approved',0)->get()->result();
+
+            // get all other teams also picking up this player
+            
+            // check the priority array to determine if we win over the other teams
+            $winner = array('priority' => PHP_INT_MAX);
+            foreach($teams as $t)
+            {
+                if ($priority_lookup[$t->team_id] < $winner['priority'])
+                {
+                    $winner['priority'] = $priority_lookup[$t->team_id];
+                    $winner['team_id'] = $t->team_id;
+                }
+
+            }
+            if ($winner['team_id'] == $team_id)
+                $wins[] = $p;
+        }
+
+        // If it's the only win, we'll take it
+        if (count($wins) <= 1)
+            return False;
+
+        // If we have more than one win and it's the highest priority, also take it
+        if (count($wins) > 1 && $player_id == $team_pickups[0])
+            return False;
+ 
+        // If we have more than one win, but it's not the highest priority, wait
+        return True;
+    }
+
+    function p($head, $arr)
+    {
+        echo $head."\n================\n";
+        print_r($arr);
+        echo "\n==============";
     }
 }
 ?>
