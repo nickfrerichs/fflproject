@@ -42,7 +42,7 @@ def main():
         print "Year: "+str(year)+", Week: "+str(week)+", Weektype: "+str(weektype)
         print
         sys.exit()
-
+        
     update_games(year, week, weektype, args.all)
 
 def update_games(year, week, weektype, update_all = False):
@@ -324,6 +324,13 @@ def update_nfl_statistics(year, week, weektype, update_all):
       deleted = cur.rowcount
       db.commit()
       print "Purged %s nfl_statistic rows." % str(deleted)
+
+      # Also delete any rows where player_id is NULL
+      query = 'delete from nfl_statistic where player_id is NULL'
+      cur.execute(query)
+      deleted = cur.rowcount
+      db.commit()
+      print "Purged %s nfl_statistic rows with NULL player_ids" % (str(deleted))
 
       # IF live changes were made, delete nfl_live_player lines that were not updated during this run
       if live_changes_made:

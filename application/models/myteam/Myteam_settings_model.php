@@ -77,9 +77,9 @@ class Myteam_settings_model extends MY_Model{
         //return $path.$teamid.'_uploaded_logo.jpg'
 
         if ($type == "thumb")
-            return site_url($path.$teamid."_thumb_logo.jpg");
+            return site_url($path.$teamid."_thumb_logo.jpg?nocache=".time());
         if ($type == "med")
-            return site_url($path.$teamid."_med_logo.jpg");
+            return site_url($path.$teamid."_med_logo.jpg?nocache=".time());
         return site_url($path);
 
     }
@@ -88,9 +88,9 @@ class Myteam_settings_model extends MY_Model{
     {
         $path = 'images/team_logos/';
         if ($type = "thumb")
-            return site_url($path."default_thumb_logo.jpg");
+            return site_url($path."default_thumb_logo.jpg?nocache=".time());
         if ($type = "med")
-            return site_url($path."med_thumb_logo.jpg");
+            return site_url($path."med_thumb_logo.jpg?nocache=".time());
     }
 
     function save_uploaded_logo($tempname, $filename)

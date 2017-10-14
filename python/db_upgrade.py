@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.32'
+CURRENT_VERSION = '1.4'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,29 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == "1.32":
+        # I never did update SD to be LAC for the team positions
+        cols = ['cbs_id','first_name','short_name','player_id']
+        query = "select id from player where player_id like '%SD%'"
+        cur.execute(query)
+        for row in cur.fetchall():
+            for col in cols:
+                query = 'update player set '+col+' = REPLACE('+col+',"SD","LAC") where id = '+str(row['id'])
+                cur.execute(query)
+
+        # Also delete any rows where player_id is NULL
+        query = 'delete from nfl_statistic where player_id is NULL'
+        cur.execute(query)
+        deleted = cur.rowcount
+        db.commit()
+        if deleted > 0:
+            print "Purged %s nfl_statistic rows with NULL player_ids" % (str(deleted))
+
+        query = 'update site_settings set db_version = "%s"' % ("1.4")
+        cur.execute(query)
+        db.commit()
+        return get_db_version() 
 
     if version == "1.31":
         # Add player_id index for player_injury, player_rank, player_researchinfo, player_news

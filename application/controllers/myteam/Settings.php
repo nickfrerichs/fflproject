@@ -15,8 +15,8 @@ class Settings extends MY_User_Controller{
         $data = array();
         $data['owner_info'] = $this->myteam_settings_model->get_owner_info();
         $data['team_info'] = $this->myteam_settings_model->get_team_info();
-        $data['team_uploaded_logo_url'] = site_url('images/team_logos/'.$this->teamid."_uploaded_logo.jpg");
-        $data['team_thumb_logo_url'] = site_url('images/team_logos/'.$this->teamid."_thumb_logo.jpg");
+        $data['team_uploaded_logo_url'] = site_url('images/team_logos/'.$this->teamid."_uploaded_logo.jpg?nocache=".time());
+        $data['team_thumb_logo_url'] = site_url('images/team_logos/'.$this->teamid."_thumb_logo.jpg?nocache=".time());
     	$this->user_view('user/myteam/settings',$data);
     }
 
@@ -26,7 +26,6 @@ class Settings extends MY_User_Controller{
         $curpass = $this->input->post('curpass');
         $newpass = $this->input->post('newpass');
         $identity = $this->myteam_settings_model->get_owner_identity();
-        //echo "curpass".$curpass;
         echo $this->flexi_auth_full->change_password($identity, $curpass, $newpass);
 
     }
