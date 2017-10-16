@@ -48,7 +48,7 @@ class Standings_model extends MY_Model{
                     ->join('schedule_result','schedule_result.team_id = team.id and schedule_result.year='.$year,'left')
                     ->join('owner','team.owner_id = owner.id')
                     ->join('team_division','team_division.team_id = team.id and team_division.year = '.$year)
-                    ->join('standings_notation_team','standings_notation_team.team_id = team.id','left')
+                    ->join('standings_notation_team','standings_notation_team.team_id = team.id and standings_notation_team.year='.$year,'left')
                     ->join('standings_notation_def','standings_notation_def.id = standings_notation_team.standings_notation_def_id and standings_notation_team.year='.$year,'left')
                     ->where('team.league_id',$this->leagueid)
                     ->where('team_division.division_id',$d->id)
