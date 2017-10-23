@@ -48,7 +48,6 @@
                                 <td><?=$l->week?></td>
                                 <td>$<?=number_format($l->amount,2)?></td>
                                 <td><?=$l->team_score?></td>
-                                <td><?=$l->team_score?></td>
                                 <?php if($l->text != ""):?>
                                     <td><span data-tooltip class="has-tip top" title="<?=$l->text?>"><?=$l->short_text?></span></td>
                                 <?php else: ?>
