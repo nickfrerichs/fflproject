@@ -40,7 +40,7 @@
             <div class="columns">
                 <table>
                     <thead>
-                        <th>Week</th><th>Amount</th><th>Score</th><th></th><th>Desc.</th><th>Team</th><th>Owner</th>
+                        <th>Week</th><th>Amount</th><th>Score</th><th>Desc.</th><th>Team</th><th>Owner</th>
                     </thead>
                     <tbody>
                         <?php foreach($list as $l): ?>
