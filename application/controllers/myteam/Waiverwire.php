@@ -21,6 +21,21 @@ class Waiverwire extends MY_User_Controller{
         {
             $data['pos'] = $this->player_search_model->get_nfl_positions_data();
             $data['pending'] = $this->waiverwire_model->get_pending_requests();
+
+            $data['latest_request_id'] = 0;
+            if (count($data['pending']) > 1)
+            {
+                $recent_date = 0;
+                foreach($data['pending'] as $p)
+                {
+                    if ($p->request_date > $recent_date)
+                    {
+                        $recent_date = $p->request_date;
+                        $data['latest_request_id'] = $p->ww_id;
+                        
+                    }
+                }
+            }
             $this->user_view('user/myteam/waiverwire.php', $data);
         }
         else
@@ -29,11 +44,6 @@ class Waiverwire extends MY_User_Controller{
             $this->user_view('user/myteam/waiverwire/closed.php',$data);
         }
 
-    }
-
-    function test()
-    {
-        print_r($this->waiverwire_model->get_priority_data_array());
     }
 
     function log()
@@ -109,6 +119,15 @@ class Waiverwire extends MY_User_Controller{
             echo json_encode($data);
         }
 
+    }
+
+    function ajax_make_preferred()
+    {
+        $ww_id = $this->input->post('id');
+        $result['success'] = False;
+        $this->waiverwire_model->make_preferred($ww_id);
+        $result['success'] = True;
+        echo json_encode($result);
     }
 
     function ajax_drop_table()

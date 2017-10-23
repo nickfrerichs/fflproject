@@ -80,7 +80,14 @@
                     <td>
                         <button class="button tiny cancel-request" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
                     </td>
-                    <td><?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)</td>
+                    <td>
+                        <?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)
+                        <?php if(count($pending > 1) && $a->ww_id == $latest_request_id): ?>
+                            <span style="font-size:.8em"><b>*Preferred*</b></span>
+                        <?php elseif(count($pending)>1):?>
+                            <span style="font-size:.8em"><a class="set-preferred" data-id="<?=$a->ww_id?>" href="#">(Set Preferred)</a></span>
+                        <?php endif;?>
+                    </td>
                     <td><?=$a->d_first.' ',$a->d_last?> (<?=$a->d_pos.' - '.$a->d_club_id?>)</td>
                 </tr>
             <?php endforeach;?>
@@ -223,6 +230,18 @@
 		});
 
 	});
+
+    $('.set-preferred').on('click',function(){
+        var id = $(this).data('id');
+        var url = "<?=site_url('myteam/waiverwire/ajax_make_preferred')?>";
+        $.post(url,{'id':id},function(data){
+            if (data.success)
+            {
+               location.reload();
+            }
+        },'json');
+
+    });
 
     function showConfirm()
 	{

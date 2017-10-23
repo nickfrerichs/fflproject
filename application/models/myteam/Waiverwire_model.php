@@ -493,4 +493,12 @@ class Waiverwire_model extends MY_Model{
 
     }
 
+    function make_preferred($ww_id)
+    {
+        $data = array('request_date' => t_mysql());
+        $this->db->where('id',$ww_id)->where('team_id',$this->teamid)
+            ->update('waiver_wire_log',$data);
+
+    }
+
 }
