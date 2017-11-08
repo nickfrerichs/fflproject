@@ -278,7 +278,7 @@ class Player_search extends MY_User_Controller{
     {
         $this->load->model('league/history_model');
         $teams = $this->history_model->get_team_record($this->year);
-        print_r($teams);
+        // print_r($teams);
 
         ?>
         <?php foreach($teams as $num => $t): ?>
