@@ -1,6 +1,7 @@
-		<br><br>
-		<div class="row align-center" style="max-width:425px;">
-			<div class="columns callout" >
+<section class="hero is-info is-medium">
+  	<div class="hero-body">
+		<div class="columns is-centered">
+			<div class="column is-two-fifths">
 			<?php if (!$admin_exists): ?>
 				<h5> Welcome to the FFL Project </h5>
 				<br>
@@ -8,9 +9,17 @@
 			<?php else: ?>
 
 				<form role="form" method="post" action="auth/login">
-					<h2><?=$site_name?></h2>
-						<input type="text" class="form-control" placeholder="Username" id="identity" name="login_identity" required autofocus />
-					<input type="password" class="form-control" placeholder="Password"  required id="password" name="login_password" />
+					<h1 class="title"><?=$site_name?></h1>
+					<div class="field">
+						<div class="control">
+							<input type="text" class="input" placeholder="Username" id="identity" name="login_identity" required autofocus />
+						</div>
+					</div>
+					<div class="field">
+						<div class="control">
+							<input type="password" class="input" placeholder="Password"  required id="password" name="login_password" />
+						</div>
+					</div>
 					<?php if(isset($redirect)): ?>
 						<input type="hidden" name="redirect" value="<?=$redirect?>">
 					<?php endif;?>
@@ -19,7 +28,11 @@
 						<?php if($use_recaptcha): ?>
 							<?=$captcha?>
 						<?php else: ?>
-							<input type="text" placeholder="<?=$captcha?>" name="math_captcha_response_field">
+						<div class="field">
+							<div class="control">
+								<input type="text" class="input" placeholder="<?=$captcha?>" name="math_captcha_response_field">
+							</div>
+						</div>
 						<?php endif;?>
 
 						 <br>
@@ -30,11 +43,17 @@
 						Remember Me
 					</label>
 		-->
-
-					<button type="submit" class="button small">Sign in</button>
+					<div class="field">
+						<div class="control">
+							<button type="submit" class="button">Sign in</button>
+						</div>
+					</div>
+			
 				</form>
 				<div><a href="<?=site_url('accounts/forgot')?>">Forgot Password</a></div>
 
 			<?php endif;?>
 			</div>
 		</div>
+	</div>
+</section>

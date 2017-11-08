@@ -1,8 +1,8 @@
 <!-- Foundation 6 -->
 <script src="<?=site_url('js/vendor/jquery.js')?>"></script>
-<script src="<?=site_url('js/vendor/foundation.min.js')?>"></script>
-<script src="<?=site_url('js/vendor/what-input.js')?>"></script>
-<script src="<?=site_url('js/vendor/jquery.visible.min.js')?>"></script>
+<!-- <script src="<?=site_url('js/vendor/foundation.min.js')?>"></script> -->
+<!-- <script src="<?=site_url('js/vendor/what-input.js')?>"></script> -->
+<!-- <script src="<?=site_url('js/vendor/jquery.visible.min.js')?>"></script> -->
 <script src="<?=site_url('js/cropper.min.js')?>"></script>
 <script src="<?=site_url('js/eventsource.min.js')?>"></script>
 
