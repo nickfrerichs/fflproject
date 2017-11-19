@@ -1,4 +1,4 @@
-<section class="hero is-info is-medium">
+<section class="hero is-large is-dark">
   	<div class="hero-body">
 		<div class="columns is-centered">
 			<div class="column is-two-fifths">
@@ -9,7 +9,7 @@
 			<?php else: ?>
 
 				<form role="form" method="post" action="auth/login">
-					<h1 class="title"><?=$site_name?></h1>
+					<h1 class="is-size-3 has-text-link"><?=$site_name?></h1>
 					<div class="field">
 						<div class="control">
 							<input type="text" class="input" placeholder="Username" id="identity" name="login_identity" required autofocus />
@@ -45,7 +45,7 @@
 		-->
 					<div class="field">
 						<div class="control">
-							<button type="submit" class="button">Sign in</button>
+							<button type="submit" class="button is-link">Sign in</button>
 						</div>
 					</div>
 			
@@ -57,3 +57,7 @@
 		</div>
 	</div>
 </section>
+<!-- <section class="hero is-link is-large">
+	<div class="hero-body">
+	</div>
+</section> -->

@@ -414,9 +414,9 @@ class Waiverwire_model extends MY_Model{
             $year = $this->current_year;
 
         $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
-        $this->db->select('d.first_name as drop_first, d.id as drop_id, d.last_name as drop_last, d.short_name as drop_short_name, dt.club_id as drop_club_id')
-            ->select('dp.short_text as drop_pos, p.id as pickup_id, p.first_name as pickup_first, p.last_name as pickup_last, p.short_name as pickup_short_name')
-            ->select('pt.club_id as pickup_club_id, pp.short_text as pickup_pos')
+        $this->db->select('d.first_name as drop_first, d.id as drop_id, d.last_name as drop_last, d.short_name as drop_short_name, dt.club_id as drop_club_id, d.photo as drop_photo')
+            ->select('dp.short_text as drop_pos, p.id as pickup_id, p.first_name as pickup_first, p.last_name as pickup_last, p.short_name as pickup_short_name, p.photo as pickup_photo')
+            ->select('pt.club_id as pickup_club_id, pt.team_name as pickup_club_name, dt.team_name as drop_club_name, pp.short_text as pickup_pos, pp.long_text as pickup_long_pos, dp.long_text as drop_long_pos')
             ->select('UNIX_TIMESTAMP(waiver_wire_log.request_date) as request_date')
             ->select('UNIX_TIMESTAMP(waiver_wire_log.transaction_date) as transaction_date')
             ->select('team.team_name')

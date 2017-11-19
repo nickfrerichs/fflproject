@@ -7,7 +7,9 @@
 <?php if($p != null): ?>
     <tr>
         <td>
+        <div class="column has-text-centered">
             <?=$starting_pos['pos']?>
+        </div>
         </td>
         <td>
         <div>
@@ -30,7 +32,7 @@
         </div>
         </td>
         <td>
-            <div><?=$matchups[$p->club_id]['opp']?></div>
+            <?=$matchups[$p->club_id]['opp']?>
             <?php if ($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] != ''): ?>
                 <?php if(date("D",$matchups[$p->club_id]['time']) == "Sun"): ?>
                     <div><?=date("D g:i",$matchups[$p->club_id]['time'])?></div>
@@ -40,35 +42,51 @@
             <?php endif;?>
         </td>
         <td>
-            <span class="hide-for-extra-small">Week </span><?=$byeweeks[$p->club_id]?>
+            <div class="column has-text-centered">
+                <span class="is-hidden-mobile"> Week </span><?=$byeweeks[$p->club_id]?>
+            </div>
         </td>
-        <td class="hide-for-extra-small text-center">
+        <td class="is-hidden-mobile">
+        <div class="column">
             <?=$p->points?>
+            </div>
         </td>
 
-        <td class="text-center">
+        <td>
+            <div class="column has-text-centered">
             <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == ''): ?>
-                <button class="button small roster-sit-btn" value="<?=$p->player_id?>">
-                    <div>
+                <button class="button is-small is-link roster-sit-btn" value="<?=$p->player_id?>">
                         Sit
-                    </div>
                 </button>
             <?php endif; ?>
-
+            </div>
+            
         </td>
     </tr>
 <?php else: ?>
     <tr>
         <td>
+            <div class="column has-text-centered">
             <?=$starting_pos['pos']?>
+            </div>
         </td>
         <td>
-        <div>
+        <div class="column">
             <i>Vacant</i>
         </div>
         </td>
-        <td>-</td>
-        <td class="hide-for-extra-small">-</td><td class="text-center">-</td><td class="text-center">-</td>
+        <td>
+            <div class="column">-</div>
+        </td>
+        <td class="is-hidden-mobile">
+            <div class="column">-</div>
+        </td>
+        <td class="has-text-centered">
+            <div class="column">-</div>
+        </td>
+        <td class="has-text-centered">
+            <div class="column">-</div>
+        </td>
     </tr>
 <?php endif; ?>
 <?php endforeach; ?>

@@ -1,22 +1,35 @@
-<?php if ($bc): ?>
-<div class="row">
-    <div class="columns small-12 medium-11">
-        <nav aria-label="You are here:" role="navigation">
-            <ul class="breadcrumbs">
-            <?php foreach($bc as $text => $url): ?>
-                <?php if($url != ""):?>
-                <li><a href="<?=$url?>"><?=$text?></a></li>
-                <?php else: ?>
-                <li><?=$text?></li>
-                <?php endif; ?>
-            <?php endforeach; ?>
-            </ul>
-        </nav>
+
+
+<div class="column">
+    <div class="level">
+        <div class="level-left">
+            <?php if ($bc): ?>
+                <nav class="breadcrumb has-succeeds-separator" style="font-size:.75em">
+                    <ul>
+                    <?php foreach($bc as $text => $url): ?>
+                        <?php if($url != ""):?>
+                        <li><a href="<?=$url?>"><?=$text?></a></li>
+                        <?php else: ?>
+                        <li class="is-active"><a href=""><?=$text?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach;?>
+                    </ul>
+                </nav>
+            <?php endif;?>
+        </div>
+        <div class="level-right is-hidden-mobile" style="font-size:.75em">
+            <div class="level-item has-text-link">
+            Who's here: Nick
+            </div>
+        </div>
     </div>
-<!--
-    <div class="columns small-12 medium-1">
-        help
-    </div>
--->
 </div>
-<?php endif;?>
+
+
+
+
+
+
+<!-- <div style="border-bottom-style:solid; border-color:#3273dc; border-width:2px;"></div> -->
+
+

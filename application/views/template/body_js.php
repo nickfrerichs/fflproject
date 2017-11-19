@@ -1,5 +1,5 @@
 <!-- Foundation 6 -->
-<script src="<?=site_url('js/vendor/jquery.js')?>"></script>
+<script src="<?=site_url('js/jquery-3.2.1.min.js')?>"></script>
 <!-- <script src="<?=site_url('js/vendor/foundation.min.js')?>"></script> -->
 <!-- <script src="<?=site_url('js/vendor/what-input.js')?>"></script> -->
 <!-- <script src="<?=site_url('js/vendor/jquery.visible.min.js')?>"></script> -->
@@ -22,4 +22,5 @@
 <?php else: ?>
 	<script>window.LEAGUE_ADMIN = false;</script>
 <?php endif;?>
-<script src="<?=site_url('js/fflproject.js?1.15')?>"></script>
+<!-- <script src="<?=site_url('js/fflproject.js?1.15')?>"></script> -->
+<script src="<?=site_url('js/fflproject-new.js?1.19')?>"></script>

@@ -32,26 +32,32 @@
                  <?php endif; ?>
             <?php endif;?>
          </td>
-         <td><span class="hide-for-extra-small">Week </span><?=$byeweeks[$b['data']->club_id]?></td>
-        <td class="hide-for-extra-small text-center">
-            <?=$b['data']->points?>
+         <td class="has-text-centered">
+            <div class="column">
+                <span class="is-hidden-mobile">Week</span> <?=$byeweeks[$b['data']->club_id]?>
+            </div>
+        </td>
+        <td class="has-text-centered">
+            <div class="column">
+                <?=$b['data']->points?>
+            </div>
         </td>
         <td>
-            <div class="row align-center">
-                <div class="columns text-center">
-                    <?php if ($matchups[$b['data']->club_id]['time'] > time() || $matchups[$b['data']->club_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
-                        <?php if (isset($b['can_start'])): ?>
-                            <?php foreach ($b['can_start'] as $pos_id => $can_pos): ?>
-                                        <button class="button small roster-start-btn" value="<?=$b['data']->player_id?>_<?=$pos_id?>">
-                                            <?=$can_pos?>
-                                        </button>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            Full
-                        <?php endif; ?>
-                    <?php endif;?>
-                </div>
+  
+            <div class="column has-text-centered">
+                <?php if ($matchups[$b['data']->club_id]['time'] > time() || $matchups[$b['data']->club_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
+                    <?php if (isset($b['can_start'])): ?>
+                        <?php foreach ($b['can_start'] as $pos_id => $can_pos): ?>
+                                    <button class="button is-small is-link roster-start-btn" value="<?=$b['data']->player_id?>_<?=$pos_id?>">
+                                        <?=$can_pos?>
+                                    </button>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        Full
+                    <?php endif; ?>
+                <?php endif;?>
             </div>
+
         </td>
     </tr>
 

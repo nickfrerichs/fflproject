@@ -1,5 +1,5 @@
 
-<?php $this->load->view('template/modals/stat_popup');?>
+<?php //$this->load->view('template/modals/stat_popup');?>
 
 <?php if($keepers_num > 0):?>
     <div class="reveal small" id="set-keepers-modal" data-reveal data-overlay="true">
@@ -16,77 +16,102 @@
     </div>
 <?php endif;?>
 
-<div class="row callout">
-    <div class="columns medium-3 text-center small-12">
-        <div><h4><?=$teamname?></h4></div>
-        <?php if ($info->logo): ?>
-            <div><img src="<?=$logo_thumb_url?>"></div>
-        <?php endif; ?>
-        <div class="mt-r-teamstats-style">
-            <div>Record: <?=$record->wins?>-<?=$record->losses?>-<?=$record->ties?></div>
-            <div>Win Pct: <?=str_replace('0.0','.0',number_format($record->winpct,3))?></div>
-            <div>Points: <?=$record->points?></div>
-            <div>Week <?=$this->session->userdata('current_week')?></div>
-        </div>
-        <hr class="show-for-small-only">
-    </div>
-    <div class="columns medium-9 mt-r-schedule-style small-12">
-        <?php
-              $cols = array();
-              if (count($schedule) > 7){
-              $cols[] = array_slice($schedule, 0, count($schedule) / 2);
-              $cols[] = array_slice($schedule, count($schedule) / 2);
-            }else{$cols[] = $schedule;}
-        ?>
-        <?php if (count($schedule) != 0): ?>
-            <h5 class="text-center">Schedule</h5>
-        <?php endif; ?>
-        <div class="row align-center">
-            <?php foreach ($cols as $col):?>
-            <?php if (count($col) == 0){continue;} ?>
-            <?php if (count($cols) == 1){$medcols=12;}else{$medcols=6;} ?>
-                <div class="columns small-12 medium-<?=$medcols?>">
-                <table>
-                <thead>
-                    <th>Week</th>
-                    <th>Opponent</th>
-                    <th>Result</th>
-                </thead>
-                <tbody>
-                <?php foreach($col as $key => $s): ?>
-                    <?php if($s->week == $this->session->userdata('current_week')):?>
-                        <tr style="background-color:#E0ECF8">
-                        <?php else:?>
-                            <tr>
-                        <?php endif;?>
 
-                        <td><?=$s->week?></td>
-                        <?php if($s->home_id != $this->session->userdata('team_id')): ?>
-                            <td><a href="<?=site_url('league/teams/view/'.$s->home_id)?>">@<?=$s->home_name?></a></td>
-                            <?php if($s->away_win == '1'):?>
-                                <td>Win (<?=$s->away_score?> - <?=$s->home_score?>)</td>
-                            <?php elseif ($s->away_win === '0'): ?>
-                                <td>Loss (<?=$s->away_score?> - <?=$s->home_score?>)</td>
-                            <?php else:?>
-                                <td></td>
-                            <?php endif;?>
-                        <?php else: ?>
-                            <td><a href="<?=site_url('league/teams/view/'.$s->away_id)?>"><?=$s->away_name?></a></td>
-                            <?php if($s->home_win == '1'):?>
-                                <td>Win (<?=$s->home_score?> - <?=$s->away_score?>)</td>
-                            <?php elseif ($s->home_win === '0'): ?>
-                                <td>Loss (<?=$s->home_score?> - <?=$s->away_score?>)</td>
-                            <?php else:?>
-                                <td></td>
-                            <?php endif;?>
-                        <?php endif;?>
-                    </tr>
+    <div class="hero is-link is-bold is-small">
+        <div class="hero-body">
+            <div class="columns is-centered">
 
-                <?php endforeach; ?>
-                </tbody>
-                </table>
+                <div class="column is-narrow is-2">
+                    <div><h2 class="title"><?=$teamname?></h2></div>
+
+                    <div class="subtitle">
+                        <div>Record: <?=$record->wins?>-<?=$record->losses?>-<?=$record->ties?></div>
+                        <div>Win Pct: <?=str_replace('0.0','.0',number_format($record->winpct,3))?></div>
+                        <div>Points: <?=$record->points?></div>
+                        <div>Week <?=$this->session->userdata('current_week')?></div>
+                    </div>
                 </div>
-            <?php endforeach;?>
+                <div class="column is-narrow is-3">
+                    <?php if ($info->logo): ?>
+                    <figure class="image is-128x128">
+                        <img src="<?=$logo_thumb_url?>">
+                    </figure>
+
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+    <div class="tabs is-small is-boxed fflp-tabs-active">
+        <ul>
+            <li class="is-active" data-for="myteam-roster-tab"><a>Roster/Starting Lineup</a></li>
+            <li class="" data-for="myteam-schedule-tab"><a>Schedule</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="myteam-schedule-tab" class="section is-hidden">
+    <div class="columns is-multiline">
+        <div class="column">
+            <?php
+                // $cols = array();
+                // if (count($schedule) > 7){
+                // $cols[] = array_slice($schedule, 0, count($schedule) / 2);
+                // $cols[] = array_slice($schedule, count($schedule) / 2);
+                // }else{$cols[] = $schedule;}
+                $cols[] = $schedule;
+            ?>
+            <?php //if (count($schedule) != 0): ?>
+                <h5 class="text-center is-size-5">Schedule</h5>
+            <?php //endif; ?>
+            <div class="columns is-multiline">
+                <?php foreach ($cols as $col):?>
+                <?php //if (count($col) == 0){continue;} ?>
+                <?php //if (count($cols) == 1){$medcols=12;}else{$medcols=6;} ?>
+                    <div class="column">
+                    <table class="table table-border is-fullwidth is-hoverable fflp-table-mobile">
+                    <thead>
+                        <th class="has-text-centered">Week</th>
+                        <th>Opponent</th>
+                        <th>Result</th>
+                    </thead>
+                    <tbody>
+                    <?php foreach($col as $key => $s): ?>
+                        <?php if($s->week == $this->session->userdata('current_week')):?>
+                            <tr style="background-color:#E0ECF8">
+                            <?php else:?>
+                                <tr>
+                            <?php endif;?>
+
+                            <td class="has-text-centered"><?=$s->week?></td>
+                            <?php if($s->home_id != $this->session->userdata('team_id')): ?>
+                                <td><a href="<?=site_url('league/teams/view/'.$s->home_id)?>">@<?=$s->home_name?></a></td>
+                                <?php if($s->away_win == '1'):?>
+                                    <td>Win (<?=$s->away_score?> - <?=$s->home_score?>)</td>
+                                <?php elseif ($s->away_win === '0'): ?>
+                                    <td>Loss (<?=$s->away_score?> - <?=$s->home_score?>)</td>
+                                <?php else:?>
+                                    <td></td>
+                                <?php endif;?>
+                            <?php else: ?>
+                                <td><a href="<?=site_url('league/teams/view/'.$s->away_id)?>"><?=$s->away_name?></a></td>
+                                <?php if($s->home_win == '1'):?>
+                                    <td>Win (<?=$s->home_score?> - <?=$s->away_score?>)</td>
+                                <?php elseif ($s->home_win === '0'): ?>
+                                    <td>Loss (<?=$s->home_score?> - <?=$s->away_score?>)</td>
+                                <?php else:?>
+                                    <td></td>
+                                <?php endif;?>
+                            <?php endif;?>
+                        </tr>
+
+                    <?php endforeach; ?>
+                    </tbody>
+                    </table>
+                    </div>
+                <?php endforeach;?>
+            </div>
         </div>
     </div>
 </div>
@@ -94,60 +119,52 @@
 <?php if($this->session->userdata('offseason')): ?>
     <?php $this->load->view('user/offseason');?>
 <?php else: ?>
-<div class="row">
-    <div class="columns callout">
-        <div class="row">
-            <div class="columns medium-2">
-                <?php if ($keepers_num > 0): ?>
-                    <a id="set-keepers" href="#"> Edit Keepers</a>
+<div class="section">
+    <div id="myteam-roster-tab">
 
-                <?php endif;?>
-                <select id="selected-week">
-                    <?php foreach($weeks as $w): ?>
-                        <?php if($w->week == $this->session->userdata('current_week')): ?>
-                            <option selected value="<?=$w->week?>">Week <?=$w->week?></option>
-                        <?php else: ?>
-                        <option value="<?=$w->week?>">Week <?=$w->week?></option>
-                        <?php endif;?>
-                    <?php endforeach; ?>
-                </select>
+        <div class="select">
+            <?php if ($keepers_num > 0): ?>
+                <a id="set-keepers" href="#"> Edit Keepers</a>
 
-            </div>
+            <?php endif;?>
+            <select id="selected-week">
+                <?php foreach($weeks as $w): ?>
+                    <?php if($w->week == $this->session->userdata('current_week')): ?>
+                        <option selected value="<?=$w->week?>">Week <?=$w->week?></option>
+                    <?php else: ?>
+                    <option value="<?=$w->week?>">Week <?=$w->week?></option>
+                    <?php endif;?>
+                <?php endforeach; ?>
+            </select>
         </div>
-        <!--
-        <div class="row text-center">
-            <div class="checkbox">
-              <label>
-                <input id="future-weeks" type="checkbox"> Set Future Weeks
-              </label>
-            </div>
-        </div>
-        -->
-        <div class="row">
-            <div class="large-6 columns small-12">
-                <div><h5>Starting Lineup</h5></div>
-                <table>
+
+        <br><br>
+        
+        <div class="columns is-multiline">
+            <div class="column">
+                <div class="is-size-5">Starting Lineup</div>
+                <table class="table is-fullwidth is-narrow table-border fflp-table-mobile is-hoverable">
                     <thead>
-                        <th>Pos</th><th>Player</th><th>Opponent</th><th>Bye</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Sit</th>
+                        <th class="has-text-centered">Pos</th><th>Player</th><th>Opponent</th><th class="has-text-centered">Bye</th><th class="is-hidden-mobile">Points</th><th class="has-text-centered">Sit</th>
                     </thead>
                     <tbody id ="starter-tbody">
                     </tbody>
                 </table>
             </div>
-            <div class="large-6 columns small-12">
-                <div><h5>Bench</h5></div>
-                <table>
+            <div class="column">
+                <div class="is-size-5">Bench</div>
+                <table class="table is-fullwidth is-narrow table-border fflp-table-mobile is-hoverable">
                     <thead>
-                        <th>Player</th><th>Opponent</th><th>Bye</th><th class="text-center hide-for-extra-small">Points</th><th class="text-center">Start as</th>
+                        <th>Player</th><th>Opponent</th><th class="has-text-centered">Bye</th><th class="has-text-centered">Points</th><th class="has-text-centered">Start as</th>
                     </thead>
                     <tbody id="bench-tbody">
                     </tbody>
                 </table>
             </div>
         </div>
+            
     </div>
 </div>
-
 <?php endif; ?>
 
 <script>
