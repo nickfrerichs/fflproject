@@ -2,17 +2,24 @@
 <?php //$this->load->view('template/modals/stat_popup');?>
 
 <?php if($keepers_num > 0):?>
-    <div class="reveal small" id="set-keepers-modal" data-reveal data-overlay="true">
-        <h5>Keepers</h5>
-        <table>
-            <thead>
-            </thead>
-            <tbody id="keepers-table">
-            </tbody>
-        </table>
-    	<button class="close-button" data-close aria-label="Close modal" type="button">
-    	  <span aria-hidden="true">&times;</span>
-    	</button>
+    <div class="modal" id="set-keepers-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <div class="modal-card-head">
+               <p class="modal-card-title">Keepers</p>
+            </div>
+            <div class="modal-card-body">
+                <h5>Keepers</h5>
+                <table class="table is-fullwidth">
+                    <thead>
+                    </thead>
+                    <tbody id="keepers-table">
+                    </tbody>
+                </table>
+            </div>
+            <button class="button modal-close-button" aria-label="close">Close</button>
+        </div>
+        
     </div>
 <?php endif;?>
 
@@ -213,11 +220,16 @@ $(document).ready(function(){
     <?php if($keepers_num > 0): ?>
         $("#set-keepers").on('click',function(){
             var url = "<?=site_url('myteam/roster/ajax_keeper_table')?>";
+            var url = "<?=site_url('myteam/roster/ajax_keeper_table')?>";
             $.post(url,{},function(data){
                 $("#keepers-table").html(data);
                 keeper_max_check();
             });
-            $("#set-keepers-modal").foundation('open');
+            $("#set-keepers-modal").addClass('is-active');
+        });
+
+        $('.modal-close, .modal-close-button, .modal-background').on('click', function(){
+            $(this).closest($('.modal')).removeClass('is-active');
         });
 
         $("#keepers-table").on('click','.keeper-toggle',function(){
