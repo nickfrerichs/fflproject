@@ -43,6 +43,34 @@ class Load_content extends MY_User_Controller{
     }
 
 
+    function ww_player_list()
+    {
+
+        # NICK YOU NEED TO MAKE THIS WORK NEXT
+
+        $this->load->model('myteam/waiverwire_model');
+        $this->load->model('myteam/myteam_roster_model');
+
+        $nfl_players = $this->waiverwire_model->get_nfl_players(10, 10, '', '', '', true);
+
+        $view_data['total'] = $nfl_players['count'];
+        $view_data['players'] = $nfl_players['result'];
+        $view_data['per_page'] = $this->per_page;
+        $view_data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+        $view_data['byeweeks'] = $this->common_model->get_byeweeks_array();
+        //$this->load->view('user/myteam/waiverwire/ajax_pickup_table',$data);
+
+        // BEGIN VIEW
+        $this->data['html'] = $this->load->view('player_search/ajax_ww_player_list',$view_data,True);
+        // END VIEW
+
+
+        $this->data['success'] = True;
+
+
+        echo json_encode($this->data);
+    }
+
     function news_items()
     {
         $this->load->model('league/news_model');

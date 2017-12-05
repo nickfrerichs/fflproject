@@ -5,10 +5,11 @@
     <div class="modal" id="set-keepers-modal">
         <div class="modal-background"></div>
         <div class="modal-card">
-            <div class="modal-card-head">
+            <header class="modal-card-head">
                <p class="modal-card-title">Keepers</p>
-            </div>
-            <div class="modal-card-body">
+               <button class="delete modal-close-button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
                 <h5>Keepers</h5>
                 <table class="table is-fullwidth">
                     <thead>
@@ -16,8 +17,12 @@
                     <tbody id="keepers-table">
                     </tbody>
                 </table>
-            </div>
-            <button class="button modal-close-button" aria-label="close">Close</button>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button modal-close-button is-link is-fullwidth is-medium" aria-label="close">Close</button>
+            </footer>
+            <!--  -->
+
         </div>
         
     </div>
@@ -128,12 +133,12 @@
 <?php else: ?>
 <div class="section">
     <div id="myteam-roster-tab">
-
-        <div class="select">
-            <?php if ($keepers_num > 0): ?>
-                <a id="set-keepers" href="#"> Edit Keepers</a>
+    <?php if ($keepers_num > 0): ?>
+                <a id="set-keepers" href="#">Edit Keepers</a><br>
 
             <?php endif;?>
+        <div class="select">
+
             <select id="selected-week">
                 <?php foreach($weeks as $w): ?>
                     <?php if($w->week == $this->session->userdata('current_week')): ?>

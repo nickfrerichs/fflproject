@@ -3,7 +3,7 @@
 <!-- Modals that are hidden by default -->
 
 <!-- Confirm modal -->
-<div class="reveal" id="confirm-modal" data-reveal data-overlay="true">
+<!-- <div class="reveal" id="confirm-modal" data-reveal data-overlay="true">
     <div id="notclear" class="hide text-center" style="padding-bottom:10px;">Players waivers have not cleared, you'll be notified when they do.</div>
     <div class="text-center">
             <div class="drop-text">Drop: No One</div>
@@ -15,10 +15,36 @@
             Cancel
         </button>
     </div>
-</div>
+</div> -->
+
+    <div class="modal" id="confirm-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+               <p class="modal-card-title">Waivers not clear</p>
+               <button class="delete modal-close-button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <h5>Waivers not clear</h5>
+                <div id="notclear" class="hide text-center" style="padding-bottom:10px;">Players waivers have not cleared, you'll be notified when they do.</div>
+                
+                <div class="drop-text">Drop: No One</div>
+                <div class="pickup-text" style="padding-bottom:10px;">Pick up: No One</div>
+                <button class="button" id="confirm-drop">Confirm</button>
+                <button class="button" id="cancel-drop" data-close aria-label="Close modal">Cancel</button>
+
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button modal-close-button is-link is-fullwidth is-medium" aria-label="close">Close</button>
+            </footer>
+            <!--  -->
+
+        </div>
+        
+    </div>
 
 <!-- Drop modal -->
-<div class="reveal" id="drop-modal" data-reveal data-overlay="true">
+<!-- <div class="reveal" id="drop-modal" data-reveal data-overlay="true">
     <div class="text-center">
             <div>
                 <div class="text-center">
@@ -38,14 +64,47 @@
                 </button>
             </div>
     </div>
-</div>
+</div> -->
+
+
+
+<div class="modal" id="drop-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+               <p class="modal-card-title">Drop Player</p>
+               <button class="delete modal-close-button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <h5>Drop player</h5>
+
+                <table class="table table-border table-condensed text-center table-striped table-hover">
+                    <thead>
+                        <th colspan=3 class="text-center">Player</th>
+                    </thead>
+                    <tbody id="ww-drop-table" data-playerid="0">
+
+                    </tbody>
+                </table>
+
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button modal-close-button is-link is-fullwidth is-medium" aria-label="close">Close</button>
+            </footer>
+            <!--  -->
+
+        </div>
+        
+    </div>
+
+
 <!-- End Modals -->
 
-<div class="row align-middle align-justify small-unstack callout">
-    <div class="columns small-12 medium-4 text-center">
-        <h5>Waiver wire</h5>
+<div class="columns section">
+    <div class="column">
+        <h5 class="is-size-4">Waiver wire</h5>
     </div>
-    <div class="columns small-12 medium-8 text-center">
+    <div class="column">
         <a href="<?=site_url('myteam/waiverwire/priority')?>">Priority & Rules</a> |
         <a href="<?=site_url('myteam/waiverwire/log')?>">Log</a>
         <?php if(!$this->session->userdata('offseason')): ?>
@@ -54,11 +113,12 @@
     </div>
     
 </div>
+
 <?php if(count($pending) > 0): ?>
-    <div class="row callout">
-        <div class="columns">
-            <h6>Pending Requests</h6>
-            <table class="table-condensed">
+    <div class="columns section">
+        <div class="column">
+            <h6 class="is-size-5">Pending Requests</h6>
+            <table class="table">
                 <thead>
                     <th>Clear Time</th><th>Pick Up</th><th>Drop</th>
                 </thead>
@@ -78,7 +138,7 @@
                 ?>
                 <tr>
                     <td>
-                        <button class="button tiny cancel-request" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
+                        <button class="button cancel-request" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
                     </td>
                     <td>
                         <?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)
@@ -105,14 +165,14 @@
 <?php else: ?>
 
 <!-- Search options -->
-<div class="row callout">
-    <div class="columns">
-        <div class="row align-center">
-            <div class="search-group columns small-12 medium-8">
+<div class="columns section">
+    <div class="column">
+        <div class="columns">
+            <div class="column">
                 <input type="text" class="player-list-text-input" data-for="ww-list" placeholder="Search">
             </div>
 
-            <div class='sort-group columns small-12 medium-4'>
+            <div class='column'>
                 <select data-for="ww-list" class="player-list-position-select">
                         <option value="0">All</option>
                     <?php foreach ($pos as $p): ?>
@@ -122,9 +182,9 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="columns">
-                <table class="table table-condensed" >
+        <div class="columns">
+            <div class="column">
+                <table class="table" >
                     <thead>
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="position" class="player-list-a-sort">Position</a></th>
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="last_name" class="player-list-a-sort">Name</a></th>
@@ -134,23 +194,23 @@
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="points" class="player-list-a-sort">Points</a></th>
                         <th><Team</th>
                     </thead>
-                    <tbody id="ww-list" data-by="points" data-order="desc" data-url="<?=site_url('player_search/ajax_ww_player_list')?>">
+                    <tbody id="ww-list" data-by="points" data-order="desc" data-url="<?=site_url('load_content/ww_player_list')?>">
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="row align-center">
-            <div class="columns text-right">
+        <div class="columns">
+            <div class="column">
                 <ul class="pagination" role="navigation" aria-label="Pagination">
                     <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="ww-list">Previous</a></li>
                 </ul>
             </div>
-            <div class="columns small-12 medium-3 text-center small-order-3 medium-order-2">
+            <div class="column">
                 <div class="player-list-total" data-for="ww-list"></div>
                 <br class="show-for-small-only">
             </div>
-            <div class="columns text-left small-order-2 medium-order-3">
+            <div class="column">
                 <ul class="pagination" role="navigation" aria-label="Pagination">
                     <li class="pagination-next"><a href="#" class="player-list-next" data-for="ww-list">Next</a></li>
                 </ul>
@@ -280,7 +340,7 @@
 
     function reloadPage()
     {
-        $(updatePlayerList("ww-list"));
+        $(loadContent('ww-list'));
         url = "<?=site_url('myteam/waiverwire/ajax_drop_table')?>";
         $.post(url,{},function(data){ $("#ww-drop-table").html(data); });
 
