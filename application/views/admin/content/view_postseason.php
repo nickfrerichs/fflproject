@@ -11,27 +11,27 @@
     </div>
 </div>
 
-    <?php if (count($content) > 0): ?>
-        <div class="row">
-            <div class="columns">
-                <h5><?=$content->title?></h5>
-            </div>
+<?php if (count($content) > 0): ?>
+    <div class="row">
+        <div class="columns">
+            <h5><?=$content->title?></h5>
         </div>
-        <div class="row">
-            <div class="columns">
-                <?=$content->data?>
-            </div>
+    </div>
+    <div class="row">
+        <div class="columns">
+            <?=$content->data?>
         </div>
-        <div class="row">
-            <div class="columns">
-                <a href="<?=site_url('admin/content/edit_postseason/'.$selected_year)?>">Edit</a>
-            </div>
+    </div>
+    <div class="row">
+        <div class="columns">
+            <a href="<?=site_url('admin/content/edit_postseason/'.$selected_year)?>">Edit</a>
         </div>
-
-        <div class="row">
-            <div class="columns">
-         page not created yet, do you want to create it? (<a href="<?=site_url('admin/content/edit_postseason/'.$selected_year)?>">Yes</a>)
-            </div>
+    </div>
+<?php else:?>
+    <div class="row">
+        <div class="columns">
+        page not created yet, do you want to create it? (<a href="<?=site_url('admin/content/create_postseason/'.$selected_year)?>">Yes</a>)
         </div>
-    <?php endif; ?>
+    </div>
+<?php endif; ?>
 

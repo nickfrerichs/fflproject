@@ -23,8 +23,28 @@ class Content_model extends MY_Model
             $year = $this->current_year;
         $row = $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
                 ->where('text_id','playoffs')->where('year',$year)->get()->row();
+
         return $row;
         
+    }
+
+    function create_postseason_content($year=0)
+    {
+        if ($year == 0)
+            $year = $this->current_year;
+        $row = $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
+                ->where('text_id','playoffs')->where('year',$year)->get()->row();
+        if (count($row) == 0)
+        {
+            $data = array('data' => '',
+                        'title' => '',
+                        'year' => $year,
+                        'date_posted' => '0000-00-00 00:00:00',
+                        'last_updated' => t_mysql(time()),
+                        'league_id' => $this->leagueid,
+                        'text_id' => 'playoffs');
+            $this->db->insert('content',$data);
+        }
     }
 
     function get_news_data()
