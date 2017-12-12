@@ -12,7 +12,7 @@ class Load_content extends MY_User_Controller{
         $this->load->model('myteam/waiverwire_model');
         $this->load->model('player_search_model');
 
-        $this->data = array('success' => FALSE, 'count' => 0, 'total' => 0);
+        $this->data = array('success' => FALSE);
 
         // Defaults
         $this->limit = 10;
@@ -46,16 +46,17 @@ class Load_content extends MY_User_Controller{
     function ww_player_list()
     {
 
-        # NICK YOU NEED TO MAKE THIS WORK NEXT
+        # NICK YOU NEED TO MAKE THIS WORK NEXT, ADD NEXT BUTTONS TO ADD MORE LIKE NEWS DOES
 
         $this->load->model('myteam/waiverwire_model');
         $this->load->model('myteam/myteam_roster_model');
 
-        $nfl_players = $this->waiverwire_model->get_nfl_players(10, 10, '', '', '', true);
-
+        $nfl_players = $this->waiverwire_model->get_nfl_players(10, 0, '');
+  
         $view_data['total'] = $nfl_players['count'];
         $view_data['players'] = $nfl_players['result'];
-        $view_data['per_page'] = $this->per_page;
+        $view_data['per_page'] = 10;
+        $view_data['in_page'] = 1;
         $view_data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
         $view_data['byeweeks'] = $this->common_model->get_byeweeks_array();
         //$this->load->view('user/myteam/waiverwire/ajax_pickup_table',$data);

@@ -31,6 +31,7 @@ function loadContent(targetSel)
 
         if(data.success)
         {
+            debug_out(data);
             $("#"+targetSel).html(data.html);
 
             $('.lc-remaining[data-for="'+targetSel+'"]').text(data.total-data.count);

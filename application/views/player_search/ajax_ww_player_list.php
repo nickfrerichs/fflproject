@@ -1,4 +1,4 @@
-<?php foreach($this->data['players'] as $p):?>
+<?php foreach($players as $p):?>
     <?php if ($p->clear_time)
     {
         $remaining = $p->clear_time - time();
@@ -22,8 +22,8 @@
         ?>
         </td>
         <td><?=$p->club_id?></td>
-        <td class="hide-for-extra-small"><?=$this->data['matchups'][$p->club_id]['opp']?></td>
-        <td><span class="hide-for-small-only">Week </span><?=$this->data['byeweeks'][$p->club_id]?></td>
+        <td class="hide-for-extra-small"><?=$matchups[$p->club_id]['opp']?></td>
+        <td><span class="hide-for-small-only">Week </span><?=$byeweeks[$p->club_id]?></td>
         <td><?=$p->points?></td>
         <td class="text-center" style="width:17%">
             <?php if($p->clear_time): ?>
@@ -35,8 +35,5 @@
         </td>
     </tr>
 <?php endforeach; ?>
-<tr id="ww-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$this->data['total']?>">
+<tr id="ww-list-data" class="hide" data-page="<?=$in_page?>" data-perpage="<?=$per_page?>" data-total="<?=$total?>">
 </tr>
-<script>
-$(".has-tip").foundation();
-</script>
