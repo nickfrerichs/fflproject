@@ -60,11 +60,11 @@ class Scores extends MY_User_Controller{
         foreach($data['matchups'] as $key => $m)
         {
 
-            if ($m['home_team']['team']->logo)
+            if (isset($m['home_team']['team']->logo) && $m['home_team']['team']->logo)
                 $data['matchups'][$key]['home_team']['thumb'] = $this->myteam_settings_model->get_logo_url($m['home_team']['team']->id,'thumb');
             else
                 $data['matchups'][$key]['home_team']['thumb'] = $this->myteam_settings_model->get_default_logo_url('thumb');
-            if ($m['away_team']['team']->logo)
+            if (isset($m['away_team']['team']->logo) && $m['away_team']['team']->logo)
                 $data['matchups'][$key]['away_team']['thumb'] = $this->myteam_settings_model->get_logo_url($m['away_team']['team']->id,'thumb');
             else
                 $data['matchups'][$key]['away_team']['thumb'] = $this->myteam_settings_model->get_default_logo_url('thumb');
