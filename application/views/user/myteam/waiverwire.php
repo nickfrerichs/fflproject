@@ -114,6 +114,8 @@
     
 </div>
 
+
+<!-- Show pending waiver wire requests, if any -->
 <?php if(count($pending) > 0): ?>
     <div class="columns section">
         <div class="column">
@@ -156,7 +158,6 @@
         </div>
     </div>
 
-
 <?php endif;?>
 
 
@@ -164,27 +165,31 @@
     <?php $this->load->view('user/offseason'); ?>
 <?php else: ?>
 
-<!-- Search options -->
+<!-- Show the main waiver wire player list for picking up new players -->
 <div class="columns section">
     <div class="column">
         <div class="columns">
             <div class="column">
-                <input type="text" class="player-list-text-input" data-for="ww-list" placeholder="Search">
+                <input type="text" class="player-list-text-input input" data-for="ww-list" placeholder="Search">
             </div>
 
             <div class='column'>
-                <select data-for="ww-list" class="player-list-position-select">
-                        <option value="0">All</option>
-                    <?php foreach ($pos as $p): ?>
-                        <option value="<?=$p->id?>"><?=$p->text_id?></option>
-                    <?php endforeach; ?>
-                </select>
+                <div class="control">
+                    <div class="select">
+                        <select data-for="ww-list" class="player-list-position-select">
+                                <option value="0">All</option>
+                            <?php foreach ($pos as $p): ?>
+                                <option value="<?=$p->id?>"><?=$p->text_id?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="columns">
             <div class="column">
-                <table class="table" >
+                <table class="table is-fullwidth" >
                     <thead>
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="position" class="player-list-a-sort">Position</a></th>
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="last_name" class="player-list-a-sort">Name</a></th>
@@ -194,13 +199,15 @@
                         <th><a href="#" data-order="asc" data-for="ww-list" data-by="points" class="player-list-a-sort">Points</a></th>
                         <th><Team</th>
                     </thead>
-                    <tbody id="ww-list" data-by="points" data-order="desc" data-url="<?=site_url('load_content/ww_player_list')?>">
+                    <tbody id="ww-list" data-by="points" data-per-page="10" data-order="desc" data-url="<?=site_url('load_content/ww_player_list')?>">
                     </tbody>
                 </table>
+                <?php $this->load->view('load_content/template/load_more_buttons',array('for' => 'ww-list'));?>
             </div>
         </div>
+        
 
-        <div class="columns">
+        <!-- <div class="columns">
             <div class="column">
                 <ul class="pagination" role="navigation" aria-label="Pagination">
                     <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="ww-list">Previous</a></li>
@@ -215,7 +222,7 @@
                     <li class="pagination-next"><a href="#" class="player-list-next" data-for="ww-list">Next</a></li>
                 </ul>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 <?php endif;?>

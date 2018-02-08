@@ -28,7 +28,7 @@ function loadContent(targetSel)
     var url = $('#'+targetSel).data('url');
 
     $.post(url, {'limit':limit}, function(data){
-
+        console.log(data);
         if(data.success)
         {
             debug_out(data);

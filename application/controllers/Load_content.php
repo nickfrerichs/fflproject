@@ -51,17 +51,19 @@ class Load_content extends MY_User_Controller{
         $this->load->model('myteam/waiverwire_model');
         $this->load->model('myteam/myteam_roster_model');
 
-        $nfl_players = $this->waiverwire_model->get_nfl_players(10, 0, '');
+        $nfl_players = $this->waiverwire_model->get_nfl_players($this->limit, 0, '');
   
         $view_data['total'] = $nfl_players['count'];
         $view_data['players'] = $nfl_players['result'];
-        $view_data['per_page'] = 10;
-        $view_data['in_page'] = 1;
+        #$view_data['per_page'] = 10;
+        #$view_data['in_page'] = 1;
         $view_data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
         $view_data['byeweeks'] = $this->common_model->get_byeweeks_array();
         //$this->load->view('user/myteam/waiverwire/ajax_pickup_table',$data);
 
         // BEGIN VIEW
+        $this->data['total'] = $view_data['total'];
+        $this->data['count'] = $this->limit;
         $this->data['html'] = $this->load->view('player_search/ajax_ww_player_list',$view_data,True);
         // END VIEW
 
