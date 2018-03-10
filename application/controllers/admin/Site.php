@@ -15,6 +15,7 @@ class Site extends MY_Admin_Controller{
     {
         $data = array();
         $data['leagues'] = $this->site_model->get_leagues();
+        $this->bc["Leagues"] = "";
         $this->admin_view('admin/site/manage_leagues', $data);
     }
 
@@ -62,20 +63,28 @@ class Site extends MY_Admin_Controller{
         $data['owners'] = $this->site_model->get_league_owners_array($leagueid);
         //print_r($data['owners']);
 
-        // print out the tbody
+
+
         ?>
             <?php foreach($data['owners'] as $id => $o): ?>
 
                 <tr>
                     <td class="text-left"><?=$o->first_name.' '.$o->last_name?></td>
                     <td>
-                        <div class="switch small">
-                            <input  class="switch-input toggle-control" data-item="<?=$id?>" data-item2="<?=$leagueid?>" data-url="<?=site_url('admin/site/ajax_toggle_league_admin')?>"
+                        <?=$this->load->view('template/component/toggle_switch',
+                                                array('id' => 'admin-'.$id,
+                                                      'var1' => $id,
+                                                      'var2' => $leagueid,
+                                                      'url' => site_url('admin/site/ajax_toggle_league_admin'),
+                                                      'is_checked' => array_key_exists($id, $data['admins'])),TRUE);
+                        ?>
+                        <!-- <div class="field">
+                            <input  class="switch toggle-control is-info" data-var1="<?=$id?>" data-var2="<?=$leagueid?>" data-url="<?=site_url('admin/site/ajax_toggle_league_admin')?>"
                                 id="admin-<?=$id?>" type="checkbox" name="adminSwitch" <?php if(array_key_exists($id, $data['admins'])){echo "checked";}?>>
-                            <label class="switch-paddle" for="admin-<?=$id?>">
+                            <label for="admin-<?=$id?>">
                             </label>
 
-                        </div>
+                        </div> -->
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -85,9 +94,9 @@ class Site extends MY_Admin_Controller{
     public function ajax_toggle_league_admin()
     {
         $response = array("success" => false);
-        $userid = $this->input->post('item');
-        $leagueid = $this->input->post('item2');
-        $action = $this->input->post('action');
+        $userid = $this->input->post('var1');
+        $leagueid = $this->input->post('var2');
+        //$action = $this->input->post('action');
 
         $response['currentValue'] = $this->site_model->toggle_league_admin($userid, $leagueid);
         if ($userid == $this->session->userdata('user_id'))
@@ -111,35 +120,38 @@ class Site extends MY_Admin_Controller{
 
     public function ajax_change_item()
     {
-        $return = array();
-        $type = $this->input->post('type');
+        $return = array('success' => FALSE);
+        //$type = $this->input->post('type');
         $value = $this->input->post('value');
-        $id = $this->input->post('var1');
-        if($type == "joinpassword")
+        $id = $this->input->post('id');
+
+        if ($id == '#join-password')
         {
-            $this->site_model->set_joinpassword($id, $value);
-            $return['success'] = True;
+            $league_id = $this->input->post('var1');
+            $this->site_model->set_joinpassword($league_id,$value);
+            $return['success'] = TRUE;
             $return['value'] = $value;
         }
-        if($type == "sitename")
+
+        if($id == "#sitename")
         {
             $this->site_model->set_sitename($value);
             $return['success'] = True;
             $return['value'] = $value;
         }
-        if($type == "week")
+        if($id == "#debug-week")
         {
             $this->site_model->set_debug_week($value);
             $return['success'] = True;
             $return['value'] = $value;
         }
-        if($type == "year")
+        if($id == "#debug-year")
         {
             $this->site_model->set_debug_year($value);
             $return['success'] = True;
             $return['value'] = $value;
         }
-        if($type == "weektype")
+        if($id == "#debug-weektype")
         {
             $this->site_model->set_debug_weektype($value);
             $return['success'] = True;
@@ -167,12 +179,14 @@ class Site extends MY_Admin_Controller{
     public function ajax_toggle_site_setting()
     {
         $response = array("success" => false);
-        $field = $this->input->post('item');
+        $col = $this->input->post('var1');
 
-        $response['currentValue'] = $this->site_model->toggle_site_setting($field);
+        $response['value'] = $this->site_model->toggle_site_setting($col);
 
         $this->load->model('security_model');
         $this->security_model->set_session_variables();
+
+        $response["success"] = True;
 
         echo json_encode($response);
     }

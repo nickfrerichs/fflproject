@@ -146,10 +146,10 @@ class Site_model extends MY_Model
         }
     }
 
-    function toggle_site_setting($field)
+    function toggle_site_setting($col)
     {
-        $val = !$this->db->select($field)->from('site_settings')->get()->row()->{$field};
-        $this->db->update('site_settings',array($field => $val));
+        $val = !$this->db->select($col)->from('site_settings')->get()->row()->{$col};
+        $this->db->update('site_settings',array($col => $val));
         return $val;
     }
 

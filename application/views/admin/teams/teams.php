@@ -1,21 +1,19 @@
 
-
-<div class="row">
+<div class="column">
     <div class="columns">
-        <div class="row">
-            <div class="columns">
-                <small>Invite URL: <a href="<?=$invite_url?>"><?=$invite_url?></a></small>
-            </div>
+        <div class="column">
+            <small>Invite URL: <a href="<?=$invite_url?>"><?=$invite_url?></a></small>
+            <table class="table table-condensed is-fullwidth">
+                <thead>
+                    <th>Team</th><th>Division</th><th>Owner</th><th class="text-center" style="width:200px">Active</th>
+                </thead>
+                <tbody id="team-list">
+                </tbody>
+            </table>
         </div>
-        <table class="table table-condensed">
-            <thead>
-                <th>Team</th><th>Division</th><th>Owner</th><th class="text-center" style="width:200px">Active</th>
-            </thead>
-            <tbody id="team-list">
-            </tbody>
-        </table>
     </div>
 </div>
+
 
 <script>
 $(document).ready(function(){
