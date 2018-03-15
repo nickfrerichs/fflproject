@@ -74,6 +74,30 @@ class Load_content extends MY_User_Controller{
         echo json_encode($this->data);
     }
 
+
+    function admin_player_list()
+    {
+//        function get_nfl_players($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',
+//        $show_owned = true, $show_inactive = false, $hide_non_lea = true)
+        if ($this->session->userdata('is_league_admin'))
+        {
+            $nfl_players = $this->player_search_model->get_nfl_players($this->limit);
+            $this->load->model('myteam/myteam_roster_model');
+            $view_data['total'] = $nfl_players['count'];
+            $view_data['players'] = $nfl_players['result'];
+            // $view_data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+
+            //$this->load->view('player_search/ajax_full_player_list',$this->data);
+            $this->data['total'] = $view_data['total'];
+            $this->data['count'] = $this->limit;
+            $this->data['html'] = $this->load->view('admin/rosters/ajax_player_search',$view_data,True);
+
+            $this->data['success'] = True;
+
+            echo json_encode($this->data);
+        }
+    }
+
     function news_items()
     {
         $this->load->model('league/news_model');

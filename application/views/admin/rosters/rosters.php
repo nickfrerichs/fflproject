@@ -1,101 +1,85 @@
 <?php $this->load->view('template/modals/stat_popup'); ?>
 
-<!-- Add modal -->
-<div class="reveal large" id="add-modal" data-reveal data-overlay="true" data-multiple-opened-"true">
-    <div>
-            <div>
-                <div class="text-center">
-                    <h5>Add Player to <?=$team_name?></h5>
-                </div>
+<?php //Body of the add-player-modal, it's a listing of players
 
-                <div class="row align-center">
-                    <div class="columns small-8">
-                        <input type="text" class="player-list-text-input" data-for="main-list" placeholder="Player search">
-                        <select data-for="main-list" class="player-list-position-select">
-                            <option value="0">All</option>
-                            <?php foreach($positions as $pos): ?>
-                                <option value="<?=$pos->id?>"><?=$pos->text_id?></option>
-                            <?php endforeach;?>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="columns">
-                        <table class="table-condensed" >
-                            <thead>
-                                <th><a href="#" data-order="asc" data-for="main-list" data-by="last_name" class="player-list-a-sort">Name</a></th>
-                                <th><a href="#" data-order="asc" data-for="main-list" data-by="position" class="player-list-a-sort">Position</a></th>
-                                <th><a href="#" data-order="asc" data-for="main-list" data-by="club_id" class="player-list-a-sort">NFL Team</a></th>
-                                <th></th>
-                            </thead>
-                            <tbody id="main-list" data-by="points" data-order="desc" data-url="<?=site_url('player_search/ajax_admin_get_player_list')?>">
+$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+$headers['Position'] = array('by' => 'position', 'order' => 'asc');
+$headers['NFL Team'] = array('by' => 'club_id', 'order' => 'asc');
+//$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
+//$headers['Points'] = array('by' => 'points', 'order' => 'asc');
+$headers['Team'] = array();
 
-                            </tbody>
-                        </table>
+$pos_dropdown['All'] = 0;
+foreach($positions as $p)
+    $pos_dropdown[$p->text_id] = $p->id;
 
-                        <div class="row align-center">
-                            <div class="columns text-right">
-                                <ul class="pagination" role="navigation" aria-label="Pagination">
-                                    <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="main-list">Previous</a></li>
-                                </ul>
-                            </div>
-                            <div class="columns small-12 medium-3 text-center small-order-3 medium-order-2">
-                                <div class="player-list-total" data-for="main-list"></div>
-                                <br class="show-for-small-only">
-                            </div>
-                            <div class="columns text-left small-order-2 medium-order-3">
-                                <ul class="pagination" role="navigation" aria-label="Pagination">
-                                    <li class="pagination-next"><a href="#" class="player-list-next" data-for="main-list">Next</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+$body = $this->load->view('template/component/player_search_table',
+                array('id' => 'admin-player-add-list',
+                      'url' => site_url('load_content/admin_player_list'),
+                      'order' => 'desc',
+                      'by' => 'points',
+                      'pos_dropdown' => $pos_dropdown,
+                      'headers' => $headers),True);
 
-                <button class="close-button" data-close aria-label="Close modal" type="button">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-    </div>
-</div>
+
+?>
+
+
+<?php 
+//     // League admins modal
+
+    $this->load->view('template/component/modal', array('id' => 'add-player-modal',
+                                                          'title' => 'Add Player',
+                                                          'body' => $body,
+                                                         'reload_on_close' => True));
+?>
+
 
 <!-- End Modals -->
 
-<div class="row">
-    <div class="columns">
+<div class="section">
+    <div class="columns is-centered">
+        <div class="column fflp-med-container">
         <h5><?=$team_name?></h5>
-    </div>
-</div>
 
-<div class="row callout">
-    <div class="columns">
-    <div id='teamlist'>
-        <?php //print_r($roster); ?>
-        <a href="#" data-open="add-modal">Add player </a><br>
-        <a href="<?=site_url('admin/rosters/lineup/'.$teamid)?>">Edit Starting Lineup</a><br><br>
-        <h6>Current Roster</h6>
-        <table class="table-condensed table-striped">
-            <thead>
-                <th>Player</th><th>Team</th><th>Position</th><th></th>
-            </thead>
-            <?php foreach ($roster as $player){ ?>
-            <tr>
-                <td><?php echo $player->short_name; ?></td>
-                <td><?php echo $player->club_id; ?></td>
-                <td><?php echo $player->position; ?></td>
-                <td>
-                    <a href='<?php echo site_url('admin/rosters/removeplayer/'.$teamid.'/'.$player->player_id); ?>'>remove</a>
-                </td>
-            </tr>
+        <div id='teamlist'>
+            <?php //print_r($roster); ?>
+            <a id="add-player-button" href="#">Add player </a><br>
+            <a href="<?=site_url('admin/rosters/lineup/'.$teamid)?>">Edit Starting Lineup</a><br><br>
+            <h6>Current Roster</h6>
+            <table class="table is-fullwidth fflp-table-fixed">
+                <thead>
+                    <th>Player</th><th>Team</th><th>Position</th><th></th>
+                </thead>
+                <?php foreach ($roster as $player): ?>
+                <tr>
+                    <td><?php echo $player->short_name; ?></td>
+                    <td><?php echo $player->club_id; ?></td>
+                    <td><?php echo $player->position; ?></td>
+                    <td>
+                        <a href='<?php echo site_url('admin/rosters/removeplayer/'.$teamid.'/'.$player->player_id); ?>'>remove</a>
+                    </td>
+                </tr>
 
 
-            <?php }?>
-        </table>
+                <?php endforeach; 
+                ?>
+            </table>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+
+    // Show modal and load list of admins
+    $("#add-player-button").on('click',function(){
+        $(loadContent("admin-player-add-list"));
+        $("#add-player-modal").addClass('is-active');
+        
+    });
+
+
     $("#add-modal").on("open.zf.reveal",function(){
         $(updatePlayerList("main-list"));
     })

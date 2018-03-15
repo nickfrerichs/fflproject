@@ -168,61 +168,32 @@
 <!-- Show the main waiver wire player list for picking up new players -->
 <div class="columns section">
     <div class="column">
-        <div class="columns">
-            <div class="column">
-                <input type="text" class="player-list-text-input input" data-for="ww-list" placeholder="Search">
-            </div>
 
-            <div class='column'>
-                <div class="control">
-                    <div class="select">
-                        <select data-for="ww-list" class="player-list-position-select">
-                                <option value="0">All</option>
-                            <?php foreach ($pos as $p): ?>
-                                <option value="<?=$p->id?>"><?=$p->text_id?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="columns">
-            <div class="column">
-                <table class="table is-fullwidth" >
-                    <thead>
-                        <th><a href="#" data-order="asc" data-for="ww-list" data-by="position" class="player-list-a-sort">Position</a></th>
-                        <th><a href="#" data-order="asc" data-for="ww-list" data-by="last_name" class="player-list-a-sort">Name</a></th>
-                        <th><a href="#" data-order="asc" data-for="ww-list" data-by="club_id" class="player-list-a-sort">NFL Team</a></th>
-                        <th class="hide-for-small-only">Wk <?=$this->session->userdata('current_week')?> Opp.</th>
-                        <th>Bye</th>
-                        <th><a href="#" data-order="asc" data-for="ww-list" data-by="points" class="player-list-a-sort">Points</a></th>
-                        <th><Team</th>
-                    </thead>
-                    <tbody id="ww-list" data-by="points" data-per-page="10" data-order="desc" data-url="<?=site_url('load_content/ww_player_list')?>">
-                    </tbody>
-                </table>
-                <?php $this->load->view('load_content/template/load_more_buttons',array('for' => 'ww-list'));?>
-            </div>
-        </div>
-        
+        <?php //Show the player list using player_search_table component
 
-        <!-- <div class="columns">
-            <div class="column">
-                <ul class="pagination" role="navigation" aria-label="Pagination">
-                    <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="ww-list">Previous</a></li>
-                </ul>
-            </div>
-            <div class="column">
-                <div class="player-list-total" data-for="ww-list"></div>
-                <br class="show-for-small-only">
-            </div>
-            <div class="column">
-                <ul class="pagination" role="navigation" aria-label="Pagination">
-                    <li class="pagination-next"><a href="#" class="player-list-next" data-for="ww-list">Next</a></li>
-                </ul>
-            </div>
-        </div> -->
+        $headers['Position'] = array('by' => 'position', 'order' => 'asc');
+        $headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+        $headers['NFL Team'] = array('by' => 'club_id', 'order' => 'asc');
+        $headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
+        $headers['Bye'] = array();
+        $headers['Points'] = array('by' => 'points', 'order' => 'asc');
+        $headers['Team'] = array();
+
+        $pos_dropdown['All'] = 0;
+        foreach($pos as $p)
+            $pos_dropdown[$p->text_id] = $p->id;
+
+        $this->load->view('template/component/player_search_table',
+                        array('id' => 'ww-list',
+                            'url' => site_url('load_content/ww_player_list'),
+                            'order' => 'desc',
+                            'by' => 'points',
+                            'pos_dropdown' => $pos_dropdown,
+                            'headers' => $headers));
+
+
+        ?>
     </div>
 </div>
 <?php endif;?>

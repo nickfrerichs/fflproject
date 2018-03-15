@@ -25,9 +25,13 @@ function loadContent(targetSel)
     // $.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
     // 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
     var url = $('#'+targetSel).data('url');
+    
+    console.log(url);
+    console.log(limit);
 
     $.post(url, {'limit':limit}, function(data){
         console.log(data);
+        console.log("Post succeeded.");
         if(data.success)
         {
             debug_out(data);
@@ -41,8 +45,10 @@ function loadContent(targetSel)
             $("#"+targetSel).data('num-displayed',data.count);
 
         }
-    },'json');
-
+    },'json').fail(function(){
+        console.log("failed");
+    });
+    console.log(targetSel);
     // Clear the ajax wait
     ajax_waits[aw_key] = false;
 }

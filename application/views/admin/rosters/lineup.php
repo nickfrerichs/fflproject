@@ -1,5 +1,5 @@
 <!-- Start other modal -->
-<div class="reveal large" id="start-other-modal" data-reveal data-overlay="true" data-multiple-opened-"true">
+<!-- <div class="reveal large" id="start-other-modal" data-reveal data-overlay="true" data-multiple-opened-"true">
     <div>
         <div>
             <div class="text-center">
@@ -56,35 +56,38 @@
             </button>
         </div>
     </div>
-</div>
+</div> -->
 
-<div class="row callout warning" style="max-width:800px;">
+<div class="section">
     <b>Note:</b>No checks are done to determing roster/starter limits, if that player is already started on another team, or if the player is owned.
     Make sure you know what you are doing.<br><br>If it's a past year/week, you'll need to recalculate statistics.
+
+    <h5 class="text-center">Edit Lineup</h5>
+    <div class="columns is-centered">
+
+        <div class="column fflp-med-container">
+            Year:
+            <select id="lineup-year-select">
+                <?php foreach($lineup_years as $y): ?>
+                    <option><?=$y->year?></option>
+                <?php endforeach;?>
+            </select>
+        </div>
+        <div class="column fflp-med-container">
+            Week:
+            <select id="lineup-week-select">
+
+            </select>
+        </div>
+    </div>
+
 </div>
 
-<div class="row callout" style="max-width:800px;">
-    <div class="columns">
-        <h5 class="text-center">Edit Lineup</h5>
-        <div class="row">
-            <div class="columns small-6">
-                Year:
-                <select id="lineup-year-select">
-                    <?php foreach($lineup_years as $y): ?>
-                        <option><?=$y->year?></option>
-                    <?php endforeach;?>
-                </select>
-            </div>
-            <div class="columns small-6">
-                Week:
-                <select id="lineup-week-select">
-
-                </select>
-            </div>
-        </div>
-        <div>
+<div class="section">
+    <div class="columns is-centered">
+        <div class="column">
             <h5>Starters</h5>
-            <table class="table-condensed">
+            <table class="table">
                 <thead>
                     <th style="width:60%">Player</th>
                     <th style="width:20%" class="text-center">Starting Pos.</th>
@@ -94,7 +97,7 @@
                 </tbody>
             </table>
             <h5>Bench</h5>
-            <table class="table-condensed">
+            <table class="table">
                 <thead>
                     <th style="width:80%">Player</th>
                     <th style="width:20%;" class="text-center">Start As</th>
@@ -102,12 +105,15 @@
                 <tbody id="bench">
                 </tbody>
             </table>
+
+            <div>
+                <a href="#" data-open="start-other-modal">Start Another player</a>
+            </div>
         </div>
-        <div>
-            <a href="#" data-open="start-other-modal">Start Another player</a>
-        </div>
-    </div>
+
 </div>
+
+
 <script>
 
 updateLineupWeeks();
