@@ -16,7 +16,7 @@
 							<td id="sitename-field" class="text-center" colspan=2>
 
 
-								<?php $this->load->view('template/component/editable_text',array('id' => 'sitename', 
+								<?php $this->load->view('components/editable_text',array('id' => 'sitename', 
                                                                                           	  'value' => $settings->name,
                                                                                           		'url' => site_url('admin/site/ajax_change_item')));?>
 
@@ -31,7 +31,7 @@
 						<tr>
 							<td colspan=2><span data-tooltip class="has-tip top" title="Show debug info site-wide for all users.">Debug On</span></td>
 							<td>
-								<?php $this->load->view('template/component/toggle_switch',
+								<?php $this->load->view('components/toggle_switch',
                                                 array('id' => 'debug-user',
 													  'url' => site_url('admin/site/ajax_toggle_site_setting'),
 													  'var1' => 'debug_user',
@@ -42,7 +42,7 @@
 						<tr>
 							<td colspan=2><span data-tooltip class="has-tip top" title="Show debug info site-wide for Site Admins only.">Debug On, Admins-only</span></td>
 							<td>
-								<?php $this->load->view('template/component/toggle_switch',
+								<?php $this->load->view('components/toggle_switch',
                                                 array('id' => 'debug-admin',
 													  'url' => site_url('admin/site/ajax_toggle_site_setting'),
 													  'var1' => 'debug_admin',
@@ -58,7 +58,7 @@
 									// Inputs: $id, $value, $blank_value, $url, $options, $selected_val
 									$options = array('Off' => '-1');
 									for($i = $current_year; $i >= $current_year-10; $i--){$options[$i] = $i;}
-									$this->load->view('template/component/editable_select',
+									$this->load->view('components/editable_select',
 												array('id' => 'debug-year',
 													  'options' => $options,
 													  'url' => site_url('admin/site/ajax_change_item'),
@@ -73,7 +73,7 @@
 									// Inputs: $id, $value, $blank_value, $url, $options, $selected_val
 									$options = array('Off' => '-1');
 									for($i = 0; $i <= 17; $i++){$options[$i] = $i;}
-									$this->load->view('template/component/editable_select',
+									$this->load->view('components/editable_select',
 												array('id' => 'debug-week',
 													  'options' => $options,
 													  'url' => site_url('admin/site/ajax_change_item'),
@@ -88,7 +88,7 @@
 									// Inputs: $id, $value, $blank_value, $url, $options, $selected_val
 									$options = array('Off' => '-1');
 									foreach($week_types as $id => $text_id){$options[$text_id] = $id;}
-									$this->load->view('template/component/editable_select',
+									$this->load->view('components/editable_select',
 												array('id' => 'debug-weektype',
 													  'options' => $options,
 													  'url' => site_url('admin/site/ajax_change_item'),

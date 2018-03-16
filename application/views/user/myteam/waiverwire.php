@@ -184,7 +184,7 @@
         foreach($pos as $p)
             $pos_dropdown[$p->text_id] = $p->id;
 
-        $this->load->view('template/component/player_search_table',
+        $this->load->view('components/player_search_table',
                         array('id' => 'ww-list',
                             'url' => site_url('load_content/ww_player_list'),
                             'order' => 'desc',

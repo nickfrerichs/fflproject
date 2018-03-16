@@ -102,7 +102,9 @@ class Rosters extends MY_Admin_Controller{
             <tr>
                 <td><?=$p->first_name?> <?=$p->last_name?> (<?=$p->pos_text?> - <?=$p->club_id?>)</td>
                 <td class="text-center"><?=$p->lea_pos?></td>
-                <td class="text-center"><button class="button small admin-sit-button" data-id="<?=$p->player_id?>">Sit</button></td>
+                <td class="has-text-centered">
+                    <button class="button is-small is-link admin-sit-button" data-id="<?=$p->player_id?>">Sit</button>
+                </td>
             </tr>
 
         <?php endforeach; ?>
@@ -124,10 +126,10 @@ class Rosters extends MY_Admin_Controller{
         <?php foreach ($bench as $p): ?>
             <tr>
                 <td><?=$p->first_name?> <?=$p->last_name?> (<?=$p->pos_text?> - <?=$p->club_id?>)</td>
-                <td class="text-center">
+                <td class="has-text-centered">
                     <?php foreach($pos_lookup as $posid => $pl): ?>
                         <?php if(in_array($p->nfl_position_id, explode(",",$pl['list']))): ?>
-                            <button class="button small admin-start-button" data-id="<?=$p->player_id?>" data-posid="<?=$posid?>"><?=$pl['pos_text']?></button>
+                            <button class="button admin-start-button is-link is-small" data-id="<?=$p->player_id?>" data-posid="<?=$posid?>"><?=$pl['pos_text']?></button>
                         <?php endif;?>
                     <?php endforeach;?>
                 </td>

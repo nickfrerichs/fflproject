@@ -1,8 +1,9 @@
 
-<div class="row">
-    <div class="columns">
-
-        <table class="table" style="max-width:400px;">
+<div class="section">
+    <div class="columns is-centered">
+        <div class="column">
+            <div class="container fflp-med-container">
+        <table class="table is-fullwidth">
             <thead>
                 <th>Symbol</th><th>Text</th><th></th><th></th>
             </thead>
@@ -25,5 +26,7 @@
         </table>
 
         <a href="<?=site_url('admin/standings/notations/add')?>">Add Notation</a>
+        </div>
+        </div>
     </div>
 </div>

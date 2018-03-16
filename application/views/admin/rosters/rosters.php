@@ -1,4 +1,4 @@
-<?php $this->load->view('template/modals/stat_popup'); ?>
+<?php //$this->load->view('template/modals/stat_popup'); ?>
 
 <?php //Body of the add-player-modal, it's a listing of players
 
@@ -13,9 +13,9 @@ $pos_dropdown['All'] = 0;
 foreach($positions as $p)
     $pos_dropdown[$p->text_id] = $p->id;
 
-$body = $this->load->view('template/component/player_search_table',
+$body = $this->load->view('components/player_search_table',
                 array('id' => 'admin-player-add-list',
-                      'url' => site_url('load_content/admin_player_list'),
+                      'url' => site_url('load_content/admin_rosters_player_search'),
                       'order' => 'desc',
                       'by' => 'points',
                       'pos_dropdown' => $pos_dropdown,
@@ -28,7 +28,7 @@ $body = $this->load->view('template/component/player_search_table',
 <?php 
 //     // League admins modal
 
-    $this->load->view('template/component/modal', array('id' => 'add-player-modal',
+    $this->load->view('components/modal', array('id' => 'add-player-modal',
                                                           'title' => 'Add Player',
                                                           'body' => $body,
                                                          'reload_on_close' => True));
@@ -76,7 +76,6 @@ $body = $this->load->view('template/component/player_search_table',
     $("#add-player-button").on('click',function(){
         $(loadContent("admin-player-add-list"));
         $("#add-player-modal").addClass('is-active');
-        
     });
 
 
@@ -84,7 +83,7 @@ $body = $this->load->view('template/component/player_search_table',
         $(updatePlayerList("main-list"));
     })
 
-    $("#main-list").on("click",".add-button",function(){
+    $("#admin-player-add-list").on("click",".add-button",function(){
         var url = "<?=site_url('admin/rosters/ajax_addplayer')?>";
         console.log("<?=$teamid?>");
         var teamid = "<?=$teamid?>";
@@ -94,8 +93,7 @@ $body = $this->load->view('template/component/player_search_table',
             var d = jQuery.parseJSON(data);
 			if (d.success == true)
             {
-                notice(playername+" added to <?=$team_name?>");
-                $(updatePlayerList("main-list"));
+                $(loadContent("admin-player-add-list"));
             }
         });
     });

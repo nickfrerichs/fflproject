@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="control">
-        <a id="<?=$id?>-edit-button" class="button is-info editable-select-edit-button">edit</a>
+        <a id="<?=$id?>-edit-button" class="button is-link editable-select-edit-button">edit</a>
     </div>
     <div class="control">
         <a id="<?=$id?>-cancel-button" class="button is-danger editable-select-cancel-button is-hidden">cancel</a>

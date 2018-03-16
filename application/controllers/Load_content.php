@@ -42,7 +42,6 @@ class Load_content extends MY_User_Controller{
 
     }
 
-
     function ww_player_list()
     {
 
@@ -64,7 +63,7 @@ class Load_content extends MY_User_Controller{
         // BEGIN VIEW
         $this->data['total'] = $view_data['total'];
         $this->data['count'] = $this->limit;
-        $this->data['html'] = $this->load->view('player_search/ajax_ww_player_list',$view_data,True);
+        $this->data['html'] = $this->load->view('load_content/ww_player_list',$view_data,True);
         // END VIEW
 
 
@@ -75,27 +74,52 @@ class Load_content extends MY_User_Controller{
     }
 
 
-    function admin_player_list()
+    function admin_rosters_player_search()
     {
+        $this->common_model->force_league_admin();
 //        function get_nfl_players($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',
 //        $show_owned = true, $show_inactive = false, $hide_non_lea = true)
-        if ($this->session->userdata('is_league_admin'))
-        {
-            $nfl_players = $this->player_search_model->get_nfl_players($this->limit);
-            $this->load->model('myteam/myteam_roster_model');
-            $view_data['total'] = $nfl_players['count'];
-            $view_data['players'] = $nfl_players['result'];
-            // $view_data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
 
-            //$this->load->view('player_search/ajax_full_player_list',$this->data);
-            $this->data['total'] = $view_data['total'];
-            $this->data['count'] = $this->limit;
-            $this->data['html'] = $this->load->view('admin/rosters/ajax_player_search',$view_data,True);
+        $nfl_players = $this->player_search_model->get_nfl_players($this->limit);
+        $this->load->model('myteam/myteam_roster_model');
+        $view_data['total'] = $nfl_players['count'];
+        $view_data['players'] = $nfl_players['result'];
+        // $view_data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
 
-            $this->data['success'] = True;
+        //$this->load->view('player_search/ajax_full_player_list',$this->data);
+        $this->data['total'] = $view_data['total'];
+        $this->data['count'] = $this->limit;
+        $this->data['html'] = $this->load->view('load_content/admin_rosters_player_search',$view_data,True);
 
-            echo json_encode($this->data);
-        }
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
+
+    }
+
+
+    function admin_lineup_player_search()
+    {
+        $this->common_model->force_league_admin();
+
+        $year = $this->input->post('var1');
+
+        $nfl_players = $this->player_search_model->get_nfl_players($this->limit);
+        $this->load->model('myteam/myteam_roster_model');
+
+        $view_data['total'] = $nfl_players['count'];
+        $view_data['players'] = $nfl_players['result'];
+        $view_data['pos_lookup'] = $this->common_model->get_leapos_lookup_array($year);
+
+//        $this->data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+
+        $this->data['total'] = $view_data['total'];
+        $this->data['count'] = $this->limit;
+        $this->data['html'] = $this->load->view('load_content/admin_lineup_player_search',$view_data,True);
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);        
     }
 
     function news_items()
@@ -141,25 +165,25 @@ class Load_content extends MY_User_Controller{
     {
         $this->load->model('myteam/waiverwire_model');
         
-                if($this->leagueid == "")
-                {
-                    $wwdata = array();
-                }
-                else
-                {
-                    $wwdata = $this->waiverwire_model->get_log_data($this->current_year,$this->limit, 0);
-                    $this->data['count'] = count($wwdata['result']);
-                    $this->data['total'] = $wwdata['total'];
-                }
+        if($this->leagueid == "")
+        {
+            $wwdata = array();
+        }
+        else
+        {
+            $wwdata = $this->waiverwire_model->get_log_data($this->current_year,$this->limit, 0);
+            $this->data['count'] = count($wwdata['result']);
+            $this->data['total'] = $wwdata['total'];
+        }
+
+        // $this->per_page = 3;
+        // $data = $this->waiverwire_model->get_log_data($this->current_year,$this->limit, 0, 3);
+        // $waiverwire_log = $data['result'];
         
-                // $this->per_page = 3;
-                // $data = $this->waiverwire_model->get_log_data($this->current_year,$this->limit, 0, 3);
-                // $waiverwire_log = $data['result'];
-                
-                $this->data['html'] = $this->load->view('load_content/news_moves_items',$wwdata,True);
-                $this->data['success'] = true;
-        
-                echo json_encode($this->data);
+        $this->data['html'] = $this->load->view('load_content/news_moves_items',$wwdata,True);
+        $this->data['success'] = true;
+
+        echo json_encode($this->data);
             
         
     }

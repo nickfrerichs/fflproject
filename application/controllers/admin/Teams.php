@@ -55,17 +55,12 @@ class Teams extends MY_Admin_Controller
                 <td><?=$team->division_name?></td>
                 <td><?=$team->first_name.' '.$team->last_name; ?></td>
                 <td class="text-center">
-                <div class="field">
-                    <input id="active-<?=$team->id?>" type="checkbox" name="switchExample" class="switch toggle-control is-info"
-                            data-item="<?=$team->id?>" data-url="<?=site_url('admin/teams/ajax_toggle_active')?>" <?php if($team->active){echo "checked";}?>>
-                    <label for="active-<?=$team->id?>"></label>
-                </div>
-                <!-- <div class="switch small">
-                    <input  class="switch-input toggle-control" data-item="<?=$team->id?>" data-url="<?=site_url('admin/teams/ajax_toggle_active')?>"
-                        id="active-<?=$team->id?>" type="checkbox" name="exampleSwitch" <?php if($team->active){echo "checked";}?>>
-                    <label class="switch-paddle" for="active-<?=$team->id?>">
-                    </label>
-                </div> -->
+                <?php echo $this->load->view('components/toggle_switch',
+                                array('id' => 'active-'.$team->id,
+                                        'url' => site_url('admin/teams/ajax_toggle_active'),
+                                        'var1' => $team->id,
+                                        'is_checked' => $team->active),True);
+                ?>
                 </td>
             </tr>
             <?php endforeach;?>
@@ -78,7 +73,7 @@ class Teams extends MY_Admin_Controller
     function ajax_toggle_active()
     {
         $response = array("success" => False);
-        $teamid = $this->input->post('item');
+        $teamid = $this->input->post('var1');
         $active = $this->teams_model->toggle_active_flag($teamid);
         $response['success'] = True;
         $response['currentValue'] = $active;

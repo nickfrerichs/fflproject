@@ -11,4 +11,4 @@
 <link href="<?=site_url('/css/jBox.css')?>" rel="stylesheet">
 
 <!-- My custom CSS -->
-<link href="<?=site_url('/css/fflproject-new.css?16')?>" rel="stylesheet">
+<link href="<?=site_url('/css/fflproject-new.css?17')?>" rel="stylesheet">

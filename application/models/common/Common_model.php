@@ -331,6 +331,18 @@ class Common_model extends CI_Model{
         return $data;
     }
 
+    function force_league_admin()
+    {
+        if (!$this->session->userdata('is_league_admin'))
+            redirect('/');
+    }
+
+    function force_site_admin()
+    {
+        if (!$this->session->userdata('is_site_admin'))
+            redirect('/');
+    }
+
 
 }
 

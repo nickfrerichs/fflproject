@@ -5,7 +5,7 @@
 
                 </tbody>
             </table>';
-    $this->load->view('template/component/modal', array('id' => 'set-admins-modal',
+    $this->load->view('components/modal', array('id' => 'set-admins-modal',
                                                           'title' => 'Set League Admins',
                                                           'body' => $body,
                                                          'reload_on_close' => True));
@@ -25,7 +25,7 @@
                 <tr>
                     <td style="width: 150px;"><b>Join Password</b></td>
                     <td colspan=2>
-                        <?php $this->load->view('template/component/editable_text',array('id' => 'join-password', 
+                        <?php $this->load->view('components/editable_text',array('id' => 'join-password', 
                                                                                           'value' => $settings->join_password,
                                                                                           'url' => site_url('admin/site/ajax_change_item'),
                                                                                           'var1' => $info->id));?>

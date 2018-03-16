@@ -23,13 +23,13 @@ class Standings extends MY_Admin_Controller
     {
         if ($action == "add")
         {
-            if ($this->input->post('notation_text') && $this->input->post('notation_symbol'))
-            {
-                $text = $this->input->post('notation_text');
-                $symbol = $this->input->post('notation_symbol');
-                $this->standings_model->add_notation_def($text,$symbol);
-                redirect('admin/standings/notations');
-            }
+            // if ($this->input->post('notation_text') && $this->input->post('notation_symbol'))
+            // {
+            //     $text = $this->input->post('notation_text');
+            //     $symbol = $this->input->post('notation_symbol');
+            //     $this->standings_model->add_notation_def($text,$symbol);
+            //     redirect('admin/standings/notations');
+            // }
             $this->bc['Standings'] = site_url('admin/standings');
             $this->bc['Notations'] = site_url('admin/standings/notations');
             $this->bc['Add'] = "";
@@ -60,6 +60,16 @@ class Standings extends MY_Admin_Controller
         $this->standings_model->set_team_notation($teamid, $notationid);
     }
 
+    function ajax_add_notation()
+    {
+        $result = array('success' => False);
+        $text = $this->input->post('text');
+        $symbol = $this->input->post('symbol');
+        $this->standings_model->add_notation_def($text,$symbol);
+        $result['success'] = True;
+
+        echo json_encode($result);
+    }
 
 }
 

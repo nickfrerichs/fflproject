@@ -1,116 +1,114 @@
 <!-- Start other modal -->
-<!-- <div class="reveal large" id="start-other-modal" data-reveal data-overlay="true" data-multiple-opened-"true">
-    <div>
-        <div>
-            <div class="text-center">
-                <h5>Start a player for: <?=$team_name?></h5>
-                <h5 id="start-other-week"></h5>
-            </div>
 
-            <div class="row align-center">
-                <div class="columns small-8">
-                    <input type="text" class="player-list-text-input" data-for="main-list" placeholder="Player search">
-                    <select data-for="main-list" class="player-list-position-select">
-                        <option value="0">All</option>
-                        <?php foreach($positions as $pos): ?>
-                            <option value="<?=$pos->id?>"><?=$pos->text_id?></option>
-                        <?php endforeach;?>
-                    </select>
+<?php //Body of the add-player-modal, it's a listing of players
+
+$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+$headers['Position'] = array('by' => 'position', 'order' => 'asc');
+$headers['NFL Team'] = array('by' => 'club_id', 'order' => 'asc');
+//$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
+//$headers['Points'] = array('by' => 'points', 'order' => 'asc');
+$headers['Team'] = array();
+
+$pos_dropdown['All'] = 0;
+foreach($positions as $p)
+    $pos_dropdown[$p->text_id] = $p->id;
+
+$body = $this->load->view('components/player_search_table',
+                array('id' => 'admin-lineup-player-list',
+                      'url' => site_url('load_content/admin_lineup_player_search'),
+                      'order' => 'desc',
+                      'by' => 'points',
+                      'pos_dropdown' => $pos_dropdown,
+                      'headers' => $headers),True);
+
+
+
+
+?>
+
+<?php 
+//     // League admins modal
+
+    $this->load->view('components/modal', array('id' => 'start-player-modal',
+                                                          'title' => 'Start Player (<span id="start-other-week"></span>)',
+                                                          'body' => $body,
+                                                         'reload_on_close' => True));
+?>
+
+
+<div class="section">
+    <div class="container fflp-med-container">
+        <div class="columns is-centered">
+            <div class="column">
+                <div class="is-size-5"><?=$team_name?></div>
+
+                <div class="notification">
+                    <b>Note: </b>No checks are done to determing roster/starter limits, if that player is already started on another team, or if the player is owned.
+                    Make sure you know what you are doing.<br>
+                    <br>If it's a past year/week, you'll need to recalculate statistics.
                 </div>
             </div>
-            <div class="row">
-                <div class="columns">
-                    <table class="table-condensed" >
-                        <thead>
-                            <th><a href="#" data-order="asc" data-for="main-list" data-by="last_name" class="player-list-a-sort">Name</a></th>
-                            <th><a href="#" data-order="asc" data-for="main-list" data-by="position" class="player-list-a-sort">Position</a></th>
-                            <th><a href="#" data-order="asc" data-for="main-list" data-by="club_id" class="player-list-a-sort">NFL Team</a></th>
-                            <th></th>
-                        </thead>
-                        <tbody id="main-list" data-by="points" data-order="desc" data-url="<?=site_url('player_search/ajax_admin_start_get_player_list')?>">
-
-                        </tbody>
-                    </table>
-
-                    <div class="row align-center">
-                        <div class="columns text-right">
-                            <ul class="pagination" role="navigation" aria-label="Pagination">
-                                <li class="pagination-previous"><a href="#" class="player-list-prev" data-for="main-list">Previous</a></li>
-                            </ul>
-                        </div>
-                        <div class="columns small-12 medium-3 text-center small-order-3 medium-order-2">
-                            <div class="player-list-total" data-for="main-list"></div>
-                            <br class="show-for-small-only">
-                        </div>
-                        <div class="columns text-left small-order-2 medium-order-3">
-                            <ul class="pagination" role="navigation" aria-label="Pagination">
-                                <li class="pagination-next"><a href="#" class="player-list-next" data-for="main-list">Next</a></li>
-                            </ul>
+        </div>
+    </div>
+    <div class="container fflp-med-container">
+        <div class="columns is-centered">
+            <div class="column">
+                <div class="field">
+                    <div class="label">Year:</div>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="lineup-year-select">
+                                <?php foreach($lineup_years as $y): ?>
+                                    <option><?=$y->year?></option>
+                                <?php endforeach;?>
+                            </select>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <div class="column">
+                <div class="field">
+                    <div class="label">Week:</div>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="lineup-week-select">
 
-            <button class="close-button" data-close aria-label="Close modal" type="button">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    </div>
-</div> -->
-
-<div class="section">
-    <b>Note:</b>No checks are done to determing roster/starter limits, if that player is already started on another team, or if the player is owned.
-    Make sure you know what you are doing.<br><br>If it's a past year/week, you'll need to recalculate statistics.
-
-    <h5 class="text-center">Edit Lineup</h5>
-    <div class="columns is-centered">
-
-        <div class="column fflp-med-container">
-            Year:
-            <select id="lineup-year-select">
-                <?php foreach($lineup_years as $y): ?>
-                    <option><?=$y->year?></option>
-                <?php endforeach;?>
-            </select>
-        </div>
-        <div class="column fflp-med-container">
-            Week:
-            <select id="lineup-week-select">
-
-            </select>
-        </div>
-    </div>
-
-</div>
-
-<div class="section">
-    <div class="columns is-centered">
-        <div class="column">
-            <h5>Starters</h5>
-            <table class="table">
-                <thead>
-                    <th style="width:60%">Player</th>
-                    <th style="width:20%" class="text-center">Starting Pos.</th>
-                    <th style="width:20%;" class="text-center">Sit</th>
-                </thead>
-                <tbody id="lineup">
-                </tbody>
-            </table>
-            <h5>Bench</h5>
-            <table class="table">
-                <thead>
-                    <th style="width:80%">Player</th>
-                    <th style="width:20%;" class="text-center">Start As</th>
-                </thead>
-                <tbody id="bench">
-                </tbody>
-            </table>
-
-            <div>
-                <a href="#" data-open="start-other-modal">Start Another player</a>
+                            </select>
+                        </div>
+                    </div>  
+                </div>
             </div>
         </div>
 
+        <div class="columns is-centered">
+            <div class="column">
+                <h5>Starters</h5>
+                <table class="table is-fullwidth is-narrow is-striped is-hoverable is-bordered fflp-table-fixed">
+                    <thead>
+                        <th style="width:60%">Player</th>
+                        <th style="width:20%" class="text-center">Starting Pos.</th>
+                        <th style="width:20%;" class="text-center">Sit</th>
+                    </thead>
+                    <tbody id="lineup">
+                    </tbody>
+                </table>
+                <h5>Bench</h5>
+                <table class="table is-fullwidth is-narrow is-striped is-hoverable is-bordered fflp-table-fixed">
+                    <thead>
+                        <th style="width:80%">Player</th>
+                        <th style="width:20%;" class="text-center">Start As</th>
+                    </thead>
+                    <tbody id="bench">
+                    </tbody>
+                </table>
+
+                <div>
+                    <a href="#" id="start-other-player-button">Start Another player</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -123,11 +121,6 @@ $("#lineup-week-select, #lineup-year-select").on('change',function(){
     updateLineup();
 })
 
-$("#start-other-modal").on("open.zf.reveal",function(){
-    $("#start-other-week").text($("#lineup-year-select").val()+" - Week "+$("#lineup-week-select").val());
-    $(updatePlayerList("main-list"));
-})
-
 $("#choose-pos-modal").on("open.zf.reveal",function(){
     var url = "<?=site_url('admin/rosters/ajax_get_league_positions')?>";
     var year = $("#lineup-year-select").val();
@@ -135,6 +128,12 @@ $("#choose-pos-modal").on("open.zf.reveal",function(){
         $("#start-positions").html(data);
     });
 })
+
+$('#start-other-player-button').on('click',function(){
+    $("#start-other-week").text("Year "+$("#lineup-year-select").val()+" - Week "+$("#lineup-week-select").val());
+    $(loadContent("admin-lineup-player-list"));
+    $("#start-player-modal").addClass('is-active');
+});
 
 $(document).on('click','.admin-sit-button',function(){
     var url = "<?=site_url('admin/rosters/ajax_sit_player')?>";
@@ -160,7 +159,7 @@ $(document).on('click','.admin-start-button',function(){
     $.post(url,{'teamid':<?=$teamid?>, 'playerid':playerid, 'week':week, 'year':year, 'posid':posid}, function(data){
         if(data.success)
         {
-            $("#start-other-modal").foundation('close');
+//            $("#start-other-modal").foundation('close');
             updateLineup();
         }
     },'json');
