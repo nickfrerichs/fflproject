@@ -1,12 +1,13 @@
-<div class="row">
+<div class="section">
     <div class="columns">
+        <div class="column">
         <?php if(count($title_defs) == 0): ?>
             No titles defined.
         <?php endif; ?>
-        <?php //print_r($title_defs); ?>
+
         <?php if (count($titles) > 0): ?>
-            <h5>Titles from Schedule</h5>
-            <table>
+            <div class="is-size-5">Titles from Schedule</div>
+            <table class="table is-striped is-fullwidth is-narrow fflp-table-fixed">
                 <thead></thead>
                 <tbody>
                     <?php foreach($titles as $t): ?>
@@ -36,35 +37,40 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
         <?php endif;?>
         <?php if (count($title_defs) > 0): ?>
-            <h5>Assign Titles</h5>
-            <table>
+            <div class="is-size-5">Assign Titles</div>
+            <table class="table is-fullwidth is-narrow fflp-table-fixed">
                 <thead><th>Title</th><th>Team</th><th></th></thead>
                 <tbody>
                     <?php foreach($other_titles as $t):?>
                     <tr>
                         <td><?=$t->text?></td>
                         <td><?=$t->team_name?></td>
-                        <td><button class="delete-title-link button small" data-title-id="<?=$t->title_id?>">X</button></td>
+                        <td><button class="delete-title-link button is-small is-link" data-title-id="<?=$t->title_id?>">X</button></td>
                     </tr>
                     <?php endforeach; ?>
                     <tr>
                         <td>
-                            <select id="other-title-def-id">
-                            <?php foreach($title_defs as $def): ?>
-                                <option value="<?=$def->id?>"><?=$def->text?></option>
-                            <?php endforeach;?>
-                            </select>
+                            <div class="select">
+                                <select id="other-title-def-id">
+                                <?php foreach($title_defs as $def): ?>
+                                    <option value="<?=$def->id?>"><?=$def->text?></option>
+                                <?php endforeach;?>
+                                </select>
+                            </div>
                         </td>
                         <td>
-                            <select id="other-title-team-id">
-                            <?php foreach($teams as $team): ?>
-                                <option value="<?=$team->team_id?>"><?=$team->team_name?></option>
-                            <?php endforeach; ?>
-                            </select>
+                            <div class="select">
+                                <select id="other-title-team-id">
+                                <?php foreach($teams as $team): ?>
+                                    <option value="<?=$team->team_id?>"><?=$team->team_name?></option>
+                                <?php endforeach; ?>
+                                </select>
+                            </div>
                         </td>
-                        <td width="10%"><button id="add-other-title" class="button small">Add</button></td>
+                        <td width="10%"><button id="add-other-title" class="button is-small is-link">Add</button></td>
                     </tr>
                 </tbody>
             </table>

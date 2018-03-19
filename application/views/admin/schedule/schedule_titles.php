@@ -1,33 +1,33 @@
-<div class="row">
-    <div class="columns">
-        <h5>Titles</h5>
-    </div>
+<div class="section">
+    <div class="is-size-5">Titles</div>
 </div>
-<?php //print_r($titles);?>
-<div class="row">
+
+<div class="section">
     <div class="columns">
-        <table>
-            <thead>
-                <th>Title Text</th><th></th><th>Display Order</th><th></th><th>Delete</th>
-            </thead>
-            <tbody>
-                <?php foreach($titles as $t): ?>
-                    <tr>
-                        <td id="text<?=$t->id?>-field"> <?=$t->text?></td>
-                        <td>
-                            <a href="#" id="text<?=$t->id?>-control" class="change-control" data-var1="<?=$t->id?>" data-url="<?=site_url('admin/schedule_templates/ajax_title_text_edit')?>">Change</a>
-                            <a href="#" id="text<?=$t->id?>-cancel" class="cancel-control"></a>
-                        </td>
-                        <td id="order<?=$t->id?>-field"> <?=$t->display_order?></td>
-                        <td>
-                            <a href="#" id="order<?=$t->id?>-control" class="change-control" data-var1="<?=$t->id?>" data-url="<?=site_url('admin/schedule_templates/ajax_title_order_edit')?>">Change</a>
-                            <a href="#" id="order<?=$t->id?>-cancel" class="cancel-control"></a>
-                        </td>
-                        <td><a href="#" class="delete-title" data-id="<?=$t->id?>">delete</a></td>
-                    </tr>
-                <?php endforeach;?>
-            </tbody>
-        </table>
+        <div class="column">
+            <table class="table is-fullwidth is-narrow is-striped">
+                <thead>
+                    <th>Title Text</th><th></th><th>Display Order</th><th></th><th>Delete</th>
+                </thead>
+                <tbody>
+                    <?php foreach($titles as $t): ?>
+                        <tr>
+                            <td id="text<?=$t->id?>-field"> <?=$t->text?></td>
+                            <td>
+                                <a href="#" id="text<?=$t->id?>-control" class="change-control" data-var1="<?=$t->id?>" data-url="<?=site_url('admin/schedule_templates/ajax_title_text_edit')?>">Change</a>
+                                <a href="#" id="text<?=$t->id?>-cancel" class="cancel-control"></a>
+                            </td>
+                            <td id="order<?=$t->id?>-field"> <?=$t->display_order?></td>
+                            <td>
+                                <a href="#" id="order<?=$t->id?>-control" class="change-control" data-var1="<?=$t->id?>" data-url="<?=site_url('admin/schedule_templates/ajax_title_order_edit')?>">Change</a>
+                                <a href="#" id="order<?=$t->id?>-cancel" class="cancel-control"></a>
+                            </td>
+                            <td><a href="#" class="delete-title" data-id="<?=$t->id?>">delete</a></td>
+                        </tr>
+                    <?php endforeach;?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <div class="row">

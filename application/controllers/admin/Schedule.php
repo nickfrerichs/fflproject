@@ -106,29 +106,14 @@ class Schedule extends MY_Admin_Controller{
 
     function create()
     {
-        if ($this->input->post('create_schedule'))
-        {
-            $id_map = array();
-            foreach($this->input->post() as $key => $value)
-            {
-                if (is_numeric($key))
-                    $id_map[$value] = $key;
-            }
-            $this->schedule_model->create_schedule_from_template($this->input->post('template_id'), $id_map);
 
-            redirect('admin/schedule');
-        }
 
         $teams = $this->schedule_model->get_teams_data();
         $divisions = $this->schedule_model->get_divisions_data();
         $templates = $this->schedule_model->get_templates_data();
         $matchups = array();
         $template = null;
-        if ($this->input->post('select_template'))
-        {
-            $matchups = $this->schedule_model->get_template_matchups_data($this->input->post('template'));
-            $template = $this->schedule_model->get_template_data($this->input->post('template'));
-        }
+
 
         $this->load->helper('form');
 
@@ -140,6 +125,22 @@ class Schedule extends MY_Admin_Controller{
                                                                 'templates' => $templates,
                                                                 'matchups' => $matchups,
                                                                 'template' => $template));
+    }
+
+    function ajax_create_schedule_from_template()
+    {
+        $result = array('success' => false);
+        $id_map = array();
+        $template_id = $this->input->post('template_id');
+        foreach($this->input->post('team_array') as $team)
+        {
+            $id_map[$team['num']] = $team['team_id'];
+        }
+        $this->schedule_model->create_schedule_from_template($template_id, $id_map);
+
+        $result['success'] =  true;
+
+        echo json_encode($result);
     }
 
     function ajax_add_games()
@@ -168,6 +169,27 @@ class Schedule extends MY_Admin_Controller{
 
         $result['success'] = True;
         echo json_encode($result);
+
+    }
+
+    function ajax_create_load_teams()
+    {
+        $result = array('success' => False);
+        $template_id = $this->input->post('template_id');
+
+        $viewdata['matchups'] = $this->schedule_model->get_template_matchups_data($template_id);
+        $viewdata['template'] = $this->schedule_model->get_template_data($template_id);
+        $viewdata['teams'] = $this->schedule_model->get_teams_data();
+        $viewdata['divisions'] = $this->schedule_model->get_divisions_data();
+
+
+        $result['html'] = $this->load->view('admin/schedule/ajax_create_load_teams',$viewdata,True);
+
+        $result['success'] = True;
+
+        echo json_encode($result);
+        
+
     }
 
     function ajax_save_schedule()

@@ -21,9 +21,9 @@ class Leaguesettings extends MY_Admin_Controller
     function ajax_toggle_item()
     {
         $return = array();
-        $item = $this->input->post('item');
+        $item = $this->input->post('var1');
 
-        $return['currentValue'] = $this->leaguesettings_model->toggle_setting($this->session->userdata('league_id'),$item);
+        $return['value'] = $this->leaguesettings_model->toggle_setting($this->session->userdata('league_id'),$item);
         $return['success'] = true;
 
         echo json_encode($return);

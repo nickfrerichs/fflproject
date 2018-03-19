@@ -120,6 +120,7 @@ $(document).on('click','.editable-text-save-button', function(e){
     var url = $(input).data('url');
 
     $.post(url,{'id':id,'value':value,'var1':var1,'var2':var2,'var3':var3},function(data){
+        console.log(data);
         var d = $.parseJSON(data);
         console.log(d);
 		if(d.success) {$(input).val(d.value);}
@@ -189,6 +190,7 @@ $(document).on('click','.toggle-control',function(e){
 		var d = $.parseJSON(data);
 		if(d.success)
 		{
+            console.log(d);
 			if ((d.value == 1 && element.is(':checked')) || (d.value == 0 && !element.is(':checked')))
 			{return}
 			location.reload();
