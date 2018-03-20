@@ -5,7 +5,7 @@
 .fflp-med-container{max-width: 800px;}
 .fflp-lg-container{max-width: 1000px;}
 
-.fflp-table-fixed{table-layout:fixed;}
+.fflp-table-fixed{table-layout:fixed; width:100%;}
 
 /* I'm tring stuff for tiny devices, this could change */
 

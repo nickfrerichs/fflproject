@@ -187,7 +187,8 @@ $(document).on('click','.toggle-control',function(e){
 	var var1 = $(this).data('var1');
 	var var2 = $(this).data('var2');
 	$.post(url,{"var1":var1,"var2":var2},function(data){
-		var d = $.parseJSON(data);
+        console.log(data);
+        var d = $.parseJSON(data);
 		if(d.success)
 		{
             console.log(d);

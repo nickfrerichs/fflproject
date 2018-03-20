@@ -61,22 +61,25 @@ class Draft extends MY_Admin_Controller
         $data['settings'] = $this->draft_model->get_draft_settings();
         $this->bc["Draft"] = site_url('admin/draft');
         $this->bc["Settings"] = "";
-        $this->admin_view('admin/draft/live',$data);
+        $this->admin_view('admin/draft/settings',$data);
     }
 
     function save_draft_settings()
     {
         $response = array("success" => False);
-        $type = $this->input->post('type');
-        if ($type == "drafttime")
+        $id = $this->input->post('id');
+        $limit = false;
+        $draft_time = false;
+        if ($id == "#drafttime")
+        {
             $draft_time = $this->input->post('value');
-        else
-            $draft_time = false;
-
-        if ($type == "picktime")
+            $response['value'] = $draft_time;
+        }
+        if ($id == "#picktime")
+        {
             $limit = $this->input->post('value');
-        else
-            $limit = false;
+            $response['value'] = $limit;
+        }
 
         //$draft_time = $this->current_year.'-'.$mon.'-'.$day.' '.$hour.':'.$min.':00';
 
@@ -93,7 +96,7 @@ class Draft extends MY_Admin_Controller
     function ajax_toggle_auto_start()
     {
         $response = array('success' => False);
-        $response['currentValue'] = $this->draft_model->toggle_auto_start();
+        $response['value'] = $this->draft_model->toggle_auto_start();
         $response['success'] = True;
 
         echo json_encode($response);

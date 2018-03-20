@@ -1,45 +1,47 @@
-<div class="row">
-	<div class="columns">
-		<h5>Create Draft Order</h5>
-	</div>
+<div class="section">
+	<div class="is-size-5">Create Draft Order</div>
 </div>
 
-<div class="row">
-	<div class="columns">
+<div class="section">
+
 		<?php if ($draft_exists > 0): ?>
 		<div class="text-center"><strong>Warning: This will wipe out existing <?=$year?> draft data!!</strong></div>
 		<?php endif; ?>
-			<table>
+			<table class="table is-narrow is-fullwidth fflp-table-fixed">
 			<?php for ($i=1; $i <= count($teams); $i++): ?>
 			<tr>
 				<td class="text-right">Pick <?=$i?></td>
 				<td>
-				<select id="pick_<?=$i?>"class="choose-team">
-					<option value="0"></option>
-					<?php foreach ($teams as $t): ?>
-					<option value="<?=$t->team_id?>"><?=$t->team_name?></option>
-					<?php endforeach; ?>
-				</select>
+					<div class="select">
+						<select id="pick_<?=$i?>"class="choose-team">
+							<option value="0"></option>
+							<?php foreach ($teams as $t): ?>
+							<option value="<?=$t->team_id?>"><?=$t->team_name?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
 				</td>
 			</tr>
 			<?php endfor; ?>
 			<tr>
 				<td class="text-right"># of Rounds</td>
 				<td>
-					<select id="rounds">
-						<?php for ($i=1; $i<=40; $i++): ?>
-						<option value="<?=$i?>"><?=$i?></option>
-						<?php endfor; ?>
-					</select>
+					<div class="select">
+						<select id="rounds">
+							<?php for ($i=1; $i<=40; $i++): ?>
+							<option value="<?=$i?>"><?=$i?></option>
+							<?php endfor; ?>
+						</select>
+					</div>
 				</td>
 			</tr>
 			<tr>
 				<td></td><td>
-			    <label>
+			    <label class="checkbox">
 			      <input id="reverse" type="checkbox"> Reverse every other round
 			    </label>
 				<?php if($traded_picks): ?>
-				<label>
+				<label class="checkbox">
 				  <input id="trades" type="checkbox" checked> Apply traded draft picks
 				</label>
 				<?php endif;?>
@@ -47,13 +49,13 @@
 			</tr>
 		  	<tr>
 			  	<td></td><td>
-				<button id="reset-button" class="button small">Reset</button>
-				<button id="create-button" class="button small">Create</button>
+				<button id="reset-button" class="button is-small is-link">Reset</button>
+				<button id="create-button" class="button is-small is-link">Create</button>
 				</td>
 			</tr>
 			</table>
 
-	</div>
+
 </div>
 
 <script>

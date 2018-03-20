@@ -1,46 +1,55 @@
-<div class="row callout">
-    <div class="columns medium-6 small-12">
-        <h5>Manage Future Picks</h5>
-        <?php if (count($pick_years) == 0):?>
-            <span style="font-style:italic">No future years exist.</span>
-        <?php else: ?>
-            <div class="row">
-                <div class="columns small-6">
-                    <select id="manage-year">
-                    <?php foreach($pick_years as $y): ?>
-                        <option value="<?=$y?>"><?=$y?></option>
-                    <?php endforeach; ?>
-                    </select>
+<div class="section">
+    <div class="columns">
+        <div class="column">
+            <div class="is-size-5">Manage Future Picks</div>
+            <?php if (count($pick_years) == 0):?>
+                <span style="font-style:italic">No future years exist.</span>
+            <?php else: ?>
+                <div class="columns">
+                    <div class="column is-6">
+                        <div class="select">
+                            <select id="manage-year">
+                            <?php foreach($pick_years as $y): ?>
+                                <option value="<?=$y?>"><?=$y?></option>
+                            <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-6">
+                        <button id="manage-button" class="button is-small is-link">Manage</button>
+                    </div>
                 </div>
-                <div class="columns small-6">
-                    <button id="manage-button" class="button small">Manage</button>
-                </div>
-            </div>
-        <?php endif;?>
-    </div>
-    <div class="columns medium-6 small-12">
-        <h5>Create Future Picks for Trading</h5>
-        <div class="row">
-            <div class="columns small-3">
-                <select id="create-year">
-                <?php for($i=$this->session->userdata('current_year')+1; $i<=$this->session->userdata('current_year')+15; $i++): ?>
-                    <?php if(in_array($i,$pick_years)){continue;}?>
-                        <option value="<?=$i?>"><?=$i?></option>
-                <?php endfor;?>
-                </select>
-            </div>
-            <div class="columns small-5">
-                <select id="num-rounds">
-                    <?php for($i=1; $i<=50; $i++): ?>
-                        <option value="<?=$i?>"<?php if($i == $default_num_rounds){echo "selected";}?>><?=$i?> rounds</option>
-                    <?php endfor;?>
-                </select>
-            </div>
-            <div class="columns small-4">
-                <button id="create-button" class="button small">Create</button>
-            </div>
+            <?php endif;?>
         </div>
-        <span style="font-style:italic">Will use all current active teams.</span>
+
+        <div class="column">
+            <div class="is-size-5">Create Future Picks for Trading</div>
+            <div class="columns">
+                <div class="column is-3">
+                    <div class="select">
+                        <select id="create-year">
+                        <?php for($i=$this->session->userdata('current_year')+1; $i<=$this->session->userdata('current_year')+15; $i++): ?>
+                            <?php if(in_array($i,$pick_years)){continue;}?>
+                                <option value="<?=$i?>"><?=$i?></option>
+                        <?php endfor;?>
+                        </select>
+                    </div>
+                </div>
+                <div class="column is-5">
+                    <div class="select">
+                        <select id="num-rounds">
+                            <?php for($i=1; $i<=50; $i++): ?>
+                                <option value="<?=$i?>"<?php if($i == $default_num_rounds){echo "selected";}?>><?=$i?> rounds</option>
+                            <?php endfor;?>
+                        </select>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <button id="create-button" class="button is-small is-link">Create</button>
+                </div>
+            </div>
+            <span style="font-style:italic">Will use all current active teams.</span>
+        </div>
     </div>
 </div>
 

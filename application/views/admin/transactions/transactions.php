@@ -1,5 +1,6 @@
 <!-- <script src="<?=site_url('js/foundation-datepicker.min.js')?>"></script>
 <link href="<?=site_url('/css/foundation-datepicker.min.css')?>" rel="stylesheet"> -->
+<?php if(count($approvals) > 0): ?>
 <div class="section">
 	<div class="columns">
 		<div class="column">
@@ -31,6 +32,7 @@
 		</div>
 	</div>
 </div>
+<?php endif;?>
 
 <div class="section">
 	<div class="columns">
@@ -83,7 +85,8 @@
 					</tr>
 					<tr>
 						<td><span data-tooltip class="has-tip top" title="Players cannot be picked up/dropped for the current week after their game has started.">Lock players after game start</span></td>
-						<td>
+						<td>	
+							<div>Lock Players</div>
 								<?php $this->load->view('components/toggle_switch',
                                                 array('id' => 'disablegt',
 													  'url' => site_url('admin/leaguesettings/ajax_toggle_item'),
@@ -91,25 +94,30 @@
                                                       'is_checked' => $settings->waiver_wire_disable_gt));
                         		?>
 						</td>
-						<td></td>
 					</tr>
 					<tr>
 						<td><span data-tooltip class="has-tip top" title="Onwner requests will be queued on these days and be subject to the waiver wire priority/approval.">Disable waiver wire on these days</span></td>
 						<td>
-							<fieldset>
-								<legend>Days of the week</legend>
-								<?php $wwdays = str_split($settings->waiver_wire_disable_days); ?>
-								<input id="ww0" class="wwday" data-day="0" type="checkbox" <?php if(in_array("0",$wwdays)){echo 'checked="checked"';}?>><label for="ww0">Sun</label>
-								<input id="ww1" class="wwday" data-day="1" type="checkbox" <?php if(in_array("1",$wwdays)){echo 'checked="checked"';}?>><label for="ww1">Mon</label>
-								<input id="ww2" class="wwday" data-day="2" type="checkbox" <?php if(in_array("2",$wwdays)){echo 'checked="checked"';}?>><label for="ww2">Tue</label>
-								<input id="ww3" class="wwday" data-day="3" type="checkbox" <?php if(in_array("3",$wwdays)){echo 'checked="checked"';}?>><label for="ww3">Wed</label>
-								<input id="ww4" class="wwday" data-day="4" type="checkbox" <?php if(in_array("4",$wwdays)){echo 'checked="checked"';}?>><label for="ww4">Thu</label>
-								<input id="ww5" class="wwday" data-day="5" type="checkbox" <?php if(in_array("5",$wwdays)){echo 'checked="checked"';}?>><label for="ww5">Fri</label>
-								<input id="ww6" class="wwday" data-day="6" type="checkbox" <?php if(in_array("6",$wwdays)){echo 'checked="checked"';}?>><label for="ww6">Sat</label>
-							</fieldset>
-						</td>
-						<td><button id="wwdaysave" type="button" class="alert button hide">Save</button></td>
 
+							<?php
+								$wwdays = str_split($settings->waiver_wire_disable_days);
+								$dow = array("Sun","Mon","Tue","Wed","Thu","Fri","Sat");
+							?>
+							<?php foreach(array("0","1","2","3","4","5","6") as $i): ?>
+								<div style="display:inline-block">
+									<div style="display:inline-block"><?=$dow[$i]?></div>
+
+									<?php
+									$this->load->view('components/toggle_switch',
+												array('id' => 'wwday_'.$i,
+													'url' => site_url('admin/transactions/ajax_toggle_wwday'),
+													'is_checked' => in_array($i,$wwdays),
+													'var1' => $i));
+									?>
+								</div>
+
+							<?php endforeach;?>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -161,22 +169,22 @@
 		$("#wwdaysave").removeClass('hide');
 	});
 
-	$('#wwdaysave').on('click',function(){
-		var url = "<?=site_url('admin/transactions/ajax_save_setting')?>";
-		var wwdays = "";
+	// $('#wwdaysave').on('click',function(){
+	// 	var url = "<?=site_url('admin/transactions/ajax_save_setting')?>";
+	// 	var wwdays = "";
 
-		$('.wwday:checked').each(function(){
-			wwdays += $(this).data('day');
-		});
-		console.log(wwdays);
-		$.post(url,{"value" : wwdays, "type":"wwdays"}, function(data){
-			if (data.success)
-			{
-				notice('Saved.','success');
-				$("#wwdaysave").addClass('hide');
-			}
-			else {notice('An error ocurred while saving.','Error');}
-		},'json');
-	});
+	// 	$('.wwday:checked').each(function(){
+	// 		wwdays += $(this).data('day');
+	// 	});
+	// 	console.log(wwdays);
+	// 	$.post(url,{"value" : wwdays, "type":"wwdays"}, function(data){
+	// 		if (data.success)
+	// 		{
+	// 			notice('Saved.','success');
+	// 			$("#wwdaysave").addClass('hide');
+	// 		}
+	// 		else {notice('An error ocurred while saving.','Error');}
+	// 	},'json');
+	// });
 
 </script>

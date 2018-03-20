@@ -1,7 +1,7 @@
-<div class="row">
-    <div class="columns">
+<div class="section">
+
         <?php //print_r($picks);?>
-        <table>
+        <table class="table is-striped is-narrow is-fullwidth is-bordered fflp-table-fixed">
             <thead>
                 <th>Round</th>
                 <th>Original Pick Owner</th>
@@ -17,5 +17,5 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-    </div>
+
 </div>

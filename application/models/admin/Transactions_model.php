@@ -207,6 +207,33 @@ class Transactions_model extends MY_Model
 
     }
 
+    function toggle_wwday($wwday)
+    {
+        $row = $this->db->select('waiver_wire_disable_days')->from('league_settings')->where('league_id',$this->leagueid)->get()->row();
+        if ($row)
+        {
+            $new_wwdays = '';
+            $wwdays = str_split($row->waiver_wire_disable_days);
+            foreach(str_split('0123456') as $i)
+            {
+                if (in_array($i,$wwdays))
+                {
+                    if ($i == $wwday)
+                        continue;
+                    $new_wwdays .= $i;
+                }
+                else
+                {
+                    if ($i == $wwday)
+                        $new_wwdays .= $i;
+                }
+            }
+            $this->db->where('league_id',$this->leagueid)->update('league_settings',array('waiver_wire_disable_days' => $new_wwdays));
+
+            return in_array($wwday,str_split($new_wwdays));
+        }
+    }
+
 }
 
 ?>

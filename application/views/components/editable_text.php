@@ -8,7 +8,7 @@ else
 
 ?>
 
-<div class="field has-addons" style="max-width:500px;">
+<div class="field has-addons">
     <div class="control is-expanded">
         <input class="input editable-text-input is-fullwidth"
                type="text"

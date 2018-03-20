@@ -28,6 +28,7 @@ class Leaguesettings extends MY_Admin_Controller
 
         echo json_encode($return);
     }
+
     function ajax_change_item()
     {
         $return = array();

@@ -1,48 +1,45 @@
 
-<div class="row">
+<div class="section">
+
+	<div><a href="<?=site_url('admin/draft/create')?>">Create New <?=$this->session->userdata('current_year')?> Draft Order</a></div>
+	<div><a href="<?=site_url('admin/draft/settings')?>">Draft Settings</a></div>
+	<?php if($settings->trade_draft_picks): ?>
+		<div><a href="<?=site_url('admin/draft/future')?>">Draft Future</a></div>
+	<?php endif; ?>
+
+
+
+	<?php if($num_rounds > 0): ?>
+
+	<h5 class="text-center">Round <span id="round-num">1</span></h5>
+	<table class="table is-narrow is-bordered is-fullwidth fflp-table-fixed">
+		<thead>
+		<th></th><th>Pick</th><th>Overall</th><th>Team</th><th>Player</th>
+		</thead>
+		<tbody id="draft-table">
+		</tbody>
+	</table>
+
+
+
 	<div class="columns">
+		<!-- Prev/Next buttons -->
+		<div class="column is-2"></div>
+		<div class="column is-8">
 
-		<div><a href="<?=site_url('admin/draft/create')?>">Create New <?=$this->session->userdata('current_year')?> Draft Order</a></div>
-		<div><a href="<?=site_url('admin/draft/settings')?>">Draft Settings</a></div>
-		<?php if($settings->trade_draft_picks): ?>
-			<div><a href="<?=site_url('admin/draft/future')?>">Draft Future</a></div>
-		<?php endif; ?>
+					<button id="prev" class="button is-small is-link page-btn" type="button" value="0">
+					Previous
+					</button>
 
+					<button id="next" class="button is-small is-link page-btn" type="button" value="2">
+					Next
+					</button>
+
+		</div>
+		<div class="column is-2"></div>
 	</div>
+	<?php endif;?>
 </div>
-
-<?php if($num_rounds > 0): ?>
-<div class="row">
-	<div class="columns">
-		<h5 class="text-center">Round <span id="round-num">1</span></h5>
-		<table>
-			<thead>
-			<th></th><th>Pick</th><th>Overall</th><th>Team</th><th>Player</th>
-			</thead>
-			<tbody id="draft-table">
-			</tbody>
-		</table>
-	</div>
-</div>
-
-
-<div class="row">
-	<!-- Prev/Next buttons -->
-	<div class="columns small-2"></div>
-	<div class="columns small-8">
-
-				<button id="prev" class="button small page-btn" type="button" value="0">
-				Previous
-				</button>
-
-				<button id="next" class="button small page-btn" type="button" value="2">
-				Next
-				</button>
-
-	</div>
-	<div class="columns small-2"></div>
-<?php endif;?>
-
 <script>
 $(document).ready(function(){
 

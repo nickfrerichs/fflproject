@@ -71,26 +71,26 @@ class Leaguesettings_model extends MY_Model{
         $this->db->delete('team_keeper');
     }
 
-    function wwdays_is_valid($wwdays)
-    {
-        if ($wwdays == "")
-            return True;
-        $temp  = str_split($wwdays);
-        $valid = str_split('0123456');
-        if (count($wwdays) > 7)
-        {
-            return False;
-        }
-        foreach($temp as $i)
-        {
-            if (!in_array($i,$valid))
-            {
-                return False;
-            }
-        }
+    // function wwdays_is_valid($wwdays)
+    // {
+    //     if ($wwdays == "")
+    //         return True;
+    //     $temp  = str_split($wwdays);
+    //     $valid = str_split('0123456');
+    //     if (count($wwdays) > 7)
+    //     {
+    //         return False;
+    //     }
+    //     foreach($temp as $i)
+    //     {
+    //         if (!in_array($i,$valid))
+    //         {
+    //             return False;
+    //         }
+    //     }
 
-        return True;
-    }
+    //     return True;
+    // }
 
 }
 ?>
