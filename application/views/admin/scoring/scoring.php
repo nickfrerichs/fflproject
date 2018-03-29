@@ -1,23 +1,18 @@
 <div><?php //print_r($scoring_defs); ?></div>
 
-<div class="row">
-    <div class="columns">
-        <?php $this->load->view('admin/scoring/year_bar.php');?>
-        <br><br>
-    </div>
-</div>
-<div class="row">
-    <div class="columns">
-        <h5><?=$selected_year?> Season</h5>
-        Scoring definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
-    </div>
-</div>
+<div class="section">
+    <?php $this->load->view('admin/scoring/year_bar.php');?>
+    <br><br>
 
-<div class="row">
-    <div class="columns">
+        <div class="is-size-5"><?=$selected_year?> Season</div>
+        <br>
+        Scoring definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
+        <br><br>
+
+
         <span>(<a href="<?=site_url('admin/scoring/add/'.$selected_year)?>">Add More</a>)</span>
         <span>(<a href="<?=site_url('admin/scoring/edit/'.$selected_year)?>">Edit Values</a>)</span>
-        <table class="table table-condensed table-striped text-center">
+        <table class="table is-fullwidth is-narrow is-striped">
             <th class="text-left">Statistic</th><th>Position</th><th>Points</th><th>Per</th><th>Round</th><th>Range Start</th><th>Range End</th><th>delete</th>
             <?php foreach ($scoring_defs as $type_text => $type_def): ?>
 
@@ -47,15 +42,18 @@
         </table>
         <span style="font-style:italic">Use this URL to display to your league (ex: in League Rules): </span><?=site_url('league/rules/scoring')?>
 
-    </div>
 </div>
 
 <script>
 $(".add-range").on("click",function(){
-    var url='<?=site_url("admin/scoring/add")?>'+"/"+$(this).data("posid");
-    $.post(url,{"stat_id":$(this).data("catid"),"type":"Unit range"},function(){
-        location.reload();
-    });
+    var year = "<?=$selected_year?>";
+    var url='<?=site_url("admin/scoring/ajax_add_scoring_def")?>';
+    $.post(url,{"cat_id":$(this).data("catid"),"is_range":"1",'year':year,'pos_id':$(this).data('posid')},function(data){
+        if (data.success)
+        {
+            location.reload();
+        }
+    },'json');
     //console.log($(this).data("posid"));
 });
 </script>

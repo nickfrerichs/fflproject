@@ -62,17 +62,17 @@ class Scoring extends MY_Admin_Controller
         // This will be "Per unit" or "Unit range"
         $type = $this->input->post('type');
 
-        if ($stat_id)
-        {
-            if ($type == "Unit range")
-            {
-                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, true, $year);
-            }
-            elseif (!$this->scoring_model->stat_value_exists($position_id,$stat_id))
-            {
-                $this->scoring_model->add_stat_value_entry($stat_id, $position_id, false, $year);
-            }
-        }
+        // if ($stat_id)
+        // {
+        //     if ($type == "Unit range")
+        //     {
+        //         $this->scoring_model->add_stat_value_entry($stat_id, $position_id, true, $year);
+        //     }
+        //     elseif (!$this->scoring_model->stat_value_exists($position_id,$stat_id))
+        //     {
+        //         $this->scoring_model->add_stat_value_entry($stat_id, $position_id, false, $year);
+        //     }
+        // }
 
         $this->load->helper('form');
         $categories = $this->scoring_model->get_scoring_cats_data($position_id);
@@ -90,41 +90,60 @@ class Scoring extends MY_Admin_Controller
 
     }
 
+    function ajax_add_scoring_def()
+    {
+        $response = array('success' => false);
+
+        $cat_id = $this->input->post('cat_id');
+        $is_range = $this->input->post('is_range');
+        $year = $this->input->post('year');
+        $position_id = $this->input->post('pos_id');
+
+        if ($is_range == "1")
+            $this->scoring_model->add_stat_value_entry($cat_id, $position_id, true, $year);
+        elseif(!$this->scoring_model->stat_value_exists($position_id,$cat_id))
+            $this->scoring_model->add_stat_value_entry($cat_id, $position_id, false, $year);
+
+        $response['success'] = True;
+
+        echo json_encode($response);
+    }
+
     function edit($year=0)
     {
         $data = array();
         if ($year == 0)
             $year = $this->current_year;
         $data['selected_year'] = $year;
-        if ($this->input->post('save'))
-        {
-            $values = array();
-            foreach ($this->input->post() as $key => $val)
-            {
-                if (stripos($key,'_') === false)
-                    continue;
-                $v = explode('_',$key);
-                $values[$v[1]][$v[0]] = $val;
-            }
+        // if ($this->input->post('save'))
+        // {
+        //     $values = array();
+        //     foreach ($this->input->post() as $key => $val)
+        //     {
+        //         if (stripos($key,'_') === false)
+        //             continue;
+        //         $v = explode('_',$key);
+        //         $values[$v[1]][$v[0]] = $val;
+        //     }
 
-            foreach ($values as $key => $val)
-            {
-                if (!array_key_exists('per',$val))
-                    $val['per'] = 0;
-                if (!array_key_exists('start',$val))
-                    $val['start'] = 0;
-                if (!array_key_exists('end',$val))
-                    $val['end'] = 0;
+        //     foreach ($values as $key => $val)
+        //     {
+        //         if (!array_key_exists('per',$val))
+        //             $val['per'] = 0;
+        //         if (!array_key_exists('start',$val))
+        //             $val['start'] = 0;
+        //         if (!array_key_exists('end',$val))
+        //             $val['end'] = 0;
 
-                $this->scoring_model->reconcile_scoring_def_year(False,$key,array('points' => $val['points'],
-                                                                                        'per' => $val['per'],
-                                                                                        'range_start' => $val['start'],
-                                                                                        'range_end' => $val['end'],
-                                                                                        'round' => $val['round']),
-                                                                                        $year);
-            }
-            redirect(site_url('admin/scoring'));
-        }
+        //         $this->scoring_model->reconcile_scoring_def_year(False,$key,array('points' => $val['points'],
+        //                                                                                 'per' => $val['per'],
+        //                                                                                 'range_start' => $val['start'],
+        //                                                                                 'range_end' => $val['end'],
+        //                                                                                 'round' => $val['round']),
+        //                                                                                 $year);
+        //     }
+        //     redirect(site_url('admin/scoring'));
+        // }
 
         $this->load->helper('form');
         $values = $this->scoring_model->get_values_data($year);
@@ -136,6 +155,33 @@ class Scoring extends MY_Admin_Controller
         $data['values'] = $values;
 
         $this->admin_view('admin/scoring/edit.php', $data);
+    }
+
+    function ajax_save_scoring_defs()
+    {
+        $response = array('success' => false);
+
+        $values = $this->input->post('values');
+        $year = $this->input->post('year');
+        foreach($values as $id => $val)
+        {
+            if (!array_key_exists('per',$val))
+                $val['per'] = 0;
+            if (!array_key_exists('start',$val))
+                $val['start'] = 0;
+            if (!array_key_exists('end',$val))
+                $val['end'] = 0;
+            $this->scoring_model->reconcile_scoring_def_year(False,$id,array('points' => $val['points'],
+                    'per' => $val['per'],
+                    'range_start' => $val['start'],
+                    'range_end' => $val['end'],
+                    'round' => $val['round']),
+                    $year);
+        }
+
+        $response['success'] = True;
+
+        echo json_encode($response);
     }
 
     function delete($year=0, $value_id)

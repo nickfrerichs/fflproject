@@ -1,24 +1,23 @@
-<script>
+<!-- <script>
 function SetStatID(stat_id) {
     document.getElementsByName("stat_id").item(0).value = stat_id;
 };
-</script>
+</script> -->
 
-<div class="row">
-    <div class="columns">
-        <h5><?=$selected_year?> Season</h5>
-    </div>
-</div>
-<div class="row align-center">
-    <div class="columns" style="max-width: 800px;">
-        <h5><a href="<?=site_url('admin/scoring')?>">Done</a></h5>
-        <table class="table table-condensed table-striped">
+<div class="section">
+
+        <div class="is-size-5"><?=$selected_year?> Season</div>
+
+        <br>
+        <div class="is-size-5"><a href="<?=site_url('admin/scoring')?>">Done</a></div>
+        <br>
+        <table class="table is-fullwidth is-narrow is-striped">
             <tr>
                 <td>
                     <?php if($selected_pos == 0):?>
                         All
                     <?php else: ?>
-                        <a href='<?=site_url('admin/scoring/add/0')?>'>All</a>
+                        <a href='<?=site_url('admin/scoring/add/'.$selected_year)?>'>All</a>
                     <?php endif; ?>
                     <?php foreach ($nfl_positions as $p): ?>
                         <?php if ($selected_pos == $p->id): ?>
@@ -29,9 +28,6 @@ function SetStatID(stat_id) {
                     <?php endforeach;?>
                 </td>
             </tr>
-
-            <?php echo form_open();?>
-            <?php echo form_hidden('stat_id','0'); ?>
 
             <?php $current_type = ""; ?>
             <?php foreach ($cats as $cat): ?>
@@ -44,13 +40,32 @@ function SetStatID(stat_id) {
                 <tr>
                     <td><?=$cat->long_text?></td>
                     <td>
-                        <input class="button tiny" type="submit" name="type" value="Per unit"  onClick="SetStatID(<?=$cat->id?>);" />
+                        <button class="button is-link is-small add-cat" data-cat-id="<?=$cat->id?>" data-is-range="0">Per unit</button>
+                        <!-- <input class="button is-link is-small" type="submit" name="type" value="Per unit"  onClick="SetStatID(<?=$cat->id?>);" /> -->
                     </td>
                     <td>
-                        <input class="button tiny" type="submit" name="type" value="Unit range"  onClick="SetStatID(<?=$cat->id?>);" />
+                        <button class="button is-link is-small add-cat" data-cat-id="<?=$cat->id?>" data-is-range="1">Unit range</button>
+                        <!-- <input class="button is-link is-small" type="submit" name="type" value="Unit range"  onClick="SetStatID(<?=$cat->id?>);" /> -->
                     </td>
                 </tr>
             <?php endforeach; ?>
         </table>
-    </div>
+
 </div>
+
+<script>
+$('.add-cat').one('click',function(){
+    var url = "<?=site_url('admin/scoring/ajax_add_scoring_def')?>"
+    var cat_id = $(this).data('cat-id');
+    var is_range = $(this).data('is-range');
+    var year = "<?=$selected_year?>";
+    var pos_id = "<?=$selected_pos?>";
+    $.post(url,{'cat_id':cat_id, 'is_range':is_range, 'year':year, 'pos_id':pos_id},function(data){
+        console.log(data);
+        if (data.success)
+        {
+            location.reload();
+        }
+    },'json');
+});
+</script>

@@ -1,6 +1,6 @@
-<div class="row">
-    <div class="columns">
-        <table class="text-left">
+<div class="section">
+
+        <table class="table is-fullwidth is-narrow is-striped">
             <tr>
                 <th>Name</th><th>Team</th><th>Phone</th>
             </tr>
@@ -13,5 +13,5 @@
             </tr>
             <?php }?>
         </table>
-    </div>
+
 </div>

@@ -1,90 +1,57 @@
-<?php //print_r($nfl_positions)?>
-
-<!-- Add positions modal -->
-<div class="reveal tiny" id="position-form-modal" data-reveal data-overlay="true">
-    <div class="row">
-        <div class="columns">
-            <h5><span id="type-text">Add</span> Position</h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="columns">
-            <table class="table-condensed">
-                <thead>
-                    <th style="width:50%"></th><th></th>
-                </thead>
+<?php 
+    // League admins modal
+    $body = '<table class="table is-fullwidth is-narrow">
                 <tbody id="position-form">
 
                 </tbody>
             </table>
-            <div class="row">
-                <div class="columns">
+            <button id="save-button" class="button is-link">Add</button>
+            ';
+    $this->load->view('components/modal', array('id' => 'position-form-modal',
+                                                          'title' => 'Add Position',
+                                                          'body' => $body,
+                                                         'reload_on_close' => True));
+?>
 
-                </div>
-            </div>
-            <div class="row">
-                <div class="columns">
-                    <button id="save-button" class="button">Add</button>
-                </div>
-            </div>
-            <button class="close-button" data-close aria-label="Close modal" type="button">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="columns">
+<div class="section">
         <?php $this->load->view('admin/positions/year_bar.php'); ?>
-    </div>
-</div>
-<br>
 
-<div class="row">
-    <div class="columns">
-        <h5><?=$selected_year?> Season</h5>
-        Pos. definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
-    </div>
-</div>
-<br>
-<div class="row">
-    <div class="columns">
-        <h6><a id="show-add-button">Add Position</a></h6>
-    </div>
-</div>
-<br>
-<div class="row">
-    <div class="columns">
-        <table class="text-center">
-            <tr><th class="text-left">Name</th><th>Position</th><th>NFL Pos</th><th>Roster Max</th><th>Roster Min</th>
-                <th>Start Max</th><th>Start Min</th><th></th></tr>
-        <?php foreach($league_positions as $lp): ?>
+    <br><br>
+    <div class="is-size-5"><?=$selected_year?> Season</div>
+    Pos. definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
+    <br><br>
+    <div class="is-size-6"><a id="show-add-button">Add Position</a></div>
+    <br><br>
 
-            <tr>
-                <td class="text-left"><?php echo $lp->long_text; ?></td>
-                <td><?php echo $lp->text_id;?></td>
-                <td>
-                    <?php foreach(explode(",",$lp->nfl_position_id_list) as $nfl_id){
-                        //echo $nfl_id." ";
-                        echo $nfl_positions[$nfl_id]." ";
-                    }?>
-                </td>
-                <td><?=$lp->max_roster == -1 ? "No max" : $lp->max_roster?></td>
-                <td><?=$lp->min_roster == -1 ? "No min" : $lp->min_roster?></td>
-                <td><?=$lp->max_start == -1 ? "No max" : $lp->max_start?></td>
-                <td><?=$lp->min_start == -1 ? "No min" : $lp->min_start?></td>
-                <td>
-                    <a class="show-edit-button" data-id="<?=$lp->id?>">edit</a>
-                    <a href='<?php echo site_url('admin/positions/delete/'.$selected_year.'/'.$lp->id); ?>'>delete</a>
-                </td>
-            </tr>
-        <?php endforeach;?>
-        </table>
-        <br>
-        <span style="font-style:italic">Use this URL to display to your league (ex: in League Rules): </span><?=site_url('league/rules/positions')?>
-    </div>
+    <table class="table is-fullwidth is-narrow is-striped">
+        <tr><th class="text-left">Name</th><th>Position</th><th>NFL Pos</th><th>Roster Max</th><th>Roster Min</th>
+            <th>Start Max</th><th>Start Min</th><th></th></tr>
+    <?php foreach($league_positions as $lp): ?>
+
+        <tr>
+            <td class="text-left"><?php echo $lp->long_text; ?></td>
+            <td><?php echo $lp->text_id;?></td>
+            <td>
+                <?php foreach(explode(",",$lp->nfl_position_id_list) as $nfl_id){
+                    //echo $nfl_id." ";
+                    echo $nfl_positions[$nfl_id]." ";
+                }?>
+            </td>
+            <td><?=$lp->max_roster == -1 ? "No max" : $lp->max_roster?></td>
+            <td><?=$lp->min_roster == -1 ? "No min" : $lp->min_roster?></td>
+            <td><?=$lp->max_start == -1 ? "No max" : $lp->max_start?></td>
+            <td><?=$lp->min_start == -1 ? "No min" : $lp->min_start?></td>
+            <td>
+                <a class="show-edit-button" data-id="<?=$lp->id?>">edit</a>
+                <a href='<?php echo site_url('admin/positions/delete/'.$selected_year.'/'.$lp->id); ?>'>delete</a>
+            </td>
+        </tr>
+    <?php endforeach;?>
+    </table>
+    <br><br>
+    <span style="font-style:italic">Use this URL to display to your league (ex: in League Rules): </span><?=site_url('league/rules/positions')?>
 </div>
+
 
 <script>
 
@@ -119,7 +86,8 @@ $("#show-add-button").on("click",function(){
     {
         $("#position-form").html(data);
     });
-    $("#position-form-modal").foundation('open');
+    $("#position-form-modal").addClass('is-active');
+
 });
 
 $(".show-edit-button").on("click",function(){
@@ -132,13 +100,15 @@ $(".show-edit-button").on("click",function(){
     {
         $("#position-form").html(data);
     });
-    $("#position-form-modal").foundation('open');
+    $("#position-form-modal").addClass('is-active');
+
 });
 
 function MoveItem(fromId, toId)
 {
     var fromObj = $("#"+fromId).get(0);
     var toObj = $("#"+toId).get(0);
+
    for (var selIndex = fromObj.length - 1; selIndex >= 0; selIndex--)
    {
       // Is this option selected?
@@ -156,6 +126,7 @@ function MoveItem(fromId, toId)
          fromObj[selIndex] = null;
       }
    }
+
 
     // var fromObj = $("#"+fromID);
     // var toObj = $("#"+toID);

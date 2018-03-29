@@ -1,33 +1,55 @@
-<div class="row">
-    <div class="columns">
-        <h5>Add a division</h5>
-    </div>
-</div>
-<div class="row">
-    <div class="columns">
-        <table>
-        <?=form_open(current_url())?>
-            <tr>
-                <td><?=form_label('Division Name','name')?></td>
-                <td><?=form_input('name')?></td>
-            </tr>
-            <tr>
-                <td colspan=2>
-                    <input class="button small" type="submit" name="add" value="Add"  />
-                </td>
-            </tr>
+<div class="section">
+    <div class="columns is-centered">
+        <div class="column fflp-sm-container">
+            <div class="is-size-5">Add a division</div>
 
-        <?=form_close()?>
-        </table>
-        <p></p>
-        <h5>Divisions</h5>
-        <table>
-            <?php foreach ($divisions as $div): ?>
-            <tr>
-                <td><?=$div->name?></td>
-                <td><a href="<?=site_url('admin/divisions/delete/'.$div->id)?>">delete</a></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
+            <table class="table is-fullwidth is-narrow">
+                <tr>
+                    <td>
+                        <label>Division Name</label>
+                        <input id="division_name" class="input" type="text"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=2>
+                        <button id="add-division-button" class="button is-small is-link">Add</button>
+                    </td>
+                </tr>
+            </table>
+            <p></p>
+            <h5>Divisions</h5>
+            <table class="table is-fullwidth is-narrow">
+                <?php foreach ($divisions as $div): ?>
+                <tr>
+                    <td><?=$div->name?></td>
+                    <td><a href="#" data-id="<?=$div->id?>" class="delete-division">delete</a></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
     </div>
 </div>
+
+<script>
+    $('#add-division-button').on('click',function(){
+        var url="<?=site_url('admin/divisions/ajax_add_division')?>";
+        var name = $('#division_name').val();
+        $.post(url,{'name':name},function(data){
+            if(data.success)
+            {
+                location.reload();
+            }
+        },'json');
+    });
+
+    $('.delete-division').on('click',function(){
+        var url="<?=site_url('admin/divisions/ajax_delete_division')?>";
+        var id = $(this).data('id');
+        $.post(url,{'id':id},function(data){
+            if(data.success)
+            {
+                location.reload();
+            }
+        },'json')
+    });
+</script>

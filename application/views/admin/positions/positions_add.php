@@ -1,4 +1,6 @@
-<?php print_r($pos);?>
+<!-- I think this file can be deleted, no longer used -->
+adfafasdf
+adfasdf
 
 <div class="row">
     <div class="columns">

@@ -71,20 +71,14 @@ class Site extends MY_Admin_Controller{
                 <tr>
                     <td class="text-left"><?=$o->first_name.' '.$o->last_name?></td>
                     <td>
-                        <?=$this->load->view('template/component/toggle_switch',
+                        <?=$this->load->view('components/toggle_switch',
                                                 array('id' => 'admin-'.$id,
                                                       'var1' => $id,
                                                       'var2' => $leagueid,
                                                       'url' => site_url('admin/site/ajax_toggle_league_admin'),
                                                       'is_checked' => array_key_exists($id, $data['admins'])),TRUE);
                         ?>
-                        <!-- <div class="field">
-                            <input  class="switch toggle-control is-info" data-var1="<?=$id?>" data-var2="<?=$leagueid?>" data-url="<?=site_url('admin/site/ajax_toggle_league_admin')?>"
-                                id="admin-<?=$id?>" type="checkbox" name="adminSwitch" <?php if(array_key_exists($id, $data['admins'])){echo "checked";}?>>
-                            <label for="admin-<?=$id?>">
-                            </label>
 
-                        </div> -->
                     </td>
                 </tr>
             <?php endforeach; ?>

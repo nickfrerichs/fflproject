@@ -36,29 +36,70 @@ class Divisions extends MY_Admin_Controller{
         $this->admin_view('admin/divisions/divisions', array('division_array' => $divisions_array, 'divisions' => $divisions));
     }
 
-    function save()
+    // function save()
+    // {
+    //     if($this->input->post('save'))
+    //     {
+    //         foreach($this->input->post() as $key => $value)
+    //         {
+    //             if (is_numeric($value))
+    //             {
+    //                 $this->divisions_model->save_team($key, $value);
+    //             }
+    //         }
+    //     }
+    //     redirect('admin/divisions');
+    // }
+
+    function ajax_save_divisions()
     {
-        if($this->input->post('save'))
+        $response = array('success' => false);
+        $teams = $this->input->post('teams');
+
+        foreach($teams as $team_id => $div_id)
         {
-            foreach($this->input->post() as $key => $value)
+            if (is_numeric($div_id))
             {
-                if (is_numeric($value))
-                {
-                    $this->divisions_model->save_team($key, $value);
-                }
+                $this->divisions_model->save_team($team_id, $div_id);
             }
         }
-        redirect('admin/divisions');
+
+        $response['success'] = True;
+
+        echo json_encode($response);
+    }
+
+    function ajax_add_division()
+    {
+        $response = array('success' => false);
+        $div_name = $this->input->post('name');
+        $this->divisions_model->add_division($div_name);
+
+        $response['success'] = True;
+
+        echo json_encode($response);
+    }
+
+    function ajax_delete_division()
+    {
+        $response = array('success' => False);
+        $id = $this->input->post('id');
+
+        $this->divisions_model->delete_division($id);
+
+        $response['success'] = True;
+
+        echo json_encode($response);
     }
 
     function manage()
     {
-        if ($this->input->post('add'))
-        {
-            $div_name = $this->input->post('name');
-            $this->divisions_model->add_division($div_name);
-            redirect(site_url('admin/divisions/manage'));
-        }
+        // if ($this->input->post('add'))
+        // {
+        //     $div_name = $this->input->post('name');
+        //     $this->divisions_model->add_division($div_name);
+        //     redirect(site_url('admin/divisions/manage'));
+        // }
         $divisions = $this->divisions_model->get_league_divisions();
         $this->load->helper('form');
         $this->bc['Divisions'] = site_url('admin/divisions');
@@ -66,11 +107,11 @@ class Divisions extends MY_Admin_Controller{
         $this->admin_view('admin/divisions/manage', array('divisions' => $divisions));
     }
 
-    function delete($id)
-    {
-        $this->divisions_model->delete_division($id);
-        redirect('admin/divisions/manage');
-    }
+    // function delete($id)
+    // {
+    //     $this->divisions_model->delete_division($id);
+    //     redirect('admin/divisions/manage');
+    // }
 
 
 }

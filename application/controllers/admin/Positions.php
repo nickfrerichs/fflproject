@@ -49,96 +49,109 @@ class Positions extends MY_Admin_Controller{
 
         $nfl_positions = $this->positions_model->get_nfl_positions_array();
         ?>
-        <tr><td>Short Name</td><td><input id="short-text" type="text" value="<?php if($editid){echo $position->text_id;}?>"></td></tr>
-        <tr><td>Long Name</td><td><input id="long-text" type="text" value="<?php if($editid){echo $position->long_text;}?>"></td></tr>
+        <tr><td>Short Name</td><td><input id="short-text" class="input" type="text" value="<?php if($editid){echo $position->text_id;}?>"></td></tr>
+        <tr><td>Long Name</td><td><input id="long-text" class="input" type="text" value="<?php if($editid){echo $position->long_text;}?>"></td></tr>
         <tr><td>Roster Max</td><td>
             <?php if($roster_max == -1){$roster_max=20;}?>
-            <select id="roster-max">
-                <?php if($position->max_roster == -1): ?>
-                    <option selected value="-1">No max</option>
-                <?php else: ?>
-                    <option value="-1">No max</option>
-                <?php endif; ?>
-                <?php for($i=0; $i<=$roster_max; $i++): ?>
-                    <?php if ($editid && $position->max_roster == $i): ?>
-                        <option selected value="<?=$i?>"><?=$i?></option>
-                    <?php else:?>
-                        <option value="<?=$i?>"><?=$i?></option>
-                    <?php endif;?>
-                <?php endfor; ?>
-            </select>
+            <div class="select">
+                <select id="roster-max">
+                    <?php if($position->max_roster == -1): ?>
+                        <option selected value="-1">No max</option>
+                    <?php else: ?>
+                        <option value="-1">No max</option>
+                    <?php endif; ?>
+                    <?php for($i=0; $i<=$roster_max; $i++): ?>
+                        <?php if ($editid && $position->max_roster == $i): ?>
+                            <option selected value="<?=$i?>"><?=$i?></option>
+                        <?php else:?>
+                            <option value="<?=$i?>"><?=$i?></option>
+                        <?php endif;?>
+                    <?php endfor; ?>
+                </select>
+            </div>
         </td></tr>
         <tr><td>Roster Min</td><td>
-            <select id="roster-min">
-                <?php if($position->min_roster == -1): ?>
-                    <option selected value="-1">No min</option>
-                <?php else: ?>
-                    <option value="-1">No min</option>
-                <?php endif; ?>
-                <?php for($i=0; $i<=$roster_max; $i++): ?>
-                    <?php if ($editid && $position->min_roster == $i): ?>
-                        <option selected value="<?=$i?>"><?=$i?></option>
+            <div class="select">
+                <select id="roster-min">
+                    <?php if($position->min_roster == -1): ?>
+                        <option selected value="-1">No min</option>
                     <?php else: ?>
-                        <option value="<?=$i?>"><?=$i?></option>
-                    <?php endif;?>
-                <?php endfor; ?>
-            </select>
+                        <option value="-1">No min</option>
+                    <?php endif; ?>
+                    <?php for($i=0; $i<=$roster_max; $i++): ?>
+                        <?php if ($editid && $position->min_roster == $i): ?>
+                            <option selected value="<?=$i?>"><?=$i?></option>
+                        <?php else: ?>
+                            <option value="<?=$i?>"><?=$i?></option>
+                        <?php endif;?>
+                    <?php endfor; ?>
+                </select>
+            </div>
         </td></tr>
         <tr><td>Start Max</td><td>
-            <select id="start-max">
-                <?php if($position->max_start == -1): ?>
-                    <option selected value="-1">No max</option>
-                <?php else: ?>
-                    <option value="-1">No max</option>
-                <?php endif; ?>
-                <?php for($i=0; $i<=$roster_max; $i++): ?>
-                    <?php if ($editid && $position->max_start == $i): ?>
-                        <option selected value="<?=$i?>"><?=$i?></option>
+            <div class="select">
+                <select id="start-max">
+                    <?php if($position->max_start == -1): ?>
+                        <option selected value="-1">No max</option>
                     <?php else: ?>
-                        <option value="<?=$i?>"><?=$i?></option>
-                    <?php endif;?>
-                <?php endfor; ?>
-            </select>
+                        <option value="-1">No max</option>
+                    <?php endif; ?>
+                    <?php for($i=0; $i<=$roster_max; $i++): ?>
+                        <?php if ($editid && $position->max_start == $i): ?>
+                            <option selected value="<?=$i?>"><?=$i?></option>
+                        <?php else: ?>
+                            <option value="<?=$i?>"><?=$i?></option>
+                        <?php endif;?>
+                    <?php endfor; ?>
+                </select>
+            </div>
         </td></tr>
         <tr><td>Start Min</td><td>
-            <select id="start-min">
-                <?php if($position->min_start == -1): ?>
-                    <option selected value="-1">No min</option>
-                <?php else: ?>
-                    <option value="-1">No min</option>
-                <?php endif; ?>
-                <?php for($i=0; $i<=$roster_max; $i++): ?>
-                    <?php if ($editid && $position->min_start == $i): ?>
-                        <option selected value="<?=$i?>"><?=$i?></option>
+            <div class="select">
+                <select id="start-min">
+                    <?php if($position->min_start == -1): ?>
+                        <option selected value="-1">No min</option>
                     <?php else: ?>
-                        <option value="<?=$i?>"><?=$i?></option>
-                    <?php endif;?>
-                <?php endfor; ?>
-            </select>
+                        <option value="-1">No min</option>
+                    <?php endif; ?>
+                    <?php for($i=0; $i<=$roster_max; $i++): ?>
+                        <?php if ($editid && $position->min_start == $i): ?>
+                            <option selected value="<?=$i?>"><?=$i?></option>
+                        <?php else: ?>
+                            <option value="<?=$i?>"><?=$i?></option>
+                        <?php endif;?>
+                    <?php endfor; ?>
+                </select>
+            </div>
         </td></tr>
         <tr><td>
-                <select id="nfl-positions" name="nfl-positions" multiple="multiple">
-                <?php foreach($nfl_positions as $id => $p): ?>
-                    <?php if(!$editid || !in_array($id,explode(',',$position->nfl_position_id_list))):?>
-                        <option value="<?=$id?>"><?=$p?></option>
-                    <?php endif;?>
-                <?php endforeach;?>
-                </select>
-                <div class="text-center">
-                    <button class="button" onclick="MoveItem('league-positions', 'nfl-positions');"><<</button>
+                <div class="select is-multiple">
+                    <select id="nfl-positions" name="nfl-positions" multiple size="5" style="min-width:75px;">
+                    <?php foreach($nfl_positions as $id => $p): ?>
+                        <?php if(!$editid || !in_array($id,explode(',',$position->nfl_position_id_list))):?>
+                            <option value="<?=$id?>"><?=$p?></option>
+                        <?php endif;?>
+                    <?php endforeach;?>
+                    </select>
                 </div>
+                <br>
+                <button class="button is-link" onclick="MoveItem('nfl-positions', 'league-positions');">>></button>
+
             </td>
             <td>
-                <select id="league-positions" name="nfl-positions" multiple="multiple">
-                    <?php if($editid):?>
-                        <?php foreach(explode(',',$position->nfl_position_id_list) as $p): ?>
-                            <option value="<?=$p?>"><?=$nfl_positions[$p]?></option>
-                        <?php endforeach;?>
-                    <?php endif;?>
-                </select>
-                <div class="text-center">
-                    <button class="button" onclick="MoveItem('nfl-positions', 'league-positions');">>></button>
+                <div class="select is-multiple">
+                    <select id="league-positions" name="nfl-positions" multiple size="5" style="min-width:75px;">
+                        <?php if($editid):?>
+                            <?php foreach(explode(',',$position->nfl_position_id_list) as $p): ?>
+                                <option value="<?=$p?>"><?=$nfl_positions[$p]?></option>
+                            <?php endforeach;?>
+                        <?php endif;?>
+                    </select>
                 </div>
+                <br>
+                <button class="button is-link" onclick="MoveItem('league-positions', 'nfl-positions');"><<</button>
+                    
+
             </td>
 
         <?php
