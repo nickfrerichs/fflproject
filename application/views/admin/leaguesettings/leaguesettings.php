@@ -3,15 +3,10 @@
 </style>
 
 
-<div class="row align-center" style="max-width:650px;">
-
-    <div class="columns">
-        <h4><?=$settings->league_name?></h4>
-    </div>
-
-    <div class="columns small-12 callout">
-        <h6><b>League Settings</b></h6>
-        <table class="table">
+<div class="section">
+        <div class="is-size-4"><?=$settings->league_name?></div>
+        <div class="is-size-6"><b>League Settings</b></div>
+        <table class="table is-fullwidth is-narrow">
             <thead>
             </thead>
             <tbody>
@@ -98,10 +93,10 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-    <div class="columns small-12 callout">
-        <h6><b>Cosmetic</b></h6>
-        <table>
+
+
+        <div class="is-size-6"><b>Cosmetic</b></div>
+        <table class="table is-fullwdith is-narrow">
             <tbody>
                 <tr>
                     <td>Display who's online</td>
@@ -127,10 +122,10 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-    <div class="columns small-12 callout">
-        <h6><b>Join settings</b></h6>
-        <table>
+
+
+        <div class="is-size-6"><b>Join settings</b></div>
+        <table class="table is-fullwidth is-narrow">
             <tbody>
                 <tr>
                     <td><span data-tooltip class="has-tip top" title="Set a password that new owners must know when joining the league.">Join Password</span></td>
@@ -146,11 +141,10 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-    <div class="columns small-12 callout">
-        <h6><b>Twitter API</b></h6>
 
-        <table>
+        <div class="is-size-6"><b>Twitter API</b></div>
+
+        <table class="table is-fullwidth is-narrow">
             <thead>
             </thead>
             <tbody>
@@ -213,7 +207,7 @@
             </tbody>
         </table>
         <a href="https://apps.twitter.com/">https://apps.twitter.com/</a>
-    </div>
+
     </div>
     <?=debug($settings,$this->session->userdata('debug'))?>
 </div>

@@ -1,80 +1,100 @@
 
 <?php //print_r($matchups); ?>
 
-<div class="row">
-    <div class="columns">
-        <div class="callout">
-        <h5><?=$template->teams.' teams - '.$template->divisions.' divisions'?></h5>
-        <?=form_open(current_url())?>
-        <table>
-            <tr>
-                <td><?=form_label('Template name', 'name')?></td>
-                <td><?=form_input('name', $template->name)?></td>
-            </tr>
-            <tr>
-                <td><?=form_label('Template description', 'description')?></td>
-                <td><?=form_input('description', $template->description)?></td>
-            </tr>
-            <tr>
-                <td><?=form_label('Number of teams', 'teams')?></td>
-                <td><?=form_input('teams', $template->teams)?></td>
-            </tr>
-            <tr>
-                <td><?=form_label('Number of divisions', 'divisions')?></td>
-                <td><?=form_input('divisions', $template->divisions)?></td>
-            </tr>
-            <tr>
-                <td><?=form_label('Regular season weeks', 'weeks')?></td>
-                <td><?=form_input('weeks', $template->weeks)?></td>
-            </tr>
-            <tr>
-                <td><?=form_label('Total games per week', 'per_week')?></td>
-                <td><?=form_input('per_week', $template->per_week)?></td>
-            </tr>
-
-        </table>
-        <input class="button small" type="submit" name="update" value="Update info"  />
-        <?=form_close()?>
-        </div>
-        <div class="callout">
-        <h5>Edit Matchups</h5>
-        <small>Use numbers to denote teams (Ex: 1, 2, 3, 4)</small>
-        <br><br>
-        <?=form_open(current_url())?>
-        <?php $count=0; ?>
-        <div class="row">
-        <?php for($w=1; $w<=$template->weeks; $w++): ?>
-
-            <div class="columns medium-6 small-12">
-                <table>
-                <h5>Week <?=$w?></h5>
-                <?php for($g=1; $g<=$template->per_week; $g++): ?>
+<div class="section">
+    <div class="columns is-centered">
+        <div class="column fflp-lg-container">
+            <div class="is-size-5"><?=$template->teams.' teams - '.$template->divisions.' divisions'?></div>
+            <br>
+            <br>
+            <div class="is-size-6">Edit Template Info</div>
+            <table class="table is-fullwidth is-narrow fflp-table-fixed is-bordered">
                 <tr>
-                    <td>
-                        <?=form_label('Home','home'.$count.'_'.$w.'_'.$g)?>
-                        <?php if(isset($matchups[$w][$g]['home'])): ?>
-                            <?=form_input('home'.$count.'_'.$w.'_'.$g,$matchups[$w][$g]['home'])?>
-                        <?php else: ?>
-                            <?=form_input('home'.$count.'_'.$w.'_'.$g)?>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?=form_label('Away','away'.$count.'_'.$w.'_'.$g)?>
-                        <?php if(isset($matchups[$w][$g]['away'])): ?>
-                            <?=form_input('away'.$count.'_'.$w.'_'.$g,$matchups[$w][$g]['away'])?>
-                        <?php else: ?>
-                            <?=form_input('away'.$count.'_'.$w.'_'.$g)?>
-                        <?php endif; ?>
-                    </td>
+                    <td>Template Name</td>
+                    <td><input data-post-id="name" class="input post-edit-info" type="text" value="<?=$template->name?>"></td>
                 </tr>
-                <?php $count++; ?>
-                <?php endfor; ?>
-                </table>
-            </div>
-        <?php endfor; ?>
+                <tr>
+                    <td>Template Description</td>
+                    <td><input data-post-id="desc" class="input post-edit-info" type="text" value="<?=$template->description?>"></td>
+                </tr>
+                <tr>
+                    <td>Number of Teams</td>
+                    <td><input data-post-id = "num_teams" class="input post-edit-info" type="text" value="<?=$template->teams?>"></td>
+                </tr>
+                <tr>
+                    <td>Number of Divisions</td>
+                    <td><input data-post-id = "num_divs" class="input post-edit-info" type="text" value="<?=$template->divisions?>"></td>
+                </tr>
+                <tr>
+                    <td>Number of Regular Season Weeks</td>
+                    <td><input data-post-id = "num_weeks" class="input post-edit-info" type="text" value="<?=$template->weeks?>"></td>
+                </tr>
+                <tr>
+                    <td>Games per Week</td>
+                    <td><input data-post-id = "per_week" class="input post-edit-info" type="text" value="<?=$template->per_week?>"></td>
+                </tr>
+            </table>
+            <button 
+                    class="button is-small is-link post-edit-info ajax-submit-button"
+                    data-url="<?=site_url('admin/schedule_templates/ajax_edit_template_info')?>"
+                    data-varclass="post-edit-info"
+                    data-post-id="template_id" 
+                    value="<?=$template->id?>">Update</button>
         </div>
-        <input class="button small" type="submit" name="save" value="Save matchups"  />
-        <?=form_close()?>
+    </div>
+    <hr>
+    <div class="columns is-centered">
+        <div class="column fflp-lg-container">
+            <div class="is-size-6">Edit Matchups</div>
+            <small>Use numbers to denote teams (Ex: 1, 2, 3, 4)</small>
+            <br><br>
+            <?php $count=0; ?>
+
+            <?php for($w=1; $w<=$template->weeks; $w++): ?>
+
+
+                    <table class="table is-fullwidth is-narrow is-bordered">
+                    <div class="is-size-6">Week <?=$w?></div>
+                    <?php for($g=1; $g<=$template->per_week; $g++): ?>
+                    <tr>
+                        <td>
+                            Home
+                            <input class="post-edit-data input" 
+                                data-post-arrayid="games"
+                                data-post-week="<?=$w?>" 
+                                data-post-game="<?=$g?>"
+                                data-post-homeaway="home"
+                                <?php if (isset($matchups[$w][$g]['home'])): ?>
+                                value = "<?=$matchups[$w][$g]['home']?>"
+                                <?php endif;?>>
+                        </td>
+                        <td>
+                            Away
+                            <input class="post-edit-data input" 
+                                data-post-arrayid="games"
+                                data-post-week="<?=$w?>" 
+                                data-post-game="<?=$g?>"
+                                data-post-homeaway="away"
+                                <?php if (isset($matchups[$w][$g]['away'])): ?>
+                                value = "<?=$matchups[$w][$g]['away']?>"
+                                <?php endif;?>>
+                        </td>
+                    </tr>
+                    <?php $count++; ?>
+                    <?php endfor; ?>
+                    </table>
+  
+            <?php endfor; ?>
+
+
+            <button 
+                class="button is-small is-link post-edit-data ajax-submit-button"
+                data-url="<?=site_url('admin/schedule_templates/ajax_edit_template_data')?>"
+                data-varclass="post-edit-data"
+                data-post-id="template_id" 
+                value="<?=$template->id?>"
+                data-reload="false">Update</button>
+
         </div>
     </div>
 </div>

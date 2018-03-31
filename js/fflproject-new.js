@@ -234,6 +234,72 @@ $(document).on('click','.modal-close, .modal-close-button, .modal-background', f
 
 
 
+// =====================================
+// Ajax posting
+
+$(document).on('click','.ajax-submit-button',function(){
+    var url = $(this).data('url');
+    var post_data = get_post_data('.'+$(this).data('varclass'));
+    var do_reload = true;
+    debug_out('Data to post: ',post_data);
+
+    if($(this).data('reload') == false)
+    {do_reload = false;}
+     
+    $.post(url,{'data':post_data}, function(data){
+        debug_out('Json response: ',data);
+        if (data.success)
+        {
+            if(do_reload)
+            {location.reload();}
+        }
+
+    },'json');
+
+});
+
+function get_post_data(css_class)
+{
+    var postData = {};
+    $(css_class).each(function(){
+        var data = $(this).data();
+        var id = $(this).data('post-id');
+        var arrayid = $(this).data('post-arrayid');
+        if (id != undefined)
+        {
+            postData[id] = {};
+            if($(this).is(':checkbox')){postData[id]['value'] = $(this).is(':checked');}
+            else{postData[id]['value'] = $(this).val();}   
+            $.each(data,function(key,val){
+                if(key.match("^post"))
+                {
+                    key = key.replace('post','').toLowerCase();
+                    postData[id][key] = val;
+                }
+            });
+        }
+        if (arrayid != undefined)
+        {
+            if (postData[arrayid] == undefined)
+            {postData[arrayid] = [];}
+            var newVal = {};
+            newVal['value'] = $(this).val();
+            $.each(data,function(key,val){
+                if(key.match("^post"))
+                {
+                    key = key.replace('post','').toLowerCase();
+                    newVal[key] = val;
+                }
+            });
+            postData[arrayid].push(newVal);
+        }
+    });
+   return postData;
+}
+
+// End Ajax posting
+// ======================================
+
 function debug_out(o,o2)
 {
 	if (window.DEBUG_ENABLED){

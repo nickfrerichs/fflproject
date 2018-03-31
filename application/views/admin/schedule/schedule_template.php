@@ -30,36 +30,56 @@
             </table>
             <hr>
             <div class="is-size-5">Create new template</div>
-            <?=form_open(current_url())?>
+
             <table class="table is-fullwidth is-narrow">
                 <tr>
-                    <td><?=form_label('Template name', 'name')?></td>
-                    <td><?=form_input('name')?></td>
+                    <td>Template Name</td>
+                    <td><input id="template-name" class="input" type="text"></td>
                 </tr>
                 <tr>
-                    <td><?=form_label('Template description', 'description')?></td>
-                    <td><?=form_input('description')?></td>
+                    <td>Template Description</td>
+                    <td><input id="template-description" class="input" type="text"></td>
                 </tr>
                 <tr>
-                    <td><?=form_label('Number of teams', 'teams')?></td>
-                    <td><?=form_input('teams')?></td>
+                    <td>Number of Teams</td>
+                    <td><input id="template-num-teams" class="input" type="text"></td>
                 </tr>
                 <tr>
-                    <td><?=form_label('Number of divisions', 'divisions')?></td>
-                    <td><?=form_input('divisions')?></td>
+                    <td>Number of Divisions</td>
+                    <td><input id="template-num-divisions" class="input" type="text"></td>
                 </tr>
                 <tr>
-                    <td><?=form_label('Regular season weeks', 'weeks')?></td>
-                    <td><?=form_input('weeks')?></td>
+                    <td>Number of Regular Season Weeks</td>
+                    <td><input id="template-num-reg-weeks" class="input" type="text"></td>
                 </tr>
                 <tr>
-                    <td><?=form_label('Total games per week', 'weeks')?></td>
-                    <td><?=form_input('per_week')?></td>
+                    <td>Number of Games per Week</td>
+                    <td><input id="template-num-games-per-week" class="input" type="text"></td>
                 </tr>
 
             </table>
-            <input class="button small" type="submit" name="create" value="Create"  />
-            <?=form_close()?>
+            <button id="create-button" class="button is-small is-link">Create</button>
         </div>
     </div>
 </div>
+
+<script>
+    $('#create-button').on('click',function(){
+        var url = "<?=site_url('admin/schedule_templates/ajax_create_template')?>";
+        var name = $('#template-name').val();
+        var desc = $('#template-description').val();
+        var num_teams = $('#template-num-teams').val();
+        var num_divs = $('#template-num-divisions').val();
+        var num_reg_weeks = $('#template-num-reg-weeks').val();
+        var num_games_per_week = $('#template-num-games-per-week').val();
+
+        $.post(url,{'name':name,'desc':desc,'num_teams':num_teams,'num_divs':num_divs,'num_reg_weeks':num_reg_weeks,
+                    'num_games_per_week':num_games_per_week}, function(data){
+            if (data.success)
+            {
+                location.reload();
+            }
+
+        },'json');
+    });
+</script>

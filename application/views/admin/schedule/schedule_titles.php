@@ -1,45 +1,48 @@
-<div class="section">
-    <div class="is-size-5">Titles</div>
-</div>
 
 <div class="section">
-    <div class="columns">
-        <div class="column">
+    <div class="columns is-centered">
+        <div class="column fflp-lg-container">
+            <div class="is-size-5">Titles</div>
+            <br>
             <table class="table is-fullwidth is-narrow is-striped">
                 <thead>
-                    <th>Title Text</th><th></th><th>Display Order</th><th></th><th>Delete</th>
+                    <th>Title Text</th><th>Display Order</th><th>Delete</th>
                 </thead>
                 <tbody>
                     <?php foreach($titles as $t): ?>
                         <tr>
-                            <td id="text<?=$t->id?>-field"> <?=$t->text?></td>
                             <td>
-                                <a href="#" id="text<?=$t->id?>-control" class="change-control" data-var1="<?=$t->id?>" data-url="<?=site_url('admin/schedule_templates/ajax_title_text_edit')?>">Change</a>
-                                <a href="#" id="text<?=$t->id?>-cancel" class="cancel-control"></a>
+                            <?php $this->load->view('components/editable_text',
+                                    array(  'id' => "text".$t->id,
+                                            'var1' => $t->id, 
+                                            'value' => $t->text,
+                                            'url' => site_url('admin/schedule_templates/ajax_title_text_edit')));?>
+
                             </td>
-                            <td id="order<?=$t->id?>-field"> <?=$t->display_order?></td>
+
+
                             <td>
-                                <a href="#" id="order<?=$t->id?>-control" class="change-control" data-var1="<?=$t->id?>" data-url="<?=site_url('admin/schedule_templates/ajax_title_order_edit')?>">Change</a>
-                                <a href="#" id="order<?=$t->id?>-cancel" class="cancel-control"></a>
+                            <?php $this->load->view('components/editable_text',
+                                    array(  'id' => "order".$t->id,
+                                            'var1' => $t->id, 
+                                            'value' => $t->display_order,
+                                            'url' => site_url('admin/schedule_templates/ajax_title_order_edit')));?>
+
                             </td>
                             <td><a href="#" class="delete-title" data-id="<?=$t->id?>">delete</a></td>
                         </tr>
                     <?php endforeach;?>
                 </tbody>
             </table>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="columns">
-        <h6>Add Title</h6>
-        <table>
+
+        <div class="is-size-6">Add Title</div>
+        <table class="table is-fullwidth is-narrow fflp-table-fixed">
             <thead>
             </thead>
             <tbody>
                 <tr>
-                    <td><input id="add-title-text" type="text"></td>
-                    <td><input id="add-title" class="button small" value="Add"  /></td>
+                    <td><input id="add-title-text" class="input" type="text"></td>
+                    <td><input id="add-title" class="button is-link" value="Add"  /></td>
                 </tr>
             </tbody>
         </table>
