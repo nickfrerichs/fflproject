@@ -1,27 +1,20 @@
 <?php //print_r($content);?>
 
 
-<div class="row">
-    <div class="columns">
-        <?php if($content->text_id == "news"):?>
-            <input id="title" type="text" value="<?=$content->title?>">
-        <?php else:?>
-            <h5><?=$content->title?></h5>
-        <?php endif;?>
+<div class="section">
+    <?php if($content->text_id == "news"):?>
+        <input class="input" id="title" type="text" value="<?=$content->title?>">
+    <?php else:?>
+        <div class="is-size-5"><?=$content->title?></div>
+    <?php endif;?>
+
+    <div id="content">
     </div>
-</div>
-<div class="row">
-    <div class="columns">
-        <div id="content">
-        </div>
-    </div>
-</div>
-<br>
-<div class="row">
-    <div class="columns">
-        <button id="submit" class="button small">Save</button>
-        <button id="cancel" class="button small">Cancel</button>
-    </div>
+
+    <br>
+
+    <button id="submit" class="button is-small is-link">Save</button>
+    <button id="cancel" class="button is-small is-link">Cancel</button>
 </div>
 <script src="<?=site_url('js/tinymce/tinymce.min.js')?>"></script>
 <script>

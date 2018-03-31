@@ -19,13 +19,13 @@ class Leaguesettings_model extends MY_Model{
 
     function toggle_setting($leagueid,$item)
     {
-        $lookup = array('playermoves' => 'twitter_player_moves',
-                        'chatupdates' => 'twitter_chat_updates',
-                        'offseason' => 'offseason',
-                        'tradepicks' => 'trade_draft_picks',
-                        'locklineups' => 'lock_lineups_first_game',
-                        'draftranks' => 'use_draft_ranks',
-                        'disablegt' => 'waiver_wire_disable_gt');
+        $lookup = array('#playermoves' => 'twitter_player_moves',
+                        '#chatupdates' => 'twitter_chat_updates',
+                        '#offseason' => 'offseason',
+                        '#tradepicks' => 'trade_draft_picks',
+                        '#locklineups' => 'lock_lineups_first_game',
+                        '#draftranks' => 'use_draft_ranks',
+                        '#disablegt' => 'waiver_wire_disable_gt');
         $val = !$this->db->select($lookup[$item])->from('league_settings')->where('league_id',$leagueid)
             ->get()->row()->{$lookup[$item]};
         $this->db->where('league_id',$leagueid);
@@ -37,13 +37,13 @@ class Leaguesettings_model extends MY_Model{
     {
         if ($leagueid == 0 || !$leagueid)
             $leagueid = $this->leagueid;
-        $lookup = array('maxteams' => 'max_teams',
-              'rostermax' => 'roster_max',
-              'joinpassword' => 'join_password',
-              'consumertoken' => 'twitter_consumer_token',
-              'consumersecret' => 'twitter_consumer_secret',
-              'accesstoken' => 'twitter_access_token',
-              'accesssecret' => 'twitter_access_secret',
+        $lookup = array('#maxteams' => 'max_teams',
+              '#rostermax' => 'roster_max',
+              '#joinpassword' => 'join_password',
+              '#consumertoken' => 'twitter_consumer_token',
+              '#consumersecret' => 'twitter_consumer_secret',
+              '#accesstoken' => 'twitter_access_token',
+              '#accesssecret' => 'twitter_access_secret',
               '#wwdeadline' => 'waiver_wire_deadline',
               '#wwcleartime' => 'waiver_wire_clear_time',
               '#tdeadline' => 'trade_deadline',

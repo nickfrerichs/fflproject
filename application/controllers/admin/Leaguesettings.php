@@ -21,8 +21,7 @@ class Leaguesettings extends MY_Admin_Controller
     function ajax_toggle_item()
     {
         $return = array();
-        $item = $this->input->post('var1');
-
+        $item = $this->input->post('id');
         $return['value'] = $this->leaguesettings_model->toggle_setting($this->session->userdata('league_id'),$item);
         $return['success'] = true;
 
@@ -33,10 +32,10 @@ class Leaguesettings extends MY_Admin_Controller
     {
         $return = array();
         $return['success'] = false;
-        $type = $this->input->post('type');
+        $id = $this->input->post('id');
         $value = $this->input->post('value');
         $return['value'] = $value;
-        $result = $this->leaguesettings_model->change_setting($this->session->userdata('league_id'),$type,$value);
+        $result = $this->leaguesettings_model->change_setting($this->session->userdata('league_id'),$id,$value);
         if ($result > 0)
             $return['success'] = true;
         $return['rows'] = $result;
@@ -48,6 +47,7 @@ class Leaguesettings extends MY_Admin_Controller
         $value = $this->input->post('value');
         $this->leaguesettings_model->set_wo_setting($value);
         $response['success'] = true;
+        $response['value'] = $value;
 
         $this->load->model('security_model');
         $this->security_model->set_session_variables();

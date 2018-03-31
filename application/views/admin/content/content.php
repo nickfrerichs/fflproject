@@ -1,13 +1,13 @@
-<div class="row">
-    <div class="columns callout">
-        <h5>
+<div class="section">
+
+        <div class="is-size-5">
             <a href="<?=site_url('admin/content/view/news')?>">News</a>
-        </h5>
-        <h5>
+        </div>
+        <div class="is-size-5">
             <a href="<?=site_url('admin/content/postseason')?>">Post Season</a>
-        </h5>
-        <h5>
+        </div>
+        <div class="is-size-5">
             <a href="<?=site_url('admin/content/view/rules')?>">Rules</a>
-        </h5>
-    </div>
+        </div>
+
 </div>

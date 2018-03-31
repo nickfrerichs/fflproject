@@ -182,11 +182,12 @@ $(document).on('click','.editable-select-save-button', function(e){
 
 // Handles a toggle-control that is clicked, post to the url
 $(document).on('click','.toggle-control',function(e){
-	var element = $(this);
+    var element = $(this);
+    var id = '#'+$(this).prop('id');
 	var url = $(this).data('url');
 	var var1 = $(this).data('var1');
 	var var2 = $(this).data('var2');
-	$.post(url,{"var1":var1,"var2":var2},function(data){
+	$.post(url,{"id":id,"var1":var1,"var2":var2},function(data){
         console.log(data);
         var d = $.parseJSON(data);
 		if(d.success)
@@ -194,7 +195,7 @@ $(document).on('click','.toggle-control',function(e){
             console.log(d);
 			if ((d.value == 1 && element.is(':checked')) || (d.value == 0 && !element.is(':checked')))
 			{return}
-			location.reload();
+			//location.reload();
 		}
     });
     

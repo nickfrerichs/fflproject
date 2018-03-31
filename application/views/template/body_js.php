@@ -23,4 +23,4 @@
 	<script>window.LEAGUE_ADMIN = false;</script>
 <?php endif;?>
 <!-- <script src="<?=site_url('js/fflproject.js?1.15')?>"></script> -->
-<script src="<?=site_url('js/fflproject-new.js?1.36')?>"></script>
+<script src="<?=site_url('js/fflproject-new.js?1.37')?>"></script>

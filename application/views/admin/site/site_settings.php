@@ -17,8 +17,8 @@
 
 
 								<?php $this->load->view('components/editable_text',array('id' => 'sitename', 
-                                                                                          	  'value' => $settings->name,
-                                                                                          		'url' => site_url('admin/site/ajax_change_item')));?>
+                                                                                        'value' => $settings->name,
+                                                                                        'url' => site_url('admin/site/ajax_change_item')));?>
 
 							</td>
 						</tr>
