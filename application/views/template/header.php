@@ -14,11 +14,11 @@
                 </span>
             </a>
         
-            <a class="navbar-item is-hidden-desktop" href="">
+            <button class="navbar-item is-hidden-desktop" href="">
                 <span class="icon" style="color: #333;">
                 Chat
                 </span>
-            </a>
+            </button>
             <div class="navbar-burger burger" data-target="navMenuTransparentExample">
                 <span></span>
                 <span></span>
@@ -51,9 +51,9 @@
             </div>
             <div class="navbar-end">
             <div class="navbar-item">
-                  <a class="button is-link" href="">
+                  <button id="league-chat-button" class="button is-link" onclick="chatModal.toggle();">
                     <span>chat</span>
-                  </a>
+                  </button>
             </div>
                 <div class="navbar-item is-hoverable">
                     <span class="icon">
@@ -67,6 +67,31 @@
     </div>
 </nav>
 
+<?php if($this->session->userdata('league_id')): ?>
+<!-- Chat modal -->
+<div class="modal" id="chat-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">League Chat</p>
+            <button class="delete modal-close-button" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <table>
+                <tbody id="chat-history-ajax" class="chat-history-ajax">
+                </tbody>
+            </table>
+        </section>
+        <footer class="modal-card-foot">
+        <button class="button modal-close-button is-link is-fullwidth is-medium" aria-label="close">Close</button>
+        </footer>
+    </div>
+</div>
+<?php endif;?>
+
+ <!-- <span onclick="myModal.open();">Open jBox!</span>
+ <span onclick="myModal.close();">Close jBox!</span>
+ <span onclick="myModal.toggle();">Toggle jBox!</span> -->
 
 <script>
   $('.navbar-burger').on('click',function(){
@@ -78,5 +103,26 @@ $('.navbar-link').on('click',function(){
   $('.navbar-dropdown').not($(this).next('.navbar-dropdown')).addClass('is-hidden-touch');
   $(this).next('.navbar-dropdown').toggleClass('is-hidden-touch');
 });
+
+// $('#league-chat-button').on('click',function(){
+//     $("#chat-modal").addClass('is-active');
+// });
+
+var chatModal =   new jBox('Modal', {
+    attach: $('#modal-drag-on-title'),
+    width: 220,
+    title: 'jBox',
+    overlay: false,
+    content: 'Drag me around by using the title',
+    draggable: 'title',
+    repositionOnOpen: false,
+    repositionOnContent: false
+});
+ 
+
+<?php if($this->session->userdata('league_id')): ?>
+// Start up an SSE stream to make things live
+sse_stream_start();
+<?php endif;?>
 
 </script>

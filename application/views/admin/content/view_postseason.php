@@ -15,7 +15,7 @@
             <div class="is-size-5"><?=$content->title?></div>
 
             <div class="content">
-            <?=$content->data?>
+                <?=$content->data?>
             </div>
 
 

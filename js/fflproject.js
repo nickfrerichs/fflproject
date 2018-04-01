@@ -576,9 +576,6 @@ function nflGameActive(id, game)
 	if (game.a == 1)
 	{$(gamerowid+" ."+id+"-clubid").addClass('ls-s-nflgame-offense');}
 	else {$(gamerowid+" ."+id+"-clubid").removeClass('ls-s-nflgame-offense');}
-
-
-
 }
 
 
