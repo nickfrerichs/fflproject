@@ -63,6 +63,3 @@
 
 <?php endforeach;?>
 
-<script>
-$(".has-tip").foundation();
-</script>

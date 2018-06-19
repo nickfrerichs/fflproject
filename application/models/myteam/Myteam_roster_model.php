@@ -396,16 +396,17 @@ class Myteam_roster_model extends MY_Model{
         if (count($row) == 1)
         {
             $this->db->where('id',$row->id)->delete('team_keeper');
+            return False;
         }
-        elseif ($this->keeper_add_ok())
+        elseif($this->keeper_add_ok())
         {
             $data = array('team_id' => $this->teamid,
                           'player_id' => $player_id,
                           'league_id' => $this->leagueid,
                           'year' => $this->current_year);
             $this->db->insert('team_keeper',$data);
+            return True;
         }
-
     }
 
 }

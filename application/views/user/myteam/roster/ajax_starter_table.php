@@ -54,7 +54,7 @@
 
         <td>
             <div class="column has-text-centered">
-            <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == ''): ?>
+            <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
                 <button class="button is-small is-link roster-sit-btn" value="<?=$p->player_id?>">
                         Sit
                 </button>
@@ -92,6 +92,4 @@
 <?php endforeach; ?>
 <?php endforeach; ?>
 
-<script>
-$(".has-tip").foundation();
-</script>
+

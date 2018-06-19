@@ -1,8 +1,11 @@
 <!-- Foundation 6 -->
 <script src="<?=site_url('js/jquery-3.2.1.min.js')?>"></script>
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<!-- <script src="<?=site_url('js/vendor/jquery.js')?>"></script> -->
 <!-- <script src="<?=site_url('js/vendor/foundation.min.js')?>"></script> -->
 <!-- <script src="<?=site_url('js/vendor/what-input.js')?>"></script> -->
 <!-- <script src="<?=site_url('js/vendor/jquery.visible.min.js')?>"></script> -->
+
 <script src="<?=site_url('js/cropper.min.js')?>"></script>
 <script src="<?=site_url('js/eventsource.min.js')?>"></script>
 
@@ -23,5 +26,6 @@
 	<script>window.LEAGUE_ADMIN = false;</script>
 <?php endif;?>
 <!-- <script src="<?=site_url('js/fflproject.js?1.15')?>"></script> -->
-<script src="<?=site_url('js/fflproject-new.js?1.38')?>"></script>
-<script src="<?=site_url('js/fflproject-sse.js?1.00')?>"></script>
+<script src="<?=site_url('js/fflproject-new.js?1.47')?>"></script>
+<script src="<?=site_url('js/fflproject-sse.js?1.03')?>"></script>
+<script src="<?=site_url('js/fflproject-chat.js?1.07')?>"></script>

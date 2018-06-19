@@ -233,23 +233,23 @@ class Common_model extends CI_Model{
         return site_url('joinleague/invite/'.$mask);
     }
 
-    function get_user_messages()
+    function get_user_notifications()
     {
         // Actual messages get set in the security_model with session variables.
-        if (is_array($this->session->userdata('user_messages')))
-            return $this->session->userdata('user_messages');
+        if (is_array($this->session->userdata('user_notifications')))
+            return $this->session->userdata('user_notifications');
         return array();
     }
 
-    function clear_user_message($text="")
+    function clear_user_notification($text="")
     {
-        $messages = $this->session->userdata('user_messages');
+        $messages = $this->session->userdata('user_notifications');
         foreach($messages as $key => $m)
         {
             if( strpos($m['id'], $text) !== false )
                 unset($messages[$key]);
         }
-        $this->session->set_userdata('user_messages',$messages);
+        $this->session->set_userdata('user_notifications',$messages);
     }
 
     function drop_player($player_id, $teamid)

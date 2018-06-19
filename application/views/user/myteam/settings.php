@@ -1,22 +1,9 @@
 <?php //print_r($owner_info); ?>
 <link href="<?=site_url('css/cropper.min.css')?>" rel="stylesheet">
 
-<!-- Confirm modal -->
-<div class="reveal" id="confirm-modal" data-reveal data-overlay="true">
-    <div class="text-center">
-            <div class="drop-text">Drop: No One</div>
-            <div class="pickup-text">Pick up: No One</div>
-        <button class="button" type="button" id="confirm-drop">
-            Confirm
-        </button>
-        <button class="button" type-"button" id="cancel-drop" data-close aria-label="Close modal">
-            Cancel
-        </button>
-    </div>
-</div>
 
 <!-- Upload logo modal -->
-<div class="reveal" id="logo-modal" data-reveal data-overlay="true">
+<!-- <div class="reveal" id="logo-modal" data-reveal data-overlay="true">
     <h4> Upload Team Logo </h4>
     <hr>
         <form id="logo-form" action="" method="POST">
@@ -24,122 +11,189 @@
             <br>
             <button id="logo-upload-button" name="logo-submit" type="submit" class="button hide">Upload</button>
         </form>
-    <div style="max-height:500px;">
-        <img id="team-logo-cropper" class="hide" src="<?=$team_uploaded_logo_url?>">
-    </div>
-</div>
-
-<div class="row callout">
-    <div class="columns">
-        <div class="row">
-            <div class="columns">
-                <h4>Team Settings</h4>
-            </div>
+        <div style="max-height:500px;">
+            <img id="team-logo-cropper" class="hide" src="<?=$team_uploaded_logo_url?>">
         </div>
-        <div class="row">
-            <div class="columns">
-                <table class="table-condensed">
-                    <thead>
-                    </thead>
+</div> -->
+
+<?php
+$body = '   <form id="logo-form" action="" method="POST">
+                <div class="file is-centered">
+                    <label class="file-label">
+                        <input id="logo-select" class="file-input" type="file" name="files" accept="image/*">
+                        <span class="file-cta">
+                            <span class="file-icon">
+                            <i class="fas fa-upload"></i>
+                            </span>
+                            <span class="file-label">
+                            Choose a file…
+                            </span>
+                        </span>
+                    </label>
+                </div>
+                <br>
+                <button id="logo-upload-button" name="logo-submit" type="submit" class="button is-hidden is-success">Upload</button>
+                <br>
+                <br>
+            </form>
+            <div style="max-height:500px;">
+                <img id="team-logo-cropper" class="is-hidden" src="'.$team_uploaded_logo_url.'">
+            </div>';
+
+$this->load->view('components/modal', array('id' => 'logo-modal',
+                                                    'title' => 'Upload Team Logo',
+                                                    'body' => $body,
+                                                    'reload_on_close' => False));
+
+
+
+?>
+
+<!-- Change Password Modal -->
+<?php
+$body = '   
+            <div id="passerror" style="color:red">
+            </div>
+            <div id="passsuccess" style="color:green">
+            </div>
+            <div class="field has-text-left">
+                <label class="label">Current Password</label>
+                <div class="control">
+                    <input id="current-password" class="input is-fullwidth" type="password"></input>
+                </div>
+            </div>
+
+            <div class="field has-text-left">
+                <label class="label">New Password</label>
+                <div class="control">
+                    <input id="password1" class="input is-fullwidth" type="password"></input>
+                </div>
+            </div>
+
+            <div class="field has-text-left">
+                <label class="label">Confirm Password</label>
+                <div class="control">
+                    <input id="password2" class="input is-fullwidth" type="password"></input>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button id="password-confirm" class="button is-success is-fullwidth is-medium">Confirm</button>
+                </div>
+            </div>
+
+        ';
+
+$this->load->view('components/modal', array('id' => 'change-password-modal',
+                                                    'title' => 'Change Password',
+                                                    'body' => $body,
+                                                    'reload_on_close' => False));
+
+
+
+?>
+
+<div class="section">
+
+            <div class="is-size-4">
+                Team Settings
+            </div>
+
+                <table class="table is-fullwidth fflp-table-fixed">
                     <tbody>
                         <tr>
-                            <td><b>Team Name</b></td>
+                            <td>Team Name</td>
+                            <td colspan=2>
+                                <?php $this->load->view('components/editable_text',array('id' => 'teamname', 
+                                                                                        'value' => $team_info->long_name,
+                                                                                        'url' => site_url('myteam/settings/ajax_change_item')));?>
 
-                            <td id="teamname-field"><?=$team_info->long_name?></td>
-                            <td>
-                                <a href="#" id="teamname-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
-                                <a href="#" id="teamname-cancel" class="cancel-control"></a>
                             </td>
                         </tr>
                         <tr>
-                            <td><b>Team Logo</b></td>
-                            <td id="team-logo">
+                            <td>Team Logo</td>
+                            <td id="team-logo" colspan=2>
                                 <?php if($team_info->logo): ?>
                                 <img src="<?=$team_thumb_logo_url?>">
                                 <?php else: ?>
                                 None
                                 <?php endif; ?>
+                                <div>
+                                <a href="#" id="logo-change">Upload Team Logo</a>
+                                </div>
                             </td>
-                            <td>
-                                <a href="#" id="logo-change">Upload</a>
-                            </td>
+
                         </tr>
                     </tbody>
                 </table>
+
+
+            <div class="is-size-4">
+                Owner Settings
             </div>
-        </div>
-    </div>
-</div>
-<div class="row callout">
-    <div class="columns">
-        <div class="row">
-            <div class="columns">
-                <h4>Owner Settings</h4>
-            </div>
-        </div>
+
             <br>
-        <div class="row">
-        <div class="columns">
-                <table class="table-condensed">
+
+                <table class="table is-fullwidth fflp-table-fixed">
                     <thead>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><b>First Name</b></td>
-                            <td id="first-field"><?=$owner_info->first_name?></td>
-                            <td>
-                                <a href="#" id="first-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
-                                <a href="#" id="first-cancel" class="cancel-control"></a>
+                            <td>First Name</td>
+                            <td colspan=2>
+                                <?php $this->load->view('components/editable_text',array('id' => 'first', 
+                                                                                        'value' => $owner_info->first_name,
+                                                                                        'url' => site_url('myteam/settings/ajax_change_item')));?>
+
                             </td>
                         </tr>
                         <tr>
-                            <td><b>Last Name</b></td>
-                            <td id="last-field"><?=$owner_info->last_name?></td>
-                            <td>
-                                <a href="#" id="last-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
-                                <a href="#" id="last-cancel" class="cancel-control"></a>
+                            <td>Last Name</td>
+                            <td colspan=2>
+                                <?php $this->load->view('components/editable_text',array('id' => 'last', 
+                                                                                        'value' => $owner_info->last_name,
+                                                                                        'url' => site_url('myteam/settings/ajax_change_item')));?>
+
                             </td>
                         </tr>
                         <tr>
-                            <td><b>Email Address</b></td>
-                            <td id="email-field"><?=$owner_info->email?></td>
-                            <td>
-                                <a href="#" id="email-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
-                                <a href="#" id="email-cancel" class="cancel-control"></a>
+                        <td>Email Address</td>
+                            <td colspan=2>
+                                <?php $this->load->view('components/editable_text',array('id' => 'email', 
+                                                                                        'value' => $owner_info->email,
+                                                                                        'url' => site_url('myteam/settings/ajax_change_item')));?>
+
                             </td>
                         </tr>
                         <tr>
-                            <td><b>Phone Number</b></td>
-                            <td id="phone-field"><?=$owner_info->phone_number?></td>
-                            <td>
-                                <a href="#" id="phone-control" class="change-control" data-url="<?=site_url('myteam/settings/ajax_change_item')?>">Change</a>
-                                <a href="#" id="phone-cancel" class="cancel-control"></a>
+                            <td>Phone Number</td>
+                            <td colspan=2>
+                                <?php $this->load->view('components/editable_text',array('id' => 'phone', 
+                                                                                        'value' => $owner_info->phone_number,
+                                                                                        'url' => site_url('myteam/settings/ajax_change_item')));?>
+
                             </td>
                         </tr>
+
                         <tr>
-                            <td><b>Password</b></td>
-                            <td id="password-field">********************</td>
-                            <td class="text-left"><a href="#" id="password-control" data-command="edit">Change</a>
-                                                <a href="#" id="password-cancel"></a>
-                            </td>
+                            <td>Password</td>
+                            <td colspan=2><a id="launch-change-password" href="#">Change Password</a></td>
                         </tr>
+
                         <tr>
-                            <td><b>Show Chat Balloons</b></td>
-                            <td></td>
-                            <td>
-                                <div class="switch tiny">
-                                <input  class="switch-input toggle-control" data-item="chat_balloon" data-url="<?=site_url('myteam/settings/ajax_toggle_item')?>"
-                                    id="chat_balloon" type="checkbox" <?php if($owner_info->chat_balloon == "1"){echo "checked";}?>>
-                                <label class="switch-paddle" for="chat_balloon">
-                                </label>
-                                </div>
+                            <td>Show Chat Balloons</td>
+                            <td colspan=2>
+                                <?php $this->load->view('components/toggle_switch',
+                                                array('id' => 'chat_balloon',
+                                                        'url' => site_url('myteam/settings/ajax_toggle_item'),
+                                                        'is_checked' => $owner_info->chat_balloon));
+                                ?>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 
@@ -150,13 +204,17 @@
 // Logo upload stuff
 $("#logo-change").on('click',function(){
     //$("#logo-file").trigger("click");
-    $("#logo-modal").foundation('open');
+    $('#logo-modal').addClass('is-active')
     //$("#logo-upload-button").toggleClass("hidden");
 });
 
 $("#logo-select").on('change',function(){
-    $("#logo-upload-button").removeClass('hide');
+    $("#logo-upload-button").removeClass('is-hidden');
     $("#logo-upload-button").text('Upload');
+});
+
+$("#launch-change-password").on('click',function(){
+    $('#change-password-modal').addClass('is-active');
 });
 
 $("#logo-upload-button").on('click submit',function(e){
@@ -198,8 +256,8 @@ $("#logo-upload-button").on('click submit',function(e){
                     cropBoxResizable: false
                 });
                 $image.cropper('replace',$("#team-logo-cropper").attr("src")+"?"+Math.random() );
-                $("#team-logo-cropper").removeClass('hide');
-                $("#logo-upload-button").text('Save');
+                $("#team-logo-cropper").removeClass('is-hidden');
+                $("#logo-upload-button").text('Save as Team Logo');
                 //$image.cropper('reset', true);
             },
             error: function(jqXHR, textStatus, errorThrown)
@@ -211,7 +269,7 @@ $("#logo-upload-button").on('click submit',function(e){
 
         console.log("<?=$team_uploaded_logo_url?>");
     }
-    else if($(this).text() == "Save")
+    else if($(this).text() == "Save as Team Logo")
     {
 
         var cropData = $("#team-logo-cropper").cropper('getData',true);
@@ -222,7 +280,7 @@ $("#logo-upload-button").on('click submit',function(e){
 
             console.log(data);
             // Close modal and reset upload text
-            $("#logo-modal").foundation('close');
+            $("#logo-modal").removeClass('is-active');
             setTimeout(function(){
                          window.location = "<?=current_url();?>";
                     }, 250);
@@ -233,60 +291,42 @@ $("#logo-upload-button").on('click submit',function(e){
 });
 
 // Password reset stuff
-$("#password-control").on('click', function(){
-    //alert($(this).data('command'));
-    if ($(this).data('command') == "edit")
-    {
-        var field = "<div class='form-group'>"+
-            "<input type='password' class='form-control' id='currentpassword' placeholder='current password'>"+
-            "<input type='password' class='form-control' id='password1' placeholder='new password'>"+
-            "<input type='password' class='form-control' id='password2' placeholder='repeat new password'>"+
-            "<div id='passerror'></div>"+
-            "</div>";
-        $("#password-field").html(field);
-        $("#password-control").text("Save");
-        $('#password-control').data('command','save');
-        $('#password-cancel').text('Cancel');
+$("#password-confirm").on('click',function(){
+    var pass1 = $("#password1").val();
+    var pass2 = $("#password2").val();
+    var curpass = $("#current-password").val();
+    $("#password1").css('background-color','');
+    $("#password2").css('background-color','');
+    $("#current-password").css('background-color','');
+    $("#password-control").data('success','true');
 
-        return
+    if (pass1 == pass2)
+    {
+        // Post to controller, check return value to make sure requirements met
+        url = "<?=site_url('myteam/settings/ajax_change_password')?>";
+        $.post(url,{'curpass':curpass, 'newpass':pass1}, function(data){
+            if (data != "1")
+            {
+                //$("#password-control").data('success','false');
+                $("#passerror").text('Current password not correct!');
+                $("#current-password").css('background-color','#FFCCCC');
+
+            }
+            else {
+                //showMessage("Password updated!","alert");
+                reset_password_control();
+                //$('#change-password-modal').removeClass('is-active');
+                $('#passsuccess').text('Password changed: Logging out');
+                setTimeout(function(){window.location.replace('<?=site_url("auth/logout")?>');},3000);
+            }
+        });
     }
-    if ($(this).data('command') == 'save')
+    else
     {
-        var pass1 = $("#password1").val();
-        var pass2 = $("#password2").val();
-        var curpass = $("#currentpassword").val();
-        $("#password1").css('background-color','');
-        $("#password2").css('background-color','');
-        $("#currentpassword").css('background-color','');
-        $("#password-control").data('success','true');
-
-        if (pass1 == pass2)
-        {
-            // Post to controller, check return value to make sure requirements met
-            url = "<?=site_url('myteam/settings/ajax_change_password')?>";
-            $.post(url,{'curpass':curpass, 'newpass':pass1}, function(data){
-                console.log(data);
-                if (data != "1")
-                {
-                    console.log("data not eq 1");
-                    $("#password-control").data('success','false');
-                    $("#passerror").text('Current password not correct!');
-                    $("#currentpassword").css('background-color','#FFCCCC');
-
-                }
-                else {
-                    showMessage("Password updated!","alert");
-                    reset_password_control();
-                }
-            });
-        }
-        else
-        {
-            $("#passerror").text('New password doesn\'t match, fix it.');
-            $("#password1").css('background-color','#FFCCCC');
-            $("#password2").css('background-color','#FFCCCC');
-            //showMessage("New password doesn't match!","alert");
-        }
+        $("#passerror").text('New password doesn\'t match, fix it.');
+        $("#password1").css('background-color','#FFCCCC');
+        $("#password2").css('background-color','#FFCCCC');
+        //showMessage("New password doesn't match!","alert");
     }
 });
 
@@ -298,11 +338,7 @@ function reset_password_control()
 {
     $("#password1").css('background-color','');
     $("#password2").css('background-color','');
-    $("#currentpassword").css('background-color','');
+    $("#current-password").css('background-color','');
     var field = "********************";
-    $("#password-field").html(field);
-    $("#password-control").text("Change");
-    $('#password-control').data('command','edit');
-    $("#password-cancel").text("");
 }
 </script>

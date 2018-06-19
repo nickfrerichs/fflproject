@@ -4,35 +4,34 @@
 	.activemessage{color:blue}
 </style>
 
-<div class="row">
-	<div class="columns">
-		<h4>Messages</h4>
-	</div>
-</div>
+<div class="section">
+	<div class="is-size-4">Messages</div>
 
-<div class="row callout">
-	<div class=" columns medium-2 small-12">
-		<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>Compose</a></h6></div>
-		<div id="folder_0" class="folder"><a href="#"><h6>Inbox</h6></a></div>
-		<div id="folder_1" class="folder"><a href="#"><h6>Sent Items</h6></a></div>
-		<div id="folder_2" class="folder"><a href="#"><h6>Trash</h6></a></div>
-	</div>
-	<div class="columns medium-10 small-12 callout">
-		<h4><div id="current_0" class="folder-name">Current Folder</div></h4>
-		<div style="overflow: auto;max-height:200px; background-color:#FFF">
-			<table id="message-table" style="border-color:#fff;">
-				<tbody id="message-list">
-				</tbody>
-			</table>
+
+	<div class="columns">
+		<div class="column is-2-tablet">
+			<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>Compose</a></h6></div>
+			<div id="folder_0" class="folder"><a href="#"><h6>Inbox</h6></a></div>
+			<div id="folder_1" class="folder"><a href="#"><h6>Sent Items</h6></a></div>
+			<div id="folder_2" class="folder"><a href="#"><h6>Trash</h6></a></div>
 		</div>
-		<br>
-		<div id="message-callout" class="callout hide">
-			<div id="message-display" style="max-height:300px; overflow-x:scroll margin-bottom:0px">
+		<div class="column is-10-tablet box">
+			<div id="current_0" class="folder-name is-size-4">Current Folder</div>
+			<div style="overflow: auto;max-height:200px; background-color:#FFF">
+				<table id="message-table" class="table is-fullwidth is-striped" style="border-color:#fff;">
+					<tbody id="message-list">
+					</tbody>
+				</table>
 			</div>
-			<div id="message-buttons" class="hide">
-				<button id="message-reply" class="button">Reply</button>
-				<button id="message-delete" class="button">Delete</button>
-				<button id="message-close" class="button">Close</button>
+			<br>
+			<div id="message-callout" class="is-hidden message">
+				<div id="message-display" style="max-height:300px; overflow-x:scroll margin-bottom:0px" class="message-body">
+				</div>
+			</div>
+			<div id="message-buttons" class="is-hidden">
+				<button id="message-reply" class="button is-small is-link">Reply</button>
+				<button id="message-delete" class="button is-small is-link">Delete</button>
+				<button id="message-close" class="button is-small is-link">Close</button>
 			</div>
 		</div>
 	</div>
@@ -48,7 +47,7 @@ $(document).ready(function(){
 		if (this.id == $("#displayed-message").data("message-id"))
 		{
 			$("#message-close").click();
-			$("#message-callout").addClass("hide");
+			$("#message-callout").addClass("is-hidden");
 		}
 		else
 		{
@@ -59,7 +58,7 @@ $(document).ready(function(){
 			});
 			$("#message-list tr").removeClass("activemessage")
 			$(this).addClass("activemessage");
-			$("#message-callout").removeClass("hide");
+			$("#message-callout").removeClass("is-hidden");
 		}
 	});
 
@@ -83,7 +82,9 @@ $(document).ready(function(){
 			result = $.parseJSON(data);
 			if (result.success == true)
 			{
-				notice(result.msg);
+				$("#message-display").text("");
+				$("#message-callout").addClass("is-hidden");
+				//notice(result.msg);
 			}
 			load_messages(current_folderid());
 
@@ -92,6 +93,7 @@ $(document).ready(function(){
 	// Close button click
 	$("#message-close").on("click",function(){
 		$("#message-display").text("");
+		$("#message-callout").addClass("is-hidden");
 		hide_controls();
 	});
 
@@ -111,9 +113,9 @@ $(document).ready(function(){
 	}
 
 	function hide_controls()
-	{$("#message-buttons").addClass("hide");}
+	{$("#message-buttons").addClass("is-hidden");}
 	function show_controls()
-	{$("#message-buttons").removeClass("hide");}
+	{$("#message-buttons").removeClass("is-hidden");}
 
 });
 

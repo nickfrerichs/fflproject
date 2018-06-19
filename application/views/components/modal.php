@@ -12,7 +12,7 @@
             <p class="modal-card-title"><?=$title?></p>
             <button class="delete modal-close-button" aria-label="close"></button>
         </header>
-        <section class="modal-card-body">
+        <section class="modal-card-body has-text-centered">
             <?=$body?>
         </section>
         <footer class="modal-card-foot">

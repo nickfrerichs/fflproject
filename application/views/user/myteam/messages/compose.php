@@ -1,31 +1,43 @@
 <?php //print_r($owners); ?>
 
-<div class="row">
-	<div class="columns">
-		<h5>Compose Message</h5>
+<div class="section">
 
-
-		<select id="message-to" class="form-control">
-			<option value="0">To:</option>
-			<?php foreach($owners as $o): ?>
-			<?php if ($teamid != $o->team_id): ?>
-				<?php if (isset($reply_teamid) && $reply_teamid == $o->team_id): ?>
-				<option value="<?=$o->team_id?>" selected><?=$o->first_name.' '.$o->last_name?></option>
+		<div class="is-size-5">Compose Message</div>
+		<br>
+		<div class="field">
+			<div class="control">
+				<div class="select">
+					<select id="message-to" class="form-control">
+						<option value="0">To:</option>
+						<?php foreach($owners as $o): ?>
+						<?php if ($teamid != $o->team_id): ?>
+							<?php if (isset($reply_teamid) && $reply_teamid == $o->team_id): ?>
+							<option value="<?=$o->team_id?>" selected><?=$o->first_name.' '.$o->last_name?></option>
+							<?php else: ?>
+							<option value="<?=$o->team_id?>"><?=$o->first_name.' '.$o->last_name?></option>
+							<?php endif; ?>
+						<?php endif; ?>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="field">
+			<div class="control">
+				<?php if (isset($reply_subject)): ?>
+				<input id="message-subject" type="text" class="input" value="<?=$reply_subject?>">
 				<?php else: ?>
-				<option value="<?=$o->team_id?>"><?=$o->first_name.' '.$o->last_name?></option>
+				<input id="message-subject" type="text" class="input" placeholder="Subject">
 				<?php endif; ?>
-			<?php endif; ?>
-			<?php endforeach; ?>
-		</select>
-		<?php if (isset($reply_subject)): ?>
-		<input id="message-subject" type="text" class="form-control" value="<?=$reply_subject?>">
-		<?php else: ?>
-		<input id="message-subject" type="text" class="form-control" placeholder="Subject">
-		<?php endif; ?>
+			</div>
+		</div>
+		<div class="field">
+			<div class="control">
+				<textarea id="message-body" class="textarea" rows="10"></textarea>
+			</div>
+		</div>
+		<button id="send-message" class="button is-link is-small">Send Message</button>
 
-		<textarea id="message-body" class="form-control" rows="10"></textarea>
-		<button id="send-message" class="button">Send Message</button>
-	</div>
 </div>
 
 

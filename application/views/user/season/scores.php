@@ -1,5 +1,5 @@
 <?php //print_r($weeks); ?>
-<?php $this->load->view('template/modals/stat_popup'); ?>
+<?php //$this->load->view('template/modals/stat_popup'); ?>
 <style>
 
 .week-selected{
@@ -20,45 +20,40 @@
 }
 
 </style>
-<div class="row">
-    <div class="columns callout">
-<?php if ($selected_week == 0): ?>
-    <div class="row">
-        <div class="columns">
-            <h6 class='text-center'></h6>
-        </div>
-    </div>
-<?php else:?>
-    <div class="row">
-        <div class="columns">
-            <h4 class='text-center'>Week <?=$selected_week?> Scores</h4>
-            <table class="text-center table-condensed">
-                <tr>
-                <?php foreach($weeks as $num => $w): ?>
-                    <?php if($selected_week == $w->week):?>
-                        <td class="week-selected">
-                            <?=$w->week?>
-                        </td>
-                    <?php elseif($w->week <= $this->session->userdata('current_week') && $selected_year <= $this->session->userdata['current_year']):?>
-                        <td class="week-link">
-                            <a href="<?=site_url('season/scores/week/'.$w->week)?>"><?=$w->week?></a>
-                        </td>
-                    <?php else:?>
-                        <td class="week-future">
-                            <?=$w->week?>
-                        </td>
-                    <?php endif;?>
-                <?php endforeach;?>
-                </tr>
+<div class="section">
 
-            </table>
-        </div>
-    </div>
+<?php if ($selected_week == 0): ?>
+    <div class='is-size-6'></div>
+<?php else:?>
+
+    <div class='is-size-4'>Week <?=$selected_week?> Scores</div>
+    <br>
+    <table class="table is-fullwidth is-narrow">
+        <tr>
+        <?php foreach($weeks as $num => $w): ?>
+            <?php if($selected_week == $w->week):?>
+                <td class="week-selected has-text-centered">
+                    <?=$w->week?>
+                </td>
+            <?php elseif($w->week <= $this->session->userdata('current_week') && $selected_year <= $this->session->userdata['current_year']):?>
+                <td class="week-link has-text-centered">
+                    <a href="<?=site_url('season/scores/week/'.$w->week)?>"><?=$w->week?></a>
+                </td>
+            <?php else:?>
+                <td class="week-future has-text-centered">
+                    <?=$w->week?>
+                </td>
+            <?php endif;?>
+        <?php endforeach;?>
+        </tr>
+    </table>
+
+
 <?php endif; // If selected week is > 0?>
-    <div class="row">
+    <div class="columns is-multiline ">
         <?php foreach($matchups as $m): ?>
-            <div class="columns medium-6 small-12">
-                <table class="table-condensed">
+            <div class="column is-half-desktop">
+                <table class="table is-fullwidth is-striped is-bordered fflp-table-fixed">
                     <thead>
                         <th height="55px"><?=$m['home_team']['points']?></th>
                         <th class="text-right" style="width:40%"><a href="<?=site_url('league/teams/view/'.$m['home_team']['team']->id)?>"><?=$m['home_team']['team']->team_name?></a></th>
@@ -100,4 +95,4 @@
         <?php endforeach;?>
     </div>
 </div>
-</div>
+

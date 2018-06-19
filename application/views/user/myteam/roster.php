@@ -2,30 +2,24 @@
 <?php //$this->load->view('template/modals/stat_popup');?>
 
 <?php if($keepers_num > 0):?>
-    <div class="modal" id="set-keepers-modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-               <p class="modal-card-title">Keepers</p>
-               <button class="delete modal-close-button" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <h5>Keepers</h5>
+    <?php 
+
+        $body = '<div class="is-size5">Keepers</div>
                 <table class="table is-fullwidth">
                     <thead>
                     </thead>
                     <tbody id="keepers-table">
                     </tbody>
-                </table>
-            </section>
-            <footer class="modal-card-foot">
-                <button class="button modal-close-button is-link is-fullwidth is-medium" aria-label="close">Close</button>
-            </footer>
-            <!--  -->
+                </table>';
 
-        </div>
-        
-    </div>
+    // Keepers modal
+
+        $this->load->view('components/modal', array('id' => 'set-keepers-modal',
+                                                            'title' => 'Keepers',
+                                                            'body' => $body,
+                                                            'reload_on_close' => True));
+    ?>
+
 <?php endif;?>
 
 
@@ -133,10 +127,11 @@
 <?php else: ?>
 <div class="section">
     <div id="myteam-roster-tab">
-    <?php if ($keepers_num > 0): ?>
-                <a id="set-keepers" href="#">Edit Keepers</a><br>
 
-            <?php endif;?>
+        <?php if ($keepers_num > 0): ?>
+            <a id="set-keepers" href="#">Edit Keepers</a><br>
+
+        <?php endif;?>
         <div class="select">
 
             <select id="selected-week">
@@ -187,7 +182,6 @@ $(document).ready(function(){
         var week = $("#selected-week").val();
         url = "<?=site_url('myteam/roster/start')?>";
         $.post(url,{'player_id' : $(this).val(),'week' : week, 'pos_id':0}, function(data){
-            console.log(data);
             loadTables();
         });
     });
@@ -197,7 +191,6 @@ $(document).ready(function(){
         url = "<?=site_url('myteam/roster/start')?>";
         var data = $(this).val().split("_")
         $.post(url,{'player_id' : data[0], 'pos_id' : data[1], 'week':week},function(data){
-            console.log(data);
             loadTables();
         });
     });
@@ -225,38 +218,37 @@ $(document).ready(function(){
     <?php if($keepers_num > 0): ?>
         $("#set-keepers").on('click',function(){
             var url = "<?=site_url('myteam/roster/ajax_keeper_table')?>";
-            var url = "<?=site_url('myteam/roster/ajax_keeper_table')?>";
             $.post(url,{},function(data){
                 $("#keepers-table").html(data);
-                keeper_max_check();
+                //keeper_max_check();
             });
             $("#set-keepers-modal").addClass('is-active');
         });
 
-        $('.modal-close, .modal-close-button, .modal-background').on('click', function(){
-            $(this).closest($('.modal')).removeClass('is-active');
-        });
+        // $('.modal-close, .modal-close-button, .modal-background').on('click', function(){
+        //     $(this).closest($('.modal')).removeClass('is-active');
+        // });
 
-        $("#keepers-table").on('click','.keeper-toggle',function(){
-            var id = $(this).attr('id').replace('keeper-','');
-            var url = "<?=site_url('myteam/roster/toggle_keeper')?>";
-            $.post(url,{'id':id},function(){
+        // $("#keepers-table").on('click','.keeper-toggle',function(){
+        //     var id = $(this).attr('id').replace('keeper-','');
+        //     var url = "<?=site_url('myteam/roster/toggle_keeper')?>";
+        //     $.post(url,{'id':id},function(){
 
-            });
-            keeper_max_check();
-        });
+        //     });
+        //     keeper_max_check();
+        // });
 
-        $(document).on("closed.zf.reveal",function(){
-            loadTables();
-        });
+        // // $(document).on("closed.zf.reveal",function(){
+        // //     loadTables();
+        // // });
 
-        function keeper_max_check()
-        {
-            var len = $(".keeper-toggle:checked").length;
-            if (len >= <?=$keepers_num?>)
-            {$(".keeper-toggle:not(:checked)").attr('disabled',true);}
-            else {$(".keeper-toggle:not(:checked)").attr('disabled',false);}
-        }
+        // function keeper_max_check()
+        // {
+        //     var len = $(".keeper-toggle:checked").length;
+        //     if (len >= <?=$keepers_num?>)
+        //     {$(".keeper-toggle:not(:checked)").attr('disabled',true);}
+        //     else {$(".keeper-toggle:not(:checked)").attr('disabled',false);}
+        // }
     <?php endif;?>
 
 });

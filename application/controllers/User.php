@@ -38,7 +38,7 @@ class User extends CI_Controller{
             $data['menu_items'] = $this->menu_model->get_menu_items_data();
             $data['v'] = 'user/join_league';
             $data['bc'] = array('Join League' => "");
-            $data['_messages'] = array();
+            $data['_notifications'] = array();
             $this->load->view('template/user_init',$data);
         }
         else

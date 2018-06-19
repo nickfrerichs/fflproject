@@ -18,6 +18,7 @@ class News extends MY_User_Controller{
         $data = array();
         $result = $this->news_model->get_news_data();
         $data['news'] = $result['news'];
+        $data['ajax_wait'] = true;
         //$data['waiverwire_log'] = $this->waiverwire_model->get_log_data($this->current_year,time()-(24*60*60*1));
         $this->user_view('user/league/news',$data);
     }

@@ -47,7 +47,7 @@ class Leaguesettings_model extends MY_Model{
               '#wwdeadline' => 'waiver_wire_deadline',
               '#wwcleartime' => 'waiver_wire_clear_time',
               '#tdeadline' => 'trade_deadline',
-              'keepersnum' => 'keepers_num',
+              '#keepersnum' => 'keepers_num',
               '#wwdays' => 'waiver_wire_disable_days');
 
         $this->db->where('league_id',$leagueid);

@@ -1,20 +1,14 @@
 
-<div class="row">
-    <div class="columns">
+<div class="section">
+
         <a href="<?=site_url('myteam/waiverwire')?>">Back to Waiver Wire</a>
-        <h4>Waiver Wire Log</h4>
-    </div>
-</div>
-
-<div class="row">
-    <div class="column">
+        <br><br>
+        <div class="is-size-4">Waiver Wire Log</div>
+        <hr>
         <p>Players dropped before <b><?=date("n/j/y g:i a",$clear_time)?></b> have cleared waivers.</p>
-    </div>
-</div>
+        <hr>
 
-<div class="row">
-    <div class="column">
-        <table>
+        <table class="table is-fullwidth is-striped">
             <thead>
             </thead>
             <tbody>
@@ -54,5 +48,5 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-    </div>
+
 </div>

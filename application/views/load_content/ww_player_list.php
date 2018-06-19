@@ -27,10 +27,10 @@
         <td><?=$p->points?></td>
         <td class="text-center" style="width:17%">
             <?php if($p->clear_time): ?>
-            <button <?=($p->requested ? "disabled" : "")?> class="player-pickup button tiny" data-clear="no" data-pickup-id="<?=$p->id?>"
+            <button <?=($p->requested ? "disabled" : "")?> class="player-pickup button is-link is-small" data-clear="no" data-pickup-id="<?=$p->id?>"
                 data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup (<?=$hr?>h:<?=$min?>m)</button>
             <?php else: ?>
-                <button class="player-pickup button tiny" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup</button>
+                <button class="player-pickup button is-link is-small" data-pickup-id="<?=$p->id?>" data-pickup-name="<?=$p->first_name.' '.$p->last_name?>">Pickup</button>
             <?php endif;?>
         </td>
     </tr>

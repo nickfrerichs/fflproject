@@ -26,11 +26,11 @@ class Common extends CI_Controller{
         }
     }
 
-    function message_ack($id)
+    function notification_ack($id)
     {
-        $acks = $this->session->userdata("message_acks");
+        $acks = $this->session->userdata("notification_acks");
         $acks[] = $id;
-        $this->session->set_userdata('message_acks',$acks);
+        $this->session->set_userdata('notification_acks',$acks);
     }
 
     function liveElements($last_check_in = 0)

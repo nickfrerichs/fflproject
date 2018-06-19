@@ -5,7 +5,6 @@ if (!isset($value) || $value == "")
     $set_val = "";
 else
     $set_val = $value;
-
 ?>
 
 <div class="field has-addons">

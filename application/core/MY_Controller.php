@@ -45,7 +45,7 @@ class MY_User_Controller extends MY_Basic_Controller{
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
                         'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
+                        'uri_string' => FALSE, 'http_headers' => TRUE, 'session_data' => TRUE
                 );
                 $this->output->set_profiler_sections($sections);
                 $this->output->enable_profiler(TRUE);
@@ -90,7 +90,7 @@ class MY_User_Controller extends MY_Basic_Controller{
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
 
-        $d['_messages'] = $this->common_model->get_user_messages();
+        $d['_notifications'] = $this->common_model->get_user_notifications();
         $this->load->view('template/user_init', $d);
     }
 
@@ -122,7 +122,7 @@ class MY_Admin_Controller extends MY_Basic_Controller{
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
                         'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
+                        'uri_string' => FALSE, 'http_headers' => TRUE, 'session_data' => TRUE
                 );
                 $this->output->set_profiler_sections($sections);
                 $this->output->enable_profiler(TRUE);
@@ -139,7 +139,7 @@ class MY_Admin_Controller extends MY_Basic_Controller{
     {
         $this->load->model('menu_model');
         $this->load->model('admin/admin_security_model');
-        $d['_messages'] = $this->admin_security_model->get_admin_messages();
+        $d['_notifications'] = $this->admin_security_model->get_admin_notifications();
         $d['menu_items'] = $this->menu_model->get_menu_items_data(true);
         $d['v'] = $viewname;
         $d['bc'] = $this->bc;
@@ -161,7 +161,7 @@ class MY_Basic_Controller extends CI_Controller{
                 $sections = array(
                         'benchmarks' => TRUE, 'memory_usage' => TRUE,
                         'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => FALSE, 'session_data' => TRUE
+                        'uri_string' => FALSE, 'http_headers' => TRUE, 'session_data' => TRUE
                 );
                 $this->output->set_profiler_sections($sections);
                 $this->output->enable_profiler(TRUE);

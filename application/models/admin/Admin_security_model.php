@@ -74,7 +74,7 @@ class Admin_security_model extends MY_Model
         return False;
     }
 
-    function get_admin_messages()
+    function get_admin_notifications()
     {
         # class: is the foundation css class for a callout
         # message: is what will be displayed to the user
@@ -114,7 +114,7 @@ class Admin_security_model extends MY_Model
                 $messages[] = array('class'=>'warning',
                                     'message'=>'You have no scoring definitions defined for your league.'.
                                                 '<br><a href="'.site_url('admin/scoring').'" data-ackurl="'.
-                                                site_url('common/message_ack/'.$id).'" class="_message-close">Manage Scoring Definitions</a>',
+                                                site_url('common/message_ack/'.$id).'" class="_notification-close">Manage Scoring Definitions</a>',
                                     'id' => $id);
             }
 

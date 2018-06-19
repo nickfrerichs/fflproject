@@ -112,6 +112,7 @@
 												array('id' => 'wwday_'.$i,
 													'url' => site_url('admin/transactions/ajax_toggle_wwday'),
 													'is_checked' => in_array($i,$wwdays),
+													'color' => 'is-danger',
 													'var1' => $i));
 									?>
 								</div>

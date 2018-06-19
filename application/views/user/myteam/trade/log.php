@@ -1,8 +1,8 @@
-<div class="row">
-	<div class="columns">
+<div class="section">
+
 		<?php if(count($log) > 0): ?>
 			<?php //print_r($log); ?>
-			<table>
+			<table class="table is-fullwidth is-narrow is-striped">
 				<thead>
 					<th>Date</th><th></th><th colspan=2>Trade details</th>
 				</thead>
@@ -28,6 +28,8 @@
 			<?php endforeach; ?>
 			</tbody>
 			</table>
+		<?php else:?>
+			<div class="is-size-6">No Trades to report</div>
 		<?php endif;?>
-	</div>
+
 </div>

@@ -22,8 +22,15 @@ class Load_content extends MY_User_Controller{
 
         // $this->in_page = $this->input->post('page');
         // $this->in_pos = $this->input->post('pos');
-        // $this->in_sort = $this->input->post('by');
-        // $this->in_order = $this->input->post('order');
+        $this->by = $this->input->post('by');
+        $this->order = $this->input->post('order');
+        $this->filters = array();
+        if ($this->input->post('filters'))
+        {
+            foreach($this->input->post('filters') as $key => $val)
+                $this->{'filter_'.$key} = $val;
+            
+        }
         // $this->in_search = $this->input->post('search');
 
         // $this->year = $this->input->post('year');
@@ -44,13 +51,17 @@ class Load_content extends MY_User_Controller{
 
     function ww_player_list()
     {
-
-        # NICK YOU NEED TO MAKE THIS WORK NEXT, ADD NEXT BUTTONS TO ADD MORE LIKE NEWS DOES
-
         $this->load->model('myteam/waiverwire_model');
         $this->load->model('myteam/myteam_roster_model');
 
-        $nfl_players = $this->waiverwire_model->get_nfl_players($this->limit, 0, '');
+        if (!isset($this->filter_search))
+            $this->filter_search = '';
+
+        if (!isset($this->filter_pos))
+            $this->filter_pos = '';
+
+        $nfl_players = $this->waiverwire_model->get_nfl_players($this->limit, 0, $this->filter_pos, array($this->by, $this->order),$this->filter_search);
+       // get_nfl_players($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='',$show_owned = false)
   
         $view_data['total'] = $nfl_players['count'];
         $view_data['players'] = $nfl_players['result'];

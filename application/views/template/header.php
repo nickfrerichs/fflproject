@@ -14,7 +14,7 @@
                 </span>
             </a>
         
-            <button class="navbar-item is-hidden-desktop" href="">
+            <button class="navbar-item is-hidden-desktop chat-button">
                 <span class="icon" style="color: #333;">
                 Chat
                 </span>
@@ -51,8 +51,8 @@
             </div>
             <div class="navbar-end">
             <div class="navbar-item">
-                  <button id="league-chat-button" class="button is-link" onclick="chatModal.toggle();">
-                    <span>chat</span>
+                  <button id="league-chat-button" class="button is-link chat-button">
+                    <span>chat</span><span id="unread-chat-count"></span>
                   </button>
             </div>
                 <div class="navbar-item is-hoverable">
@@ -69,7 +69,7 @@
 
 <?php if($this->session->userdata('league_id')): ?>
 <!-- Chat modal -->
-<div class="modal" id="chat-modal">
+<!-- <div class="modal" id="chat-modal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
@@ -85,6 +85,19 @@
         <footer class="modal-card-foot">
         <button class="button modal-close-button is-link is-fullwidth is-medium" aria-label="close">Close</button>
         </footer>
+    </div>
+</div> -->
+
+
+<div id="chat-modal" hidden>
+    <div id="chat-history-table" class="chat-history-table">
+        <table class="table is-fullwidth is-narrow is-striped">
+            <tbody id="chat-history-ajax" class="chat-history-ajax">
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <textarea id="chat-message" class="textarea" rows="2" placeholder="You put your trash talk in here..." autofocus></textarea>
     </div>
 </div>
 <?php endif;?>

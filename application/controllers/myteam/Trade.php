@@ -73,6 +73,12 @@ class Trade extends MY_User_Controller{
 
     }
 
+    function ajax_get_my_roster()
+    {
+        $data['roster'] = $this->trade_model->get_roster_data();
+        $this->load->view('user/myteam/trade/ajax_get_my_roster',$data);
+    }
+
     function submit_trade_offer()
     {
         $team1_id = $this->teamid;
@@ -301,7 +307,7 @@ class Trade extends MY_User_Controller{
             <td><?=$p->round?></td>
             <td><?php if($p->pick == 0){echo "-";}else{echo $p->pick;} ?></td>
             <td>
-                <button id="btn-<?=$year?>-<?=$p->round?>" class="button pick-btn small"
+                <button id="btn-<?=$year?>-<?=$p->round?>" class="button pick-btn is-small"
                     data-id="<?=$p->id?>" data-year="<?=$year?>" data-round="<?=$p->round?>" data-pick="<?=$p->pick?>"
                     <?php if($future){echo 'data-future="true"';}else{echo 'data-future="false"';}?>>Select</button>
             </td>

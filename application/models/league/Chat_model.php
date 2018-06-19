@@ -13,7 +13,7 @@ class Chat_model extends MY_Model{
 
     }
 
-    function save_message($message)
+    function save($message)
     {
         $now = date('Y-m-d H:i:s');
         $data = array('owner_id' => $this->ownerid,

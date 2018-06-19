@@ -127,11 +127,11 @@ class Security_model extends CI_Model
             $this->session->set_userdata('live_scores',$this->live_scores_on());
 
             $this->session->set_userdata('draft_in_progress',$this->draft_in_progress());
-            $this->set_user_messages();
+            $this->set_user_notifications();
         }
     }
 
-    function set_user_messages()
+    function set_user_notifications()
     {
 
         $messages = array();
@@ -156,7 +156,7 @@ class Security_model extends CI_Model
         {
             $messages[] = array('class' => 'primary',
                                 'message' => '<a href="'.site_url('season/draft/live').'" data-ackurl="'.
-                                site_url('common/message_ack/msg_draft_in_progress').'" class="_message-close">Join the Draft currently in progress.</a>',
+                                site_url('common/notification_ack/msg_draft_in_progress').'" class="_notification-close">Join the Draft currently in progress.</a>',
                                 'id' => 'msg_draft_in_progress');
         }
 
@@ -172,11 +172,11 @@ class Security_model extends CI_Model
                 $note = "You have ".$trades." trades awaiting responses.";
             $messages[] = array('class'=>'primary',
                                 'message'=> $note.
-                                '<br><a href="'.site_url('myteam/trade').'" data-ackurl="'.site_url('common/message_ack/msg_open_trades').'" class="_message-close">View Trades</a>',
+                                '<br><a href="'.site_url('myteam/trade').'" data-ackurl="'.site_url('common/message_ack/msg_open_trades').'" class="_notification-close">View Trades</a>',
                                 'id'=>'msg_open_trades');
         }
 
-        $this->session->set_userdata('user_messages',$messages);
+        $this->session->set_userdata('user_notifications',$messages);
 
     }
 

@@ -10,7 +10,7 @@
 
         <?php $this->load->view('template/header.php'); ?>
         <?php $this->load->view('template/breadcrumbs.php'); ?>
-        <?php $this->load->view('template/messages.php'); ?>
+        <?php $this->load->view('template/notifications.php'); ?>
         <?php $this->load->view($v); ?>
 
         <?php $this->load->view('template/footer.php'); ?>

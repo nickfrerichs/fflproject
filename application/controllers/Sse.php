@@ -10,11 +10,11 @@ class Sse extends MY_User_Controller{
         $this->load->model('sse_model');
     }
 
-    function test()
-    {
-        $this->load->model('season/draft_model');
-        $this->draft_model->get_update_key();
-    }
+    // function test()
+    // {
+    //     $this->load->model('season/draft_model');
+    //     $this->draft_model->get_update_key();
+    // }
 
     // The stream of data
     function stream($sse_func = "")
@@ -47,6 +47,9 @@ class Sse extends MY_User_Controller{
         $ls_first = True;
         $draft_first = True;
 
+        // This while loop fires multiple times per second, $data is populated with things that should be sent to the users
+        // browser to be handled by javascript. This means often times the loop results in no new data and silence on the
+        // web browsers end.
         while($count > 0)
         {
             $start = microtime(True);
@@ -55,11 +58,33 @@ class Sse extends MY_User_Controller{
             $keys = $this->sse_model->keys();
             $data = array();
 
-            // If the chat_key is new, output chats that occured since the last one.
-            // Need a way to know to send chats if chat_balloon is disabled...ran into complications because two windows could be open.
-            // So for now, I'm always sending chats, they will get ignored if not needed.
+            // GLOBAL things that are always sent regardless of which page the user is on
+            // These use the live_element_refresh_time interval
+            if ($last_live_element_check < $now - $interval)
+            {
+                $this->load->model('security_model');
+                $this->load->model('league/chat_model');
+                $check_in = $this->chat_model->update_last_check_in();
+                if ($this->security_model->live_scores_on())
+                    $data['global']['live_scores_active'] = 'yes';
+                else
+                    $data['global']['live_scores_active'] = 'no';
+                $last_live_element_check = $now;
+
+                if($this->session->userdata('show_whos_online'))
+                    $data['global']['whos_online'] = $this->chat_model->whos_online();
+
+                $data['global']["unread_chats"] = $this->chat_model->get_unread_count();
+            }
+
+            
+            // CHATS get sent when new chat's arrive by watching the chat_key for changes. These are also sent
+            // regardless of which page a user is on.
             if ((1==1 || $this->session->userdata('chat_balloon')) && $last_keys->chat_key != $keys->chat_key)
             {
+                // If the chat_key is new, output chats that occured since the last one.
+                // Need a way to know to send chats if chat_balloon is disabled...ran into complications because two windows could be open.
+                // So for now, I'm always sending chats, they will get ignored if not needed.
                 $this->load->model('league/chat_model');
                 // If chat is open, include the owners messages too, otherwise we don't want balloons for ourself
                 if ($settings->sse_chat)
@@ -71,6 +96,8 @@ class Sse extends MY_User_Controller{
 
             }
 
+            // LIVE DRAFT data is only sent when $sse_func == sse_live_draft, meaning the user is currently visiting the
+            // live draft page
             if ($sse_live_draft)
             {
                 //
@@ -121,64 +148,46 @@ class Sse extends MY_User_Controller{
                     $this->draft_model->get_update_key();
             }
 
+            // LIVE SCORES data is only sent when $sse_func == sse_live_scores, meaning the user is currently visiting the
+            // live scores page
             // If sse_live_scores is set and live_scores_key has changed, output stuff needed for live scores.
             if (($ls_first && $sse_live_scores) || ($sse_live_scores && $last_keys->live_scores_key != $keys->live_scores_key))
             {
                 $this->load->model('season/scores_model');
-                $data['live']['players_live'] = $this->scores_model->get_player_live_array();
-                $data['live']['nfl_games'] = $this->scores_model->get_nfl_game_live_array();
-                $data['live']['scores'] = $this->scores_model->get_fantasy_scores_array();
-                $data['live']['key'] = $keys->live_scores_key;
+                $data['live_scores']['players_live'] = $this->scores_model->get_player_live_array();
+                $data['live_scores']['nfl_games'] = $this->scores_model->get_nfl_game_live_array();
+                $data['live_scores']['scores'] = $this->scores_model->get_fantasy_scores_array();
+                $data['live_scores']['key'] = $keys->live_scores_key;
                 $ls_first = False;
             }
 
-            // Update things at a slower interval like live scoring icon, etc
-            // Whos_online goes here too.
-            if ($last_live_element_check < $now - $interval)
-            {
-                $this->load->model('security_model');
-                $this->load->model('league/chat_model');
-                $check_in = $this->chat_model->update_last_check_in();
-                if ($this->security_model->live_scores_on())
-                    $data['ls'] = 'on';
-                else
-                    $data['ls'] = 'off';
-                $last_live_element_check = $now;
 
-                if($this->session->userdata('show_whos_online'))
-                    $data['wo'] = $this->chat_model->whos_online();
-
-                $data["ur"] = $this->chat_model->get_unread_count();
-            }
-            $runtime += (microtime(True) - $start);
+            // Now, if the $data array contains something, write it out and flush so the open connection gets the data.
+    
+            //$runtime += (microtime(True) - $start);
             //$data['debug'] = number_format((microtime(True) - $start),2);
             if (count($data) >0)
-                sse_json($data);
+                echo "data: ".json_encode($data)."\n\n";
             ob_flush(); // Needed to add this after moving to centos, no idea why.
             flush();
-            $runtime += (microtime(True) - $start);
+            //$runtime += (microtime(True) - $start);
             usleep(250000); //half a second
             //$count--;
             $last_keys = $keys;
         }
-        // echo "\n";
-        // echo $runtime;
-        // echo "\n";
-        // echo $runtime/$num;
-
     }
 
     // Update session varaible containing enabled SSE functions
-    function turn_on($function)
-    {
-        $this->sse_model->turn_on($function);
-    }
+    // function turn_on($function)
+    // {
+    //     $this->sse_model->turn_on($function);
+    // }
 
-    // Update session variable to remove an SSE function
-    function turn_off($function)
-    {
-        $this->sse_model->turn_off($function);
-    }
+    // // Update session variable to remove an SSE function
+    // function turn_off($function)
+    // {
+    //     $this->sse_model->turn_off($function);
+    // }
 
 }
 ?>

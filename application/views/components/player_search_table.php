@@ -15,14 +15,14 @@ if (!isset($per_page))
 
 <div class="columns">
     <div class="column">
-        <input type="text" class="player-list-text-input input" data-for="<?=$id?>" placeholder="Search">
+        <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
     </div>
 
     <?php if (isset($pos_dropdown) && is_array($pos_dropdown)): ?>
         <div class='column'>
             <div class="control">
                 <div class="select">
-                    <select data-for="<?=$id?>" class="player-list-position-select">
+                    <select data-for="<?=$id?>" class="player-list-position-select pagination-filter" data-filter="pos">
                         <?php foreach ($pos_dropdown as $text => $posid): ?>
                             <option value="<?=$posid?>"><?=$text?></option>
                         <?php endforeach; ?>
@@ -33,7 +33,6 @@ if (!isset($per_page))
     <?php endif;?>
 
 </div>
-
 <div class="columns">
     <div class="column">
         <table class="table is-fullwidth fflp-table-fixed" >
@@ -44,13 +43,12 @@ if (!isset($per_page))
                     <?php else:?>
                         <th>
                     <?php endif;?>
-
                     <?php if(array_key_exists('order',$h) && array_key_exists('by',$h)):?>
                         <a href="#" 
                         <?php if(array_key_exists('order',$h)){echo 'data-order="'.$h['order'].'"';}?>
                         data-for="<?=$id?>"
                         <?php if(array_key_exists('by',$h)){echo 'data-by="'.$h['by'].'"';}?>
-                        class="player-list-a-sort"><?=$header_text?></a>
+                        class="lc-sort"><?=$header_text?></a>
                     <?php endif;?>
                     </th>
                 <?php endforeach;?>

@@ -1,3 +1,17 @@
+// =====================================
+// Misc. used site wide
+
+// For "notifications" at the top
+$(document).on('click',"._notification-close",function(){
+    debug_out('Message acked');
+	var ackurl = $(this).data('ackurl');
+    $.post(ackurl);
+});
+
+$(document).on('click', '.notification > button.delete', function() {
+    $(this).parent().addClass('is-hidden');
+    return false;
+});
 
 // =====================================
 // Start Pagination/endless list functions
@@ -7,7 +21,6 @@ function loadContent(targetSel)
 	// Set an ajax wait key to prevent flashing of objects on initial page load.
 	var aw_key = 'loadcontent_'+targetSel;
     ajax_waits[aw_key] = true;
-
     var per_page = $('#'+targetSel).data('per-page');
     //url
     //filters (table colums)
@@ -21,17 +34,14 @@ function loadContent(targetSel)
     $('.pagination-filter[data-for="'+targetSel+'"]').each(function(){
         filters[$(this).data('filter')] = $(this).val();
     });
-
+    var order = $('#'+targetSel).data('order');
+    var by = $('#'+targetSel).data('by');
     // $.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
     // 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
     var url = $('#'+targetSel).data('url');
     
-    console.log(url);
-    console.log(limit);
+    $.post(url, {'limit':limit, 'order':order, 'by':by, 'filters':filters}, function(data){
 
-    $.post(url, {'limit':limit}, function(data){
-        console.log(data);
-        console.log("Post succeeded.");
         if(data.success)
         {
             debug_out(data);
@@ -43,15 +53,48 @@ function loadContent(targetSel)
 
             $("#"+targetSel).data('total',data.total);
             $("#"+targetSel).data('num-displayed',data.count);
+            // Clear the ajax wait
+            ajax_waits[aw_key] = false;
 
         }
     },'json').fail(function(){
-        console.log("failed");
+        console.log("loadContent failed");
+        ajax_waits[aw_key] = false;
     });
-    console.log(targetSel);
-    // Clear the ajax wait
-    ajax_waits[aw_key] = false;
+
 }
+
+// Filter changed events that reload the content
+$(document).on('input','.pagination-filter',function(e){
+	var playerSearchTimer;
+	clearTimeout(playerSearchTimer);
+	var delay = 500;
+	var for_id = $(this).data('for');
+	playerSearchTimer = setTimeout(function(){
+		//resetPlayerSearch(tbody,0,0);
+		loadContent(for_id);
+	},delay);
+});
+
+$(document).on('change','.pagination-filter', function(e){
+    var for_id = $(this).data('for');
+    loadContent(for_id);
+});
+
+$(document).on('click','.lc-sort', function(e){
+    var for_id = $(this).data('for');
+    var order = $('#'+for_id).data('order');
+    var by = $(this).data('by');
+
+    if ($('#'+for_id).data('by') == by)
+    {
+        if(order == 'asc'){order='desc';}
+        else{order='asc';}
+    }
+    $('#'+for_id).data('by',by);
+    $('#'+for_id).data('order',order);
+    loadContent(for_id);
+});
 
 // 
 $(document).on('click','.lc-load-all-button', function(e){
@@ -120,9 +163,8 @@ $(document).on('click','.editable-text-save-button', function(e){
     var url = $(input).data('url');
 
     $.post(url,{'id':id,'value':value,'var1':var1,'var2':var2,'var3':var3},function(data){
-        console.log(data);
         var d = $.parseJSON(data);
-        console.log(d);
+        debug_out(d);
 		if(d.success) {$(input).val(d.value);}
         else {$(input).val($(input).data('initial-value'));}
     });
@@ -133,6 +175,58 @@ $(document).on('click','.editable-text-save-button', function(e){
     $(id+'-edit-button').removeClass('is-hidden');
 });
 
+
+// Editable password field with save/edit/cancel buttons, posts to url
+// $(document).on('click','.editable-password-edit-button', function(e){
+//     var id = '#'+$(this).prop('id').replace('-edit-button','');
+//     var input = id+'-password';
+//     var val = $(id+'-password').val();
+//     $(input).prop('disabled',false);
+//     $(input).data('initial-value',$(input).val());
+//     $(id+'-save-button').removeClass('is-hidden');
+//     $(id+'-cancel-button').removeClass('is-hidden');
+//     $(id+'-edit-button').addClass('is-hidden');
+//     var password2_html = '<input class="input is-fullwidth"'+
+//                         'type="password"'+
+//                         'value='+val+'></input>';
+//     $(id+'-password2').html(password2_html);
+//     console.log(password2_html);
+// });
+
+// $(document).on('click','.editable-password-cancel-button', function(e){
+//     var id = '#'+$(this).prop('id').replace('-cancel-button','');
+//     var input = id+'-password';
+//     console.log(input);
+//     $(input).prop('disabled',true);
+//     $(input).val($(input).data('initial-value'));
+//     $(id+'-save-button').addClass('is-hidden');
+//     $(id+'-cancel-button').addClass('is-hidden');
+//     $(id+'-edit-button').removeClass('is-hidden');
+//     $(id+'-password2').remove();
+// });
+
+// $(document).on('click','.editable-password-save-button', function(e){
+//     var id = '#'+$(this).prop('id').replace('-save-button','');
+//     var input = id+'-password';
+//     var value = $(input).val();
+//     var var1 = false, var2 = false, var3 = false
+//     var1 = $(input).data('var1');
+//     var2 = $(input).data('var2');
+//     var3 = $(input).data('var3');
+//     var url = $(input).data('url');
+
+//     $.post(url,{'id':id,'value':value,'var1':var1,'var2':var2,'var3':var3},function(data){
+//         var d = $.parseJSON(data);
+//         debug_out(d);
+// 		if(d.success) {$(input).val(d.value);}
+//         else {$(input).val($(input).data('initial-value'));}
+//     });
+
+//     $(input).prop('disabled',true);
+//     $(id+'-save-button').addClass('is-hidden');
+//     $(id+'-cancel-button').addClass('is-hidden');
+//     $(id+'-edit-button').removeClass('is-hidden');
+// });
 
 // Editable select field with save/edit/cancel buttons, posts to url
 $(document).on('click','.editable-select-edit-button', function(e){
@@ -186,17 +280,19 @@ $(document).on('click','.toggle-control',function(e){
     var id = '#'+$(this).prop('id');
 	var url = $(this).data('url');
 	var var1 = $(this).data('var1');
-	var var2 = $(this).data('var2');
+    var var2 = $(this).data('var2');
 	$.post(url,{"id":id,"var1":var1,"var2":var2},function(data){
-        console.log(data);
+        debug_out(data);
         var d = $.parseJSON(data);
 		if(d.success)
 		{
-            console.log(d);
-			if ((d.value == 1 && element.is(':checked')) || (d.value == 0 && !element.is(':checked')))
-			{return}
-			//location.reload();
-		}
+            if (d.value == 1){element.prop('checked',true);}
+            else {element.prop('checked',false);}
+        }
+        else
+        {
+            debug_out('error in toggle');
+        }
     });
     
 });

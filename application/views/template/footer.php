@@ -1,7 +1,7 @@
 
 
 <footer class="footer">
-<div id="footer-bar">
+<div id="footer-bar" class="section">
 		<!-- <?php if (count($this->session->userdata('leagues')) > 1): ?>
 			<?php $this->load->view('template/modals/change_league'); ?>
 		<div class="columns small-6">
@@ -15,3 +15,7 @@
 		</div>
 </div>
 </footer>
+<?php if($this->session->userdata('debug')):?>
+	<?php $this->load->view('template/debug_block'); ?>
+<?php endif;?>
+

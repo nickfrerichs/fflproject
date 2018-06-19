@@ -28,7 +28,7 @@ class Standings extends MY_User_Controller{
         //BEGIN VIEW
         ?>
         <?php //debug($divs,$this->session->userdata('debug')); ?>
-        <table class="table table-condensed table-striped" id="standings-table">
+        <table class="table is-narrow is-striped is-fullwidth" id="standings-table">
             <thead>
                       <th>Team</th><th>Win %</th><th>Record</th><th>Points <span style="font-size:.8em">(ppg)</span></th><th>Opp Points <span style="font-size:.8em">(ppg)</span></th>
             </thead>

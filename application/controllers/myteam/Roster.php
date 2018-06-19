@@ -136,11 +136,17 @@ class Roster extends MY_User_Controller{
 
     function toggle_keeper()
     {
-        $id = $this->input->post('id');
+        $response = array('success' => False);
+        $id = $this->input->post('var1');
+
         if ($this->myteam_roster_model->is_player_owner($id))
         {
-            $this->myteam_roster_model->toggle_keeper($id);
+            $response['value'] = $this->myteam_roster_model->toggle_keeper($id); 
+            $response['success'] = True;
         }
+
+        echo json_encode($response);
+
     }
 
 }

@@ -1,4 +1,4 @@
-<table class="table table-striped table-border text-center table-condensed">
+<table class="table is-fullwidth is-narrow">
 	<thead><th class="text-center">Pos</th><th class="text-center">Player</th><th></th></thead>
 <tbody>
 <?php foreach ($team_roster as $r): ?>
@@ -14,7 +14,7 @@
 		    </div>
 		</td>
 		<td>
-			<button class="button request-btn small" type="button" value="<?=$r->player_id?>" data-name="<?=$name?>">Select</button>
+			<button class="button request-btn is-small is-link" type="button" value="<?=$r->player_id?>" data-name="<?=$name?>">Select</button>
 		</td>
 
 

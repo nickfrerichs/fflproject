@@ -1,214 +1,195 @@
-<?php $this->load->view('template/modals/stat_popup'); ?>
-<!-- Choose team modal -->
-<div class="reveal tiny" id="choose-team-modal" data-reveal data-overlay="true">
+<?php //$this->load->view('template/modals/stat_popup'); ?>
 
-	<form class="navbar-form text-center">
-		<div><h5>Trade with</h5></div>
-		<div class="form-group text-center">
-			<?=form_dropdown('',$team_options,'0','id="team-dropdown" class="form-control"')?>
-		</div>
-	</form>
-	<button class="close-button" data-close aria-label="Close modal" type="button">
-	  <span aria-hidden="true">&times;</span>
-	</button>
-</div>
+<?php
+// Choose team modal
+$body = '<div class="select"><select id="team-dropdown">';
+foreach($team_options as $o => $t)
+{
+	$body .= '<option value="'.$o.'">'.$t.'</option>';
+}
+$body .= '</select></div>';
+
+$this->load->view('components/modal', array('id' => 'choose-team-modal',
+                                                    'title' => 'Choose Team',
+                                                    'body' => $body,
+                                                    'reload_on_close' => False));
+?>
 
 <?php // Add modals for trading draft picks ?>
 <?php if($settings['trade_draft_picks']): ?>
-	<!-- Request picks modal -->
-	<div class="reveal" id="request-picks-modal" data-reveal data-overlay="true">
-		<div class="row">
-			<div class="columns">
-				<h5 class="text-center">Pick request</h5>
+
+	<?php 
+	// Request picks modal
+	$body = '	<div class="select">
+				<select id="requestpick-year">
+
+				</select>
+				</div>
+				<table class="table is-fullwidth">
+						<thead>
+							<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
+						</thead>
+						<tbody id="requestpicks">
+
+						</tbody>
+				</table>
+				<div id="trade-picks-with-team">
+				</div>';
+
+	$this->load->view('components/modal', array('id' => 'request-picks-modal',
+														'title' => 'Pick request',
+														'body' => $body,
+														'reload_on_close' => False));
+
+	// Offer picks modal
+	$body = '
+			<div class="select">
+			<select id="offerpick-year">';
+				foreach($pick_years as $p)
+				{
+					$body.='<option value="'.$p.'"';
+					if($p == $pick_year){$body.= "selected";}
+					$body.='>'.$p.'</option>';
+				}
+
+	$body.='</select>
 			</div>
-		</div>
-		<select id="requestpick-year">
+			<table class="table is-fullwidth">
+					<thead>
+						<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
+					</thead>
+					<tbody id="offerpicks">
 
-		</select>
-		<table class="text-center table-condensed">
-				<thead>
-					<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
-				</thead>
-				<tbody id="requestpicks">
+					</tbody>
+			</table>';
 
-				</tbody>
-		</table>
-		<div id="trade-picks-with-team">
-		</div>
-		<div><button class="button done-button text-center">Done</button></div>
+	$this->load->view('components/modal', array('id' => 'offer-picks-modal',
+														'title' => 'Pick offer',
+														'body' => $body,
+														'reload_on_close' => False));
+														
 
-		<button class="close-button" data-close aria-label="Close modal" type="button">
-		  <span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-
-	<!-- Trade picks modal -->
-	<div class="reveal" id="offer-picks-modal" data-reveal data-overlay="true">
-		<div class="row">
-			<div class="columns">
-				<h5 class="text-center">Picks offer</h5>
-			</div>
-		</div>
-		<select id="offerpick-year">
-			<?php foreach($pick_years as $p): ?>
-				<option value="<?=$p?>" <?php if($p == $pick_year){echo "selected";}?>><?=$p?></option>
-			<?php endforeach;?>
-		</select>
-		<table class="text-center table-condensed">
-				<thead>
-					<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
-				</thead>
-				<tbody id="offerpicks">
-
-				</tbody>
-		</table>
-		<div class="text-center"><button class="button done-button">Done</button></div>
-		<button class="close-button" data-close aria-label="Close modal" type="button">
-		  <span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-
-
-
+	?>
 <?php endif;?>
 
-<!-- Request players modal -->
-<div class="reveal" id="request-players-modal" data-reveal data-overlay="true">
-	<div class="row">
-		<div class="columns">
-			<h5 class="text-center">Trade request</h5>
-		</div>
-	</div>
-	<div id="trade-with-team">
-	</div>
-	<div><button class="button done-button text-center">Done</button></div>
+<?php 
+// Request players modal
+$body = '<div id="trade-with-team">
+		 </div>
+		 <div>';
 
-	<button class="close-button" data-close aria-label="Close modal" type="button">
-	  <span aria-hidden="true">&times;</span>
-	</button>
-</div>
+$this->load->view('components/modal', array('id' => 'request-players-modal',
+                                                    'title' => 'Trade request',
+                                                    'body' => $body,
+                                                    'reload_on_close' => False));
 
-<!-- Trade players modal -->
-<div class="reveal" id="trade-players-modal" data-reveal data-overlay="true">
-	<div class="row">
-		<div class="columns">
-			<h5 class="text-center">Trade offer</h5>
-		</div>
-	</div>
-	<table class="text-center table-condensed">
-			<thead>
-				<th class="text-center">Pos</th><th class="text-center">Player</th><th></th>
-			</thead>
-			<tbody>
-				<?php foreach ($roster as $r): ?>
-				<tr>
-					<td><?=$r->pos?></td>
-					<td>
-			        <div>
-			                <?php if(strlen($r->first_name.$r->last_name) > 12){$name = $r->short_name; }
-			                      else{$name = $r->first_name." ".$r->last_name;} ?>
-			            <a href="#" class="stat-popup" data-type="player" data-id="<?=$r->player_id?>"><?=$name?></a> - <?=$r->club_id?>
-			        </div>
-		    		</td>
-		    		<td>
-		    			<button class="button offer-btn small" value="<?=$r->player_id?>" data-name="<?=$name?>">Select</button>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-	</table>
-	<div class="text-center"><button class="button done-button">Done</button></div>
-	<button class="close-button" data-close aria-label="Close modal" type="button">
-	  <span aria-hidden="true">&times;</span>
-	</button>
-</div>
+// Trade players modal
+$body = '<div id="trade-my-team">
+		 </div>
+		 <div>';
+
+$this->load->view('components/modal', array('id' => 'trade-players-modal',
+                                                    'title' => 'Trade offer',
+                                                    'body' => $body,
+                                                    'reload_on_close' => False));
 
 
-<div class="hide trade-form row">
-	<div class="small-12 medium-6">
-		<table class="table-condensed">
-			<thead>
-				<th>
-					<div class="text-center"><h5><?=$team_name?></h5></div>
-					<div class="text-center"><h6><a href="#" id="trade-players">Add/Remove Players</a></h6></div>
-				</th>
-			</thead>
-			<tbody id="trade-offer-text" class="text-center">
-			</tbody>
-		</table>
-		<?php if($settings['trade_draft_picks']): ?>
-		<table class="table-condensed">
-			<thead>
-				<th>
-					<div class="text-center"><h6><a href="#" id="offer-picks">Add/Remove Draft Picks</a></h6></div>
-				</th>
-			</thead>
-			<tbody id="pick-offer-text" class="text-center">
 
-			</tbody>
-		</table>
-		<?php endif;?>
-	</div>
+?>
 
-	<div class="small-12 medium-6">
-		<table class="table-condensed">
-			<thead>
-				<th class="text-center">
-					<h5><span class="text-center" id="request-team-name"></span><span style="font-size:.5em"><a href="#" id="trade-title"> (change)</a></h5></span>
-					<div class="text-center"><h6><a id="request-players" href="#">Add/Remove Players</a></h6></div>
-				</th>
-			</thead>
-			<tbody id="trade-request-text" class="text-center">
-
-			</tbody>
-		</table>
-		<?php if($settings['trade_draft_picks']): ?>
-			<table class="table-condensed">
+<div class="section">
+	<div class="columns">
+		<div class="column">
+			<table class="table is-fullwidth is-narrow">
 				<thead>
-					<th class="text-center"><div class="text-center"><h6><a href="#" id="request-picks">Add/Remove Draft Picks</a></h6></div></th>
+					<th>
+						<div class="is-size-5"><?=$team_name?></div>
+						<div class="is-size-6"><a href="#" id="trade-players">Add/Remove Players</a></div>
+					</th>
 				</thead>
-				<tbody id="pick-request-text" class="text-center">
+				<tbody id="trade-offer-text" class="text-center">
+				</tbody>
+			</table>
+			<?php if($settings['trade_draft_picks']): ?>
+			<table class="table is-fullwidth">
+				<thead>
+					<th colspan=2>
+						<div class="is-size-6"><a href="#" id="offer-picks">Add/Remove Draft Picks</a></div>
+					</th>
+				</thead>
+				<tbody id="pick-offer-text" class="text-center">
 
 				</tbody>
 			</table>
-		<?php endif;?>
+			<?php endif;?>
+		</div>
 
+		<div class="column">
+			<table class="table is-fullwidth is-narrow">
+				<thead>
+					<th class="text-center">
+						<span class="is-size-5" id="request-team-name"></span><span style="font-size:.8em"><a href="#" id="trade-title"> (change)</a></span>
+						<div class="is-size-6"><a id="request-players" href="#">Add/Remove Players</a></div>
+					</th>
+				</thead>
+				<tbody id="trade-request-text" class="text-center">
+
+				</tbody>
+			</table>
+			<?php if($settings['trade_draft_picks']): ?>
+				<table class="table is-fullwidth">
+					<thead>
+						<th class="text-center" colspan=2><div class="is-size-6"><a href="#" id="request-picks">Add/Remove Draft Picks</a></div></th>
+					</thead>
+					<tbody id="pick-request-text" class="text-center">
+
+					</tbody>
+				</table>
+			<?php endif;?>
+		</div>
 	</div>
-</div>
-<div class="row" style="max-width:325px;">
-	<div class="column">
-		<form class="navbar-form text-center hide trade-form">
-			<div class="form-group">
-				<select id="trade-expire" class="form-control">
-					<option value="<?=time()+(60*60*6)?>">Expires in 6 hours</option>
-					<option value="<?=time()+(60*60*12)?>">Expires in 12 hours</option>
-					<option value="<?=time()+(60*60*24)?>">Expires in 24 hours</option>
-					<option value="<?=time()+(60*60*48)?>">Expires in 48 hours</option>
-				</select>
+
+	<div class="columns is-centered">
+		<div class="column is-half has-text-centered">
+			<div class="field">
+				<div class="control has-text-centered">
+					<div class="select is-expanded">
+						<select id="trade-expire" class="is-expanded">
+							<option value="<?=time()+(60*60*6)?>">Expires in 6 hours</option>
+							<option value="<?=time()+(60*60*12)?>">Expires in 12 hours</option>
+							<option value="<?=time()+(60*60*24)?>">Expires in 24 hours</option>
+							<option value="<?=time()+(60*60*48)?>">Expires in 48 hours</option>
+						</select>
+					</div>
+				</div>
 			</div>
-
-			<button id="send-trade-offer" class="button" type="button">
-			Send Trade offer
-			</button>
-		</form>
+			<div class="field">
+				<div class="control has-text-centered">
+					<button id="send-trade-offer" class="button is-link is-small is-centered" type="button">
+					Send Trade offer
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-
 
 
 <script>
 $(document).ready(function(){
 
 
-$("#choose-team-modal").foundation('open');
+$("#choose-team-modal").addClass('is-active');
 
 $("#request-players").click(function(){
-	$("#request-players-modal").foundation("open");
+	//$("#request-players-modal").foundation("open");
+	$("#request-players-modal").addClass('is-active')
 	event.stopPropagation();
 });
 
 $("#trade-players").click(function(){
-	$("#trade-players-modal").foundation("open");
+	//$("#trade-players-modal").foundation("open");
+	$("#trade-players-modal").addClass('is-active');
 	event.stopPropagation();
 });
 
@@ -225,7 +206,7 @@ $("#request-picks").click(function(){
 			updatePicks("request", $("#team-dropdown").val());
 		});
 	}
-	$("#request-picks-modal").foundation("open");
+	$("#request-picks-modal").addClass("is-active");
 	event.stopPropagation();
 });
 
@@ -242,7 +223,7 @@ $("#requestpick-year").on('change',function(){
 $("#offer-picks").click(function(){
 	if ($("#offerpicks").html().trim() == "")
 	{updatePicks("offer", "<?=$this->session->userdata('team_id')?>");}
-	$("#offer-picks-modal").foundation("open");
+	$("#offer-picks-modal").addClass('is-active');
 });
 
 // When a mypick is selected
@@ -291,6 +272,7 @@ function updatePicks(whichone, teamid)
 
 function togglePickList(whichone, year, round, pick, pickid, future)
 {
+	console.log("here");
 	//pick-offer-text, pick-request-text
 	var id = whichone+"-"+pickid+"-"+year+"-"+round+"-"+future;
 	var tr_class = "pick-"+whichone
@@ -305,26 +287,33 @@ function togglePickList(whichone, year, round, pick, pickid, future)
 <?php endif;?>
 
 $("#trade-title").click(function(){
-	$("#choose-team-modal").foundation('open');
+	//$("#choose-team-modal").foundation('open');
+	$("#choose-team-modal").addClass('is-active');
+	
 })
 
 $(".done-button").click(function(){
-	$("#request-players-modal").foundation("close");
-	$("#trade-players-modal").foundation("close");
+	//$("#request-players-modal").foundation("close");
+	$("#request-players-modal").removeClass('is-active');
+	$("#trade-players-modal").removeClass('is-active');
 <?php if($settings['trade_draft_picks']): ?>
-	$("#request-picks-modal").foundation("close");
-	$("#offer-picks-modal").foundation("close");
+	$("#request-picks-modal").removeClass("is-active");
+	$("#offer-picks-modal").removeClass("is-active");
 <?php endif;?>
 });
 
 $("#team-dropdown").on("change",function(){
 	url = "<?=site_url('myteam/trade/ajax_get_team_roster')?>";
 	$.post(url,{'team_id' : $("#team-dropdown").val()},function(data){ $("#trade-with-team").html(data); });
-	$(".footer-nav-item").each(function(){
-		$(this).removeClass('hide');
-	});
+	// $(".footer-nav-item").each(function(){
+	// 	$(this).removeClass('hide');
+	// });
+
+	url = "<?=site_url('myteam/trade/ajax_get_my_roster')?>";
+	$.post(url,{},function(data){ $("#trade-my-team").html(data); });
+
 	// Reset a bunch of stuff.
-	$("#choose-team-modal").foundation('close');
+	$("#choose-team-modal").removeClass('is-active');
 	$("#request-team-name").text($("#team-dropdown option:selected").text())
 	$("#trade-offer-text").html('');
 	$("#trade-request-text").html('');
@@ -345,10 +334,11 @@ $("#team-dropdown").on("change",function(){
 })
 
 // Update list of offered players
-$("button.offer-btn").on("click",function(){
+$("#trade-my-team").on("click","button.offer-btn",function(){
 	toggleSelected($(this));
 	updateList("offer");
 });
+
 
 // Update list of requested players
 $("#trade-with-team").on("click","button.request-btn",function(){
@@ -358,6 +348,7 @@ $("#trade-with-team").on("click","button.request-btn",function(){
 
 function toggleSelected(element)
 {
+	element.toggleClass("is-link");
 	element.toggleClass("secondary");
 	if (element.text() == "Select"){element.text("Remove");}
 	else {element.text("Select");}

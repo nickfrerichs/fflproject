@@ -50,7 +50,7 @@ class Messages extends MY_User_Controller{
         $data['message'] = $this->messages_model->get_message($id);
 
         $this->load->model('security_model');
-        $this->security_model->set_user_messages();
+        $this->security_model->set_user_notifications();
 
         $this->load->view('user/myteam/messages/ajax_display_message',$data);
     }
