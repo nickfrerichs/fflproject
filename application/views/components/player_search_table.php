@@ -8,15 +8,21 @@
 // headers array('by'=>'','order'=>'',classes=>'')
 // $positions[$p->text_id] = $p->id; //drop down select with options
 
+
 if (!isset($per_page))
     $per_page = 10;
 
 ?>
 
 <div class="columns">
-    <div class="column">
-        <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
-    </div>
+    <?php if(isset($disable_search) && $disable_search == True): ?>
+        Search Disabled <?=$disable_search?>
+    <?php else: ?>
+        <div class="column">
+            <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
+        </div>
+        <?php $disable_search = False; ?>
+    <?php endif;?>
 
     <?php if (isset($pos_dropdown) && is_array($pos_dropdown)): ?>
         <div class='column'>
@@ -59,3 +65,8 @@ if (!isset($per_page))
         <?php $this->load->view('load_content/template/load_more_buttons',array('for' => $id));?>
     </div>
 </div>
+
+<?php
+// Do this cause it's a nested view, if not variables are retained if another view is called
+$this->load->clear_vars();
+?>

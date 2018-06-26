@@ -1,4 +1,4 @@
-<?php //$this->load->view('template/modals/stat_popup'); ?>
+<?php $this->load->view('components/stat_popup'); ?>
 
 <!-- Modals that are hidden by default -->
 

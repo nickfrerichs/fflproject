@@ -1,4 +1,4 @@
-<?php //$this->load->view('template/modals/stat_popup'); ?>
+<?php $this->load->view('components/stat_popup'); ?>
 
 <?php
 // Choose team modal

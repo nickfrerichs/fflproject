@@ -7,21 +7,21 @@
 			<?=$p->order?>
 		</td>
 		<td>
-			<div>
-				<?php if($key != 0 || ($this->in_page!=""&&$this->in_page!=0)): ?>
+			<!-- <div>
+				<?php //if($key != 0 || ($this->in_page!=""&&$this->in_page!=0)): ?>
 				<a href="#" class="btn-draft" data-value="up_<?=$p->id?>"><i class="fi-arrow-up" style="font-size:1.2em"></i></a>
-				<?php else: ?>
+				<?php //else: ?>
 					<span class=""></span>
-				<?php endif;?>
+				<?php //endif;?>
 			</div>
 
 			<div>
-				<?php if(count($players) != $key+1 || $this->in_page != floor($total_players/$this->per_page)):?>
+				<?php //if(count($players) != $key+1 || $this->in_page != floor($total_players/$this->per_page)):?>
 				<a href="#" class="btn-draft" data-value="down_<?=$p->id?>"><i class="fi-arrow-down" style="font-size:1.2em"></i></a>
-				<?php else: ?>
+				<?php //else: ?>
 					<span class=""></span>
-				<?php endif;?>
-			</div>
+				<?php //endif;?>
+			</div> -->
 		</td>
 
 		<td>
@@ -29,27 +29,27 @@
 			<div><?=$p->club_id.' - '.$p->position?> <span style="font-size: .8em">(bye <?=$byeweeks[$p->club_id]?>)</span></div>
 		</td>
 		<td>
-			<button class="button tiny btn-draft" data-value="watch_<?=$p->id?>">
+			<button class="button is-small is-link btn-draft" data-value="watch_<?=$p->id?>">
 				Unwatch
 			</button>
 		</td>
 		<td>
 
-			<?php if($draft_team_id == $team_id && !$paused): ?>
-			<button class="button tiny btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>">Draft</button>
-			<?php else: ?>
-			<button class="button tiny btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>" disabled>Draft</button>
-			<?php endif; ?>
+			<?php //if($draft_team_id == $team_id && !$paused): ?>
+			<button class="button is-small is-link btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>">Draft</button>
+			<?php //else: ?>
+			<button class="button is-small is-link btn-draft" value="draft_<?=$p->id?>" data-value="draft_<?=$p->id?>" disabled>Draft</button>
+			<?php //endif; ?>
 
 		</td>
 
 	</tr>
 
 <?php endforeach; ?>
-<tr id="watch-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$total_players?>">
-</tr>
+<!-- <tr id="watch-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$total_players?>">
+</tr> -->
 <?php endif;?>
 
 <script>
-$(".reload-foundation").foundation();
+//$(".reload-foundation").foundation();
 </script>

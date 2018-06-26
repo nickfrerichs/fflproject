@@ -1,6 +1,6 @@
-<div class="row">
-    <div class="columns callout">
-        <table>
+<div class="section">
+
+        <table class="table is-fullwidth is-narrow is-striped">
             <thead>
                 <th>NFL Pos.</th><th>Description</th>
             </thead>
@@ -21,5 +21,5 @@
                 <?php endforeach;?>
             </tbody>
         </table>
-    </div>
+
 </div>

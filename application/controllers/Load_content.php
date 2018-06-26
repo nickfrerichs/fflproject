@@ -49,6 +49,38 @@ class Load_content extends MY_User_Controller{
 
     }
 
+    function test()
+    {
+        $this->load->model('season/draft_model');
+  //      $nfl_players = $this->player_search_model->get_nfl_players($this->limit, 0, 0, array("last_name", "desc"), "", true);
+        $nfl_players = $this->draft_model->get_watch_list($this->limit, 0, 0);
+        print_r($nfl_players);
+    }
+
+    function ajax_full_player_list()
+    {
+        if (!isset($this->filter_pos))
+            $this->filter_pos = '';
+        $nfl_players = $this->player_search_model->get_nfl_players($this->limit, 0, $this->filter_pos, array($this->by, $this->order), $this->filter_search, true);
+ 
+        $this->load->model('myteam/myteam_roster_model');
+        $view_data['total'] = $nfl_players['count'];
+        $view_data['players'] = $nfl_players['result'];
+        //$this->data['per_page'] = $this->per_page;
+        $view_data['matchups'] = $this->myteam_roster_model->get_nfl_opponent_array();
+        $view_data['byeweeks'] = $this->common_model->get_byeweeks_array();
+
+        //$this->load->view('player_search/ajax_full_player_list',$this->data);
+
+        $this->data['html'] = $this->load->view('load_content/full_player_list',$view_data,True);
+        $this->data['total'] = $view_data['total'];
+        $this->data['count'] = $this->limit;
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
+    }
+
     function ww_player_list()
     {
         $this->load->model('myteam/waiverwire_model');
@@ -84,6 +116,68 @@ class Load_content extends MY_User_Controller{
         echo json_encode($this->data);
     }
 
+    function draft_player_list()
+    {
+        $this->load->model('season/draft_model');
+        //if ($this->order_by[0] == 'points')
+        //    $this->order_by[0] = 'last_name';
+
+        if (!isset($this->filter_search))
+            $this->filter_search = '';
+
+        if (!isset($this->filter_pos))
+            $this->filter_pos = '';
+
+        $nfl_players = $this->draft_model->get_available_players_data($this->limit, 0, $this->filter_pos, array($this->by, $this->order), $this->filter_search);
+
+        $view_data['total'] = $nfl_players['count'];
+        $view_data['players'] = $nfl_players['result'];
+        //$data['per_page'] = $this->per_page;
+        $view_data['draft_team_id'] = $this->draft_model->get_draft_team_id();
+        $view_data['team_id'] = $this->teamid;
+        $view_data['paused'] = $this->draft_model->draft_paused();
+        $view_data['admin_pick'] = false;
+        if ($this->input->post('var1') == "true")
+            $view_data['admin_pick'] = true;
+
+        $view_data['byeweeks'] = $this->common_model->get_byeweeks_array();
+
+        $this->data['total'] = $view_data['total'];
+        $this->data['count'] = $this->limit;
+        $this->data['html'] = $this->load->view('user/season/draft/ajax_get_draft_table', $view_data, True);
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
+    }
+
+    function draft_watch_list()
+    {
+        $this->load->model('season/draft_model');
+
+        if (!isset($this->filter_pos))
+        $this->filter_pos = '';
+
+        $view_data['draft_team_id'] = $this->draft_model->get_draft_team_id();
+        $view_data['team_id'] = $this->teamid;
+
+        $watch_players = $this->draft_model->get_watch_list($this->limit, 0, $this->filter_pos);
+        $view_data['players'] = $watch_players['result'];
+        $view_data['total_players'] = $watch_players['count'];
+       // $view_data['per_page'] = $this->per_page;
+       // $view_data['page'] = $this->in_page;
+        $view_data['paused'] = $this->draft_model->draft_paused();
+
+        $view_data['byeweeks'] = $this->common_model->get_byeweeks_array();
+
+        $this->data['total'] = $view_data['total_players'];
+        $this->data['count'] = $this->limit;
+        $this->data['html'] = $this->load->view('user/season/draft/ajax_get_watch_list', $view_data,True);
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
+    }
 
     function admin_rosters_player_search()
     {

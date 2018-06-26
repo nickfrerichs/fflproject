@@ -19,7 +19,7 @@
 <script>
 function js_Load(){
     // Wait for all ajax_waits to be false so the page is only displayed when everything is loaded
-    var max_check_time = 1000;
+    var max_check_time = 5000;
     var total_check_time = 0;
     var check_interval = 25;
     var check = function(){

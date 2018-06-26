@@ -39,11 +39,13 @@ function loadContent(targetSel)
     // $.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
     // 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
     var url = $('#'+targetSel).data('url');
-    
+    console.log(url);
+    console.log(order);
     $.post(url, {'limit':limit, 'order':order, 'by':by, 'filters':filters}, function(data){
-
+        
         if(data.success)
         {
+            debug_out("Success");
             debug_out(data);
             $("#"+targetSel).html(data.html);
 
@@ -57,8 +59,14 @@ function loadContent(targetSel)
             ajax_waits[aw_key] = false;
 
         }
+        else
+        {
+            debug_out("loadContent: success = false")
+            debug_out(data);
+        }
     },'json').fail(function(){
         console.log("loadContent failed");
+        debug_out(data);
         ajax_waits[aw_key] = false;
     });
 
@@ -94,6 +102,7 @@ $(document).on('click','.lc-sort', function(e){
     $('#'+for_id).data('by',by);
     $('#'+for_id).data('order',order);
     loadContent(for_id);
+    e.preventDefault();
 });
 
 // 

@@ -92,68 +92,65 @@ class Quickstats extends MY_User_Controller{
 
         //Begin view
         ?>
-        <div>
-            <div class="row">
-                <div class="columns small-12">
-                    <div class="row">
-                        <div class="columns hide-for-small-only medium-2">
-                            <?php if($player->photo != ""): ?>
-                                <img class="stat-popup-img" src="<?=site_url('images/'.$player->photo)?>">
-                            <?php endif;?>
-                        </div>
-                        <div class="columns small-12 medium-10">
-                           
-                            <a href="<?=site_url('league/players/id/'.$player->player_id)?>" target="_blank"><?=$player->first_name.' '.$player->last_name?> - <?=$player->pos?> #<?=$player->number?></a>  
-                            <br>NFL Team: <?=$player->club_id?>
-                            <br>Fantasy Team: <?=$player->team_name?>
-                            <br>Draft Round: <?=$player->round?> <?php if($player->round != "Undrafted"){echo " (#".$player->draft_pick." overall)";}?>
-                        </div>
-                    </div>
+        <div class="section">
 
-                    <div class="table-responsive" style="overflow:auto;">
-                        <table class="table">
-                            <thead>
-                                <th>Week</th>
-                                <th>Points</th>
-                                <th>Opp</th>
-                                <?php if (array_key_exists('cats',$stats[1])):?>
-                                    <?php foreach($stats[1]['cats'] as $s):?>
-                                        <th>
-                                            <?php if (is_array($s) && array_key_exists('cat_text',$s)):?>
-                                                <?=$s['cat_text']?>
-                                            <?php endif;?>
-                                        </th>
-                                    <?php endforeach;?>
-                                <?php endif;?>
-                            </thead>
-                            <tbody>
-                                <?php foreach($stats as $week => $s): ?>
-                                    <?php if($week > $this->current_week -3 && $week <= $this->current_week +1): ?>
-                                        <?php if($week == $this->current_week): ?>
-                                            <tr style="background-color:#E0ECF8">
-                                        <?php else: ?>
-                                            <tr>
-                                        <?php endif;?>
-                                        <td style="font-weight:bold"><?=$week?></td>
-                                        <td><?=$s['total']['value']?></td>
-                                        <td>
-                                        <?=$s['opp']?>
-                                    </td>
-                                        <?php if (array_key_exists('cats',$stats['1'])): ?>
-                                            <?php foreach($stats[1]['cats'] as $cat => $c):?>
-                                                <td>
-                                                    <?=$stats[$week]['cats'][$cat]['value']?>
-                                                </td>
-                                            <?php endforeach;?>
-                                        <?php endif?>
-                                    </tr>
-                                    <?php endif;?>
-                                <?php endforeach;?>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="columns">
+                <div class="column is-2-tablet">
+                    <?php if($player->photo != ""): ?>
+                        <img class="stat-popup-img" src="<?=site_url('images/'.$player->photo)?>">
+                    <?php endif;?>
+                </div>
+                <div class="column is-10-tablet">
+                    
+                    <a href="<?=site_url('league/players/id/'.$player->player_id)?>" target="_blank"><?=$player->first_name.' '.$player->last_name?> - <?=$player->pos?> #<?=$player->number?></a>  
+                    <br>NFL Team: <?=$player->club_id?>
+                    <br>Fantasy Team: <?=$player->team_name?>
+                    <br>Draft Round: <?=$player->round?> <?php if($player->round != "Undrafted"){echo " (#".$player->draft_pick." overall)";}?>
                 </div>
             </div>
+            <div class="fflp-overflow">
+                <table class="table is-fullwidth is-narrow is-striped">
+                    <thead>
+                        <th>Week</th>
+                        <th>Points</th>
+                        <th>Opp</th>
+                        <?php if (array_key_exists('cats',$stats[1])):?>
+                            <?php foreach($stats[1]['cats'] as $s):?>
+                                <th>
+                                    <?php if (is_array($s) && array_key_exists('cat_text',$s)):?>
+                                        <?=$s['cat_text']?>
+                                    <?php endif;?>
+                                </th>
+                            <?php endforeach;?>
+                        <?php endif;?>
+                    </thead>
+                    <tbody>
+                        <?php foreach($stats as $week => $s): ?>
+                            <?php if($week > $this->current_week -3 && $week <= $this->current_week +1): ?>
+                                <?php if($week == $this->current_week): ?>
+                                    <tr style="background-color:#E0ECF8">
+                                <?php else: ?>
+                                    <tr>
+                                <?php endif;?>
+                                <td style="font-weight:bold"><?=$week?></td>
+                                <td><?=$s['total']['value']?></td>
+                                <td>
+                                <?=$s['opp']?>
+                            </td>
+                                <?php if (array_key_exists('cats',$stats['1'])): ?>
+                                    <?php foreach($stats[1]['cats'] as $cat => $c):?>
+                                        <td>
+                                            <?=$stats[$week]['cats'][$cat]['value']?>
+                                        </td>
+                                    <?php endforeach;?>
+                                <?php endif?>
+                            </tr>
+                            <?php endif;?>
+                        <?php endforeach;?>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
         <?php // end view
     }

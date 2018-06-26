@@ -1,23 +1,23 @@
 <?php //print_r($teams); ?>
 
 
-
-    <div class="row callout">
+<div class="section">
+    <div class="columns is-multiline">
         <?php foreach($teams as $t): ?>
-            <div class="columns medium-6 small-12">
-                <div class="text-center">
-                    <h4><a href="<?=site_url('league/teams/view/'.$t->team_id)?>"><?=$t->long_name?></a></h4>
+            <div class="column is-half-tablet">
+                <div class="is-size-4">
+                    <a href="<?=site_url('league/teams/view/'.$t->team_id)?>"><?=$t->long_name?></a>
                 </div>
-                <div class="row">
-                    <div class="columns small-5">
+                <div class="columns">
+                    <div class="column is-4">
 
-                        <div class="text-center">
+                        <div class="has-text-center">
                             <img class="team-logo" src="<?=$logos[$t->team_id]?>"/>
                         </div>
                         <br>
                     </div>
-                    <div class="columns small-7">
-                        <table class="table">
+                    <div class="column is-8">
+                        <table class="table is-fullwidth">
                             <tbody>
                                 <tr>
                                     <td>Owner:</td>
@@ -39,9 +39,7 @@
                                 </tr>
                             </tbody>
                         </table>
-
                     </div>
-
                 </div>
                 <hr>
             </div>
