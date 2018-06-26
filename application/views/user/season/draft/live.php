@@ -128,71 +128,78 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
 <!-- Row with draft search, watch list -->
 <div class="section">
 
-
-
-
+	<div class="tabs is-small is-boxed fflp-tabs-active">
+		<ul>
+			<li class="is-active" data-for="draft-player-list-tab" data-load-content="draft-list"><a>Player List</a></li>
+			<li class="" data-for="draft-watch-list-tab" data-load-content="watch-list"><a>Watch List</a></li>
+			<li class="" data-for="draft-myteam-list-tab" data-load-content="myteam-list"><a>My Team</a></li>
+		</ul>
+	</div>
 
  
 	<!-- Player search goes here -->
 
 
 
+	<div id="draft-player-list-tab">
+		<?php //Show the player list using player_search_table component
 
-	<?php //Show the player list using player_search_table component
+		$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+		$headers['Team'] = array('by' => 'club_id', 'order' => 'asc');
+		$headers['Position'] = array('by' => 'position', 'order' => 'asc');
+		$headers['Bye'] = array();
+		$headers[''] = array();
+		//$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
+		//$headers['Bye'] = array();
+		//$headers['Points'] = array('by' => 'points', 'order' => 'asc');
+		//$headers['Team'] = array();
 
-	$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
-	$headers['Team'] = array('by' => 'club_id', 'order' => 'asc');
-	$headers['Position'] = array('by' => 'position', 'order' => 'asc');
-	$headers['Bye'] = array();
-	$headers[''] = array();
-	//$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
-	//$headers['Bye'] = array();
-	//$headers['Points'] = array('by' => 'points', 'order' => 'asc');
-	//$headers['Team'] = array();
+		$pos_dropdown['All'] = 0;
+		foreach($pos as $p)
+			$pos_dropdown[$p->text_id] = $p->id;
 
-	$pos_dropdown['All'] = 0;
-	foreach($pos as $p)
-		$pos_dropdown[$p->text_id] = $p->id;
-
-	$this->load->view('components/player_search_table',
-					array('id' => 'draft-list',
-						'url' => site_url('load_content/draft_player_list'),
-						'order' => 'desc',
-						'by' => 'last_name',
-						'pos_dropdown' => $pos_dropdown,
-						'headers' => $headers,
-						'blah' => "blah",
-						'disable_search' => True));
+		$this->load->view('components/player_search_table',
+						array('id' => 'draft-list',
+							'url' => site_url('load_content/draft_player_list'),
+							'order' => 'desc',
+							'by' => 'last_name',
+							'pos_dropdown' => $pos_dropdown,
+							'headers' => $headers,
+							'disable_search' => False,
+							'blah' => "blah"));
 
 
-	?>
+		?>
+	</div>
 
     <!-- watch list -->
-	<?php //Show the player list using player_search_table component
+	<div id="draft-watch-list-tab" class="is-hidden">
+		<?php //Show the player list using player_search_table component
 
-	$headers[''] = array('by' => 'last_name', 'order' => 'asc');
-	$headers[''] = array('by' => 'club_id', 'order' => 'asc');
-	$headers[''] = array('by' => 'position', 'order' => 'asc');
-	$headers[''] = array();
-	$headers[''] = array();
+		$headers[''] = array('by' => 'last_name', 'order' => 'asc');
+		$headers[''] = array('by' => 'club_id', 'order' => 'asc');
+		$headers[''] = array('by' => 'position', 'order' => 'asc');
+		$headers[''] = array();
+		$headers[''] = array();
 
-	$pos_dropdown['All'] = 0;
-	foreach($pos as $p)
-		$pos_dropdown[$p->text_id] = $p->id;
+		$pos_dropdown['All'] = 0;
+		foreach($pos as $p)
+			$pos_dropdown[$p->text_id] = $p->id;
 
-	$this->load->view('components/player_search_table',
-					array('id' => 'watch-list',
-						'url' => site_url('load_content/draft_watch_list'),
-						'order' => 'asc',
-						'by' => 'meh',
-						'pos_dropdown' => $pos_dropdown,
-						'headers' => $headers));
+		$this->load->view('components/player_search_table',
+						array('id' => 'watch-list',
+							'url' => site_url('load_content/draft_watch_list'),
+							'order' => 'asc',
+							'by' => 'meh',
+							'pos_dropdown' => $pos_dropdown,
+							'disable_search' => True,
+							'headers' => $headers));
 
 
-	?>
+		?>
+	</div>
 
-<div id="myteam-panel" class="row callout" data-toggler data-animate="hinge-in-from-top spin-out">
-	<div class="columns draft-box">
+	<div id="draft-myteam-list-tab" class="is-hidden">
 		<div class="d-myteam-heading text-center"><h5>My Team</h5></div>
 		<table class="text-center table-condensed">
 			<thead>
@@ -202,7 +209,7 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
 			</tbody>
 		</table>
 	</div>
-</div>
+
 
 <div id="debug" class="text-center hide"></div>
 

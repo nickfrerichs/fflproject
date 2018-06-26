@@ -16,12 +16,10 @@ if (!isset($per_page))
 
 <div class="columns">
     <?php if(isset($disable_search) && $disable_search == True): ?>
-        Search Disabled <?=$disable_search?>
     <?php else: ?>
         <div class="column">
             <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
         </div>
-        <?php $disable_search = False; ?>
     <?php endif;?>
 
     <?php if (isset($pos_dropdown) && is_array($pos_dropdown)): ?>
@@ -65,8 +63,3 @@ if (!isset($per_page))
         <?php $this->load->view('load_content/template/load_more_buttons',array('for' => $id));?>
     </div>
 </div>
-
-<?php
-// Do this cause it's a nested view, if not variables are retained if another view is called
-$this->load->clear_vars();
-?>
