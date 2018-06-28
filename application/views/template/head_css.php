@@ -12,4 +12,4 @@
 
 <!-- My custom CSS -->
 <link href="<?=site_url('/css/fflproject-chat.css?5')?>" rel="stylesheet">
-<link href="<?=site_url('/css/fflproject-new.css?1')?>" rel="stylesheet">
+<link href="<?=site_url('/css/fflproject-new.css?4')?>" rel="stylesheet">

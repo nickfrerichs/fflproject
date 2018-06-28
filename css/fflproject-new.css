@@ -7,6 +7,8 @@
 
 .fflp-table-fixed{table-layout:fixed; width:100%;}
 
+
+
 /* I'm tring stuff for tiny devices, this could change */
 
 @media only screen
@@ -25,7 +27,7 @@ table{font-size: .9em;}
 table.text-3{font-size: 1em;}
 table.text-4{font-size: .9em;}
 table.text-5{font-size: .8em;}
-.section{padding:1.5rem 1.5rem;}
+.section{padding:1.5rem .5rem;}
 
 /* Change navbar dropdown colors */
 .navbar-link{background-color:#363636; color:#fff;}
@@ -33,3 +35,13 @@ table.text-5{font-size: .8em;}
 .navbar-dropdown>a:hover{background-color:rgb(190, 190, 190); color:#000}
 .navbar-item{background-color:#363636; color:#fff;}
 .navbar-item>a:hover{background-color:#fff; color:#000;}
+
+
+
+/* ----------------------- */
+/* Live draft stuff        */
+/* ----------------------- */
+/*.d-rp-futurepick td{background-color:#FAFAFA;}*/
+/* .d-rp-currentpick td{background-color:#fc0;} */
+.d-rp-currentpick td{background-color:#ffe266;font-weight:bold}
+.d-rp-recentpick td{color:#888;}

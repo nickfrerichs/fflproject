@@ -36,12 +36,13 @@ function loadContent(targetSel)
     });
     var order = $('#'+targetSel).data('order');
     var by = $('#'+targetSel).data('by');
+    var var1 = $('#'+targetSel).data('var1');
     // $.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
     // 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
     var url = $('#'+targetSel).data('url');
     console.log(url);
     console.log(order);
-    $.post(url, {'limit':limit, 'order':order, 'by':by, 'filters':filters}, function(data){
+    $.post(url, {'limit':limit, 'order':order, 'by':by, 'filters':filters, 'var1':var1}, function(data){
         
         if(data.success)
         {

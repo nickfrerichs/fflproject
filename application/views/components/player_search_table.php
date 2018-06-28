@@ -14,12 +14,10 @@ if (!isset($per_page))
 
 ?>
 
-<div class="columns">
+<div>
     <?php if(isset($disable_search) && $disable_search == True): ?>
     <?php else: ?>
-        <div class="column">
             <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
-        </div>
     <?php endif;?>
 
     <?php if (isset($pos_dropdown) && is_array($pos_dropdown)): ?>
@@ -36,30 +34,28 @@ if (!isset($per_page))
         </div>
     <?php endif;?>
 
-</div>
-<div class="columns">
-    <div class="column">
-        <table class="table is-fullwidth fflp-table-fixed" >
-            <thead>
-                <?php foreach($headers as $header_text => $h):?>
-                    <?php if(isset($h->classes) && is_array($classes)): ?>
-                        <th class="<?php implode(" ",$h->classes);?>">
-                    <?php else:?>
-                        <th>
-                    <?php endif;?>
-                    <?php if(array_key_exists('order',$h) && array_key_exists('by',$h)):?>
-                        <a href="#" 
-                        <?php if(array_key_exists('order',$h)){echo 'data-order="'.$h['order'].'"';}?>
-                        data-for="<?=$id?>"
-                        <?php if(array_key_exists('by',$h)){echo 'data-by="'.$h['by'].'"';}?>
-                        class="lc-sort"><?=$header_text?></a>
-                    <?php endif;?>
-                    </th>
-                <?php endforeach;?>
-            </thead>
-            <tbody id="<?=$id?>" data-by="<?=$by?>" data-per-page="<?=$per_page?>" data-order="<?=$order?>" data-url="<?=$url?>">
-            </tbody>
-        </table>
-        <?php $this->load->view('load_content/template/load_more_buttons',array('for' => $id));?>
-    </div>
+
+
+    <table class="table is-fullwidth fflp-table-fixed" >
+        <thead>
+            <?php foreach($headers as $header_text => $h):?>
+                <?php if(isset($h->classes) && is_array($classes)): ?>
+                    <th class="<?php implode(" ",$h->classes);?>">
+                <?php else:?>
+                    <th>
+                <?php endif;?>
+                <?php if(array_key_exists('order',$h) && array_key_exists('by',$h)):?>
+                    <a href="#" 
+                    <?php if(array_key_exists('order',$h)){echo 'data-order="'.$h['order'].'"';}?>
+                    data-for="<?=$id?>"
+                    <?php if(array_key_exists('by',$h)){echo 'data-by="'.$h['by'].'"';}?>
+                    class="lc-sort"><?=$header_text?></a>
+                <?php endif;?>
+                </th>
+            <?php endforeach;?>
+        </thead>
+        <tbody id="<?=$id?>" data-by="<?=$by?>" data-per-page="<?=$per_page?>" data-order="<?=$order?>" data-url="<?=$url?>">
+        </tbody>
+    </table>
+    <?php $this->load->view('load_content/template/load_more_buttons',array('for' => $id));?>
 </div>

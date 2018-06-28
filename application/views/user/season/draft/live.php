@@ -26,190 +26,184 @@ $body =     '	<div class="text-center">This will clear your current watch list!<
 					</button>
 				</div>';
 
-$this->load->view('components/modal', array('id' => 'drop-modal',
-                                                    'title' => 'Are you sure?',
-                                                    'body' => $body,
-                                                    'reload_on_close' => True));
+fflp_modal('clear-watch-modal','Are you sure?',$body,True);
+
 ?>
-<!-- <div class="reveal" id="confirm-rank-reset-modal" data-reveal data-overlay="true">
-	<h5 class="text-center">Are you sure?</h5>
-	<div class="text-center">This will clear your current watch list!</div>
-	<br>
-    <div class="text-center">
-        <button class="button" type="button" id="confirm-rank-reset">
-            Confirm
-        </button>
-        <button class="button" type-"button" id="cancel-rank-reset" data-close aria-label="Close modal">
-            Cancel
-        </button>
-    </div>
-</div> -->
 
-<?php if($this->is_league_admin):?>
 <div class="section">
+<?php if($this->is_league_admin):?>
 
-		<div class="is-size-5"><?=$this->session->userdata('current_year')?> Draft</div>
+	<?=fflp_html_block_begin()?>
+		<div class="columns">
+			<div class="column is-narrow is-size-5">
+				<?=$this->session->userdata('current_year')?> Draft
+			</div>
 
-	<div>
-			<button class="button is-link is-small" id="admin-pause-button">Start Draft</button>
-			<button class="button is-link is-small" id="admin-picks" data-on="">Pick for User</button>
-			<button class="button is-link is-small" disabled id="admin-undo">Undo Last Pick</button>
-	</div>
-</div>
+			<div class="column has-text-right">
+				<button class="button is-small is-link" id="admin-pause-button">Start Draft</button>
+				<button class="button is-small is-link" id="admin-picks" data-on="">Pick for User</button>
+				<button class="button is-small is-link" disabled id="admin-undo">Undo Last Pick</button>
+			</div>
+		</div>
+	<?=fflp_html_block_end()?>
+
 <?php endif;?>
 
 	<!-- Top row with Now Picking and Recent picks -->
-<div class="section">
 
-	<div class="is-size-5" id="d-block-title">
-		<?=$block_title?>
-	</div>
+	<?=fflp_html_block_begin()?>
+		<div class="columns">
+			<div class="column is-2 has-text-centered">
+				<div class="is-size-5" id="d-block-title">
+					<?=$block_title?>
+				</div>
 
-	<div id="on-the-block">
-		<!-- moved stuff from old ajax here -->
-		<?php if(($scheduled_start_time > $current_time) && ($start_time == 0 || $start_time > $current_time)): // Draft is in the future?>
-			<div class="d-block-team-name"><?=date('D M j - g:i a',$scheduled_start_time)?></div>
-			<div>
-				<img id="d-block-team-logo" class="hide-for-small-only" src="">
+				<div id="on-the-block">
+					<!-- moved stuff from old ajax here -->
+					<?php if(($scheduled_start_time > $current_time) && ($start_time == 0 || $start_time > $current_time)): // Draft is in the future?>
+						<div class="d-block-team-name"><?=date('D M j - g:i a',$scheduled_start_time)?></div>
+						<div>
+							<img id="d-block-team-logo" class="hide-for-small-only" src="">
+						</div>
+
+						<div class="d-block-round">
+						</div>
+						
+						<div id="countdown" class="d-block-clock" data-deadline=""
+							data-currenttime="<?=$current_time?>" data-seconds="-1"
+							data-paused="" data-starttime="<?=$start_time?>" data-teamid="">
+						</div>
+					<?php elseif (empty($current_pick)): // Draft is over??>
+						<div class="d-block-team-name">Draft is over.</div>
+					<?php else: // Draft is in progress?>
+						<div class="d-block-team-name"><?=$current_pick->team_name?></div>
+						<div>
+							<img id="d-block-team-logo" class="hide-for-small-only" src="<?=$current_pick->logo_url?>">
+						</div>
+
+						<div class="d-block-round">
+							Round <?=$current_pick->round?>
+
+							Pick <?=$current_pick->pick?>
+						</div>
+
+						<div id="countdown" class="d-block-clock" data-deadline="<?=$current_pick->deadline?>"
+							data-currenttime="<?=$current_time?>" data-seconds="<?=$seconds_left?>"
+							data-paused="<?=$paused?>" data-starttime="<?=$start_time?>" data-teamid ="<?=$current_pick->team_id?>">...
+						</div>
+					<?php endif; ?>
+					<!-- end move stuff from old ajax -->
+				</div>
 			</div>
 
-			<div class="d-block-round">
-			</div>
-			
-			<div id="countdown" class="d-block-clock" data-deadline=""
-				data-currenttime="<?=$current_time?>" data-seconds="-1"
-				data-paused="" data-starttime="<?=$start_time?>" data-teamid="">
-			</div>
-		<?php elseif (empty($current_pick)): // Draft is over??>
-			<div class="d-block-team-name">Draft is over.</div>
-		<?php else: // Draft is in progress?>
-			<div class="d-block-team-name"><?=$current_pick->team_name?></div>
-			<div>
-				<img id="d-block-team-logo" class="hide-for-small-only" src="<?=$current_pick->logo_url?>">
-			</div>
+			<div class="column">
+				<div id="d-recent-picks-div" style="max-height:190px;overflow-Y:hidden">
+					<div class="text-center hide"><a href="<?=site_url('season/draft')?>" target="_blank">
+						Recent Picks</a>
+					</div>
+					<table class="table is-narrow is-fullwidth is-striped small-text">
+						<thead>
+							<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
+						</thead>
+						<tbody id="recent-picks">
 
-			<div class="d-block-round">
-				Round <?=$current_pick->round?>
-
-				Pick <?=$current_pick->pick?>
+						</tbody>
+					</table>
+				</div>
+				<div class="text-center" style="font-size:.9em;cursor:pointer"><a id="d-scroll-link">scroll</a></div>
 			</div>
-
-			<div id="countdown" class="d-block-clock" data-deadline="<?=$current_pick->deadline?>"
-				data-currenttime="<?=$current_time?>" data-seconds="<?=$seconds_left?>"
-				data-paused="<?=$paused?>" data-starttime="<?=$start_time?>" data-teamid ="<?=$current_pick->team_id?>">...
-			</div>
-		<?php endif; ?>
-		<!-- end move stuff from old ajax -->
-	</div>
-
-
-	<div id="d-recent-picks-div" style="max-height:190px;overflow-Y:hidden">
-		<div class="text-center hide"><a href="<?=site_url('season/draft')?>" target="_blank">
-			Recent Picks</a>
 		</div>
-		<table class="table is-narrow is-fullwidth">
-			<thead>
-				<th>Overall</th><th>Round</th><th>Player</th><th>Team</th><th>Owner</th>
-			</thead>
-			<tbody id="recent-picks">
+	<?=fflp_html_block_end()?>
 
-			</tbody>
-		</table>
-	</div>
-	<div class="text-center" style="font-size:.9em;cursor:pointer"><a id="d-scroll-link">scroll</a></div>
-
-
-	<div class="text-center show-for-small-only">
-		<a href="#" class="show-for-small-only">Recent Picks</a>
-	</div>
-</div>
 
 
 <!-- Row with draft search, watch list -->
-<div class="section">
+	<?=fflp_html_block_begin()?>
 
-	<div class="tabs is-small is-boxed fflp-tabs-active">
-		<ul>
-			<li class="is-active" data-for="draft-player-list-tab" data-load-content="draft-list"><a>Player List</a></li>
-			<li class="" data-for="draft-watch-list-tab" data-load-content="watch-list"><a>Watch List</a></li>
-			<li class="" data-for="draft-myteam-list-tab" data-load-content="myteam-list"><a>My Team</a></li>
-		</ul>
-	</div>
+		<div class="tabs is-small is-boxed fflp-tabs-active">
+			<ul>
+				<li class="is-active" data-for="draft-player-list-tab" data-load-content="draft-list"><a>Player List</a></li>
+				<li class="" data-for="draft-watch-list-tab" data-load-content="watch-list"><a>Watch List</a></li>
+				<li class="" data-for="draft-myteam-list-tab" data-load-content="myteam-list"><a>My Team</a></li>
+			</ul>
+		</div>
 
- 
-	<!-- Player search goes here -->
-
-
-
-	<div id="draft-player-list-tab">
-		<?php //Show the player list using player_search_table component
-
-		$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
-		$headers['Team'] = array('by' => 'club_id', 'order' => 'asc');
-		$headers['Position'] = array('by' => 'position', 'order' => 'asc');
-		$headers['Bye'] = array();
-		$headers[''] = array();
-		//$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
-		//$headers['Bye'] = array();
-		//$headers['Points'] = array('by' => 'points', 'order' => 'asc');
-		//$headers['Team'] = array();
-
-		$pos_dropdown['All'] = 0;
-		foreach($pos as $p)
-			$pos_dropdown[$p->text_id] = $p->id;
-
-		$this->load->view('components/player_search_table',
-						array('id' => 'draft-list',
-							'url' => site_url('load_content/draft_player_list'),
-							'order' => 'desc',
-							'by' => 'last_name',
-							'pos_dropdown' => $pos_dropdown,
-							'headers' => $headers,
-							'disable_search' => False,
-							'blah' => "blah"));
+	
+		<!-- Player search goes here -->
 
 
-		?>
-	</div>
 
-    <!-- watch list -->
-	<div id="draft-watch-list-tab" class="is-hidden">
-		<?php //Show the player list using player_search_table component
+		<div id="draft-player-list-tab">
+			<?php //Show the player list using player_search_table component
 
-		$headers[''] = array('by' => 'last_name', 'order' => 'asc');
-		$headers[''] = array('by' => 'club_id', 'order' => 'asc');
-		$headers[''] = array('by' => 'position', 'order' => 'asc');
-		$headers[''] = array();
-		$headers[''] = array();
+			$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+			$headers['Team'] = array('by' => 'club_id', 'order' => 'asc');
+			$headers['Position'] = array('by' => 'position', 'order' => 'asc');
+			$headers['Bye'] = array();
+			$headers[''] = array();
 
-		$pos_dropdown['All'] = 0;
-		foreach($pos as $p)
-			$pos_dropdown[$p->text_id] = $p->id;
+			//$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
+			//$headers['Bye'] = array();
+			//$headers['Points'] = array('by' => 'points', 'order' => 'asc');
+			//$headers['Team'] = array();
 
-		$this->load->view('components/player_search_table',
-						array('id' => 'watch-list',
-							'url' => site_url('load_content/draft_watch_list'),
-							'order' => 'asc',
-							'by' => 'meh',
-							'pos_dropdown' => $pos_dropdown,
-							'disable_search' => True,
-							'headers' => $headers));
+			$pos_dropdown['All'] = 0;
+			foreach($pos as $p)
+				$pos_dropdown[$p->text_id] = $p->id;
+
+			fflp_player_search_table('draft-list',
+									site_url('load_content/draft_player_list'),
+									'desc',
+									'last_name',
+									$pos_dropdown,
+									$headers,
+									$classes='is-striped small-text',
+									$disable_search=False)
+
+			?>
+		</div>
+
+		<!-- watch list -->
+		<div id="draft-watch-list-tab" class="is-hidden">
+			<?php //Show the player list using player_search_table component
+			$headers = array();
+			$headers['Rank'] = array('classes'=>array('has-text-centered'));
+			$headers['Action'] = array();
+			$headers['Player'] = array();
 
 
-		?>
-	</div>
 
-	<div id="draft-myteam-list-tab" class="is-hidden">
-		<div class="d-myteam-heading text-center"><h5>My Team</h5></div>
-		<table class="text-center table-condensed">
-			<thead>
-				<th class="text-center">Player Name</th><th class="text-center">Team/Pos</th><th class="text-center">Bye</th><th class="text-center">Pick</th><th class="text-center hide-for-small-only">Round</th>
-			</thead>
-			<tbody id="myteam-list">
-			</tbody>
-		</table>
-	</div>
 
+			$pos_dropdown['All'] = 0;
+			foreach($pos as $p)
+				$pos_dropdown[$p->text_id] = $p->id;
+
+
+			fflp_player_search_table('watch-list',
+				site_url('load_content/draft_watch_list'),
+				$order='asc',
+				$by='meh',
+				$pos_dropdown,
+				$headers,
+				$classes='is-striped small-text',
+				$disable_search=True)
+
+			?>
+		</div>
+
+		<div id="draft-myteam-list-tab" class="is-hidden fflp-overflow">
+			<!-- <div class="d-myteam-heading text-center"><h5>My Team</h5></div> -->
+			<table class="table is-narrow is-fullwidth is-striped small-text">
+				<thead>
+					<th class="text-center">Player Name</th><th class="text-center">Team/Pos</th><th class="text-center">Bye</th><th class="text-center">Pick</th><th class="text-center hide-for-small-only">Round</th>
+				</thead>
+				<tbody id="myteam-list">
+				</tbody>
+			</table>
+		</div>
+
+	<?=fflp_html_block_end()?>
+</div>
 
 <div id="debug" class="text-center hide"></div>
 
@@ -276,8 +270,8 @@ $('#confirm-rank-reset').on('click',function(){
 		console.log(data);
 		if (data.success)
 		{
-			updatePlayerList("watch-list");
-			updatePlayerList("draft-list");
+			$(loadContent('draft-list'));
+			$(loadContent('watch-list'));
 		}
 	},'json');
 });
@@ -343,14 +337,15 @@ $("#draft-list, #watch-list").on("click",".btn-draft",function(event){
 		{
 			//var e = "a[data-value='"+vals[0]+"_"+vals[1]+"']";
 			e = "."+vals[0]+"-"+vals[1];
-			updatePlayerList("watch-list");
+			//updatePlayerList("watch-list");
+			$(loadContent('watch-list'));
 			return;
 		}
 		<?php if($this->is_league_admin): ?>
 		set_admin_picks(false);
 		<?php endif;?>
-		updatePlayerList("watch-list");
-		updatePlayerList("draft-list");
+		$(loadContent('draft-list'));
+		$(loadContent('watch-list'));
 		if(vals[0] == "draft"){loadMyTeam();}
 	});
 })
@@ -428,7 +423,7 @@ function pad(n) {
 		$("#draft-list").data('var1',setting);
 		if (setting == true){$("#admin-picks").text("Cancel user Pick");}
 		else {$("#admin-picks").text("Pick for User");}
-		updatePlayerList("draft-list");
+		$(loadContent('draft-list'));
 	}
 	$("#admin-picks").on('click',function(){
 
