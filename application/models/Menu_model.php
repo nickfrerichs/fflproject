@@ -19,11 +19,11 @@ class Menu_model extends CI_Model
 
         if ($admin == false)
             $this->db->where('menu_bar.admin',0)->where('menu_bar.super_admin',0);
-        elseif ($admin && $this->flexi_auth->is_admin())
+        elseif ($admin && $this->ion_auth->is_admin())
         {
             $this->db->where('(menu_bar.super_admin = 1 or menu_bar.admin = 1)',null,false);
         }
-        elseif($this->flexi_auth->is_admin())
+        elseif($this->ion_auth->is_admin())
             $this->db->where('menu_bar.super_admin',1);
         elseif($admin)
             $this->db->where('menu_bar.admin',1);

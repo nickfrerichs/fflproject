@@ -4,6 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // Need some variables from consolidated config file.
 include(FCPATH.'config.php');
 
+// Variables added to config from fflp config
+$config['fflp_salt'] = $fflp_salt;
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -378,7 +380,7 @@ $config['sess_save_path'] = 'ci_sessions';
 // if (isset($fflp_session_expire))
 //     $config['sess_expiration'] = $fflp_session_expire;
 // else
-    $config['sess_expiration'] = 7200;
+$config['sess_expiration'] = 7200;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

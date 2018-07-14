@@ -5,8 +5,7 @@ class Common extends CI_Controller{
     function __construct()
     {
         parent::__construct();
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+        $this->load->library('ion_auth');
 
         // Turn debugging on, if enabled.
         if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
@@ -20,7 +19,7 @@ class Common extends CI_Controller{
                 $this->output->enable_profiler(TRUE);
         }
         //$this->load->model('security_model');
-        if (!$this->flexi_auth->is_logged_in())
+        if (!$this->ion_auth->logged_in())
         {
              die();
         }

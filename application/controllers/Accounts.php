@@ -5,10 +5,9 @@ class Accounts extends MY_Basic_Controller{
     function __construct()
     {
         parent::__construct();
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth', FALSE);
+        $this->load->library('ion_auth');
         $this->load->model('account_model');
-        if ($this->flexi_auth->is_logged_in())
+        if ($this->ion_auth->logged_in())
         {
                 redirect('auth');
         }
@@ -105,11 +104,8 @@ class Accounts extends MY_Basic_Controller{
         $data = array();
         if ($this->input->post('email_address'))
         {
-
             $this->flexi_auth->forgotten_password($this->input->post('email_address'));
             $data['sent'] = true;
-            //$this->flexi_auth->auto_reset_forgotten_password($this->input->post('email_address'));
-
         }
         $data['site_name'] = $this->common_noauth_model->get_site_name();
         $this->load->helper('form');

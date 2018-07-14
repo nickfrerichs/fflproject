@@ -11,7 +11,7 @@
 					<a data-open="change-league-modal">Change League</a>
 				</div>
 				<?php endif; ?> -->
-				<?php $isadmin = ($this->session->userdata('is_league_admin') || $this->flexi_auth->is_admin()); ?>
+				<?php $isadmin = ($this->session->userdata('is_league_admin') || $this->ion_auth->is_admin()); ?>
 
 				<?php if ($isadmin && stripos($v,'admin') === false) {echo ' <a href = '.site_url().'admin><span class="has-text-light">Admin</span> </a>';} ?>
 				<?php if ($isadmin && stripos($v,'admin') > -1) {echo ' <a href = '.site_url().'><span class="has-text-light">User</span> </a>';} ?>

@@ -6,13 +6,12 @@ class Joinleague extends MY_Basic_Controller{
     {
         parent::__construct();
 
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+        $this->load->library('ion_auth');
     }
 
     function invite($mask_id="")
     {
-        if (!$this->flexi_auth->is_logged_in())
+        if (!$this->ion_auth->logged_in())
         {
             // If they aren't logged in, ask them to login, or register new account
             $league_name = $this->common_noauth_model->league_name_from_mask_id($mask_id);

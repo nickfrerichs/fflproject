@@ -8,7 +8,7 @@ class Ajax_model extends CI_Model{
     // Methods for admin functions
     function __construct()
     {
-        $this->userid = $this->flexi_auth->get_user_id();
+        $this->userid = $this->ion_auth->get_user_id();
         $this->leagueid = $this->session->userdata('league_id');
     }
     

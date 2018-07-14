@@ -5,7 +5,6 @@ class Settings extends MY_User_Controller{
     {
         parent::__construct();
         $this->load->model('myteam/myteam_settings_model');
-        $this->load->library('flexi_auth', FALSE, 'flexi_auth_full');
         $this->bc['My Team'] = "";
         $this->bc['Settings'] = "";
     }
@@ -22,11 +21,12 @@ class Settings extends MY_User_Controller{
 
     function ajax_change_password()
     {
+        $this->load->model('ion_auth_model');
         $identity="none";
         $curpass = $this->input->post('curpass');
         $newpass = $this->input->post('newpass');
         $identity = $this->myteam_settings_model->get_owner_identity();
-        echo $this->flexi_auth_full->change_password($identity, $curpass, $newpass);
+        echo $this->ion_auth_model->change_password($identity, $curpass, $newpass);
 
     }
 

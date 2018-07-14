@@ -19,13 +19,10 @@ class Ajax extends CI_Controller{
     
     function players($var = "")
     {
-        
-        // Initialize flexi auth (lite)
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+        $this->load->library('ion_auth');
 
         // If not logged in redirect to login page
-        if (!$this->flexi_auth->is_logged_in())
+        if (!$this->ion_auth->logged_in())
         {
              die();
         }    

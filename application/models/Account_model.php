@@ -88,4 +88,29 @@ class Account_model extends CI_Model{
             return True;
         return False;
     }
+
+    // This function checks credentials against the legacy auth tables
+    function legacy_check_password($username, $verify_password)
+    {
+        $legacy_info = $this->db->select('uacc_password, uacc_salt')->from('user_accounts')->where('uacc_username',$username)
+            ->get()->row();
+        require_once(APPPATH.'libraries/phpass/PasswordHash.php');
+        require_once(FCPATH.'config.php');
+        $database_salt = $legacy_info->uacc_salt;
+        $database_password = $legacy_info->uacc_password;
+
+        $hash_token = new PasswordHash(8, FALSE);
+        return $hash_token->CheckPassword($database_salt . $verify_password . $this->config->item('fflp_salt'), $database_password);
+    }
+
+    function convert_legacy_password($username, $password)
+    {
+        $this->load->model('ion_auth_model');
+
+        // Once set in ion_auth, delete user from legacy auth table
+        if ($this->ion_auth_model->reset_password($username, $password))
+        {
+            return True;
+        }
+    }
 }

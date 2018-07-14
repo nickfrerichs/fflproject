@@ -8,16 +8,14 @@ class Security_model extends CI_Model
     {
         parent::__construct();
 
-        // Initialize flexi auth (lite)
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+        $this->load->library('ion_auth');
 
         $this->load->model('common/common_noauth_model');
 
         $this->site_settings = $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id')
             ->select('session_refresh_time, live_element_refresh_time')
             ->from('site_settings')->get()->row();
-        $this->userid = $this->flexi_auth->get_user_id();
+        $this->userid = $this->ion_auth->get_user_id();
         $this->session->set_userdata('user_id',$this->userid);
         if ($this->db->from('owner')->where('user_accounts_id',$this->userid)->count_all_results() > 0)
             $this->is_owner = True;
@@ -36,13 +34,13 @@ class Security_model extends CI_Model
         // Set debug session variable
         if ($this->site_settings->debug_user)
             $this->session->set_userdata('debug',True);
-        elseif($this->site_settings->debug_admin && $this->flexi_auth->is_admin())
+        elseif($this->site_settings->debug_admin && $this->ion_auth->is_admin())
             $this->session->set_userdata('debug',True);
         else
             $this->session->set_userdata('debug',False);
 
         $this->session->set_userdata('site_name', $this->site_settings->name);
-        $this->session->set_userdata('is_site_admin',$this->flexi_auth->is_admin());
+        $this->session->set_userdata('is_site_admin',$this->ion_auth->is_admin());
 
         $this->session->set_userdata('CI_VERSION',CI_VERSION);
     }

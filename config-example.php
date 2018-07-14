@@ -16,6 +16,8 @@ $fflp_use_recaptcha = False;
 $fflp_recaptcha_public_key = '';
 $fflp_recaptcha_private_key = '';
 
+$fflp_site_title = '';
+$fflp_admin_email = '';
 $fflp_email_site_title = '';
 $fflp_email_reply_to = '';
 

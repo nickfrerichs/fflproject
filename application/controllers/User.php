@@ -5,8 +5,6 @@ class User extends CI_Controller{
     function __construct()
     {
         parent::__construct();
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
         $this->load->model('account_model');
 
         if ($this->session->userdata('debug') && !$this->input->is_ajax_request())

@@ -11,20 +11,16 @@ class MY_User_Controller extends MY_Basic_Controller{
     {
         // Parent loads common_noauth_model and noauth session variables.
         parent::__construct();
-        // 1. Initialize flexi auth (lite) and see if we're logged in.
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
+        $this->load->library('ion_auth');
         $this->load->model('common/common_model');
 
         // If not logged in redirect to login page
-        if (!$this->flexi_auth->is_logged_in() && !$this->input->is_ajax_request())
+        if($this->ion_auth->logged_in()===FALSE && !$this->input->is_ajax_request())
         {
-             redirect('');
+            redirect('');
         }
 
         // 2. Make sure session variables exist and current.
-        // User is logged in, but session variables don't exist.  When the flexi_auth_lite library is initialized above, it checks for
-        // remember me tokens and "logs in".  If that happens, the session data will have disappeared, this reloads it.
         if ($this->session->userdata('user_id') == "")
         {
             $this->load->model('security_model');
@@ -109,10 +105,8 @@ class MY_Admin_Controller extends MY_Basic_Controller{
             $this->league_name = $this->session->userdata('league_name');
         }
         $this->is_league_admin = $this->session->userdata('is_league_admin');
-        // Initialize flexi auth (lite)
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
-        $this->is_admin = $this->flexi_auth->is_admin();
+        $this->load->library('ion_auth');
+        $this->is_admin = $this->ion_auth->is_admin();
 
         $this->bc = array();
 
@@ -129,7 +123,7 @@ class MY_Admin_Controller extends MY_Basic_Controller{
         }
 
         // If not logged in redirect to login page
-        if (!$this->flexi_auth->is_logged_in() || !($this->is_admin || $this->is_league_admin))
+        if (!$this->ion_auth->logged_in() || !($this->is_admin || $this->is_league_admin))
         {
              redirect('');
         }

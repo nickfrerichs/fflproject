@@ -12,10 +12,6 @@ class MY_Model extends CI_Model
     {
         parent::__construct();
 
-        // Initialize flexi auth (lite)   CAN THIS BE REMOVED??? Seems like I shouldn't need it
-        $this->auth = new stdClass;
-        $this->load->library('flexi_auth_lite', FALSE, 'flexi_auth');
-
         $this->userid = $this->session->userdata('user_id'); // Add this to session like league_id
         $this->load->model('common/common_model');
         $this->load->model('common/common_noauth_model');
