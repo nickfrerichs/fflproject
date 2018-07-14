@@ -35,8 +35,8 @@ fflp_modal('clear-watch-modal','Are you sure?',$body,True);
 
 	<?=fflp_html_block_begin()?>
 		<div class="columns">
-			<div class="column is-narrow is-size-5">
-				<?=$this->session->userdata('current_year')?> Draft
+			<div class="column is-narrow is-size-6">
+				Draft Admin
 			</div>
 
 			<div class="column has-text-right">

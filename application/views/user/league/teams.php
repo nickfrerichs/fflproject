@@ -5,6 +5,7 @@
     <div class="columns is-multiline">
         <?php foreach($teams as $t): ?>
             <div class="column is-half-tablet">
+            <?=fflp_html_block_begin()?>
                 <div class="is-size-4">
                     <a href="<?=site_url('league/teams/view/'.$t->team_id)?>"><?=$t->long_name?></a>
                 </div>
@@ -41,8 +42,8 @@
                         </table>
                     </div>
                 </div>
-                <hr>
             </div>
+            <?=fflp_html_block_end()?>
         <?php endforeach;?>
     </div>
 </div>

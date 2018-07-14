@@ -1,3 +1,9 @@
+/* Stuff to make the footer stay at the bottom */
+html, body {height: 100%;}
+body {display: flex;flex-direction: column;}
+.fflp-content {flex: 1 0 auto;}
+.fflp-footer {flex-shrink: 0; min-height:30px; padding-top:10px; padding-bottom:10px;}
+
 /* .ffp_box{border-style:solid; border-width:1px; padding:15px; margin-bottom:10px; border-color:rgb(204, 204, 204)} */
 /* .fflp_is-link{background-color: #3273dc; color: #FFF;} */
 .fflp-overflow{overflow-y:auto;}
@@ -21,6 +27,7 @@ and (max-width : 414px) {
 /* ====================== */
 /* Overrides to Bulma CSS */
 /* ====================== */
+.small-text{font-size:.85em;}
 table.small-text{font-size:.85em;}
 table.table-border{border-style:solid; border-width:1px; border-color:#DDD}
 table{font-size: .9em;}

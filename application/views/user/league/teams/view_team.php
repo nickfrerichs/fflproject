@@ -17,7 +17,64 @@
 }
 </style>
 <div class="section">
-    <div class="columns">
+    <div class="hero is-link is-bold is-small">
+        <div class="hero-body">
+            <div class="columns is-centered">
+
+                <div class="column is-narrow is-5-tablet has-text-centered">
+                    <div class="is-size-3 "><?=$team->long_name?></div>
+                    <img class="med-logo team-logo" src="<?=$logo?>" style="max-height: 200px;">
+                </div>
+                <div class="column is-7-tablet">
+                    <br>
+                    <div class="is-size-4">
+                        Owner: <?=$team->first_name.' '.$team->last_name?>
+                    </div>
+                    <?php if($team->division_name): ?>
+                    <div class="is-size-4">
+                        Division:
+                        <?=$team->division_name?>
+                    </div>
+                    <?php endif; ?>
+                    <div class="is-size-4">
+                        Record: <?=$record->wins?>-<?=$record->losses?>-<?=$record->ties?>
+                    </div>
+                    <div class="is-size-4">
+                        Win %: <?=str_replace('0.0','.0',number_format($record->winpct,3))?>
+                    </div>
+                    <div class="is-size-4">
+                        Points: <?=$record->points?>
+                    </div>
+
+
+                    <!-- <table class="table team-info is-fullwidth">
+                        <tbody >
+                            <tr>
+                                <td>Owner: </td><td><?=$team->first_name.' '.$team->last_name?></td>
+                            </tr>
+                            <?php if($team->division_name): ?>
+                            <tr>
+                                <td>Division:</td>
+                                <td><?=$team->division_name?></td>
+                            </tr>
+                            <?php endif; ?>
+                            <tr>
+                                <td>Record: </td><td><?=$record->wins?>-<?=$record->losses?>-<?=$record->ties?></td>
+                            </tr>
+                            <tr>
+                                <td>Win %: </td><td><?=str_replace('0.0','.0',number_format($record->winpct,3))?></td>
+                            </tr>
+                            <tr>
+                                <td>Points: </td><td><?=$record->points?></td>
+                            </tr>
+                        </tbody>
+                    </table> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="columns">
         <div class="column is-4-tablet">
             <div class="is-size-3"><?=$team->long_name?></div>
             <img class="med-logo team-logo" src="<?=$logo?>" style="max-height: 200px;">
@@ -49,7 +106,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> -->
 </div>
 <div class="section">
     <div class="is-size-4">Schedule</div>

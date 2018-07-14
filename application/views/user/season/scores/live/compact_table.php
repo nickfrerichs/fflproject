@@ -1,4 +1,5 @@
-<table id="matchup-<?=$id?>" data-id="<?=$id?>" class="ls-matchup-table<?php if($id != 0){echo ' hide"';}?>">
+<?php fflp_html_block_begin();?>
+<table id="matchup-<?=$id?>" data-id="<?=$id?>" class="table is-fullwidth is-bordered is-striped ls-matchup-table<?php if($id != 0){echo ' hide"';}?>">
     <thead>
         <th class="ls-c-playerlight"></th>
         <?php if(!$compact):?>
@@ -70,3 +71,4 @@
         <?php endforeach;?>
     </tbody>
 </table>
+<?php fflp_html_block_end();?>
