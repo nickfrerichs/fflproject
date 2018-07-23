@@ -261,15 +261,15 @@ class Trade extends MY_User_Controller{
                     <td>
                     <?php if ($type == 'offer'): ?>
 
-                        <button class="button accept-button small" value="<?=$trade_id?>">
+                        <button class="button accept-button is-small is-link" value="<?=$trade_id?>">
                             Accept
                         </button>
-                        <button class="button decline-button small" value="<?=$trade_id?>">
+                        <button class="button decline-button is-small is-link" value="<?=$trade_id?>">
                             Decline
                         </button>
 
                     <?php else: ?>
-                        <div><button class="button decline-button small" value="<?=$trade_id?>">Remove Offer</button></div>
+                        <div><button class="button decline-button is-small is-link" value="<?=$trade_id?>">Remove Offer</button></div>
                     <?php endif; ?>
                     </td>
                 </tr>

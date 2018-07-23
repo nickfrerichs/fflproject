@@ -135,7 +135,8 @@ class Security_model extends CI_Model
         $messages = array();
 
         // Check for unread messages, confusing cause I call notices to the user "messages" too.
-        $msgs = $this->db->from('message')->where('team_id',$this->session->userdata('teamid'))->where('read',0)->count_all_results();
+        $msgs = $this->db->from('message')->where('to_team_id',$this->session->userdata('team_id'))
+                    ->where('team_id',$this->session->userdata('team_id'))->where('read',0)->count_all_results();
         if ( $msgs > 0)
         {
             if ($msgs == 1)
@@ -143,7 +144,7 @@ class Security_model extends CI_Model
             else
                 $note = "You have ".$msgs." new messages.";
             $date = $this->db->select('unix_timestamp(max(message_date)) as message_date')->from('message')
-                ->where('team_id',$this->session->userdata('teamid'))->where('read',0)->get()->row()->message_date;
+                ->where('team_id',$this->session->userdata('team_id'))->get()->row()->message_date;
             $messages[] = array('class'=>'primary',
                                 'message'=> $note.
                                             '<br><a href="'.site_url('myteam/messages').'">Go to your Inbox</a>',

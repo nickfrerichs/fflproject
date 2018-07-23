@@ -9,7 +9,7 @@
 			<br>
 			<strong>Current League Season:</strong> <?=$this->session->userdata('current_year')?>
 			<div class="text-center">
-				<a href="<?=site_url('admin/end_season/reset_current_season')?>" class="button small">Reset <?=$this->session->userdata('current_year')?> Season</a>
+				<a href="<?=site_url('admin/end_season/reset_current_season')?>" class="button small is-link">Reset <?=$this->session->userdata('current_year')?> Season</a>
 			</div>
 		</div>
 	</div>
@@ -38,7 +38,7 @@
 					</ul>
 				</div>
 				<div class="text-center">
-					<a href="<?=site_url('admin/end_season/start_next_season')?>" class="button small">Ready to Begin <?=$real_year?> Season</a>
+					<a href="<?=site_url('admin/end_season/start_next_season')?>" class="button small is-link">Ready to Begin <?=$real_year?> Season</a>
 				</div>
 			<?php else:?>
 				<div class="is-size-5">Reset Season</div>

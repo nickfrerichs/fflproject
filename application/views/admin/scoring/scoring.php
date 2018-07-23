@@ -6,7 +6,7 @@
 
         <div class="is-size-5"><?=$selected_year?> Season</div>
         <br>
-        Scoring definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
+        Scoring definition year range: <?=$def_range['end']?> - <?php if($def_range['start'] == 0){echo "League Origin";}else{echo $def_range['start'];}?>
         <br><br>
 
 

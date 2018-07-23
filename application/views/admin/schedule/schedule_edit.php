@@ -109,7 +109,7 @@
                 </table>
             </div>
         <?php endforeach; ?>
-
+        </div>
         <div><button id="save-schedule" class="button is-small is-link">Save Schedule</button></div>
     </div>
 </div>

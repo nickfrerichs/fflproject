@@ -2,21 +2,14 @@
     
 <div class="section">
     <div class="columns is-centered" >
-        <div class="column">
-            <div class="container fflp-narrow-container">
-                <table class="table is-fullwidth">
-                    <tr>
-                        <td>League Name</td>
-                        <td>
-                            <input class="input" type="text" id="league-name"></input>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan=2>
-                            <button class="button small is-info" id="create-league">Create</button>
-                        </td>
-                </table>
+        <div class="column is-5-tablet">
+            <div class="field">
+                <label class="label">League Name</label>
+                <div class="control">
+                    <input class="input" type="text" id="league-name"></input>
+                </div>
             </div>
+            <button class="button small is-link" id="create-league">Create</button>
 
         </div>
     </div>

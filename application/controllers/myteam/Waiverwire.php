@@ -13,7 +13,6 @@ class Waiverwire extends MY_User_Controller{
         $this->bc['Waiver Wire'] = "";
     }
 
-
     function index()
     {
         $data = array('ajax_wait'=>true);

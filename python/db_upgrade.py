@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.4'
+CURRENT_VERSION = '1.5'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -20,6 +20,166 @@ def main():
 
 
 def upgrade_db(version):
+    if version == "1.4":
+        #########################################
+        ## Switch to ion auth bunch of changes ##
+        #########################################
+
+        # **** user_accounts **** #
+        # Rename and create columns in user_accounts table
+        if column_exists("uacc_id", "user_accounts"):
+            query = 'ALTER TABLE `user_accounts` CHANGE `uacc_id` `id` int(11) unsigned NOT NULL AUTO_INCREMENT'
+            cur.execute(query)
+        if column_exists("uacc_email", "user_accounts"):
+            query = 'ALTER TABLE `user_accounts` CHANGE `uacc_email` `email` varchar(254) NOT NULL'
+            cur.execute(query)
+        if column_exists("uacc_username", "user_accounts"):
+            query = 'ALTER TABLE `user_accounts` CHANGE `uacc_username` `username` varchar(100) NULL'
+            cur.execute(query)
+        if column_exists("uacc_password", "user_accounts"):
+            query = 'ALTER TABLE `user_accounts` CHANGE `uacc_password` `password` varchar(255) NOT NULL'
+            cur.execute(query)
+        if column_exists("uacc_salt", "user_accounts"):
+            query = 'ALTER TABLE `user_accounts` CHANGE `uacc_salt` `salt` varchar(255) DEFAULT NULL'
+            cur.execute(query)
+        if column_exists("uacc_ip_address", "user_accounts"):
+            query = 'ALTER TABLE `user_accounts` CHANGE `uacc_ip_address` `ip_address` varchar(45) NOT NULL'
+            cur.execute(query)
+        if column_exists("uacc_active", "user_accounts"):
+            query = 'ALTER TABLE `user_accounts` CHANGE `uacc_active` `active` tinyint(1) unsigned DEFAULT NULL'
+            cur.execute(query)
+
+        query = ('ALTER TABLE `user_accounts` '
+                    +'ADD `activation_code` varchar(40) DEFAULT NULL,'
+                    +'ADD `forgotten_password_code` varchar(40) DEFAULT NULL,'
+                    +'ADD `forgotten_password_time` int(11) unsigned DEFAULT NULL,'
+                    +'ADD `remember_code` varchar(40) DEFAULT NULL,'
+                    +'ADD `created_on` int(11) unsigned NOT NULL,'
+                    +'ADD `last_login` int(11) unsigned DEFAULT NULL,'
+                    +'ADD `first_name` varchar(50) DEFAULT NULL,'
+                    +'ADD `last_name` varchar(50) DEFAULT NULL,'
+                    +'ADD `company` varchar(100) DEFAULT NULL,'
+                    +'ADD `phone` varchar(20) DEFAULT NULL')
+        cur.execute(query)
+        db.commit()
+
+        # Import data from from other places to new user_accounts fields
+        query = ('update user_accounts join owner on owner.user_accounts_id = user_accounts.id '
+            +'set user_accounts.first_name=owner.first_name, user_accounts.last_name = owner.last_name,'
+            +'user_accounts.phone = owner.phone_number, user_accounts.created_on = UNIX_TIMESTAMP(user_accounts.uacc_date_added),' 
+            +'user_accounts.last_login = UNIX_TIMESTAMP(user_accounts.uacc_date_last_login)')
+        cur.execute(query)
+        db.commit()
+
+
+        # **** user_groups **** #
+        # Rename columns in user_groups table
+        if column_exists("ugrp_id", "user_groups"):
+            query = 'ALTER TABLE `user_groups` CHANGE `ugrp_id` `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT'
+            cur.execute(query)
+        if column_exists("ugrp_name", "user_groups"):
+            query = 'ALTER TABLE `user_groups` CHANGE `ugrp_name` `name` varchar(20) NOT NULL'
+            cur.execute(query)
+        if column_exists("ugrp_desc", "user_groups"):
+            query = 'ALTER TABLE `user_groups` CHANGE `ugrp_desc` `description` varchar(100) NOT NULL'
+            cur.execute(query)
+        db.commit()
+
+        # **** user_memberships **** #
+        # Create table to store user/group relationship and import existing data from user_accounts
+        if not table_exists('user_memberships'):
+            query = ('CREATE TABLE `user_memberships` ('
+                    +'`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
+                    +'`user_id` int(11) unsigned NOT NULL,'
+                    +'`group_id` mediumint(8) unsigned NOT NULL,'
+                    +'PRIMARY KEY (`id`),'
+                    +'KEY `fk_users_groups_users1_idx` (`user_id`),'
+                    +'KEY `fk_users_groups_groups1_idx` (`group_id`),'
+                    +'CONSTRAINT `uc_users_groups` UNIQUE (`user_id`, `group_id`))')
+            cur.execute(query)
+            db.commit()
+
+            # Import group memberships from user_accounts
+            query = 'select id, uacc_group_fk from user_accounts'
+            cur.execute(query)
+            for row in cur.fetchall():
+                query = 'insert into user_memberships (user_id, group_id) values (%s,%s)' % (str(row['id']), str(row['uacc_group_fk']))
+                cur.execute(query)
+                # Now that you can be in multiple groups, admins are also in the regular users group
+                if row['uacc_group_fk'] == 1:
+                    query = 'insert into user_memberships (user_id, group_id) values (%s,%s)' % (str(row['id']), "2")
+            db.commit()
+
+        # **** user_login_attempts **** #
+        if not table_exists('user_login_attempts'):
+            query = ('CREATE TABLE `user_login_attempts` ('
+                    +'`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
+                    +'`ip_address` varchar(45) NOT NULL,'
+                    +'`login` varchar(100) NOT NULL,'
+                    +'`time` int(11) unsigned DEFAULT NULL,'
+                    +'PRIMARY KEY (`id`))')
+            cur.execute(query)
+            db.commit()
+
+        # Delete all extra fields from flexi_auth.
+        to_delete = ('uacc_group_fk','uacc_activation_token','uacc_forgotten_password_token',
+                    'uacc_forgotten_password_expire','uacc_update_email_token','uacc_update_email',
+                    'uacc_suspend','uacc_fail_login_attempts','uacc_fail_login_ip_address',
+                    'uacc_date_fail_login_ban','uacc_date_last_login','uacc_date_added')
+        for d in to_delete:
+            drop_column(d,'user_accounts')
+        drop_column('ugrp_admin','user_groups')
+
+        # Delete all extra tables from flexi_auth
+        to_delete = ('user_login_sessions','user_privileges','user_privilege_groups','user_privilege_users')
+        for d in to_delete:
+            drop_table(d)
+
+
+        # Chat_read should be a team setting, not an owner setting in case they are in more than one league
+        if not column_exists("chat_read", "team"):
+            query = 'ALTER TABLE `team` ADD `chat_read` INT(11) unsigned DEFAULT 0'
+            cur.execute(query)
+            db.commit()
+
+        # Copy chat_read values from owner_setting to team tables
+        query = ('update team join owner_setting on owner_setting.owner_id = team.owner_id set team.chat_read = owner_setting.chat_read')
+        cur.execute(query)
+        db.commit()
+
+        drop_column('chat_read','owner_setting')
+
+        query = 'update site_settings set db_version = "%s"' % ("1.5")
+        cur.execute(query)
+        db.commit()
+
+        #########################################
+        ## Moved some menu items around 
+        ## If these fail, not a big deal       ##
+        #########################################
+
+        try:
+            query = 'update menu_item set hide = 1 where text = "Money List" and url = "season/moneylist"'
+            cur.execute(query)
+
+            query = 'update menu_item set hide = 1 where text = "Standings" and url = "season/standings"'
+            cur.execute(query)
+
+            query = 'update menu_item set menu_bar_id = 2, `order` = 0 where text = "News" and url = "league/news"'
+            cur.execute(query)
+
+            query = 'update menu_item set `order` = 1 where text = "Weekly Scores" and url = "season/scores"'
+            cur.execute(query)
+
+            query = 'update menu_item set `order` = 2 where text = "Schedule" and url = "season/schedule"'
+            cur.execute(query)
+
+            db.commit()
+        except:
+            pass
+
+
+        return get_db_version() 
 
     if version == "1.32":
         # I never did update SD to be LAC for the team positions
@@ -420,5 +580,14 @@ def table_exists(table):
     else:
         return True
 
+def drop_column(column, table):
+    if column_exists(column, table):
+        query = 'ALTER TABLE `'+table+'` DROP COLUMN `'+column+'`'
+        cur.execute(query)   
+
+def drop_table(table):
+    if table_exists(table):
+        query = 'DROP TABLE '+table
+        cur.execute(query)
 
 main()

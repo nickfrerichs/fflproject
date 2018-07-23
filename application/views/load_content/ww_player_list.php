@@ -35,5 +35,4 @@
         </td>
     </tr>
 <?php endforeach; ?>
-<tr id="ww-list-data" class="hide" data-page="<?=$in_page?>" data-perpage="<?=$per_page?>" data-total="<?=$total?>">
-</tr>
+

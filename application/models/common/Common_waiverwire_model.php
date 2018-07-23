@@ -236,12 +236,12 @@ class Common_waiverwire_model extends CI_Model{
     function send_email_notice($id, $subject)
     {
 
-        $data = $this->db->select('uacc_email as email_address')->from('waiver_wire_log')
+        $data = $this->db->select('email as email_address')->from('waiver_wire_log')
             ->select('pp.first_name as p_first, pp.last_name as p_last')
             ->select('dp.first_name as d_first, dp.last_name as d_last')
             ->join('team','waiver_wire_log.team_id = team.id')
             ->join('owner','owner.id = team.owner_id')
-            ->join('user_accounts','user_accounts.uacc_id = owner.user_accounts_id')
+            ->join('user_accounts','user_accounts.id = owner.user_accounts_id')
             ->join('player as pp','pp.id = waiver_wire_log.pickup_player_id','left')
             ->join('player as dp','dp.id = waiver_wire_log.drop_player_id','left')
             ->where('waiver_wire_log.id',$id)
@@ -285,8 +285,8 @@ class Common_waiverwire_model extends CI_Model{
 
     function send_admin_approval_notice($leagueid)
     {
-        $admins = $this->db->select('uacc_email as email')->from('league_admin')
-            ->join('user_accounts','uacc_id = league_admin_id')
+        $admins = $this->db->select('email as email')->from('league_admin')
+            ->join('user_accounts','user_accounts.id = league_admin_id')
             ->where('league_admin.league_id',$leagueid)->get()->result();
 
         $league_name = $this->common_noauth_model->get_league_name($leagueid);

@@ -2,21 +2,23 @@
 
 <style>
 	.activemessage{color:blue}
+	.unread{font-weight:bold}
 </style>
 
 <div class="section">
+	<div class="container">
 	<div class="is-size-4">Messages</div>
 
 
 	<div class="columns">
 		<div class="column is-2-tablet">
-			<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>Compose</a></h6></div>
+			<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>Compose</h6></a></div>
 			<div id="folder_0" class="folder"><a href="#"><h6>Inbox</h6></a></div>
 			<div id="folder_1" class="folder"><a href="#"><h6>Sent Items</h6></a></div>
 			<div id="folder_2" class="folder"><a href="#"><h6>Trash</h6></a></div>
 		</div>
 		<div class="column is-10-tablet box">
-			<div id="current_0" class="folder-name is-size-4">Current Folder</div>
+			<div id="current_0" class="folder-name is-size-4"></div>
 			<div style="overflow: auto;max-height:200px; background-color:#FFF">
 				<table id="message-table" class="table is-fullwidth is-striped" style="border-color:#fff;">
 					<tbody id="message-list">
@@ -35,6 +37,7 @@
 			</div>
 		</div>
 	</div>
+	</div>
 </div>
 
 <script>
@@ -43,6 +46,7 @@ $(document).ready(function(){
 	load_messages(0);
 
 	$("#message-list").on("click","tr",function(){
+		$(this).removeClass('unread');
 		if (this.id == "") {return}
 		if (this.id == $("#displayed-message").data("message-id"))
 		{
@@ -108,6 +112,7 @@ $(document).ready(function(){
 			$(".folder-name").attr('id','current_'+folder);
 			$(".folder-name").text($("#folder_"+folder).text());
 			console.log($(".folder-name").text());
+			console.log(current_folderid());
 		});
 		hide_controls()
 	}
@@ -116,7 +121,6 @@ $(document).ready(function(){
 	{$("#message-buttons").addClass("is-hidden");}
 	function show_controls()
 	{$("#message-buttons").removeClass("is-hidden");}
-
 });
 
 </script>

@@ -1,18 +1,19 @@
-<!-- Foundation 6 -->
-<script src="<?=site_url('js/jquery-3.2.1.min.js')?>"></script>
-<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
-<!-- <script src="<?=site_url('js/vendor/jquery.js')?>"></script> -->
-<!-- <script src="<?=site_url('js/vendor/foundation.min.js')?>"></script> -->
-<!-- <script src="<?=site_url('js/vendor/what-input.js')?>"></script> -->
-<!-- <script src="<?=site_url('js/vendor/jquery.visible.min.js')?>"></script> -->
 
+<!-- jquery -->
+<script src="<?=site_url('js/jquery-3.2.1.min.js')?>"></script>
+<script src="<?=site_url('js/jquery-migrate-3.0.0.min.js')?>"></script>
+
+<!-- Cropper to upload user images -->
 <script src="<?=site_url('js/cropper.min.js')?>"></script>
+
+<!-- Event source polyfill for IE browsers -->
 <script src="<?=site_url('js/eventsource.min.js')?>"></script>
 
-<!-- Using jbox for chat/alerts/notices/error popups -->
+<!-- jBox for chat/alerts/notices/error popups -->
 <script src="<?=site_url('js/jBox.min.js')?>"></script>
+<script src="<?=site_url('js/jBox.Notice.js')?>"></script>
 
-<!-- My custom JS, things that aren't imbedded in the page go here -->
+<!-- My custom JS things -->
 <script>window.BASE_URL = "<?=site_url()?>";</script>
 <?php if($this->session->userdata('debug') == 1): ?>
 	<script>window.DEBUG_ENABLED = true;</script>
@@ -25,7 +26,8 @@
 <?php else: ?>
 	<script>window.LEAGUE_ADMIN = false;</script>
 <?php endif;?>
-<!-- <script src="<?=site_url('js/fflproject.js?1.15')?>"></script> -->
-<script src="<?=site_url('js/fflproject-new.js?1.52')?>"></script>
+
+<!-- Leave these at the end since they may require the above -->
+<script src="<?=site_url('js/fflproject.js?1.02')?>"></script>
 <script src="<?=site_url('js/fflproject-sse.js?1.03')?>"></script>
 <script src="<?=site_url('js/fflproject-chat.js?1.07')?>"></script>

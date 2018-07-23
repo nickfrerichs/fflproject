@@ -1,199 +1,49 @@
-/* --------------------- */
-/* MAIN SITE STYLING */
-/* --------------------- */
+/* Stuff to make the footer stay at the bottom */
+html, body {height: 100%;}
+body {display: flex;flex-direction: column;}
+.fflp-content {flex: 1 0 auto;}
+.fflp-footer {flex-shrink: 0; min-height:30px; padding-top:10px; padding-bottom:10px;}
 
-/* body{background-color:#FAFAFA; font-size:.9rem} */
-body{background-color:#FAFAFA; font-size:.85rem}
+/* .ffp_box{border-style:solid; border-width:1px; padding:15px; margin-bottom:10px; border-color:rgb(204, 204, 204)} */
+/* .fflp_is-link{background-color: #3273dc; color: #FFF;} */
+.fflp-overflow{overflow-y:auto;}
+.fflp-sm-container{max-width: 600px;}
+.fflp-med-container{max-width: 800px;}
+.fflp-lg-container{max-width: 1000px;}
 
-/* wraps around the header, footer, and view */
-#body-wrap{
-	/* background-color:#F0F0F0; */
+.fflp-table-fixed{table-layout:fixed; width:100%;}
 
-	margin: auto;
-	display:block;
+
+
+/* I'm tring stuff for tiny devices, this could change */
+
+@media only screen
+and (max-width : 414px) {
+    table.fflp-table-min-mobile{font-size:.7em;}
+    table.fflp-table-mobile{font-size:.7em;}
+    .fflp-hidden-mobile{display:None;}
 }
 
+/* ====================== */
+/* Overrides to Bulma CSS */
+/* ====================== */
+.small-text{font-size:.85em;}
+table.small-text{font-size:.85em;}
+table.table-border{border-style:solid; border-width:1px; border-color:#DDD}
+table{font-size: .9em;}
+table.text-3{font-size: 1em;}
+table.text-4{font-size: .9em;}
+table.text-5{font-size: .8em;}
+.section{padding:1.5rem .5rem;}
 
-/* Just the view, not the header and footer bars */
-#view-wrap{}
-
-/* Color for glyph icons */
-i{color:#2199e8;}
-
-/* footer bar */
-#footer-bar a{color:#FFF;}
-#footer-bar{height:40px; margin-top:15px;}
-
-table{font-size:1em;}
-td{border: 1px solid #E8E8E8;}
-table tr:nth-of-type(even){background-color: #F6F6F6 !important;}
-table th{text-transform: uppercase; background-color: #FFF; border: 1px solid #E8E8E8;}
-
-/* Foundation overrides */
-/* --------------------- */
-
-table.table-nostripe tr:nth-of-type(even) {background-color: transparent !important;}
-
-.button{margin-bottom:1px; margin-top:1px;}
-.table-condensed td, .table-condensed th{
-	padding-top:4px;
-	padding-bottom:4px;
-	padding-left:9px;
-	padding-right:9px;
-	font-size: .9em;
-
-}
-.has-tip{font-weight:normal;}
-
-.row {max-width: 1200px;}
-
-div.switch{margin:0px;}
-
-td input{margin-bottom:0px !important;}
-td select{margin-bottom:0px !important;}
-
-/* .callout{border-color: #E1E1E1; border-radius:5px} */
-.callout{border-color: #C1C1C1; border-radius:5px}
-
-/* #eaeaea; */
-
-/* --------------------- */
-/* MENU BAR STYLING      */
-/* --------------------- */
-
-/* both mobile and desktop menu bars, I set 1rem to maintain this size in case I adjust the font size for the entire body*/
-#title-bar-row, .top-bar, .top-bar ul, .top-bar li, .title-bar, .small-top-bar, #footer-bar{background-color: #444; font-size:1rem; border-radius:1px;}
-.top-bar a{color: #fff;}
-
-#title-bar-row{margin-bottom:10px;}
-#title-bar-small-row{background-color:#FAFAFA; font-size:.7em; min-height:17px;}
-
-#whos-online{color: #444; font-style:italic;}
-.wo-admin{color: #2199e8;}
-
-.livescores-link{
-	color: #2199e8;
-	font-size:.7rem;
-}
-
-/* mobile menu bar */
-.title-bar {background: #444;height:42px;}
-.site-title-small{
-	padding-bottom:0px;
-	padding-top:0px;
-	color:#2199e8;
-}
-.small-top-bar{height: 42px;}
-
-/* regular desktop menu bar */
-.site-title{
-	font-size: 1.4em;
-	padding-bottom:0px;
-	padding-top:0px;
-	color:#2199e8;
-}
-.league-name-title{
-	color:#FFF;
-	font-size: 1em;
-}
-.league-name-title-small{
-	color:#2199e8;
-	font-size:.8em;
-}
-
-/* Added a custom media query to hide the site/league titles for smaller screens */
-@media screen and (min-width: 0px) and (max-width: 699px) {
-  .hide-for-small-custom { display: none; }  /* show it on small screens */
-}
-
-/* Added a custom media query to hide things for very small screens */
-@media screen and (min-width: 0px) and (max-width: 400px) {
-  .hide-for-extra-small { display: none; }  /* show it on small screens */
-}
-
-/* --------------------- */
-/* CHAT BOX STYLING      */
-/* --------------------- */
-#chat-title-bar{
-	background-color:#2199e8;
-	color:#FFF;
-	cursor:move;
-	font-size:1.5em;
-	padding-top:2px;
-	height:40px;
-}
-#chat-close-button{
-	color:#FFF;
-	float:right;
-	padding-right:5px;
-	cursor:pointer;
-	font-size: 1.3em;
-}
-
-#chat-modal{
-	padding:0px;
-}
-
-@media screen and (min-width: 600px){
-	#chat-modal{
-		width:300px;
-	}
-}
-
-#chat-history-table{
-	overflow:scroll;
-    font-size:.9em;
-    height: 250px;
-
-}
-
-#chat-modal{min-width:320px; padding:0px;}
+/* Change navbar dropdown colors */
+.navbar-link{background-color:#363636; color:#fff;}
+.navbar-dropdown{background-color:#363636;}
+.navbar-dropdown>a:hover{background-color:rgb(190, 190, 190); color:#000}
+.navbar-item{background-color:#363636; color:#fff;}
+.navbar-item>a:hover{background-color:#fff; color:#000;}
 
 
-
-#chat-message{font-size: 1em; }
-
-
-#chat-button-small{height:40px;}
-
-.jBox-chat .jBox-content{padding-top:0px !important; padding-left:5px !important; padding-right:5px !important;}
-.jBox-chat .jBox-title{text-align: center; font-size:1.2em; background-color: #2199e8; color:#EEE; text-shadow: 0 0 0 ; padding:0;}
-
-.Tooltip-chat{}
-/*.Tooltip-chat .jBox-content{background-color:#2199e8; color:#EEE;}
-.Tooltip-chat .jBox-pointer:after{background-color:#2199e8;}*/
-
-.Tooltip-chat .jBox-content{border: 2px solid #2199e8;}
-.Tooltip-chat .jBox-pointer:after{border: 2px solid #2199e8;}
-
-
-/* BELOW ARE EXCEPTIONS TO THE DEFAULT STYLES */
-
-/* ----------------------- */
-/* Myteam page
-/* ----------------------- */
-
-.mt-r-schedule-style{
-	font-size:.9em;
-}
-.mt-r-schedule-style td{
-	padding-top:2px;
-	padding-bottom:2px;
-}
-.mt-ww-page-btn-style{
-	width:100px;
-}
-
-/* ----------------------- */
-/* Site wide things
-/* ----------------------- */
-#stat-popup-html{
-	overflow-x: auto;
-}
-.stat-popup-img{
-	padding-left:10px;
-	width:100px;
-}
 
 /* ----------------------- */
 /* Live draft stuff        */
@@ -202,177 +52,3 @@ td select{margin-bottom:0px !important;}
 /* .d-rp-currentpick td{background-color:#fc0;} */
 .d-rp-currentpick td{background-color:#ffe266;font-weight:bold}
 .d-rp-recentpick td{color:#888;}
-
-/* ----------------------- */
-/* Live score stuff
-/* ----------------------- */
-
-/* COMPACT VIEW */
-
-/* Make the matchup table look better */
-table.ls-matchup-table tr:nth-of-type(even) {background-color: transparent !important;}
-table.ls-matchup-table tr{border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;}
-table.ls-matchup-table tr td.ls-c-td-left{padding-left: 2px;}
-table.ls-matchup-table tr td.ls-c-td-right{padding-right: 2px;}
-table.ls-matchup-table{table-layout: fixed;}
-
-#ls-c-matchup-dots{
-	font-size: 1.5em;
-	padding:0px;
-	margin: 0px;
-}
-#ls-c-matchup-dots .fi-arrow-left{
-	padding-left: 20px;
-}
-
-#ls-c-matchup-dots .fi-arrow-right{
-	padding-right: 20px;
-}
-
-#ls-c-matchup-dots .ls-c-dot{
-	padding-left: 2px;
-	padding-right: 2px;;
-}
-
-.ls-c-dot-hidden{
-	color: #CCC;
-}
-
-/* td with player/game info */
-.ls-c-playerbox{
-	font-size: .8em;
-	padding-top:1px;
-	padding-bottom:1px;
-	height: 44px;
-	cursor: pointer;
-}
-
-/* td that lights up to highlight a players status */
-.ls-c-playerlight{
-	width: 5px;
-	padding: 0px;
-}
-/* tds containing team/player score */
-.ls-c-teamscore{width: 35px; padding: 3px; font-size: 1.2em; font-weight: normal;}
-.ls-c-playerscore{
-	color: #2199e8;
-	padding: 2px;
-}
-
-/* middle td containing positions */
-.ls-c-position{
-	font-size: .8em;
-	background-color: #EEE;
-	color: #777;
-	padding:0px;
-	width: 30px;
-}
-
-/* div of yardline / field position */
-.ls-c-drivebar{
-	height:8px;
-	margin-bottom: 3px;
-	width: 50%;
-}
-
-.ls-c-td-right .ls-c-drivebar{float:right;}
-
-/* Text on drive bar, usually yard line */
-.ls-c-drivebar-text{
-	font-size: 8px;
-	color: white;
-}
-
-
-/* text of current game status */
-.ls-c-gamestatus{
-	font-size: .8em;
-}
-
-.ls-s-nflgameactive{
-	background-color: #fffce5;
-	height: 50px;
-	/*vertical-align: top;*/
-}
-
-.ls-s-nflgameinactive{
-	background-color: transparent;
-	color: #AAA;
-}
-
-.ls-s-nflgame-lastplay{
-
-}
-
-.ls-s-nflgameactive .ls-s-nflgame-lastplay{
-	overflow-y: auto;
-	font-size:.8em;
-	height: 49px;
-}
-
-.ls-s-nflgameinactive .ls-s-nflgame-lastplay{
-
-}
-
-.ls-s-nflgame{
-	font-size:.85em;
-}
-
-.ls-s-drivebar{
-	margin-bottom:0px;
-}
-
-.ls-s-drivebar-text{
-}
-
-.ls-s-nflgame-offense{
-	font-weight:bold;
-}
-
-.ls-s-row>.columns{
-	padding-left:10px;
-	padding-right:10px;
-}
-
-.ls-playeractive{
-	background-color: #fffce5;
-}
-.ls-playeractive.ls-c-playerlight{
-	background-color: #ffed66;
-}
-.ls-playerinactive.ls-c-playerlight{
-	background-color: #DDD;
-}
-.ls-playerevent{
-	background-color: #ffed66;
-	font-weight: bold;
-}
-
-.ls-gameinactive{
-	background-color: transparent;
-	color: #AAA;
-}
-
-.ls-c-playerphoto-box{
-	width: 60px;
-	text-align: center;
-	vertical-align: middle;
-	padding: 4px;
-}
-
-.ls-c-playerphoto-img{
-	max-width: 50px;
-	vertical-align: center;
-}
-
-.ls-s-matchup-score{
-	cursor:pointer;
-}
-
-.ls-s-matchup-selected{
-	border-color: #2199e8 !important;
-}
-
-.ls-s-nflgame-clock{
-	font-size:.9em;
-}

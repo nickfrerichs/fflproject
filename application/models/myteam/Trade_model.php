@@ -321,13 +321,19 @@ class Trade_model extends MY_Model{
     {
         $this->db->select('team1_id, team2_id')->from('trade')->where('id',$trade_id)->get()->row();
         $this->db->where('id',$trade_id)->update('trade',array('canceled'=>1, 'completed_date' => t_mysql()));
-        $this->send_trade_email_notice($trade_id, "Trade Declined");
+        
 
         $row = $this->db->select('team1_id, team2_id')->from('trade')->where('id',$trade_id)->get()->row();
         if ($row->team1_id == $this->teamid)
+        {
+            $this->send_trade_email_notice($trade_id, "Trade Canceled");
             return "Trade Canceled";
+        }
         if ($row->team2_id == $this->teamid)
+        {
+            $this->send_trade_email_notice($trade_id, "Trade Declined");
             return "Trade Declined";
+        }
     }
 
     function valid_trade_action($tradeid,$action)
@@ -478,6 +484,12 @@ class Trade_model extends MY_Model{
         {
             $body = "Trade declined by ".$team2data->team_name."\n\n";
         }
+
+        if ($subject == "Trade Canceled")
+        {
+            $body = "Trade canceled by ".$team1data->team_name."\n\n";
+        }
+
         if (count($proposed_players) > 0)
         {
             $body .= "Players offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):\n";

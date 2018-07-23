@@ -79,7 +79,7 @@ class History_model extends MY_Model{
     }
 
 
-    function get_team_record($year=0)
+    function get_team_record($year=0,$limit=10)
     {
         $this->db->select('team.team_name')
             ->select('owner.first_name, owner.last_name')
@@ -99,6 +99,7 @@ class History_model extends MY_Model{
             $this->db->where('schedule_result.year',$year);
         $this->db->group_by('team.id')
             ->order_by('win_pct','desc');
+        $this->db->limit($limit);
 
         return $this->db->get()->result();
     }

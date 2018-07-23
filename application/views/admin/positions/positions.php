@@ -18,7 +18,7 @@
 
     <br><br>
     <div class="is-size-5"><?=$selected_year?> Season</div>
-    Pos. definition year range: <?=$def_range['end']?> - <?=$def_range['start']?>
+    Pos. definition year range: <?=$def_range['end']?> - <?php if($def_range['start'] == 0){echo "League Origin";}else{echo $def_range['start'];}?>
     <br><br>
     <div class="is-size-6"><a id="show-add-button">Add Position</a></div>
     <br><br>

@@ -50,13 +50,12 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
         
     </div>
 
-
     <!-- Show pending waiver wire requests, if any -->
     <?php if(count($pending) > 0): ?>
-        <div class="columns">
+        <div class="columns box">
             <div class="column">
                 <h6 class="is-size-5">Pending Requests</h6>
-                <table class="table">
+                <table class="table is-fullwidth">
                     <thead>
                         <th>Clear Time</th><th>Pick Up</th><th>Drop</th>
                     </thead>
@@ -92,7 +91,7 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
             </table>
             </div>
         </div>
-
+        <br>
     <?php endif;?>
 
 
@@ -101,10 +100,10 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
     <?php else: ?>
 
     <!-- Show the main waiver wire player list for picking up new players -->
-    <div class="columns">
+    <div class="columns box">
         <div class="column">
 
-
+            <div class="is-size-5">Player List</div>
 
             <?php //Show the player list using player_search_table component
 
@@ -149,7 +148,11 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
     $("#drop-only").on('click',function(){
         clearSelections();
         $("#drop-modal").addClass('is-active');
-	});
+    });
+    
+    $("#cancel-drop").on('click', function(){
+        $("#confirm-modal").removeClass('is-active');
+    })
 
     // Pick up table button click
 	$("#ww-list").on("click","button.player-pickup",function(){
@@ -196,18 +199,20 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
 			{
 				if (pickup_name == undefined){pickup_name = "No one";}
                 if ((response.status_code == 1) || (response.manual != undefined && response.manual == true))
-                {//notice("Request submitted, pending approval.<br><br> Drop: "+drop_name+"<br>Add: "+pickup_name);
+                {notice("Request submitted, pending approval.<br><br> Drop: "+drop_name+"<br>Add: "+pickup_name);
                 }
-                else {//notice("Request processed succcessfuly.<br>Dropped: "+drop_name+"<br>Added: "+pickup_name,'success');
+                else {notice("Request processed succcessfuly.<br>Dropped: "+drop_name+"<br>Added: "+pickup_name,'success');
                 }
 			}
 			else
 			{
 				//showMessage(response.error,'alert-error');
-               // notice(response.error,'warning');
+                notice(response.error,'error');
             }
             $("#drop-modal").removeClass('is-active');
-		});
+		}).fail(function(){
+            notice('A system error occured.','error');
+        });
 
 	});
 
@@ -257,7 +262,9 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
 				//$("#error-text").text("Error:"+d.error);
 				//$("#error-modal").foundation('open');
 			}
-		});
+		}).fail(function(){
+            notice('A system error occured.','error');
+        });
 	}
 
     function reloadPage()

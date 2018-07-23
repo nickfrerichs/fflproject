@@ -38,7 +38,8 @@
                     class="button is-small is-link post-edit-info ajax-submit-button"
                     data-url="<?=site_url('admin/schedule_templates/ajax_edit_template_info')?>"
                     data-varclass="post-edit-info"
-                    data-post-id="template_id" 
+                    data-post-id="template_id"
+                    data-reload="false"
                     value="<?=$template->id?>">Update</button>
         </div>
     </div>

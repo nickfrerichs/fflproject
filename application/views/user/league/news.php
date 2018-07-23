@@ -13,14 +13,15 @@ hr{border: 1px solid #eaeaea;}
 /*#2199e8*/
 </style> -->
 <div class="section">
-    <div class="columns is-centered">
-        <div class="column">
+    <div class="container">
             <div class="tabs is-small is-boxed fflp-tabs-active">
                 <ul>
                     <li class="is-active" data-for="news-news-tab" data-load-content="news-content"><a>Announce</a></li>
                     <li class="" data-for="news-moves-tab" data-load-content="moves-content"><a>Player Moves</a></li>
                     <li class="" data-for="news-standings-tab" data-load-content="standings-content"><a>Standings</a></li>
-                    <li class=""><a>Money List</a></li>
+                    <?php if($show_moneylist):?>
+                        <li class="" data-for="moneylist-tab" data-load-content="moneylist-content"><a>Money List</a></li>
+                    <?php endif;?>
                 </ul>
             </div>
 
@@ -49,8 +50,16 @@ hr{border: 1px solid #eaeaea;}
                     data-url="<?=site_url('load_content/news_standings')?>">
                 </div>
             </div>
-        </div>
+        <?php if($show_moneylist): ?>
+            <div id="moneylist-tab" class="is-hidden">
+            <div class="title is-size-4">Money List</div>
+                <div id="moneylist-content"
+                     data-url="<?=site_url('load_content/moneylist')?>">
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
+
 </div>
 
 

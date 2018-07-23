@@ -13,7 +13,7 @@ class Chat_model extends MY_Model{
 
     }
 
-    function save($message)
+    function save_message($message)
     {
         $now = date('Y-m-d H:i:s');
         $data = array('owner_id' => $this->ownerid,
@@ -48,20 +48,20 @@ class Chat_model extends MY_Model{
     function set_last_read_key($key = '')
     {
         $key = $this->db->select('chat_key')->from('league_settings')->where('league_id',$this->leagueid)->get()->row()->chat_key;
-        $settingid = $this->db->select('id')->from('owner_setting')->where('owner_id',$this->ownerid)
-            ->where('league_id',$this->leagueid)->get()->row();
-        if(count($settingid) == 0)
-        {
-            $data = array('owner_id' => $this->ownerid,
-                          'league_id' => $this->leagueid,
-                          'chat_read' => $key);
-            $this->db->insert('owner_setting',$data);
-        }
-        else
-        {
-            $this->db->where('id',$settingid->id);
-            $this->db->update('owner_setting', array('chat_read' => $key));
-        }
+        // $settingid = $this->db->select('id')->from('team')->where('owner_id',$this->ownerid)
+        //     ->where('league_id',$this->leagueid)->get()->row();
+        // if(count($settingid) == 0)
+        // {
+        //     $data = array('owner_id' => $this->ownerid,
+        //                   'league_id' => $this->leagueid,
+        //                   'chat_read' => $key);
+        //     $this->db->insert('owner_setting',$data);
+        // }
+        // else
+        // {
+        $this->db->where('id',$this->teamid);
+        $this->db->update('team', array('chat_read' => $key));
+     //   }
     }
 
     function get_unread_count()
@@ -82,7 +82,7 @@ class Chat_model extends MY_Model{
 
     function get_last_read_key()
     {
-        $row = $this->db->select('chat_read')->from('owner_setting')->where('owner_id',$this->ownerid)
+        $row = $this->db->select('chat_read')->from('team')->where('id',$this->teamid)
             ->where('league_id',$this->leagueid)->get()->row();
         if (count($row) == 0)
             return 0;
@@ -153,8 +153,8 @@ class Chat_model extends MY_Model{
             ->select('IFNULL(league_admin.league_admin_id,0) as league_admin')
             ->from('owner_setting')
             ->join('owner','owner.id = owner_setting.owner_id')
-            ->join('user_accounts','uacc_id=owner.user_accounts_id')
-            ->join('league_admin','league_admin_id = user_accounts.uacc_id and league_admin.league_id='.$this->leagueid,'left')
+            ->join('user_accounts','user_accounts.id=owner.user_accounts_id')
+            ->join('league_admin','league_admin_id = user_accounts.id and league_admin.league_id='.$this->leagueid,'left')
             ->where('owner_setting.league_id',$this->leagueid)
             ->where('owner_setting.last_check_in>',t_mysql(time()-($this->session->userdata('live_element_refresh_time')*2)))
             ->order_by('first_name','asc')

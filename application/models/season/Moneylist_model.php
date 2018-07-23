@@ -36,5 +36,10 @@ class Moneylist_model extends MY_Model{
             ->order_by('week','asc')
             ->get()->result();
     }
+
+    function moneylist_is_active()
+    {
+        return ($this->db->from('money_list')->where('league_id',$this->leagueid)->where('year',$this->current_year)->get()->num_rows() > 0);
+    }
 }
 ?>

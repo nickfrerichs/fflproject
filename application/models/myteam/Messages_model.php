@@ -63,9 +63,9 @@ class Messages_model extends MY_Model{
 
     function email_new_message($to, $subject, $body)
     {
-        $recipient = $this->db->select('uacc_email')->from('team')->join('owner','owner.id = team.owner_id')
-            ->join('user_accounts','user_accounts.uacc_id = owner.user_accounts_id')
-            ->where('team.id',$to)->get()->row()->uacc_email;
+        $recipient = $this->db->select('email')->from('team')->join('owner','owner.id = team.owner_id')
+            ->join('user_accounts','user_accounts.id = owner.user_accounts_id')
+            ->where('team.id',$to)->get()->row()->email;
 
         $this->config->load('fflproject');
         $this->load->library('email');

@@ -222,58 +222,7 @@ class Player_search extends MY_User_Controller{
         // **************************************
     }
 
-    function ajax_best_week()
-    {
-        $players = $this->player_search_model->get_best_week_data($this->year, $this->starter, $this->data['sel_pos']);
-
-        // ******************************
-        //BEGIN VIEW
-        // print_r($players);
-        ?>
-        <?php foreach($players as $num => $p): ?>
-            <tr>
-                <td><?=$num+1?></td>
-                <td><?=$p->first_name." ".$p->last_name?></td>
-                <td><?=$p->position?></td>
-                <td><?=$p->points?></td>
-                <td><?=$p->week?></td>
-                <td><?=$p->year?></td>
-                <td><?=$p->owner_first_name.' '.$p->owner_last_name?></td>
-            </tr>
-        <?php endforeach;?>
-        <?php
-        //END VIEW
-        // ******************************
-    }
-
-    function ajax_career()
-    {
-        $players = $this->player_search_model->get_career_data($this->year, $this->starter, $this->data['sel_pos'], $this->order_by);
-
-        // ******************************
-        //BEGIN VIEW
-        // print_r($players);
-        ?>
-        <?php foreach($players as $num => $p): ?>
-            <tr>
-                <td><?=$num+1?></td>
-                <td><?=$p->first_name." ".$p->last_name?></td>
-                <td><?=$p->position?></td>
-                <td><?=number_format($p->avg_points,1)?></td>
-                <td><?=$p->total_points?></td>
-                <td><?=$p->games?></td>
-                <?php if($this->year == 0):?>
-                    <td>-</td>
-                <?php else: ?>
-                    <td><?=$p->year?></td>
-                <?php endif;?>
-            </tr>
-        <?php endforeach;?>
-        <?php
-        //END VIEW
-        // ******************************
-    }
-
+    // MOVED TO LOAD CONTENT
     function ajax_team_history_record()
     {
         $this->load->model('league/history_model');

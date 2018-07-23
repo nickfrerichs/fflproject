@@ -8,7 +8,7 @@
                 <em>Game types should never be deleted after they are in use, they are used for League History.</em>
             <?php endif;?>
             <table class="table is-fullwidth is-narrow fflp-table-fixed">
-                <th>Game Type</th><th><th>default</th><th>Title Game</th><th></th>
+                <th>Game Type</th><th>default</th><th>Title Game</th><th></th>
             <?php foreach($types as $type): ?>
                 <tr>
                     <td>

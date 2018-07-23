@@ -38,7 +38,7 @@ class Standings_model extends MY_Model{
             foreach ($divs as $d)
             {
                 $divs_array[$d->id]['name'] = $d->name;
-                $divs_array[$d->id]['standings'] = $this->db->select('team.team_name, team.id as team_id')
+                $this->db->select('team.team_name, team.id as team_id')
                     ->select('owner.first_name, owner.last_name')
                     ->select('IFNULL(sum(schedule_result.team_score),0) as points, IFNULL(sum(schedule_result.opp_score),0) as opp_points')
                     ->select('IFNULL(sum(win=1),0) as wins, IFNULL(sum(loss=1),0) as losses, IFNULL(sum(tie=1),0) as ties')
@@ -50,14 +50,16 @@ class Standings_model extends MY_Model{
                     ->join('team_division','team_division.team_id = team.id and team_division.year = '.$year)
                     ->join('standings_notation_team','standings_notation_team.team_id = team.id and standings_notation_team.year='.$year,'left')
                     ->join('standings_notation_def','standings_notation_def.id = standings_notation_team.standings_notation_def_id and standings_notation_team.year='.$year,'left')
+                    ->where('team.active',1)
                     ->where('team.league_id',$this->leagueid)
-                    ->where('team_division.division_id',$d->id)
-                    ->where_in('team.id',$teams_array)
-                    ->group_by('team.id')
+                    ->where('team_division.division_id',$d->id);
+                    if (count($teams_array) > 0)
+                        $this->db->where_in('team.id',$teams_array);
+                    $this->db->group_by('team.id')
                     ->order_by('wins','desc')
                     ->order_by('losses','asc')
-                    ->order_by('points','desc')
-                    ->get()->result();
+                    ->order_by('points','desc');
+                $divs_array[$d->id]['standings'] = $this->db->get()->result();
             }
 
 
@@ -65,7 +67,7 @@ class Standings_model extends MY_Model{
         else
         {
             // Old way without divisions, maybe for power rankings
-            $divs_array[0]['standings'] = $this->db->select('team.team_name, team.id as team_id')->select('owner.first_name, owner.last_name')
+            $this->db->select('team.team_name, team.id as team_id')->select('owner.first_name, owner.last_name')
                 ->select('IFNULL(sum(schedule_result.team_score),0) as points, IFNULL(sum(schedule_result.opp_score),0) as opp_points')
                 ->select('IFNULL(sum(win=1),0) as wins, IFNULL(sum(loss=1),0) as losses, IFNULL(sum(tie=1),0) as ties')
                 ->select('count(schedule_result.id) as total_games')
@@ -74,12 +76,14 @@ class Standings_model extends MY_Model{
                 ->join('owner','team.owner_id = owner.id')
                 ->join('standings_notation_team','standings_notation_team.team_id = team.id','left')
                 ->join('standings_notation_def','standings_notation_def.id = standings_notation_team.standings_notation_def_id and standings_notation_team.year='.$year,'left')
-                ->where('team.league_id',$this->leagueid)
-                ->where_in('team.id',$teams_array)
-                ->group_by('team.id')
+                ->where('team.active',1)
+                ->where('team.league_id',$this->leagueid);
+                if (count($teams_array) > 0)
+                    $this->db->where_in('team.id',$teams_array);
+                $this->db->group_by('team.id')
                 ->order_by('wins','desc')
-                ->order_by('losses','asc')
-                ->get()->result();
+                ->order_by('losses','asc');
+                $divs_array[0]['standings'] =  $this->db->get()->result();
         }
         return $divs_array;
 

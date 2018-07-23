@@ -1,5 +1,3 @@
-<div class="row">
-	<div class="columns">
-		<h5>Trades are closed.</h5>
-	</div>
+<div class="section">
+	<div class="is-size-5">Trades are closed.</div>
 </div>

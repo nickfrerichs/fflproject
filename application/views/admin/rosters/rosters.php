@@ -1,4 +1,5 @@
-<?php //$this->load->view('template/modals/stat_popup'); ?>
+
+<?php //$this->load->view('components/stat_popup'); ?>
 
 <?php //Body of the add-player-modal, it's a listing of players
 

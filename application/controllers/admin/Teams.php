@@ -76,7 +76,7 @@ class Teams extends MY_Admin_Controller
         $teamid = $this->input->post('var1');
         $active = $this->teams_model->toggle_active_flag($teamid);
         $response['success'] = True;
-        $response['currentValue'] = $active;
+        $response['value'] = $active;
         echo json_encode($response);
     }
 

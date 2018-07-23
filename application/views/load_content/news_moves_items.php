@@ -36,8 +36,13 @@
                                             </div>
                                             <div class="column">
                                                 <b>Add <?=$w->pickup_pos?></b><br>
-                                                <?=$w->pickup_first.' '.$w->pickup_last?><br>
-                                                <?=$w->pickup_club_name?>
+                                                <?php if($w->pickup_id): ?>
+                                                    <?=$w->pickup_first.' '.$w->pickup_last?><br>
+                                                    <?=$w->pickup_club_name?>
+                                                <?php else:?>
+                                                    No One 
+                                                    <br><br>
+                                                <?php endif;?>
                                             </div>
                                         </div>
                                     </div>
@@ -56,8 +61,13 @@
                                             </div>
                                             <div class="column">
                                                 <b>Drop <?=$w->drop_pos?></b><br>
-                                                <?=$w->drop_first.' '.$w->drop_last?><br>
-                                                <?=$w->drop_club_name?>
+                                                <?php if($w->drop_id): ?>
+                                                    <?=$w->drop_first.' '.$w->drop_last?><br>
+                                                    <?=$w->drop_club_name?>
+                                                <?php else:?>
+                                                    No One
+                                                    <br><br>
+                                                <?php endif;?>
                                             </div>
                                         </div>
                                     </div>

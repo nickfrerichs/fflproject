@@ -1,15 +1,17 @@
-<?php //print_r($open_trades); ?>
-<?php //$this->load->view('template/modals/stat_popup'); ?>
+<?php //$this->load->view('components/stat_popup'); ?>
 
 <div class="section">
 
-	<div class="is-size-5">Trades</div>
-	<hr>
+	<div class="is-size-3">Trades</div>
+	<br>
+	<div class="has-text-left">
+
 	<?php if(!$this->session->userdata('offseason')): ?>
-		<div><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></div>
+		<span><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></span> |
 	<?php endif;?>
-	<div><a href="<?=site_url('myteam/trade/log')?>">Trade log</a></div>
-	<hr>
+	<span><a href="<?=site_url('myteam/trade/log')?>">Trade log</a></span>
+
+	</div>
 
 
 <!--
@@ -24,7 +26,7 @@
 	<br>
 	<div class="is-size-5">Outstanding Trades</div>
 	<br>
-
+	<div class="box">
 
 	<table class="table is-fullwidth is-striped">
 		<thead>
@@ -33,7 +35,7 @@
 		<tbody id="open-trades-tbody">
 		</tbody>
 	</table>
-
+</div>
 <?php endif; ?>
 
 

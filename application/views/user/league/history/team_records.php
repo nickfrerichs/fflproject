@@ -1,50 +1,39 @@
 <div class="section">
-    <div class="select">
-        <select id="selected-record">
-            <option value="record">Record</option>
-            <option value="best-week">Best Week</option>
-            <option value="worst-week">Worst Week</option>
-            <option value="titles">Titles</option>
-        </select>
+
+    <div class="tabs is-small is-boxed fflp-tabs-active">
+        <ul>
+            <li class="is-active" data-for="record-tab" data-load-content="record-content"><a>Record</a></li>
+            <!-- <li class="" data-for="best-week-tab" data-load-content="best-week-content"><a>Best Week</a></li>
+            <li class="" data-for="worst-week-tab" data-load-content="worst-week-content"><a>Worst Week</a></li>
+            <li class="" data-for="titles-tab" data-load-content="titles-content"><a>Titles</a></li> -->
+        </ul>
     </div>
 
-
-    <div id="record-div" class="stat-div">
-        <div class="select">
-            <select class="form-control player-list-year-select" data-for="record">
-                <option value="0">All Years</option>
-                <?php foreach($years as $y): ?>
-                    <option value="<?=$y->year?>"><?=$y->year?></option>
-                <?php endforeach;?>
-            </select>
+    <div class="container">
+        <div id="record-tab">
+            <div class="select">
+                <select class="pagination-filter" data-filter="year" data-for="record-content">
+                    <option value="0">All Years</option>
+                    <?php foreach($years as $y): ?>
+                        <option value="<?=$y->year?>"><?=$y->year?></option>
+                    <?php endforeach;?>
+                </select>
+            </div>
+            <table class="table table-narrow is-fullwidth table-striped">
+                <thead>
+                    <th></th><th>Owner/Team</th><th>W Pct</th><th>Avg / Opp</th><th>W  L  T</th><th>Pts</th><th>Opp Pts</th>
+                </thead>
+                <tbody  id="record-content" 
+                        data-url="<?=site_url('load_content/history_team_record')?>"
+                        data-per-page="10">
+                </tbody>
+            </table>
+            <?php $this->load->view('load_content/template/load_more_buttons',array('for' => 'record-content'));?>
         </div>
-
-        <table class="table table-narrow is-fullwidth table-striped">
-            <thead>
-                <th></th><th>Owner/Team</th><th>W Pct</th><th>Avg / Opp</th><th>W  L  T</th><th>Pts</th><th>Opp Pts</th>
-            </thead>
-            <tbody id="record" data-url="<?=site_url('player_search/ajax_team_history_record')?>">
-            </tbody>
-        </table>
     </div>
-
 </div>
-
 
 <script>
 //$(updatePlayerList("best-week"));
-
-$('#selected-record').on('change',function(){
-	load_stat_div();
-});
-
-function load_stat_div()
-{
-	var stat = $('#selected-record').val();
-	$('#'+stat+'-div').removeClass('hide');
-	$('.stat-div:not(#'+stat+'-div)').addClass('hide');
-	$(updatePlayerList(stat));
-}
-
-load_stat_div();
+loadContent('record-content');
 </script>

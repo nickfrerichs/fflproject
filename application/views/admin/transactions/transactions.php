@@ -2,7 +2,7 @@
 <link href="<?=site_url('/css/foundation-datepicker.min.css')?>" rel="stylesheet"> -->
 <?php if(count($approvals) > 0): ?>
 <div class="section">
-	<div class="columns">
+	<div class="columns box">
 		<div class="column">
 			<div class="is-size-5">Waiver wire approvals</div>
 			<table class="table is-fullwidth is-narrow fflp-table-fixed is-striped">
@@ -22,8 +22,8 @@
 								<div><b>Owner:</b> <?=$a->o_first.' '.$a->o_last?></div>
 							</td>
 							<td>
-								<button class="button small ww-approve" data-id="<?=$a->ww_id?>">Approve</button>
-								<button class="button small ww-reject" data-id="<?=$a->ww_id?>">Reject</button>
+								<button class="button is-small is-link ww-approve" data-id="<?=$a->ww_id?>">Approve</button>
+								<button class="button is-small is-link ww-reject" data-id="<?=$a->ww_id?>">Reject</button>
 							</td>
 						</tr>
 					<?php endforeach; ?>
@@ -35,7 +35,7 @@
 <?php endif;?>
 
 <div class="section">
-	<div class="columns">
+	<div class="columns box">
 		<div class="column">
 			<h5 class="text-left">Settings</h5>
 			<table class="table is-fullwidth is-narrow fflp-table-fixed is-striped">

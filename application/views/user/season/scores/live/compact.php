@@ -1,6 +1,7 @@
 <?php //print_r($nfl_opp);?>
 <?php //print_r($matchups);?>
-<?php $this->load->view('template/modals/stat_popup.php');?>
+
+<?php $this->load->view('components/stat_popup'); ?>
 <div class="row align-center">
     <div class="columns small-12 medium-12 large-6" style="padding:0">
         <div id="ls-c-matchup-dots" class="row">

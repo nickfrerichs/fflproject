@@ -3,22 +3,22 @@
         <div class="navbar-brand">
             <div class="navbar-item">
                 <span class="has-text-link is-size-4" >
-                    <div class="title has-text-link is-size-5">MyLanparty FFL</div>
-                    <div class="has-text-white is-size-6 subtitle" >The FFL</div>
+                    <div class="title has-text-link is-size-5"><?=$this->session->userdata('site_name')?></div>
+                    <div class="has-text-white is-size-6 subtitle" ><?=$this->session->userdata('league_name')?></div>
             </span>
             </div>
 
-            <a class="navbar-item is-hidden-desktop" href="">
+            <!-- <a class="navbar-item is-hidden-desktop" href="">
                 <span class="icon" style="color: #333;">
                 Live
                 </span>
-            </a>
+            </a> -->
         
-            <button class="navbar-item is-hidden-desktop chat-button">
+            <!-- <button class="navbar-item is-hidden-desktop chat-button">
                 <span class="icon" style="color: #333;">
                 Chat
                 </span>
-            </button>
+            </button> -->
             <div class="navbar-burger burger" data-target="navMenuTransparentExample">
                 <span></span>
                 <span></span>
@@ -26,7 +26,7 @@
             </div>
         </div>
     
-        <div id="nav-menu" class="navbar-menu">
+        <div id="nav-menu" class="navbar-menu" style="padding:0px;">
             <div class="navbar-start">
                 <?php foreach($menu_items as $button => $subitem): ?>
                 <div class="navbar-item has-dropdown is-hoverable">
@@ -39,7 +39,7 @@
                     <a class="navbar-link">
                         <?=$button?>
                     </a>
-                    <div class="navbar-dropdown">
+                    <div class="navbar-dropdown" style="border-top-width:0px;">
                         <?php foreach($subitem as $subtext => $url): ?>
                             <a class="navbar-item" href="<?=site_url($url)?>">
                                 <?=$subtext?>
@@ -50,18 +50,20 @@
                 <?php endforeach;?>
             </div>
             <div class="navbar-end">
+            <?php if($this->session->userdata('league_id')): ?>
             <div class="navbar-item">
                   <button id="league-chat-button" class="button is-link chat-button">
                     <span>chat</span><span id="unread-chat-count"></span>
                   </button>
             </div>
-                <div class="navbar-item is-hoverable">
-                    <span class="icon">
-                    <a href="<?=site_url('auth/logout')?>">
-                        <i class="fa fa-power-off has-text-light"></i>
-                    </a>
-                    </span>
-                </div>
+            <?php endif;?>
+            <div class="navbar-item is-hoverable">
+                <span class="icon">
+                <a href="<?=site_url('auth/logout')?>">
+                    <i class="fa fa-power-off has-text-light"></i>
+                </a>
+                </span>
+            </div>
             </div>
         </div>
     </div>
@@ -69,26 +71,6 @@
 
 <?php if($this->session->userdata('league_id')): ?>
 <!-- Chat modal -->
-<!-- <div class="modal" id="chat-modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">League Chat</p>
-            <button class="delete modal-close-button" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <table>
-                <tbody id="chat-history-ajax" class="chat-history-ajax">
-                </tbody>
-            </table>
-        </section>
-        <footer class="modal-card-foot">
-        <button class="button modal-close-button is-link is-fullwidth is-medium" aria-label="close">Close</button>
-        </footer>
-    </div>
-</div> -->
-
-
 <div id="chat-modal" hidden>
     <div id="chat-history-table" class="chat-history-table">
         <table class="table is-fullwidth is-narrow is-striped">
@@ -101,11 +83,6 @@
     </div>
 </div>
 <?php endif;?>
-
- <!-- <span onclick="myModal.open();">Open jBox!</span>
- <span onclick="myModal.close();">Close jBox!</span>
- <span onclick="myModal.toggle();">Toggle jBox!</span> -->
-
 <script>
   $('.navbar-burger').on('click',function(){
     $('.navbar-dropdown').addClass('is-hidden-touch');

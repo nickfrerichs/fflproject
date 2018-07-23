@@ -17,6 +17,11 @@ class Messages extends MY_User_Controller{
     	$this->user_view('user/myteam/messages',$data);
     }
 
+    function test()
+    {
+        print_r($this->messages_model->get_messages_from_folder(1));
+    }
+
     function compose($action="",$id="")
     {
         $data = array();

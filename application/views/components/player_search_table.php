@@ -6,7 +6,8 @@
 // sort order (desc, asc)
 // per_page
 // headers array('by'=>'','order'=>'',classes=>'')
-// $positions[$p->text_id] = $p->id; //drop down select with options
+// $dropdowns['id']['options'][$p->text_id] = $p->id; //drop down select with options
+// $dropdowns['id']['label']
 
 
 if (!isset($per_page))
@@ -14,27 +15,53 @@ if (!isset($per_page))
 
 ?>
 
-<div>
-    <?php if(isset($disable_search) && $disable_search == True): ?>
-    <?php else: ?>
-            <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
-    <?php endif;?>
-
-    <?php if (isset($pos_dropdown) && is_array($pos_dropdown)): ?>
-        <div class='column'>
-            <div class="control">
-                <div class="select">
-                    <select data-for="<?=$id?>" class="player-list-position-select pagination-filter" data-filter="pos">
-                        <?php foreach ($pos_dropdown as $text => $posid): ?>
-                            <option value="<?=$posid?>"><?=$text?></option>
-                        <?php endforeach; ?>
-                    </select>
+<div class="container">
+    <div class="columns">
+        <div class="column is-8-tablet is-4-desktop">
+            <?php if(isset($disable_search) && $disable_search == True): ?>
+            <?php else: ?>
+                <div class="field">
+                    <div class="control">
+                        <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
+                    </div>
                 </div>
-            </div>
+            <?php endif;?>
+
+            <?php if (isset($pos_dropdown) && is_array($pos_dropdown)): ?>
+                <div class="field">
+                    <div class="control">
+                        <div class="select">
+                            <select data-for="<?=$id?>" class="pagination-filter" data-filter="pos">
+                                <?php foreach ($pos_dropdown as $text => $posid): ?>
+                                    <option value="<?=$posid?>"><?=$text?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            <?php endif;?>
+            <?php if (isset($dropdowns) && is_array($dropdowns)): ?>
+                <div class="columns">
+                    <?php foreach($dropdowns as $dd_id => $dd_data): ?>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label"><?=$dd_data['label']?></label>
+                            <div class="control">
+                                <div class="select">
+                                    <select data-for="<?=$id?>" class="pagination-filter" data-filter="<?=$dd_id?>">
+                                        <?php foreach ($dd_data['options'] as $item_text => $item_id): ?>
+                                            <option value="<?=$item_id?>"><?=$item_text?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach;?>
+                </div>
+            <?php endif;?>
         </div>
-    <?php endif;?>
-
-
+    </div>
 
     <table class="table is-fullwidth fflp-table-fixed" >
         <thead>
@@ -50,6 +77,8 @@ if (!isset($per_page))
                     data-for="<?=$id?>"
                     <?php if(array_key_exists('by',$h)){echo 'data-by="'.$h['by'].'"';}?>
                     class="lc-sort"><?=$header_text?></a>
+                <?php else:?>
+                    <?=$header_text?>
                 <?php endif;?>
                 </th>
             <?php endforeach;?>

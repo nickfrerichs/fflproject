@@ -1,5 +1,5 @@
-<?php //print_r($weeks); ?>
-<?php //$this->load->view('template/modals/stat_popup'); ?>
+
+<?php $this->load->view('components/stat_popup'); ?>
 <style>
 
 .week-selected{

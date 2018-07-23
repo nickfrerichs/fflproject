@@ -1,4 +1,4 @@
-<div class="container">
+<div class="section">
     <div class="is-size-5">Schedule templates</div>
     <div class="columns">
         <div class="column">

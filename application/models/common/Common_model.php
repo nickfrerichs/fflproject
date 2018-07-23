@@ -40,10 +40,10 @@ class Common_model extends CI_Model{
     function team_info($team_id)
     {
         return $this->db->select('team.team_name, owner.first_name, owner.last_name, owner.id as owner_id')
-            ->select('team.id as team_id, uacc_email as owner_email')
+            ->select('team.id as team_id, email as owner_email')
             ->from('team')
             ->join('owner','owner.id = team.owner_id')
-            ->join('user_accounts','uacc_id = owner.user_accounts_id')
+            ->join('user_accounts','user_accounts.id = owner.user_accounts_id')
             ->where('team.id',$team_id)->get()->row();
     }
 
@@ -138,11 +138,15 @@ class Common_model extends CI_Model{
             ->where('year > ',$start_year)->get()->row()->y;
         $data['db_start'] = $start_year;
         $data['db_end'] = $end_year;
-        // If never changed, look up the first year the league existed
+
+        // If never changed, look up the first year the league existed, if there is no schedule, then it must be a brand
+        // new league, so the current year is the start year
         if ($start_year == 0)
         {
-            $start_year = $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
-            ->order_by('year','asc')->limit(1)->get()->row()->year;
+            $sched_row = $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
+                ->order_by('year','asc')->limit(1)->get()->row();
+            if($sched_row)
+                $start_year = $sched_row->year;
         }
         // If never changed, it's through the current year... if it has, the def doesn't include the last changed year, so decrement 1.
         if ($end_year == 0)
@@ -181,8 +185,10 @@ class Common_model extends CI_Model{
         // If never changed, look up the first year the league existed
         if ($start_year == 0)
         {
-            $start_year = $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
-            ->order_by('year','asc')->limit(1)->get()->row()->year;
+            $sched_row = $this->db->select('distinct(year)')->from('schedule')->where('league_id',$this->leagueid)
+            ->order_by('year','asc')->limit(1)->get()->row();
+            if($sched_row)
+                $start_year = $sched_row->year;
         }
         // If never changed, it's through the current year... if it has, the def doesn't include the last changed year, so decrement 1.
         if ($end_year == 0)

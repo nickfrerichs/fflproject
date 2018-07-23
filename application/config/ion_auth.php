@@ -42,10 +42,10 @@ $config['database_group_name'] = '';
 | -------------------------------------------------------------------------
 | Database table names.
 */
-$config['tables']['users']           = 'ion_users';
-$config['tables']['groups']          = 'ion_groups';
-$config['tables']['users_groups']    = 'ion_users_groups';
-$config['tables']['login_attempts']  = 'ion_login_attempts';
+$config['tables']['users']           = 'user_accounts';
+$config['tables']['groups']          = 'user_groups';
+$config['tables']['users_groups']    = 'user_memberships';
+$config['tables']['login_attempts']  = 'user_login_attempts';
 
 /*
  | Users table column and Group table column you want to join WITH.
@@ -100,7 +100,7 @@ $config['salt_prefix']    = version_compare(PHP_VERSION, '5.3.7', '<') ? '$2a$' 
 $config['site_title']                 = $fflp_email_site_title;       // Site Title, example.com
 $config['admin_email']                = (isset($fflp_admin_email) ? $fflp_admin_email : ''); // Admin Email, admin@example.com
 $config['default_group']              = 'user';           // Default group, use name
-$config['admin_group']                = 'admin';             // Default administrators group, use name
+$config['admin_group']                = 'admin_user';             // Default administrators group, use name
 $config['identity']                   = 'username';             // You can use any unique column in your table as identity column. The values in this column, alongside password, will be used for login purposes
 $config['min_password_length']        = 8;                   // Minimum Required Length of Password
 $config['max_password_length']        = 20;                  // Maximum Allowed Length of Password
@@ -149,7 +149,7 @@ $config['email_config'] = array(
  | Folder where email templates are stored.
  | Default: auth/
  */
-$config['email_templates'] = 'auth/email/';
+$config['email_templates'] = 'includes/email/';
 
 /*
  | -------------------------------------------------------------------------

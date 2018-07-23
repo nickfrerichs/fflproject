@@ -12,8 +12,8 @@ class Site_model extends MY_Model
         {
             $data[$l->id] = array();
             $data[$l->id]['league'] = $l;
-            $data[$l->id]['admins'] = $this->db->select('uacc_username as username, league_admin_id as id')->from('league_admin')
-                ->join('user_accounts','user_accounts.uacc_id = league_admin.league_admin_id')
+            $data[$l->id]['admins'] = $this->db->select('username, league_admin_id as id')->from('league_admin')
+                ->join('user_accounts','user_accounts.id = league_admin.league_admin_id')
                 ->where('league_admin.league_id',$l->id)->get()->result();
             $data[$l->id]['active_teams'] = $this->db->select('id, team_name')->from('team')->where('active',1)->where('league_id',$l->id)->get()->result();
             $data[$l->id]['teams'] = $this->db->select('id, team_name')->from('team')->where('league_id',$l->id)->get()->result();
@@ -82,9 +82,9 @@ class Site_model extends MY_Model
     function get_league_admins_array($id)
     {
         $data = array();
-        $admins = $this->db->select('owner.first_name, owner.last_name, user_accounts.uacc_id as user_id')->from('league_admin')
-            ->join('user_accounts','user_accounts.uacc_id = league_admin.league_admin_id')
-            ->join('owner','owner.user_accounts_id = user_accounts.uacc_id')
+        $admins = $this->db->select('owner.first_name, owner.last_name, user_accounts.id as user_id')->from('league_admin')
+            ->join('user_accounts','user_accounts.id = league_admin.league_admin_id')
+            ->join('owner','owner.user_accounts_id = user_accounts.id')
             ->where('league_admin.league_id',$id)->get()->result();
         foreach ($admins as $a)
         {
@@ -96,9 +96,9 @@ class Site_model extends MY_Model
     function get_league_owners_array($id)
     {
         $data = array();
-        $owners = $this->db->select('owner.first_name, owner.last_name, user_accounts.uacc_id as user_id')->from('team')
+        $owners = $this->db->select('owner.first_name, owner.last_name, user_accounts.id as user_id')->from('team')
             ->join('owner','team.owner_id = owner.id')
-            ->join('user_accounts','user_accounts.uacc_id = owner.user_accounts_id')
+            ->join('user_accounts','user_accounts.id = owner.user_accounts_id')
             ->where('team.league_id',$id)->get()->result();
 
         foreach ($owners as $o)

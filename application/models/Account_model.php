@@ -7,21 +7,39 @@ class Account_model extends CI_Model{
         // $user_id = $this->db->select('uacc_id')->from('user_accounts')->
         //         where('uacc_email', $email_address)->get()->row()->uacc_id;
 
-        $owner_id = $this->db->select('owner.id as owner_id')->from('user_accounts')->join('owner','owner.user_accounts_id = user_accounts.uacc_id')
-            ->where('user_accounts.uacc_id',$user_id)->get()->row()->owner_id;
+        $owner_id = $this->db->select('owner.id as owner_id')->from('user_accounts')->join('owner','owner.user_accounts_id = user_accounts.id')
+            ->where('user_accounts.id',$user_id)->get()->row()->owner_id;
 
-        $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 'team_name' => $team_name, 'long_name' => $team_name, 'active' => 1);
-        $this->db->insert('team', $data);
+        $chat_key = $this->db->select('chat_key')->from('league_settings')->where('league_id',$league_id)->get()->row()->chat_key;
 
-        $data = array('owner_id' => $owner_id, 'league_id' => $league_id);
-        $this->db->insert('owner_setting',$data);
+        if ($this->db->from('team')->where('owner_id',$owner_id)->where('league_id',$league_id)->get()->num_rows() == 0)
+        {
+            $data = array('owner_id' => $owner_id, 'league_id' => $league_id, 
+                          'team_name' => $team_name, 'long_name' => $team_name, 'active' => 1, 'chat_read' => $chat_key);
+            $this->db->insert('team', $data);
+        }
+
+        if ($this->db->from('owner_setting')->where('owner_id',$owner_id)->where('league_id',$league_id)->get()->num_rows() == 0)  
+        {
+            $data = array('owner_id' => $owner_id, 'league_id' => $league_id);
+            $this->db->insert('owner_setting',$data);
+        }
     }
 
-    function add_owner($user_id, $first_name, $last_name)
+    function add_owner($user_id)
     {
-        $data = array('user_accounts_id' => $user_id, 'first_name' => $first_name,
-                    'last_name' => $last_name);
-        $this->db->insert('owner', $data);
+        $row = $this->db->select('first_name, last_name')->from('user_accounts')->where('id',$user_id)->get()->row();
+        if ($row)
+        {
+            $first_name = $row->first_name;
+            $last_name = $row->last_name;
+        
+            $data = array('user_accounts_id' => $user_id, 'first_name' => $first_name,
+                        'last_name' => $last_name);
+            $this->db->insert('owner', $data);
+            return $this->db->insert_id();
+        }
+        return False;
     }
 
     function set_active_league($user_id, $leagueid)
@@ -33,15 +51,23 @@ class Account_model extends CI_Model{
 
     function get_email_from_id($id)
     {
-        return $this->db->select('uacc_email')->from('user_accounts')->where('uacc_id',$id)->get()->row()->uacc_email;
+        return $this->db->select('email')->from('user_accounts')->where('id',$id)->get()->row()->email;
     }
 
-    function get_league_id($maskid, $code=false)
+    function get_username_from_email($email_address)
+    {
+        $row = $this->db->select('username')->from('user_accounts')->where('email',$email_address)->get()->row();
+        if (count($row) > 0)
+        {
+            return $row->username;
+        }
+        return False;
+    }
+
+    function get_league_id($maskid, $code='')
     {
         $this->db->select('league.id')->from('league')->join('league_settings','league_settings.league_id = league.id')
-            ->where('league.mask_id',$maskid);
-        if ($code)
-            $this->db->where('league_settings.join_password',$code);
+            ->where('league.mask_id',$maskid)->where('league_settings.join_password',$code);
         $result = $this->db->get()->row();
         if(count($result) > 0)
             return $result->id;
@@ -50,7 +76,7 @@ class Account_model extends CI_Model{
 
     function admin_account_exists()
     {
-        if ($this->db->from('user_accounts')->where('uacc_group_fk',1)->get()->num_rows() > 0)
+        if ($this->db->from('user_memberships')->where('group_id',1)->get()->num_rows() > 0)
             return True;
         return False;
     }
@@ -74,6 +100,15 @@ class Account_model extends CI_Model{
         return True;
     }
 
+    function identity_in_use($col,$identity)
+    {
+        $num = $this->db->select('id')->from('user_accounts')->where($col,$identity)->get()->num_rows();
+        if ($num > 0)
+            return True;
+        return False;
+
+    }
+
     function get_site_name()
     {
         return $this->db->select('name')->from('site_settings')->get()->row()->name;
@@ -89,18 +124,23 @@ class Account_model extends CI_Model{
         return False;
     }
 
-    // This function checks credentials against the legacy auth tables
+    // This function checks credentials against the legacy auth hash functions
     function legacy_check_password($username, $verify_password)
     {
-        $legacy_info = $this->db->select('uacc_password, uacc_salt')->from('user_accounts')->where('uacc_username',$username)
+        $legacy_info = $this->db->select('password, salt')->from('user_accounts')->where('username',$username)
             ->get()->row();
-        require_once(APPPATH.'libraries/phpass/PasswordHash.php');
-        require_once(FCPATH.'config.php');
-        $database_salt = $legacy_info->uacc_salt;
-        $database_password = $legacy_info->uacc_password;
+        if($legacy_info)
+        {
+            require_once(APPPATH.'libraries/phpass/PasswordHash.php');
+            require_once(FCPATH.'config.php');
 
-        $hash_token = new PasswordHash(8, FALSE);
-        return $hash_token->CheckPassword($database_salt . $verify_password . $this->config->item('fflp_salt'), $database_password);
+            $database_salt = $legacy_info->salt;
+            $database_password = $legacy_info->password;
+            $hash_token = new PasswordHash(8, FALSE);
+
+            return $hash_token->CheckPassword($database_salt . $verify_password . $this->config->item('fflp_salt'), $database_password);
+        }
+        return False;
     }
 
     function convert_legacy_password($username, $password)

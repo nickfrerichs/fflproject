@@ -1,118 +1,92 @@
 
-	<div class="row callout">
-		<div class="columns small-12" style="max-width:200px">
-			<select id="selected-record">
-				<option value="career">Career</option>
-				<option value="best-week">Best Week</option>
-			</select>
+	<div class="section">
+		
+		<div class="tabs is-small is-boxed fflp-tabs-active">
+			<ul>
+				<li class="is-active" data-for="career-tab" data-load-content="career-list"><a>Career</a></li>
+				<li class="" data-for="best-week-tab" data-load-content="best-week-list"><a>Best Week</a></li>
+			</ul>
 		</div>
-	</div>
+		
+		<!-- Avg Week -->
+		<div id="best-week-tab" class="is-hidden stat-div">
 
-	<!-- Player Records -->
-	<div class="row callout">
+			<?php
 
-		<div id="best-week-div" class="columns small-12 hide stat-div">
-			<div class="row">
-				<div class="columns column small-12 medium-4">
-					<select data-for="best-week" class="form-control player-list-position-select">
-						<option value="0">All Pos.</option>
-						<?php foreach($positions as $pos): ?>
-							<option value="<?=$pos->id?>"><?=$pos->text_id?></option>
-						<?php endforeach;?>
-					</select>
-				</div>
+			$headers = array();
+			$headers['Rank'] = array();
+			$headers['Name'] = array();
+			$headers['Position'] = array();		
+			$headers['Points'] = array();	
+			$headers['Weak'] = array();
+			$headers['Year'] = array();
+			$headers['Owner'] = array();
 
 
-				<div class="columns column small-12 medium-4">
-					<select class="form-control player-list-year-select" data-for="best-week">
-						<option value="0">All Years</option>
-						<?php foreach($years as $y): ?>
-							<option value="<?=$y->year?>"><?=$y->year?></option>
-						<?php endforeach;?>
-					</select>
-				</div>
+			$dropdowns['pos']['options']['All'] = 0;
+			$dropdowns['pos']['label'] = "Position";
+			foreach($positions as $p)
+				$dropdowns['pos']['options'][$p->text_id] = $p->id;
 
-				<div class="columns column small-12 medium-4">
-					<select class="form-control player-list-starter-select" data-for="best-week">
-						<option value="all" selected>All Players</option>
-						<option value="starter">Starters</option>
-						<option value="bench">Bench</option>
-					</select>
-				</div>
-			</div>
+			$dropdowns['year']['options']['All'] = 0;
+			$dropdowns['year']['label'] = "Year";
+			foreach($years as $y)
+				$dropdowns['year']['options'][$y->year] = $y->year;
 
-			<table class="table table-condensed table-striped">
-				<thead>
-					<th></th><th>Name</th><th>Pos.</th><th>Points</th><th>Week</th><th>Year</th><th>Owner</th>
-				</thead>
-				<tbody id="best-week" data-url="<?=site_url('player_search/ajax_best_week')?>">
-				</tbody>
-			</table>
+			$this->load->view('components/player_search_table',
+							array('id' => 'best-week-list',
+								'url' => site_url('load_content/history_player_best_week_list'),
+								'order' => 'desc',
+								'by' => 'points',
+								'dropdowns' => $dropdowns,
+								'headers' => $headers,
+								'disable_search' => True));
+
+
+			?>
 		</div>
 
-		<!-- Week Avg -->
-		<div id="career-div" class="columns hide small-12 stat-div">
-			<div class="row">
-				<div class="columns column small-12 medium-4">
-					<select data-for="career" class="form-control player-list-position-select">
-						<option value="0">All Pos.</option>
-						<?php foreach($positions as $pos): ?>
-							<option value="<?=$pos->id?>"><?=$pos->text_id?></option>
-						<?php endforeach;?>
-					</select>
-				</div>
-				<div class="columns column small-12 medium-4">
-					<select class="form-control player-list-year-select" data-for="career">
-						<option value="0">All Years</option>
-						<?php foreach($years as $y): ?>
-							<option value="<?=$y->year?>"><?=$y->year?></option>
-						<?php endforeach;?>
-					</select>
-				</div>
-				<div class="columns column small-12 medium-4">
-					<select class="form-control player-list-starter-select" data-for="career">
-						<option value="all" selected>All Players</option>
-						<option value="starter">Starters</option>
-						<option value="bench">Bench</option>
-					</select>
-				</div>
-			</div>
+		<!-- Career -->
+		<div id="career-tab" class="stat-div">
+
+			<?php 
+
+			$headers = array();
+			$headers['Rank'] = array();
+			$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+			$headers['Position'] = array('by' => 'position', 'order' => 'asc');		
+			$headers['Avg. Points'] = array('by' => 'avg_points', 'order' => 'desc');	
+			$headers['Total Points'] = array('by' => 'total_points', 'order' => 'desc');
+			$headers['Games'] = array();
+			
+
+			$dropdowns['pos']['options']['All'] = 0;
+			$dropdowns['pos']['label'] = "Position";
+			foreach($positions as $p)
+				$dropdowns['pos']['options'][$p->text_id] = $p->id;
+
+			$dropdowns['year']['options']['All'] = 0;
+			$dropdowns['year']['label'] = "Year";
+			foreach($years as $y)
+				$dropdowns['year']['options'][$y->year] = $y->year;
+
+			$this->load->view('components/player_search_table',
+							array('id' => 'career-list',
+								'url' => site_url('load_content/history_player_career_list'),
+								'order' => 'desc',
+								'by' => 'avg_points',
+								'dropdowns' => $dropdowns,
+								'headers' => $headers,
+								'disable_search' => True));
 
 
-			<table class="table table-condensed table-striped">
-				<thead>
-					<th></th>
-					<!-- <th><a href="#" data-order="asc" data-for="career" data-by="last_name" class="player-list-a-sort">Name</a></th> -->
-					<th>Name</th>
-					<th>Pos.</th>
-					<th><a href="#" data-order="desc" data-for="career" data-by="avg_points" class="player-list-a-sort">Avg</a></th>
-					<th><a href="#" data-order="desc" data-for="career" data-by="total_points" class="player-list-a-sort">Total</a></th>
-					<th><a href="#" data-order="desc" data-for="career" data-by="games" class="player-list-a-sort">Games</a></th>
-					<th>Year</th>
-				</thead>
-				<tbody id="career" data-by="avg_points" 
-								   data-order="desc" 
-								   data-url="<?=site_url('player_search/ajax_career')?>">
-				</tbody>
-			</table>
+			?>
 		</div>
 	</div>
 
 
 <script>
-//$(updatePlayerList("best-week"));
 
-$('#selected-record').on('change',function(){
-	load_stat_div();
-});
+loadContent('career-list');
 
-function load_stat_div()
-{
-	var stat = $('#selected-record').val();
-	$('#'+stat+'-div').removeClass('hide');
-	$('.stat-div:not(#'+stat+'-div)').addClass('hide');
-	$(updatePlayerList(stat));
-}
-
-load_stat_div();
 </script>

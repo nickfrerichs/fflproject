@@ -55,17 +55,21 @@ class Schedule_templates extends MY_Admin_Controller{
     {
         $response = array('success' => False);
 
-        $postdata = $this->input->post('data');
-        $data = array('id' => $postdata['template_id']['value'],
-            'name' => $postdata['name']['value'],
-            'teams' => $postdata['num_teams']['value'],
-            'divisions' => $postdata['num_divs']['value'],
-            'weeks' => $postdata['num_weeks']['value'],
-            'per_week' => $postdata['per_week']['value'],
-            'description' => $postdata['desc']['value']);
+        $data = array('id' => $this->input->post('template_id'),
+            'name' => $this->input->post('name'),
+            'teams' => $this->input->post('num_teams'),
+            'divisions' => $this->input->post('num_divs'),
+            'weeks' => $this->input->post('num_weeks'),
+            'per_week' => $this->input->post('per_week'),
+            'description' => $this->input->post('desc'));
+
+        // $response['data'] = $data;
+        // echo json_encode($response);
+        // die();
 
         $this->schedule_model->save_template($data);
 
+        $response['message'] = "Template info saved.";
         $response['success'] = True;
 
         echo json_encode($response);
@@ -75,10 +79,16 @@ class Schedule_templates extends MY_Admin_Controller{
     {
         $response = array('success' => False);
 
-        $postdata = $this->input->post('data');
+//        $postdata = $this->input->post('data');
 
+        $games = $this->input->post('games');
+        $template_id = $this->input->post('template_id');
+        $response['games'] = $games;
+        // $response['success'] = True;
+        // echo json_encode($response);
+        // die();
         $data = array();
-        foreach($postdata['games'] as $game)
+        foreach($games as $game)
         {   
             $key = $game['week'].$game['game'];
             // NICK START HERE WORKING TOWARDS SAVE_TEMPLATE_MATCHUPS in model
@@ -88,11 +98,12 @@ class Schedule_templates extends MY_Admin_Controller{
                 $data[$key]['home'] = $game['value'];                
             $data[$key]['week'] = $game['week'];
             $data[$key]['game'] = $game['game'];
-            $data[$key]['schedule_template_id'] = $postdata['template_id']['value'];
+            $data[$key]['schedule_template_id'] = $template_id;
         }
 
-        $this->schedule_model->save_template_matchups($postdata['template_id']['value'], $data);
+        $this->schedule_model->save_template_matchups($template_id, $data);
         $response['success'] = True;
+        $response['message'] = "Template matchups saved.";
         echo json_encode($response);
     }
 
@@ -168,8 +179,8 @@ class Schedule_templates extends MY_Admin_Controller{
     {
         $response = array('success' =>false);
 
-        $text_id = $this->input->post('data')['text_id']['value'];
-        $title_game = $this->input->post('data')['title_game']['value'];
+        $text_id = $this->input->post('text_id');
+        $title_game = $this->input->post('title_game');
 
         $this->schedule_model->add_gametype($text_id, $title_game);
 

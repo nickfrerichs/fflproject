@@ -51,10 +51,13 @@ class Load_content extends MY_User_Controller{
 
     function test()
     {
-        $this->load->model('season/draft_model');
-  //      $nfl_players = $this->player_search_model->get_nfl_players($this->limit, 0, 0, array("last_name", "desc"), "", true);
-        $nfl_players = $this->draft_model->get_watch_list($this->limit, 0, 0);
-        print_r($nfl_players);
+        $view_data['players'] = $this->player_search_model->get_career_data("2017", False, "21", array("avg_points", "desc"));
+        print_r($view_data['players']);
+        $this->data['html'] = $this->load->view('load_content/history_player_career_list',$view_data,True);
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
     }
 
     function ajax_full_player_list()
@@ -75,6 +78,57 @@ class Load_content extends MY_User_Controller{
         $this->data['html'] = $this->load->view('load_content/full_player_list',$view_data,True);
         $this->data['total'] = $view_data['total'];
         $this->data['count'] = $this->limit;
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
+    }
+
+    function history_team_record()
+    {
+        $this->load->model('league/history_model');
+        if (!isset($this->filter_year))
+            $this->filter_year = '';
+
+        $view_data['teams'] = $this->history_model->get_team_record($this->filter_year,$this->limit);
+
+        $this->data['html'] = $this->load->view('load_content/history_team_record',$view_data,True);
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
+    }
+
+    function history_player_career_list()
+    {
+        $this->load->model('player_search_model');
+
+        if (!isset($this->filter_pos))
+            $this->filter_pos = '';
+        if (!isset($this->filter_year))
+            $this->filter_year = '';
+
+        // The False boolean is for showing starters only, it didn't seem to work so I hard coded it.
+        $view_data['players'] = $this->player_search_model->get_career_data($this->filter_year, "all", $this->filter_pos, array($this->by, $this->order),$this->limit);
+        $this->data['html'] = $this->load->view('load_content/history_player_career_list',$view_data,True);
+
+        $this->data['success'] = True;
+
+        echo json_encode($this->data);
+    }
+
+    function history_player_best_week_list()
+    {
+        $this->load->model('player_search_model');
+
+        if (!isset($this->filter_pos))
+            $this->filter_pos = '';
+        if (!isset($this->filter_year))
+            $this->filter_year = '';
+
+        $view_data['players'] = $this->player_search_model->get_best_week_data($this->filter_year, "all", $this->filter_pos,$this->limit);
+
+        $this->data['html'] = $this->load->view('load_content/history_player_best_week_list',$view_data,True);
 
         $this->data['success'] = True;
 
@@ -305,5 +359,18 @@ class Load_content extends MY_User_Controller{
         echo json_encode($this->data);
 
 
+    }
+
+    function moneylist()
+    {
+        $this->load->model('season/moneylist_model');
+        $view_data = array();
+        $view_data['list'] = $this->moneylist_model->get_moneylist();
+        $view_data['totals'] = $this->moneylist_model->get_totals();
+        $this->data['html'] = $this->load->view('load_content/moneylist_html',$view_data,True);
+        
+        $this->data['success'] = true;
+
+        echo json_encode($this->data);
     }
 }

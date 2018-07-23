@@ -19,9 +19,16 @@ class User extends CI_Controller{
         }
     }
 
+    function test()
+    {
+//        $this->load->model('season/standings_model');
+        $this->load->model('security_model');
+        $this->security_model->set_user_notifications();
+    }
+
     function joinleague($mask_id="")
     {
-        $this->load->model('common/common_noauth_model');
+        $this->load->model('common/common_noauth_model');  
         $data = array();
 
         if ($this->common_noauth_model->valid_mask($mask_id) && $this->common_noauth_model->league_has_room($mask_id))
@@ -32,6 +39,7 @@ class User extends CI_Controller{
             $data['code_required'] = $this->common_noauth_model->join_code_required($mask_id);
             $data['league_name'] = $this->common_noauth_model->league_name_from_mask_id($mask_id);
             // Kinda awkard, need to reconstruct user_view function from MY_Controller class
+            $this->load->library('ion_auth');
             $this->load->model('menu_model');
             $data['menu_items'] = $this->menu_model->get_menu_items_data();
             $data['v'] = 'user/join_league';
@@ -45,14 +53,15 @@ class User extends CI_Controller{
         }
     }
 
-    function do_joinleague()
+    function do_joinleague($mask_id)
     {
-        $response = array("success" => false);
+        $response = array("success" => false, "error" => false, "message" => false);
 
-		$mask_id = $this->input->post('mask_id');
-		$code = $this->input->post('code');
-		$first = $this->input->post('first');
-		$last = $this->input->post('last');
+        //$mask_id = $this->input->post('mask_id');
+        $code = '';
+        if($this->input->post('join_code'))
+            $code = $this->input->post('join_code');
+
 		$team_name = $this->input->post('team_name');
 		$user_id = $this->session->userdata('user_id');
 
@@ -62,11 +71,11 @@ class User extends CI_Controller{
         $has_room = $this->common_noauth_model->league_has_room($mask_id);
         if (!$has_room)
         {
-            $response['msg'] = "League max teams reached.";
+            $response['error'] = "League max teams reached.";
         }
         elseif ($leagueid == -1)
         {
-            $response['msg'] = "League password incorrect.";
+            $response['error'] = "League password incorrect.";
         }
         elseif(!$this->session->userdata('leagues') || !array_key_exists($leagueid,$this->session->userdata('leagues')))
         {
@@ -76,7 +85,7 @@ class User extends CI_Controller{
         	{
         		if ($this->account_model->user_is_owner($user_id) == False)
         		{
-        			$this->account_model->add_owner($user_id, $first, $last);
+        			$this->account_model->add_owner($user_id);
         		}
 
     			$this->account_model->add_team($user_id, $team_name, $leagueid);
@@ -84,7 +93,12 @@ class User extends CI_Controller{
     			$this->load->model('security_model');
     			$this->security_model->set_session_variables();
                 $response['success'] = True;
+                $response['message'] = "League joined: ".$this->common_noauth_model->league_name_from_mask_id($mask_id);
         	}
+        }
+        else
+        {
+            $response['error'] = 'You are already in this league.';
         }
 
         echo json_encode($response);

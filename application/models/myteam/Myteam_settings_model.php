@@ -8,6 +8,7 @@ class Myteam_settings_model extends MY_Model{
         $this->current_year = $this->session->userdata('current_year');
         $this->current_week = $this->session->userdata('current_week');
         $this->ownerid = $this->session->userdata('owner_id');
+        $this->userid = $this->session->userdata('user_id');
         $this->logopath = FCPATH.'images/team_logos/';
 
     }
@@ -25,9 +26,9 @@ class Myteam_settings_model extends MY_Model{
         if ($id == 0)
             $id = $this->ownerid;
 
-        return $this->db->select('first_name, last_name, phone_number, chat_balloon, user_accounts.uacc_email as email')->from('owner')
+        return $this->db->select('owner.first_name, owner.last_name, owner.phone_number, chat_balloon, user_accounts.email as email')->from('owner')
             ->join('owner_setting','owner_setting.owner_id = owner.id')
-            ->join('user_accounts','user_accounts.uacc_id=owner.user_accounts_id')
+            ->join('user_accounts','user_accounts.id=owner.user_accounts_id')
             ->where('owner.id',$id)->get()->row();
     }
 
@@ -35,8 +36,8 @@ class Myteam_settings_model extends MY_Model{
     {
         if ($id == 0)
             $id = $this->ownerid;
-        $uacc_id = $this->db->select('user_accounts_id')->from('owner')->where('id',$id)->get()->row()->user_accounts_id;
-        return $this->db->select('uacc_username')->from('user_accounts')->where('uacc_id',$uacc_id)->get()->row()->uacc_username;
+        $user_id = $this->db->select('user_accounts_id')->from('owner')->where('id',$id)->get()->row()->user_accounts_id;
+        return $this->db->select('username')->from('user_accounts')->where('user_accounts.id',$user_id)->get()->row()->username;
     }
 
     function member_of_league($leagueid)
@@ -199,6 +200,11 @@ class Myteam_settings_model extends MY_Model{
         $data = array('phone_number' => $value);
         $this->db->where('id',$this->ownerid);
         $this->db->update('owner',$data);
+
+        $data = array('phone' => $value);
+        $this->db->where('id',$this->userid);
+        $this->db->update('user_accounts',$data);
+
         return $value;
     }
 
@@ -215,8 +221,8 @@ class Myteam_settings_model extends MY_Model{
 
     function change_owner_email($value)
     {
-        $data = array('uacc_email' => $value);
-        $this->db->where('uacc_id',$this->session->userdata('user_id'));
+        $data = array('email' => $value);
+        $this->db->where('user_accounts.id',$this->session->userdata('user_id'));
         $this->db->update('user_accounts',$data);
         return $value;
     }
@@ -226,6 +232,9 @@ class Myteam_settings_model extends MY_Model{
         $data = array('last_name' => $value);
         $this->db->where('id',$this->ownerid);
         $this->db->update('owner',$data);
+
+        $this->db->where('id',$this->userid);
+        $this->db->update('user_accounts',$data);
     }
 
     function change_owner_firstname($value)
@@ -233,6 +242,9 @@ class Myteam_settings_model extends MY_Model{
         $data = array('first_name' => $value);
         $this->db->where('id',$this->ownerid);
         $this->db->update('owner',$data);
+
+        $this->db->where('id',$this->userid);
+        $this->db->update('user_accounts',$data);
     }
 
     function toggle_chat_balloon()

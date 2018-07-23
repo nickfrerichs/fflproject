@@ -1,7 +1,7 @@
 <?php //print_r($owners); ?>
 
 <div class="section">
-
+	<div class="container">
 		<div class="is-size-5">Compose Message</div>
 		<br>
 		<div class="field">
@@ -36,8 +36,8 @@
 				<textarea id="message-body" class="textarea" rows="10"></textarea>
 			</div>
 		</div>
-		<button id="send-message" class="button is-link is-small">Send Message</button>
-
+		<button id="send-message" class="button is-link">Send</button>
+	</div>
 </div>
 
 

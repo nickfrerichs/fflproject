@@ -54,7 +54,9 @@ class Auth extends CI_Controller{
                     $success = $this->ion_auth->login($this->input->post('login_identity'), $this->input->post('login_password'), $remember_user);
 
                     if ($success)
+                    {
                         echo "Ion Success!";
+                    }
                     else
                     {
                         // Try legacy auth
@@ -63,6 +65,7 @@ class Auth extends CI_Controller{
                                                                                       $this->input->post('login_password'));
                         if ($legacy_success)
                         {
+
                             $this->account_model->convert_legacy_password($this->input->post('login_identity'), $this->input->post('login_password'));
                             // Set password in ion auth, delete user from legacy user table.
                             
@@ -78,7 +81,6 @@ class Auth extends CI_Controller{
                         }
 
                     }
-                    
 
                     $this->session->set_userdata('user_id', $this->ion_auth->get_user_id());
                     $this->load->model('security_model');
@@ -107,10 +109,8 @@ class Auth extends CI_Controller{
 
     function logout()
     {
+        // Ion auth logout also destroys the session
         $this->ion_auth->logout();
-        // Set a message to the CI flashdata so that it is available after the page redirect.
-        $this->session->sess_destroy();
-
         redirect(site_url());
     }
 }
