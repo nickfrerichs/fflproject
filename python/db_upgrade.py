@@ -3,13 +3,14 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.5'
+CURRENT_VERSION = '1.51'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
 
 def main():
     version = get_db_version()
+
     if version == CURRENT_VERSION:
         sys.exit("\nDatabase is already the current version: %s\n" % (CURRENT_VERSION))
 
@@ -20,6 +21,18 @@ def main():
 
 
 def upgrade_db(version):
+    if version == "1.5":
+
+        query = 'ALTER TABLE ci_sessions CHANGE id id varchar(128) NOT NULL'
+        cur.execute(query)
+        db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.51")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
+
     if version == "1.4":
         #########################################
         ## Switch to ion auth bunch of changes ##

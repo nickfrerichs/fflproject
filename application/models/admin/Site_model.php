@@ -50,7 +50,7 @@ class Site_model extends MY_Model
 
     function get_site_settings()
     {
-        return $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id')->from('site_settings')->get()->row();
+        return $this->db->select('name, debug_user, debug_admin, debug_year, debug_week, debug_week_type_id, db_version')->from('site_settings')->get()->row();
     }
 
     function get_week_types_array()

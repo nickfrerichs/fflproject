@@ -29,8 +29,8 @@
 				<table class="table is-fullwidth fflp-table-fixed">
 					<tbody>
 						<tr>
-							<td colspan=2><span data-tooltip class="has-tip top" title="Show debug info site-wide for all users.">Debug On</span></td>
-							<td>
+							<td><span data-tooltip class="has-tip top" title="Show debug info site-wide for all users.">Debug On</span></td>
+							<td colspan=2>
 								<?php $this->load->view('components/toggle_switch',
                                                 array('id' => 'debug-user',
 													  'url' => site_url('admin/site/ajax_toggle_site_setting'),
@@ -40,8 +40,8 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan=2><span data-tooltip class="has-tip top" title="Show debug info site-wide for Site Admins only.">Debug On, Admins-only</span></td>
-							<td>
+							<td><span data-tooltip class="has-tip top" title="Show debug info site-wide for Site Admins only.">Debug On, Admins-only</span></td>
+							<td colspan=2>
 								<?php $this->load->view('components/toggle_switch',
                                                 array('id' => 'debug-admin',
 													  'url' => site_url('admin/site/ajax_toggle_site_setting'),
@@ -95,6 +95,15 @@
 													  'selected_val' => $settings->debug_week_type_id));
 								?>
 							</td>
+						</tr>
+						<tr>
+							<td>PHP</td><td colspan=2> <?=phpversion()?></td>
+						</tr>
+						<tr>
+							<td>Codeigniter</td><td colspan=2> <?=CI_VERSION?></td>
+						</tr>
+						<tr>
+							<td>FFL Project database</td><td colspan=2> <?=$settings->db_version?></td>
 						</tr>
 
 
