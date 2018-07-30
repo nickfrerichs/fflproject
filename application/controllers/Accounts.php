@@ -26,7 +26,6 @@ class Accounts extends MY_Basic_Controller{
         else
             $league_id = $this->account_model->get_league_id($maskid);
 
-            
 
         $code_required = $this->common_noauth_model->join_code_required($maskid);
         $valid_mask = $this->common_noauth_model->valid_mask($maskid);
@@ -34,8 +33,6 @@ class Accounts extends MY_Basic_Controller{
         if ($league_id >= 0)
         {
             // Redirect user away from registration page if already logged in.
-
-
         }
         else
         {
@@ -46,7 +43,6 @@ class Accounts extends MY_Basic_Controller{
                 echo "Invalid url.";
                 return;
             }
-
             //echo "<center>You need to use a valid invite link to register.</center>";
         }
         $this->load->helper('form');

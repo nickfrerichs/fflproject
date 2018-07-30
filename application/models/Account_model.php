@@ -153,4 +153,78 @@ class Account_model extends CI_Model{
             return True;
         }
     }
+
+    function login_speedbump_needed($username="",$ip_address="")
+    {
+        if ($ip_address == "")
+            $ip_address = $this->input->ip_address();
+        // More than 10 login attempts from an IP in 5 mins
+        $num = $this->db->from('user_login_attempts')->where('ip_address',$ip_address)->where('time>',(time()-600))
+            ->count_all_results();
+
+        if ($num >= 10)
+            return True;
+
+        // More than 5 login attempts for a user in 5 mins
+        if($username != "")
+        {
+            $num = $this->db->from('user_login_attempts')->where('login',$username)->where('time>',(time()-300))
+                ->count_all_results();
+
+            if ($num >= 5)
+                return True;
+        }
+
+        return False;
+    }
+
+    // Ported over from old flexi auth implementation
+	public function get_math_captcha()
+	{
+		$min_operand_val = 1;
+		$max_operand_val = 20;
+		$total_operands = 2;
+		$operators = array('+'=>' plus ', '-'=>' minus ');
+		$equation = '';
+        for ($i = 1; $total_operands >= $i; $i++)
+		{
+			$operand = rand($min_operand_val, $max_operand_val);
+			$operator = ($i < $total_operands) ? array_rand($operators) : '';
+			$equation .= $operand.$operator;
+		}
+		// Convert equation symbols to written symbols.
+		$captcha['equation'] = str_replace(array_keys($operators), array_values($operators), $equation);
+		// Convert equation string.
+		eval("\$captcha['answer'] = ".$equation.";");
+
+        $this->session->set_flashdata('fflp_math_captcha', $captcha['answer']);
+
+        return $captcha['equation'];
+    }
+
+    // Ported over from old flexi auth implementation
+    public function validate_math_captcha($answer = FALSE)
+	{
+		return ($answer == $this->session->flashdata('fflp_math_captcha'));
+    }
+    
+    public function get_recaptcha($ssl=FALSE)
+    {
+        $this->load->helper('recaptcha_helper');
+        require_once(FCPATH.'config.php');
+        return recaptcha_get_html($this->config->item('fflp_recaptcha_public_key'), NULL, $ssl);
+    }
+
+	public function validate_recaptcha()
+	{
+        $this->load->helper('recaptcha_helper');
+        require_once(FCPATH.'config.php');
+		$response = recaptcha_check_answer(
+			$this->config->item('fflp_recaptcha_private_key'),
+			$this->input->ip_address(),
+			$this->input->post('recaptcha_challenge_field'),
+			$this->input->post('recaptcha_response_field')
+		);
+		return $response->is_valid;
+	}    
 }

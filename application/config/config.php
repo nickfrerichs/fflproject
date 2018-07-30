@@ -6,6 +6,7 @@ include(FCPATH.'config.php');
 
 // Variables added to config from fflp config
 $config['fflp_salt'] = $fflp_salt;
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL

@@ -30,7 +30,7 @@
 						<?php else: ?>
 						<div class="field">
 							<div class="control">
-								<input type="text" class="input" placeholder="<?=$captcha?>" name="math_captcha_response_field">
+								<input type="text" class="input" placeholder="What is <?=$captcha?> ?" name="math_captcha_response_field">
 							</div>
 						</div>
 						<?php endif;?>
