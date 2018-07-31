@@ -89,8 +89,8 @@ function chatScrollBottom(set)
 
 function chatOpen()
 {
-    return $('#chat-modal').data('open');
-//	return $('#chat-modal').is(':visible');
+//    return $('#chat-modal').data('open');
+	return $('#chat-modal').is(':visible');
 }
 
 function markChatsRead()

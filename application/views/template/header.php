@@ -19,7 +19,7 @@
                 Chat
                 </span>
             </button> -->
-            <div class="navbar-burger burger" data-target="navMenuTransparentExample">
+            <div id="fflp-navbar-burger" class="navbar-burger burger" data-target="navMenuTransparentExample">
                 <span></span>
                 <span></span>
                 <span></span>

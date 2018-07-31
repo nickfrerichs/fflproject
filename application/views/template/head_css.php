@@ -10,5 +10,5 @@
 <link href="<?=site_url('/css/jBox.Notice.css')?>" rel="stylesheet">
 
 <!-- My custom CSS -->
-<link href="<?=site_url('/css/fflproject-chat.css?5')?>" rel="stylesheet">
+<link href="<?=site_url('/css/fflproject-chat.css?7')?>" rel="stylesheet">
 <link href="<?=site_url('/css/fflproject.css?1')?>" rel="stylesheet">

@@ -44,9 +44,16 @@
 .jBox-chat .jBox-content{padding-top:0px !important; padding-left:5px !important; padding-right:5px !important;}
 .jBox-chat .jBox-title{text-align: center; font-size:1.2em; background-color: #276cda; color:#EEE; text-shadow: 0 0 0 ; padding:0;}
 
+
+.chat-popup-title {text-decoration:underline;}
+.chat-popup-body {font-size: .8em;}
+
 .Tooltip-chat{}
 /*.Tooltip-chat .jBox-content{background-color:#2199e8; color:#EEE;}
 .Tooltip-chat .jBox-pointer:after{background-color:#2199e8;}*/
 
 .Tooltip-chat .jBox-content{border: 2px solid #2199e8;}
 .Tooltip-chat .jBox-pointer:after{border: 2px solid #2199e8;}
+
+.Tooltip-chat .jBox-content{background-color:#276cda;}
+

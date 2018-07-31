@@ -80,7 +80,7 @@ class Sse extends MY_User_Controller{
             
             // CHATS get sent when new chat's arrive by watching the chat_key for changes. These are also sent
             // regardless of which page a user is on.
-            if ((1==1 || $this->session->userdata('chat_balloon')) && $last_keys->chat_key != $keys->chat_key)
+            if ($this->session->userdata('chat_balloon') && $last_keys->chat_key != $keys->chat_key)
             {
                 // If the chat_key is new, output chats that occured since the last one.
                 // Need a way to know to send chats if chat_balloon is disabled...ran into complications because two windows could be open.

@@ -96,18 +96,29 @@ function sse_chat_events(chat)
 	$.each(chat,function(i, msg){
 		// This is for the popup ballons.
 		// Don't show these for mobile view.
-		if (chatOpen() != true && $("#chat-button").is(":visible") && msg.is_me == 0)
+		if (chatOpen() != true && !$("#fflp-navbar-burger").is(":visible") && msg.is_me == 0)
 		{
-			var text = "<b>"+msg.chat_name+"</b><br><i>"+msg.message_text+"</i>";
-			var chat_jbox = new jBox('Tooltip', {
+			// Leaving this, prepend if I decide to use a title
+			var popup_title = "<div class='chat-popup-title has-text-centered'>League Chat</div>";
+			var text = "<div class='chat-popup-body'><b class='chat-popup-name'>"+msg.chat_name+"</b>"
+						+"<br><i class='chat-popup-message'>"+msg.message_text+"</i></div>";
+			var closeTime = 10000;
+			if (msg.message_text.length > 200){closeTime = 20000;}
+
+			new jBox('Notice', {
 				content: text,
-				target: $("#chat-button"),
-				width: 200,
-				addClass: 'Tooltip-chat',
-				stack: false
+				attributes: {
+					x: 'right',
+					y: 'bottom'
+				  },
+				color:'blue',
+				stack: true,
+				minWidth: 200,
+				maxWidth: 300,
+				minHeight: 75,
+				autoClose: closeTime,
+				animation: {open: 'pulse', close: 'pulse'}
 			});
-			chat_jbox.open();
-			setTimeout(function(){chat_jbox.close();},4000);
 		}
 		// If chatbox exists, append the chats
 		if (typeof(cb) != undefined)
