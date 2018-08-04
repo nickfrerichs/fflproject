@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.51'
+CURRENT_VERSION = '1.60'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -21,6 +21,29 @@ def main():
 
 
 def upgrade_db(version):
+league_id	team_id	player_id	week	nfl_week_type_id	year
+    if version == "1.51":
+        # **** user_login_attempts **** #
+        if not table_exists('bench'):
+            query = ('CREATE TABLE `bench` ('
+                    +'`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
+                    +'`league_id` int(11) unsigned NOT NULL,'
+                    +'`team_id` int(11) unsigned NOT NULL,'
+                    +'`player_id` int(11) NOT NULL,'
+                    +'`week` int(11) NOT NULL,'
+                    +'`year` int(11) NOT NULL,'
+                    +'`nfl_week_type_id` int(11) NOT NULL,'
+                    +'PRIMARY KEY (`id`))')
+            cur.execute(query)
+            db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.60")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
+
+
     if version == "1.5":
 
         query = 'ALTER TABLE ci_sessions CHANGE id id varchar(128) NOT NULL'
