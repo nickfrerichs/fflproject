@@ -258,6 +258,16 @@ class Common_model extends CI_Model{
         $this->session->set_userdata('user_notifications',$messages);
     }
 
+    function sit_player($playerid, $teamid, $week, $year)
+    {
+        $this->common_noauth_model->sit_player($playerid, $teamid, $week, $year, $this->leagueid);
+    }
+
+    function start_player($playerid, $posid, $teamid, $week, $year, $weektype)
+    {
+        $this->common_noauth_model->start_player($playerid, $posid, $teamid, $week, $year, $weektype, $this->leagueid);
+    }
+
     function drop_player($player_id, $teamid)
     {
         $this->common_noauth_model->drop_player($player_id, $teamid, $this->current_year, $this->current_week, $this->current_weektype);

@@ -207,43 +207,13 @@ class Myteam_roster_model extends MY_Model{
 
     function start_player($player_id, $lea_pos, $week)
     {
-        $wtype = $this->db->select('id')->from('nfl_week_type')->where('text_id',$this->week_type)->get()->row()->id;
-        if($lea_pos == '0') // Sitplayer could probably be a separate function instead of using 0
-        {
-            $this->db->where('week', $week)->where('year', $this->current_year)
-                    ->where('nfl_week_type_id',$wtype)
-                    ->where('team_id', $this->teamid)->where('player_id', $player_id)
-                    ->where('league_id', $this->leagueid)->delete('starter');
-        }
+        if ($lea_pos == 0)
+            $this->common_model->sit_player($player_id, $this->teamid, $week, $this->current_year, $this->leagueid);
         else
-        {
-            $num = $this->db->from('starter')->where('player_id',$player_id)->where('team_id',$this->teamid)
-                ->where('week',$week)->where('year',$this->current_year)->count_all_results();
-            if ($num < 1) // Check to make sure player isn't already started, ran into this twice this year
-            {
-                $data = array('league_id' => $this->leagueid,
-                              'player_id' => $player_id,
-                              'starting_position_id' => $lea_pos,
-                              'team_id' => $this->teamid,
-                              'week' => $week,
-                              'nfl_week_type_id' => $wtype,
-                              'year' => $this->current_year);
-
-                $this->db->insert('starter', $data);
-            }
-        }
-        // If it's the current week, update the bench table since something likely changed there
-        if ($week == $this->current_week)
-            $this->common_noauth_model->update_bench_players($this->teamid,$this->current_year,$this->current_week,$this->week_type,$this->leagueid);
-
+            $this->common_model->start_player($player_id, $lea_pos, $this->teamid, $week, $this->current_year, $this->week_type);
     }
 
-    function start_player_old($player_id, $lea_pos)
-    {
-        $data = array('starting_position_id' => $lea_pos);
-        $this->db->where('player_id',$player_id)
-                ->update('roster', $data);
-    }
+
 
     function is_player_owner($playerid)
     {

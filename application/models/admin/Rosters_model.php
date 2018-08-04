@@ -112,33 +112,12 @@ class Rosters_model extends MY_Model
 
     function sit_player($playerid, $teamid, $week, $year)
     {
-        $wtype = $this->db->select('id')->from('nfl_week_type')->where('text_id',$this->week_type)->get()->row()->id;
-
-        $this->db->where('week', $week)->where('year', $year)
-                ->where('nfl_week_type_id',$wtype)
-                ->where('team_id', $teamid)->where('player_id', $playerid)
-                ->where('league_id', $this->leagueid)->delete('starter');
-        
-
+        $this->common_model->sit_player($playerid, $teamid, $week, $year, $this->leagueid);
     }
 
     function start_player($playerid, $posid, $teamid, $week, $year)
     {
-        $wtype = $this->db->select('id')->from('nfl_week_type')->where('text_id',$this->week_type)->get()->row()->id;
-        $num = $this->db->from('starter')->where('player_id',$playerid)->where('team_id',$teamid)
-                ->where('week',$week)->where('year',$year)->count_all_results();
-        if ($num < 1) // Check to make sure player isn't already started, ran into this twice this year
-        {
-            $data = array('league_id' => $this->leagueid,
-                          'player_id' => $playerid,
-                          'starting_position_id' => $posid,
-                          'team_id' => $teamid,
-                          'week' => $week,
-                          'nfl_week_type_id' => $wtype,
-                          'year' => $year);
-
-            $this->db->insert('starter', $data);
-        }
+        $this->common_model->start_player($playerid, $posid, $teamid, $week, $year, $this->week_type);
     }
 
 
