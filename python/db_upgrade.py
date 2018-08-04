@@ -21,7 +21,6 @@ def main():
 
 
 def upgrade_db(version):
-league_id	team_id	player_id	week	nfl_week_type_id	year
     if version == "1.51":
         # **** user_login_attempts **** #
         if not table_exists('bench'):
