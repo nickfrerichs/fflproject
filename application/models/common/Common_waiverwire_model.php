@@ -130,7 +130,7 @@ class Common_waiverwire_model extends CI_Model{
             }
         }
 
-        $week_year = $this->common_noauth_model->get_current_week($leagueid);
+        $week_year = $this->common_noauth_model->get_current_week_year($leagueid);
 
         // Check position limit, this is a tad complicated
         $pos_year = $this->common_noauth_model->league_position_year($leagueid,$week_year->year);
@@ -214,11 +214,14 @@ class Common_waiverwire_model extends CI_Model{
 
     function pickup_player($player_id, $teamid = 0, $leagueid)
     {
-        $data['league_id'] = $leagueid;
-        $data['team_id'] = $teamid;
-        $data['player_id'] = $player_id;
-        $data['starting_position_id'] = 0;
-        $this->db->insert('roster',$data);
+        $this->common_noauth_model->add_player($player_id, $teamid, $leagueid = 0);
+        // $data['league_id'] = $leagueid;
+        // $data['team_id'] = $teamid;
+        // $data['player_id'] = $player_id;
+        // $data['starting_position_id'] = 0;
+        // $this->db->insert('roster',$data);
+        
+        // Recalculate the bench
     }
 
     function cancel_request($id, $teamid, $week=0)

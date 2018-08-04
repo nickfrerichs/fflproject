@@ -43,31 +43,12 @@ class Rosters_model extends MY_Model
 
     function add_player_to_team($playerid, $teamid)
     {
-        $data = array('league_id' => $this->leagueid,
-            'team_id' => $teamid,
-            'player_id' => $playerid);
-        $this->db->insert('roster',$data);
+        $this->common_noauth_model->add_player($playerid, $teamid, $this->leagueid);
     }
 
     function remove_player_from_team($playerid, $teamid)
     {
-        $this->load->model('common/common_model');
-        $gamestart = $this->common_model->player_game_start_time($playerid);
-
-        // Delete from starter table
-        $this->db->where('league_id',$this->leagueid)->where('team_id',$teamid)->where('player_id',$playerid);
-        if ($gamestart > time()) // if game is in the future, include this week
-            $this->db->where('week >=',$this->current_week);
-        else
-            $this->db->where('week >',$this->current_week);
-        $this->db->delete('starter');
-
-        // Delete any keeper rows for current team with this player for this year
-        $this->db->where('player_id',$playerid)->where('team_id',$teamid)->where('year',$this->current_year)->delete('team_keeper');
-
-        $this->db->where('player_id', $playerid)
-                ->where('team_id', $teamid)
-                ->delete('roster');
+        $this->common_noauth_model->drop_player($playerid, $teamid, $this->current_year, $this->current_week, $this->week_type);
     }
 
     function get_lineup_years($teamid)

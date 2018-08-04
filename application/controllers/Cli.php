@@ -21,11 +21,6 @@ class Cli extends CI_Controller{
             $this->automation_model->approve_waiver_wire_requests($l->id);
         }
     }
-
-    function test()
-    {
-        $this->automation_model->approve_waiver_wire_requests(3);
-    }
 }
 
  ?>

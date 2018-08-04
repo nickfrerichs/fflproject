@@ -104,7 +104,7 @@ class Security_model extends CI_Model
         $this->session->set_userdata('live_element_refresh_time',$this->site_settings->live_element_refresh_time);
         if($this->session->userdata('is_owner'))
         {
-            $week_year = $this->common_noauth_model->get_current_week($this->session->userdata('league_id'));
+            $week_year = $this->common_noauth_model->get_current_week_year($this->session->userdata('league_id'));
             if ($this->site_settings->debug_week == -1)
                 $this->session->set_userdata('current_week', $week_year->week);
             else

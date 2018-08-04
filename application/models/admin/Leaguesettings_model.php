@@ -33,6 +33,15 @@ class Leaguesettings_model extends MY_Model{
         return $val;
     }
 
+    function change_league_name($leagueid=0, $value)
+    {
+        if ($leagueid == 0 || !$leagueid)
+            $leagueid = $this->leagueid;
+        $this->db->where('id',$leagueid);
+        $this->db->update('league',array('league_name' => $value));
+        return $this->db->affected_rows();
+    }
+
     function change_setting($leagueid=0, $type, $value)
     {
         if ($leagueid == 0 || !$leagueid)

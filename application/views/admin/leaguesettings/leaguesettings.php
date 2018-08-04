@@ -7,6 +7,7 @@
     <div class="columns is-centered">
         <div class="column fflp-lg-container">
             <div class="is-size-4"><?=$settings->league_name?></div>
+            <hr>
             <div class="is-size-6"><b>League Settings</b></div>
             <table class="table is-fullwidth is-narrow fflp-table-fixed">
                 <thead>
@@ -93,6 +94,15 @@
             <div class="is-size-6"><b>Cosmetic</b></div>
             <table class="table is-fullwidth is-narrow fflp-table-fixed">
                 <tbody>
+                    <tr>
+                        <td>League Name</td>
+                        <td>
+                            <?php $this->load->view('components/editable_text',array('id' => 'leaguename', 
+                                                                                    'value' => $settings->league_name,
+                                                                                    'url' => site_url('admin/leaguesettings/ajax_change_league_name')));?>
+
+                        </td>
+                    </tr>
                     <tr>
                         <td>Display who's online</td>
                         <td>

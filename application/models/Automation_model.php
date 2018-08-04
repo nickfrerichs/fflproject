@@ -11,7 +11,7 @@ class Automation_model extends CI_Model{
 
     function approve_waiver_wire_requests($leagueid)
     {
-        $week_year = $this->common_noauth_model->get_current_week($leagueid);
+        $week_year = $this->common_noauth_model->get_current_week_year($leagueid);
         if (!$week_year)
             return;
         $week_type = $this->common_noauth_model->get_week_type($leagueid);

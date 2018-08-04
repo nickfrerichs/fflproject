@@ -102,30 +102,6 @@ class Myteam_roster_model extends MY_Model{
             ->get()->result();
     }
 
-    // function get_roster_data_old()
-    // {
-    //     $data = $this->db->select('roster.player_id, roster.starting_position_id')
-    //             ->select('player.first_name, player.last_name')
-    //             ->select('nfl_position.text_id as nfl_pos_text_id, nfl_position.id as nfl_pos_id')
-    //             ->select('nfl_team.club_id')
-    //             ->select('position.nfl_position_id_list, position.text_id as starting_text_id')
-    //             ->select('sum(fantasy_statistic.points) as points')
-    //             ->select('count(distinct(fantasy_statistic.week)) as weeks')
-    //             ->from('roster')
-    //             ->join('player', 'player.id = roster.player_id')
-    //             ->join('nfl_position', 'nfl_position.id = player.nfl_position_id')
-    //             ->join('nfl_team', 'nfl_team.id = player.nfl_team_id')
-    //             ->join('position', 'position.id = roster.starting_position_id','left')
-    //             ->join('fantasy_statistic', 'fantasy_statistic.player_id = player.id')
-    //             ->where('roster.team_id', $this->teamid)
-    //             ->group_by('player.id')
-    //             ->order_by('nfl_position.display_order', 'asc')
-    //             ->get();
-    //
-    //     return $data->result();
-    //
-    // }
-
     function get_team_schedule()
     {
         return $this->db->select('home.id as home_id, away.id as away_id, schedule.week')
@@ -139,20 +115,6 @@ class Myteam_roster_model extends MY_Model{
                 ->where('(`schedule`.`home_team_id` = '.$this->teamid.' or `schedule`.`away_team_id` = '.$this->teamid.')')
                 ->get()->result();
     }
-
-    // function get_nfl_positions_array()
-    // {
-    //     $data = $this->db->select('nfl_position.id, nfl_position.short_text as pos_text')
-    //             ->from('nfl_position')
-    //             ->order_by('display_order','asc')
-    //             ->get();
-    //     $data_array = array();
-    //     foreach ($data->result() as $result)
-    //     {
-    //         $data_array[$result->id] = $result->text_id;
-    //     }
-    //     return $data_array;
-    // }
 
     function get_league_positions_data()
     {
@@ -270,6 +232,10 @@ class Myteam_roster_model extends MY_Model{
                 $this->db->insert('starter', $data);
             }
         }
+        // If it's the current week, update the bench table since something likely changed there
+        if ($week == $this->current_week)
+            $this->common_noauth_model->update_bench_players($this->teamid,$this->current_year,$this->current_week,$this->week_type,$this->leagueid);
+
     }
 
     function start_player_old($player_id, $lea_pos)

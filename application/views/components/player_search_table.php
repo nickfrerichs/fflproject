@@ -15,7 +15,7 @@ if (!isset($per_page))
 
 ?>
 
-<div class="container">
+
     <div class="columns">
         <div class="column is-8-tablet is-4-desktop">
             <?php if(isset($disable_search) && $disable_search == True): ?>
@@ -87,4 +87,4 @@ if (!isset($per_page))
         </tbody>
     </table>
     <?php $this->load->view('load_content/template/load_more_buttons',array('for' => $id));?>
-</div>
+

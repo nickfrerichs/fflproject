@@ -1,5 +1,7 @@
-<!-- <script src="<?=site_url('js/foundation-datepicker.min.js')?>"></script>
-<link href="<?=site_url('/css/foundation-datepicker.min.css')?>" rel="stylesheet"> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
 <?php if(count($approvals) > 0): ?>
 <div class="section">
 	<div class="columns box">
@@ -128,13 +130,25 @@
 </div>
 
 <script>
-
-	$('body').on('focus',"#wwdeadline-edit, #tdeadline-edit", function(){
-		$(this).fdatepicker({
-			format: 'yyyy-mm-dd hh:ii',
-			pickTime: true
-		});
-	});
+	// var picker_options = {
+	// 						enableTime: true,
+	// 						altInput: true,
+	// 						dateFormat: "Y-m-d H:i",
+	// 						altFormat: "F j, Y h:i p"		
+	// 					};
+		
+	var picker_options = {
+							enableTime: true,
+							// altInput: true,
+							//altFormat: "F j, Y H:i",
+							//altInputClass:"",
+							dateFormat: "Y-m-d H:i",
+						};
+	$('#wwdeadline-input').flatpickr(picker_options);
+	$('#tdeadline-input').flatpickr(picker_options);
+	// $('body').on('focus',"#wwdeadline-input, #tdeadline-input", function(){
+	// 	$(this).flatpickr();
+	// });
 
 	$('.ww-approve').on('click',function(){
 		var url = "<?=site_url('admin/transactions/ww_approve')?>";

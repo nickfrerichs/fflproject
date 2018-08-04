@@ -41,6 +41,20 @@ class Leaguesettings extends MY_Admin_Controller
         $return['rows'] = $result;
         echo json_encode($return);
     }
+
+    function ajax_change_league_name()
+    {
+        $value = $this->input->post('value');
+        $return = array('success' => false);
+        $result = $this->leaguesettings_model->change_league_name($this->session->userdata('league_id'),$value);
+        if ($result > 0)
+        {
+            $return['success'] = true;
+            $return['value'] = $value;
+        }
+        echo json_encode($return);
+    }
+
     function set_wo_setting()
     {
         $response = array('success' => false);

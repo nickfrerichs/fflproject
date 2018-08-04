@@ -73,7 +73,7 @@ class Common_noauth_model extends CI_Model{
         return $this->db->select('nfl_season')->from('league_settings')->where('league_id',$leagueid)->get()->row()->nfl_season;
     }
 
-    function get_current_week($leagueid)
+    function get_current_week_year($leagueid)
     {
         $row = $this->db->select('season_year')->from('league')->where('id',$leagueid)->get()->row();
         if (count($row) > 0)
@@ -116,7 +116,7 @@ class Common_noauth_model extends CI_Model{
     {
         if ($year == 0) // If none passed, assume they want to know for the current year
         {
-            $week_year = $this->get_current_week($leagueid);
+            $week_year = $this->get_current_week_year($leagueid);
             $year = $week_year->year;
         }
         $pos_year = $this->db->select('max(year) as y')->from('position')->where('position.league_id',$leagueid)
@@ -165,6 +165,27 @@ class Common_noauth_model extends CI_Model{
         return $this->db->select('id')->from('league')->get()->result();
     }
 
+    function add_player($player_id, $teamid, $leagueid = 0)
+    {
+        if ($leagueid == 0)
+            $leagueid = $this->get_leagueid_from_teamid($teamid);
+        $data['league_id'] = $leagueid;
+        $data['team_id'] = $teamid;
+        $data['player_id'] = $player_id;
+        $data['starting_position_id'] = 0;
+        $this->db->insert('roster',$data);
+
+        // Recalculate the bench for current week
+        $week = $this->get_current_week($leagueid);
+        $year = $this->get_current_year($leagueid);
+        $weektype = $this->get_current_weektype($leagueid);
+        $this->update_bench_players($teamid,$year,$week,$weektype,$leagueid);
+
+    }
+    
+    
+
+    // This function is used by Trade/WW/Admin roster
     function drop_player($player_id, $teamid, $year, $week, $weektype)
     {
         if ($player_id == 0)
@@ -177,25 +198,123 @@ class Common_noauth_model extends CI_Model{
             ->where('team_id',$teamid)
             ->delete('roster');
 
-        // Delete any starter rows for current team with this player
-        $this->db->where('player_id', $player_id)
-                ->where('team_id', $teamid);
-        if(!$lineup_locked)
-            $this->db->where('week >=',$week);
-        else // this week's game has started, don't drop from this weeks starting lineup
-            $this->db->where('week >', $week);
-        $this->db->where('year', $year)
-                ->delete('starter');
-
+        
+        // Delete any starter & bench rows for current team with this player
+        $tables = array('bench','starter');
+        foreach($tables as $t)
+        {
+            $this->db->where('player_id', $player_id)
+                    ->where('team_id', $teamid);
+            if(!$lineup_locked)
+                $this->db->where('week >=',$week);
+            else // this week's game has started, don't drop from this weeks starting lineup
+                $this->db->where('week >', $week);
+            $this->db->where('year', $year)
+                    ->delete($t);
+        }
         // Delete any keeper rows for current team with this player for this year
         $this->db->where('player_id',$player_id)->where('team_id',$teamid)->where('year',$year)->delete('team_keeper');
+
+        if ($this->session->userdata('current_week'))
+            $current_week = $this->session->userdata('current_week');
+        else
+        {
+            $leagueid = $this->get_leagueid_from_teamid($teamid);
+            $week_year = $this->common_noauth_model->get_current_week_year($leagueid);
+            $current_week = $week_year->week;
+        }
+
+        // Update the bench table
+        if ($week == $current_week)
+            $this->update_bench_players($teamid,$year,$week,$weektype);
+    }
+
+
+    // Updates the bench table for one team, it will be corrected to include all players who are
+    // on the teams roster, but not in the starter table.
+    // The intent is for this function to only run for the current week. Future bench doesn't really
+    // make sense and past bench shouldn't change.
+    public function update_bench_players($teamid,$year,$week,$weektype,$leagueid=0)
+    {
+        if ($leagueid==0)
+            $leagueid = $this->get_leagueid_from_teamid($teamid);
+
+        // Retrieve & build the bench array to add first
+        $weektype_id = $this->db->select('id')->from('nfl_week_type')->where('text_id',$weektype)->get()->row()->id;
+
+        // Recalculate the bench players for this team
+        $this->bench_players_recalc($teamid,$year,$week,$weektype_id,$leagueid);
+
+        // Check for other teams that have no players on the bench, if so, recalculate those
+        // This is incase another owner has made no roster changes for the week
+        $teams_to_bench = $this->db->select('team.id')->from('team')
+            ->join('bench',"bench.week={$week} and bench.year={$year} and bench.team_id = team.id",'left')
+            ->join('roster','roster.team_id = team.id','left')
+            ->where('team.league_id',$leagueid)->where('bench.id is NULL')->where('roster.id is NOT NULL')
+            ->get()->result();
+
+        foreach($teams_to_bench as $t)
+            $this->bench_players_recalc($t->id,$year,$week,$weektype_id,$leagueid);
+    }
+
+    // Sub function to set the bench players for a single team
+    private function bench_players_recalc($teamid,$year,$week,$weektype_id,$leagueid)
+    {
+        // All players who are on the roster, aren't starters = bench
+        $newbench_result = $this->db->select('roster.player_id')->from('roster')
+            ->join('starter','starter.week = '.$week.' and starter.year = '.$year.
+                    ' and starter.team_id = '.$teamid.' and roster.player_id = starter.player_id','left')
+            ->where('roster.team_id',$teamid)->where('starter.player_id is NULL')
+            ->get()->result();
+
+        // Get who is currently in the bench table, "old bench"
+        $oldbench_result = $this->db->select('bench.player_id')->from('bench')
+            ->where('team_id',$teamid)->where('week',$week)->where('year',$year)
+            ->get()->result();
+        $oldbench_ids = array();
+        foreach($oldbench_result as $b)
+            $oldbench_ids[] = $b->player_id;
+
+        $bench_ids = array();
+        $bench_data = array();
+
+        foreach($newbench_result as $r)
+        {
+            $bench_ids[] = $r->player_id;
+            if (!in_array($r->player_id,$oldbench_ids))
+            {
+            
+                $bench_data[] = array(
+                    'league_id'         =>  $leagueid,
+                    'team_id'           =>  $teamid,
+                    'player_id'         =>  $r->player_id,
+                    'week'              =>  $week,
+                    'year'              =>  $year,
+                    'nfl_week_type_id'  =>  $weektype_id
+                );
+            }
+        }
+        
+        // Clear the bench, if they aren't in the current desired set of benched players
+        if(count($bench_ids)>0)
+        {
+            $this->db->where('team_id',$teamid)->where('week',$week)
+                ->where_not_in('player_id',$bench_ids)->delete('bench');
+        }
+        elseif(count($bench_ids)==0) // When bench is empty, cant usre "where_not_in"
+            $this->db->where('team_id',$teamid)->where('week',$week)->delete('bench');
+
+        if(count($bench_data)>0)
+        {
+            // Add the benched players from the above array that are missing
+            $this->db->insert_batch('bench',$bench_data);
+        }
     }
 
     // THIS FUNCTION SHOULDN'T BE IN NOAUTH, IT REQUIRES AUTH
     function is_player_lineup_locked($player_id, $teamid, $year, $week, $weektype)
     {
-        $leagueid = $this->db->select('league_id')->from('team')->where('id',$teamid)->get()->row()->league_id;
-
+        $leagueid = $this->get_leagueid_from_teamid($teamid);
         $lock_first_game = $this->db->select('lock_lineups_first_game')->from('league_settings')->where('league_id',$leagueid)
             ->get()->row()->lock_lineups_first_game;
 
@@ -237,5 +356,45 @@ class Common_noauth_model extends CI_Model{
 
     }
 
+    function get_leagueid_from_teamid($teamid)
+    {
+        return $this->db->select('league_id')->from('team')->where('id',$teamid)->get()->row()->league_id;
+    }
+
+    // Get the current week from session data, or look it up if not found
+    function get_current_week($leagueid=0)
+    {
+        if ($this->session->userdata('current_week'))
+            $current_week = $this->session->userdata('current_week');
+        else
+        {
+            $week_year = get_current_week_year($leagueid);
+            $current_week = $week_year->week;
+        }
+        return $current_week;
+    }
+
+    function get_current_year($leagueid=0)
+    {
+        if ($this->session->userdata('current_year'))
+            $current_year = $this->session->userdata('current_year');
+        else
+        {
+            $week_year = get_current_week($leagueid);
+            $current_year = $week_year->year;
+        }
+        return $current_year;
+    }
+
+    function get_current_weektype($leagueid)
+    {
+        if ($this->session->userdata('week_type'))
+            $current_weektype = $this->session->userdata('week_type');
+        else
+        {
+            $current_weektype = $this->db->select('nfl_season')->from('league_settings')->where('league_id',$this->session->userdata('league_id'))->get()->row()->nfl_season;
+        }    
+        return $current_weektype;
+    }
 }
 ?>

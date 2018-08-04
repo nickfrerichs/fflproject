@@ -16,10 +16,17 @@
     <button id="submit" class="button is-small is-link">Save</button>
     <button id="cancel" class="button is-small is-link">Cancel</button>
 </div>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="<?=site_url('js/tinymce/tinymce.min.js')?>"></script>
+<!-- <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script> -->
 <script>
 
 $(document).ready(function(){
+// Tried Quill, not worth the time to switch
+// var quill = new Quill('#content', {
+//   modules: { toolbar: true },
+//   theme: 'snow'
+// });
 
     tinymce.init({
         mode: 'textareas',
@@ -27,8 +34,9 @@ $(document).ready(function(){
         plugins: 'table colorpicker',
         table_styles: 'Default=table',
         init_instance_callback: "loadcontent",
-        content_css: "<?=site_url('css/foundation.min.css')?>",
+        content_css: "<?=site_url('css/bulma.min.css')?>",
         height: "280"});
+
 })
 
 $("#submit").on('click',function(){

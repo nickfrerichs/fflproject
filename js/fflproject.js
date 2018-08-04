@@ -166,11 +166,12 @@ $(document).on('click','.editable-text-save-button', function(e){
     var url = $(input).data('url');
 
     $.post(url,{'id':id,'value':value,'var1':var1,'var2':var2,'var3':var3},function(data){
+        console.log(data);
         var d = $.parseJSON(data);
         debug_out(d);
 		if(d.success) {$(input).val(d.value);}
         else {$(input).val($(input).data('initial-value'));}
-    });
+    }).fail(function(){notice('A system error occured.','error');});
 
     $(input).prop('disabled',true);
     $(id+'-save-button').addClass('is-hidden');
@@ -213,7 +214,7 @@ $(document).on('click','.editable-select-save-button', function(e){
         var d = $.parseJSON(data);
 		if(d.success) {$(select).val(d.value);}
         else {$(select).val($(select).data('initial-value'));}
-    });
+    }).fail(function(){notice('A system error occured.','error');});
 
     $(select).prop('disabled',true);
     $(id+'-save-button').addClass('is-hidden');
@@ -241,7 +242,7 @@ $(document).on('click','.toggle-control',function(e){
         {
             debug_out('error in toggle');
         }
-    });
+    }).fail(function(){notice('A system error occured.','error');});
     
 });
 
@@ -318,9 +319,7 @@ $(document).on('click','.ajax-submit-button',function(e){
             notice(data.error,'error');
         }
 
-    },'json').fail(function(){
-        notice('A system error occured.','error');
-    });
+    },'json').fail(function(){notice('A system error occured.','error');});
 
 });
 

@@ -263,26 +263,9 @@ class Trade_model extends MY_Model{
             }
             // Drop from old team
             $this->common_model->drop_player($p->player_id, $oldteamid);
-            // // Delete player from old team
-            // $this->load->model('common/common_model');
-            // $gamestart = $this->common_model->player_game_start_time($p->player_id);
-            //
-            // // Delete from starter table
-            // $this->db->where('league_id',$this->leagueid)->where('team_id',$oldteamid)->where('player_id',$p->player_id);
-            // if ($gamestart > time()) // if game is in the future, include this week
-            //     $this->db->where('week >=',$this->current_week);
-            // else
-            //     $this->db->where('week >',$this->current_week);
-            // $this->db->delete('starter');
-            //
-            // // Delete from roster table
-            // $this->db->delete('roster', array('league_id'=>$this->leagueid, 'team_id'=>$oldteamid, 'player_id'=>$p->player_id));
-            //
-            // // Delete any keeper rows for current team with this player for this year
-            // $this->db->where('player_id',$p->player_id)->where('team_id',$oldteamid)->where('year',$this->current_year)->delete('team_keeper');
 
             // Add player to new team
-            $this->db->insert('roster', array('league_id'=>$this->leagueid,'team_id'=>$newteamid,'player_id'=>$p->player_id, 'starting_position_id'=>0));
+            $this->common_noauth_model->add_player($p->player_id, $newteamid, $this->leagueid);
         }
 
         foreach($picks as $p)
@@ -596,56 +579,6 @@ class Trade_model extends MY_Model{
         }
         return $result;
     }
-
-    // function get_trade_log_array_old($year = 0, $limit = 100000, $start = 0)
-    // {
-    //
-    //     if ($year == 0)
-    //         $year = $this->current_year;
-    //
-    //     $result = array();
-    //
-    //     $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
-    //     $this->db->from('trade')->where('completed',1)->where('trade.year',$year)->where('league_id',$this->leagueid)->get()->result();
-    //     $result['total'] = $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;
-    //
-    //     $data = $this->db->select('player.first_name, player.last_name, player.id as player_id')
-    //         ->select('team1.team_name as team1_name, team2.team_name as team2_name, team1.id as team1_id, team2.id as team2_id')
-    //         ->select('trade.id as trade_id')
-    //         ->select('UNIX_TIMESTAMP(trade.completed_date) as completed_date')
-    //         ->select('trade_player.team_id as old_team_id')
-    //         ->from('trade_player')->join('player','player.id = trade_player.player_id')
-    //         ->join('trade','trade.league_id = '.$this->leagueid.' and trade.year = '.$year.' and trade.id = trade_player.trade_id')
-    //         ->join('team as team1','team1.id = trade.team1_id')
-    //         ->join('team as team2','team2.id = trade.team2_id')
-    //         ->where('completed',1)
-    //         ->order_by('completed_date','desc')
-    //         ->get()->result();
-    //
-    //
-    //
-    //     foreach($data as $row)
-    //     {
-    //         $result['log'][$row->trade_id]['team1']['team_name'] = $row->team1_name;
-    //         $result['log'][$row->trade_id]['team2']['team_name'] = $row->team2_name;
-    //         $result['log'][$row->trade_id]['team1']['team_id'] = $row->team1_id;
-    //         $result['log'][$row->trade_id]['team2']['team_id'] = $row->team2_id;
-    //         $result['log'][$row->trade_id]['completed_date'] = $row->completed_date;
-    //         if ($row->old_team_id == $row->team1_id)
-    //             $thisteam = "team2";
-    //         else
-    //             $thisteam = "team1";
-    //         $player = array('first_name' => $row->first_name,
-    //                         'last_name' => $row->last_name,
-    //                         'player_id' => $row->player_id);
-    //         $result['log'][$row->trade_id][$thisteam]['players'][] = $player;
-    //
-    //     }
-    //
-    //
-    //     $result['log'] = array_splice($result['log'],$start,$limit);
-    //     return $result;
-    // }
 
     function get_future_pick_years_array()
     {

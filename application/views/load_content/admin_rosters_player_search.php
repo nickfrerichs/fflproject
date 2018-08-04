@@ -7,7 +7,7 @@
         <?php if($p->team_name): ?>
         <td><?=$p->team_name?></td>
         <?php else: ?>
-            <td><button class="button tiny add-button" data-id="<?=$p->id?>" data-name = "<?=$p->first_name.' '.$p->last_name?>">add</button></td>
+            <td><button class="button is-small is-link add-button" data-id="<?=$p->id?>" data-name = "<?=$p->first_name.' '.$p->last_name?>">add</button></td>
         <?php endif;?>
     </tr>
 <?php endforeach; ?>

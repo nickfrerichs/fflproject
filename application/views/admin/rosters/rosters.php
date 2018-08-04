@@ -8,20 +8,20 @@ $headers['Position'] = array('by' => 'position', 'order' => 'asc');
 $headers['NFL Team'] = array('by' => 'club_id', 'order' => 'asc');
 //$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
 //$headers['Points'] = array('by' => 'points', 'order' => 'asc');
-$headers['Team'] = array();
+$headers[''] = array();
 
 $pos_dropdown['All'] = 0;
 foreach($positions as $p)
     $pos_dropdown[$p->text_id] = $p->id;
-
-$body = $this->load->view('components/player_search_table',
+$body = "<div>";
+$body .= $this->load->view('components/player_search_table',
                 array('id' => 'admin-player-add-list',
                       'url' => site_url('load_content/admin_rosters_player_search'),
                       'order' => 'desc',
                       'by' => 'points',
                       'pos_dropdown' => $pos_dropdown,
                       'headers' => $headers),True);
-
+$body .= "</body>";
 
 ?>
 
