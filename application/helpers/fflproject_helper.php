@@ -76,6 +76,11 @@ function get(&$var, $default=null) {
 //     }
 // }
 
+function prepare_email_body($in_body)
+{
+    return str_replace("\n","<br>",$in_body);
+}
+
 function debug($var,$debug)
 {
 
