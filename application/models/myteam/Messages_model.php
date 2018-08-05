@@ -72,6 +72,7 @@ class Messages_model extends MY_Model{
         $this->email->from($this->config->item('fflp_email_reply_to'), $this->config->item('fflp_email_site_title'));
         $this->email->to($recipient);
         $this->email->subject($subject);
+        $body = prepare_email_body($body);
         $this->email->message($body);
         $this->email->send();
     }
