@@ -32,7 +32,8 @@
 			</div>
 			<div id="message-buttons" class="is-hidden">
 				<button id="message-reply" class="button is-small is-link">Reply</button>
-				<button id="message-delete" class="button is-small is-link">Delete</button>
+				<button id="message-delete" class="button is-small is-link">Move to Trash</button>
+				<button id="message-forever" class="button is-small is-link">Delete Forever</button>
 				<button id="message-close" class="button is-small is-link">Close</button>
 			</div>
 		</div>
@@ -63,6 +64,8 @@ $(document).ready(function(){
 			$("#message-list tr").removeClass("activemessage")
 			$(this).addClass("activemessage");
 			$("#message-callout").removeClass("is-hidden");
+			if (current_folderid() == 2){$('#message-delete').addClass('is-hidden');}
+			else{$('#message-delete').removeClass('is-hidden');}
 		}
 	});
 
@@ -94,6 +97,24 @@ $(document).ready(function(){
 
 		});
 	});
+
+	// Delete forever button click
+	$("#message-forever").on("click",function(){
+		url = "<?=site_url('myteam/messages/delete_message')?>";
+		var id = $("#displayed-message").data("message-id");
+		$.post(url,{'id' : id,'forever':true},function(data){
+			result = $.parseJSON(data);
+			if (result.success == true)
+			{
+				$("#message-display").text("");
+				$("#message-callout").addClass("is-hidden");
+				//notice(result.msg);
+			}
+			load_messages(current_folderid());
+
+		});
+	});
+
 	// Close button click
 	$("#message-close").on("click",function(){
 		$("#message-display").text("");
@@ -111,8 +132,6 @@ $(document).ready(function(){
 			$("#message-display").text("");
 			$(".folder-name").attr('id','current_'+folder);
 			$(".folder-name").text($("#folder_"+folder).text());
-			console.log($(".folder-name").text());
-			console.log(current_folderid());
 		});
 		hide_controls()
 	}

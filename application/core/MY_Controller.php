@@ -38,13 +38,13 @@ class MY_User_Controller extends MY_Basic_Controller{
         // 3. Turn debugging on, if enabled.
         if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
         {
-                $sections = array(
-                        'benchmarks' => TRUE, 'memory_usage' => TRUE,
-                        'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => TRUE, 'session_data' => TRUE
-                );
-                $this->output->set_profiler_sections($sections);
-                $this->output->enable_profiler(TRUE);
+            $sections = array(
+                    'benchmarks' => TRUE, 'memory_usage' => TRUE,
+                    'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
+                    'uri_string' => FALSE, 'http_headers' => TRUE, 'session_data' => TRUE
+            );
+            $this->output->set_profiler_sections($sections);
+            $this->output->enable_profiler(TRUE);
         }
 
         // 4. Set some local variables for easier access, sort of regret doing this since I depend on them now.
@@ -113,13 +113,13 @@ class MY_Admin_Controller extends MY_Basic_Controller{
         // Turn debugging on, if enabled.
         if ($this->session->userdata('debug') && !$this->input->is_ajax_request())
         {
-                $sections = array(
-                        'benchmarks' => TRUE, 'memory_usage' => TRUE,
-                        'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
-                        'uri_string' => FALSE, 'http_headers' => TRUE, 'session_data' => TRUE
-                );
-                $this->output->set_profiler_sections($sections);
-                $this->output->enable_profiler(TRUE);
+            $sections = array(
+                    'benchmarks' => TRUE, 'memory_usage' => TRUE,
+                    'config' => FALSE, 'controller_info' => FALSE, 'get' => FALSE, 'post' => TRUE, 'queries' => TRUE,
+                    'uri_string' => FALSE, 'http_headers' => TRUE, 'session_data' => TRUE
+            );
+            $this->output->set_profiler_sections($sections);
+            $this->output->enable_profiler(TRUE);
         }
 
         // If not logged in redirect to login page

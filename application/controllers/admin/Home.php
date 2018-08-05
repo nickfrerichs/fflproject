@@ -16,7 +16,8 @@ class Home extends MY_Admin_Controller
     	$data = array();
     	if ($this->is_league_admin)
 	    	redirect('admin/teams');
-	    $data['has_leagues'] = $this->site_model->has_leagues();
+        $data['has_leagues'] = $this->site_model->has_leagues();
+        $data['nfl_schedule_status'] = $this->site_model->get_nfl_schedule_status();
         $this->admin_view('admin/home',$data);
     }
 }

@@ -33,6 +33,9 @@ class End_season extends MY_Admin_Controller
             // Clear rosters except for keepers, use current_season to get keepers assigned during that season
             $this->end_season_model->clear_rosters($current_season);
 
+            // Make a copy of any current keepers to the next season
+            $this->end_season_model->copy_keepers($current_season,$next_season);
+
             $this->load->model('security_model');
             $this->security_model->set_dynamic_session_variables();
 

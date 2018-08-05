@@ -29,6 +29,25 @@ class End_season_model extends MY_Model
 		$this->db->query($sql);
 	}
 
+	function copy_keepers($current_season,$next_season)
+	{
+		$result = $this->db->select('team_id, player_id')->from('team_keeper')->where('league_id',$this->leagueid)
+			->where('year',$current_season)->get()->result();
+		$data = array();
+		foreach($result as $k)
+		{
+			$data[] = array(
+				'team_id' => $k->team_id,
+				'player_id' => $k->player_id,
+				'league_id' => $this->leagueid,
+				'year' => $next_season
+			);
+		}
+		if (count($data)>0)
+			$this->db->insert_batch('team_keeper',$data);
+
+	}
+
 	function enable_offseason()
 	{
 		$this->db->where('league_id',$this->leagueid);

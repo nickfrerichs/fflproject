@@ -22,6 +22,7 @@ class Site extends MY_Admin_Controller{
     public function create_league()
     {
         $data = array();
+        $data['nfl_schedule_status'] = $this->site_model->get_nfl_schedule_status();
         $this->bc["Leagues"] = site_url("admin/site/manage_leagues");
         $this->bc["New"] = "";
         $this->admin_view('admin/site/create_league',$data);
