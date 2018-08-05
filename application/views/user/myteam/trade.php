@@ -6,10 +6,10 @@
 	<br>
 	<div class="has-text-left">
 
-	<?php if(!$this->session->userdata('offseason')): ?>
-		<span><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></span> |
-	<?php endif;?>
-	<span><a href="<?=site_url('myteam/trade/log')?>">Trade log</a></span>
+		<?php if(!$this->session->userdata('offseason')): ?>
+			<span><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></span> |
+		<?php endif;?>
+		<span><a href="<?=site_url('myteam/trade/log')?>">Trade log</a></span>
 
 	</div>
 
@@ -27,17 +27,16 @@
 	<div class="is-size-5">Outstanding Trades</div>
 	<br>
 	<div class="box">
-
-	<table class="table is-fullwidth is-striped">
-		<thead>
-			<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
-		</thead>
-		<tbody id="open-trades-tbody">
-		</tbody>
-	</table>
-</div>
+		<table class="table is-fullwidth is-striped">
+			<thead>
+				<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
+			</thead>
+			<tbody id="open-trades-tbody">
+			</tbody>
+		</table>
+	</div>
 <?php endif; ?>
-
+</div>
 
 
 <script>

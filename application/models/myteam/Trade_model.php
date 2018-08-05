@@ -447,66 +447,70 @@ class Trade_model extends MY_Model{
         $team1data = $this->common_model->team_info($data->team1_id);
         $team2data = $this->common_model->team_info($data->team2_id);
 
-
+        $body = "<h3>";
         if ($subject == "Trade Proposed")
         {
-            $body = "New proposal from ".$team1data->team_name."\n\n";
+            $body .= "New proposal from ".$team1data->team_name."<br><br>";
         }
 
         if ($subject == "Trade Accepted")
         {
-            $body = "Trade Accepted by ".$team2data->team_name."\n\n";
+            $body .= "Trade Accepted by ".$team2data->team_name."<br><br>";
         }
 
         if ($subject == "Trade Pending")
         {
-            $body = "Trade accepted, pending ".$team2data->team_name." clears enough roster spots.\n\n";
+            $body .= "Trade accepted, pending ".$team2data->team_name." clears enough roster spots.<br><br>";
         }
 
         if ($subject == "Trade Declined")
         {
-            $body = "Trade declined by ".$team2data->team_name."\n\n";
+            $body .= "Trade declined by ".$team2data->team_name."<br><br>";
         }
 
         if ($subject == "Trade Canceled")
         {
-            $body = "Trade canceled by ".$team1data->team_name."\n\n";
+            $body .= "Trade canceled by ".$team1data->team_name."<br><br>";
         }
-
+        $body .= "</h3>";
         if (count($proposed_players) > 0)
         {
-            $body .= "Players offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):\n";
+            $body .= "<b>Players offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):</b><ul>";
             foreach($proposed_players as $p)
             {
-                $body.=$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")\n";
+                $body.="<li>".$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")</li>";
             }
+            $body.="</ul>";
         }
 
         if (count($proposed_picks) > 0)
         {
-            $body .= "\nPicks offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):\n";
+            $body .= "<br><b>Picks offered by ".$team1data->team_name.' ('.$team1data->first_name.' '.$team1data->last_name."):</b><ul>";
             foreach($proposed_picks as $p)
             {
-                $body.='Year: '.$p->year.', Round: '.$p->round."\n";
+                $body.='<li>Year: '.$p->year.', Round: '.$p->round."</li>";
             }
+            $body.="</ul>";
         }
 
         if (count($requested_players) > 0)
         {
-            $body .= "\nPlayers requested from ".$team2data->team_name.' ('.$team2data->first_name.' '.$team2data->last_name."):\n";
+            $body .= "<br><b>Players requested from ".$team2data->team_name.' ('.$team2data->first_name.' '.$team2data->last_name."):</b><ul>";
             foreach($requested_players as $p)
             {
-                $body.=$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")\n";
+                $body.="<li>".$p->first_name.' '.$p->last_name.' ('.$p->pos.' - '.$p->club_id.")</li>";
             }
+            $body.="</ul>";
         }
 
         if (count($requested_picks) > 0)
         {
-            $body .= "\nPicks requested from ".$team2data->team_name.' ('.$team2data->first_name.' '.$team2data->last_name."):\n";
+            $body .= "<br><b>Picks requested from ".$team2data->team_name.' ('.$team2data->first_name.' '.$team2data->last_name."):</b><ul>";
             foreach($requested_picks as $p)
             {
-                $body.='Year: '.$p->year.', Round: '.$p->round."\n";
+                $body.='<li>Year: '.$p->year.', Round: '.$p->round."</li>";
             }
+            $body.="</ul>";
         }
 
         $this->config->load('fflproject');
