@@ -51,7 +51,9 @@ class Player_search_model extends CI_Model{
             $this->db->where_not_in('player.id',$owned);
         $this->db->group_by('player.id')
             ->order_by($order_by[0],$order_by[1])
-            ->order_by('last_name','asc');
+            ->order_by('last_name','asc')
+            ->order_by('first_name','asc')
+            ->order_by('player.id','asc');
 
         if (!$show_inactive)
             $this->db->where('player.active', true);

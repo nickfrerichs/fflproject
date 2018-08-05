@@ -4,8 +4,8 @@
 <div class="section">
 	<?php //Show the player list using player_search_table component
 
-	$headers['Position'] = array('by' => 'position', 'order' => 'asc');
 	$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+	$headers['Position'] = array('by' => 'position', 'order' => 'asc');
 	$headers['NFL Team'] = array('by' => 'club_id', 'order' => 'asc');
 	$headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
 	$headers['Bye'] = array();
