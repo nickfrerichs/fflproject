@@ -161,6 +161,14 @@ class Site_model extends MY_Model
 
     }
 
+    function get_nfl_schedule_status()
+    {
+        $row = $this->db->select('year,gt')->from('nfl_schedule')->order_by('start_time','desc')->limit(1)->get()->row();
+        if ($row)
+            return $row;
+        return False;
+    }
+
     function set_debug_week($value)
     {
         $data = array("debug_week" => $value);

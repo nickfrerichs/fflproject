@@ -53,7 +53,14 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	$fflp_set_ci_env = 'production';
+	if (file_exists('fflp_ci_env.php'))
+		include('fflp_ci_env.php');
+	
+	if (isset($fflp_ci_env))
+		$fflp_set_ci_env = $fflp_ci_env;
+		
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : $fflp_set_ci_env);
 
 /*
  *---------------------------------------------------------------

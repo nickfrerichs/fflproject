@@ -5,7 +5,7 @@
     <div class="columns is-centered">
         <div class="column">
 			<div class="container fflp-lg-container">
-				<h5>Settings</h5>
+				<div class="is-size-5">Settings</div>
 				<?php //print_r($settings); ?>
 				<table class="table is-fullwidth fflp-table-fixed">
 					<thead>
@@ -24,8 +24,7 @@
 						</tr>
 					</tbody>
 				</table>
-				<br>
-				<h5>Debugging Options</h5>
+				<div class="is-size-5">Debugging Options</div>
 				<table class="table is-fullwidth fflp-table-fixed">
 					<tbody>
 						<tr>
@@ -97,17 +96,34 @@
 							</td>
 						</tr>
 						<tr>
-							<td>PHP</td><td colspan=2> <?=phpversion()?></td>
-						</tr>
-						<tr>
-							<td>Codeigniter</td><td colspan=2> <?=CI_VERSION?></td>
-						</tr>
-						<tr>
-							<td>FFL Project database</td><td colspan=2> <?=$settings->db_version?></td>
-						</tr>
+							<td colspan=3>
+								<div class="content">
+									<a href="#" id="toggle-error-reporting">How do I enable PHP error reporting?</a>
+									<div id="error-reporting" class="is-hidden">
+										<ul>
+											<li>Create a file called fflp_ci_env.php in the document root.</li>
+											<li>Add the following content to the file:
+												<pre>&lt;?php $fflp_ci_env = 'development'; ?&gt;</pre>
+												</li>
 
-
+										</ul>
+									</div>
+								</div>
+							</td>
+						</tr>
 					</tbody>
+				</table>
+				<div class="is-size-5">Version Information</div>
+				<table class="table is-fullwidth fflp-table-fixed">
+					<tr>
+						<td>PHP</td><td colspan=2> <?=phpversion()?></td>
+					</tr>
+					<tr>
+						<td>Codeigniter</td><td colspan=2> <?=CI_VERSION?></td>
+					</tr>
+					<tr>
+						<td>FFL Project database</td><td colspan=2> <?=$settings->db_version?></td>
+					</tr>
 				</table>
 			</div>
 		</div>
@@ -115,32 +131,9 @@
 </div>
 
 <script>
-// $('.change').on('click',function(){
-// 	var ele = $(this).data('for');
-// 	if ($(this).text() == "Change")
-// 	{
-// 		$('#'+ele).prop("disabled",false);
-// 		$(this).text("Cancel");
-// 	}
-// 	else if($(this).text() == "Cancel")
-// 	{
-// 		$('#'+ele).prop("disabled",true);
-// 		$(this).text("Change");
-// 	}
-// });
-
-// $('#change-week, #change-year, #change-weektype').on('change', function(){
-// 	var type = $(this).attr('id').replace('change-',"");
-// 	var url = "<?=site_url('admin/site/ajax_change_item')?>";
-// 	var value = $(this).val();
-
-// 	$.post(url,{'type':type,'value':value},function(data){
-// 		var d = $.parseJSON(data);
-// 		if(d.success)
-// 		{
-// 			location.reload();
-// 		}
-// 	});
-// });
+$('#toggle-error-reporting').on('click',function(e){
+	e.preventDefault();
+	$('#error-reporting').toggleClass('is-hidden');
+});
 
 </script>

@@ -62,8 +62,11 @@ class Messages extends MY_User_Controller{
 
     function delete_message()
     {
+        $forever = false;
+        if ($this->input->post('forever') == true)
+            $forever = true;
         $response = array('success' => false, 'msg' => '');
-        $response['msg'] = $this->messages_model->delete_message($this->input->post('id'));
+        $response['msg'] = $this->messages_model->delete_message($this->input->post('id'),$forever);
         $response['success'] = true;
         //$this->messages_model->delete_message(9);
 

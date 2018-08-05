@@ -74,6 +74,18 @@ class Admin_security_model extends MY_Model
         return False;
     }
 
+    function league_admins_missing()
+    {
+        $this->load->model('admin/site_model');
+        $leagues = $this->site_model->get_leagues();
+        $noadmins = False;
+        foreach($leagues as $l)
+        {
+            if (count($l['admins']) == 0)
+                $noadmins = True;
+        }
+        return $noadmins;
+    }
     function get_admin_notifications()
     {
         # class: is the foundation css class for a callout
@@ -81,6 +93,19 @@ class Admin_security_model extends MY_Model
         # id: can be whatever you want, but it should be unique site-wide vs all css classes
 
         $messages = array();
+
+        // Messages for site admin
+        if ($this->session->userdata('is_site_admin'))
+        {
+            if ($this->league_admins_missing())
+            {
+                $messages[] = array('class'=>'warning',
+                                    'message'=>'Some leagues have no admins assigned.'.
+                                    '<br><a href="'.site_url('admin/site/manage_leagues').'">Manage League Settings</a>',
+                                    'id'=>'msg_site_admins_missing');   
+            }
+        }
+
         // Messages for league admin (is_owner)
         if ($this->session->userdata('is_league_admin'))
         {
