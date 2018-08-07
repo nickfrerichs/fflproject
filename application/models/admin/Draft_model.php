@@ -160,6 +160,10 @@ class Draft_model extends MY_Model
 
     function reset_auto_start()
     {
+        # Temporarily disabling autostart
+        $this->db->where('league_id',$this->leagueid)->update('league_settings',array('draft_start_time' => 0));
+        return;
+
         $s = $this->get_draft_settings();
         if ($s->draft_start_time > 0)
         {
@@ -171,6 +175,11 @@ class Draft_model extends MY_Model
     {
         $s = $this->get_draft_settings();
         $data = array('draft_start_time' => 0);
+
+        // Temporarily disabling autostart
+        $this->db->where('league_id',$this->leagueid)->update('league_settings',$data);
+        return 0;
+
         if ($s->draft_start_time == 0)
         {
             $data['draft_start_time'] = $s->scheduled_draft_start_time;
