@@ -54,106 +54,67 @@ class Draft extends MY_User_Controller{
 
     function live()
     {
-        $this->load->model('myteam/myteam_settings_model');
         $data = array();
-        $current_time = time();
-        $settings = $this->draft_model->get_settings();
-
-        // Recent/current pick data
-        $data['current_pick'] = $this->draft_model->get_current_pick_data();
-        $data['picks'] = $this->draft_model->get_recent_picks_data();
-
-        // if($settings->draft_start_time <= $current_time) // Draft has started
-        // {
-        //     $current_pick = $this->draft_model->get_current_pick_data();
-        // }
-
-        $data['start_time'] = $settings->scheduled_draft_start_time;
-        $data['per_page'] = $this->per_page;
-        $data['sort'] = array('a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');
-        $data['pos'] = $this->player_search_model->get_nfl_positions_data();
-
-        $data['scheduled_start_time'] = $settings->scheduled_draft_start_time;
-        $data['start_time'] = $settings->draft_start_time;
-        $data['current_time'] = $current_time;
-        $data['paused'] = false;
-        if ($settings->draft_paused > 0)
-            $data['paused'] = true;
-
-        if(($settings->scheduled_draft_start_time > $current_time && ($settings->draft_start_time == 0 || $settings->draft_start_time > $current_time)))
-            $data['block_title'] = 'Draft Begins';
-        elseif(empty($data['current_pick']))
-            $data['block_title'] = 'End of Draft';
+        if ($this->session->userdata('offseason'))
+        {
+            $this->bc['Draft'] = site_url('season/draft');
+            $this->bc[$this->current_year.' Live'] = "";
+            $this->user_view('user/offseason',$data);
+        }
         else
         {
-            $data['seconds_left'] = $settings->draft_update_key - $current_time;
-            if($data['paused'])
-            {
-                $data['seconds_left'] = $this->draft_model->draft_paused();
-            }
-            $data['block_title'] = 'Now Picking';
-            if ($data['current_pick']->logo)
-                $data['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_logo_url($data['current_pick']->team_id,'thumb');
-            else
-                $data['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_default_logo_url();
-        }
-
-
-
-        $this->bc['Draft'] = site_url('season/draft');
-        $this->bc[$this->current_year.' Live'] = "";
-        $this->user_view('user/season/draft/live',$data);
-    }
-
-    // function live()
-    // {
-    //     $data = array();
-    //     $data['start_time'] = $this->draft_model->get_start_time();
-    //     $data['per_page'] = $this->per_page;
-    //     $data['sort'] = array('a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');
-    //     $data['pos'] = $this->player_search_model->get_nfl_positions_data();
-    //
-    //     if ($data['start_time'] == "0")
-    //         $this->user_view('user/league/draft/disabled');
-    //     else
-    //         $this->user_view('user/league/draft/live',$data);
-    // }
-
-/*
-    function ajax_get_block_info()
-    {
-        $data = array();
-        $current_time = time();
-
-        $settings = $this->draft_model->get_settings();
-        $data['scheduled_start_time'] = $settings->scheduled_draft_start_time;
-        $data['start_time'] = $settings->draft_start_time;
-        $data['current_time'] = $current_time;
-        $data['paused'] = false;
-        if ($settings->draft_paused > 0)
-            $data['paused'] = true;
-        if($data['start_time'] <= $current_time) // Draft has started
-        {
-            $data['current_pick'] = $this->draft_model->get_current_pick_data();
-
-            $data['team_id'] = $this->teamid;
-            $data['seconds_left'] = $settings->draft_update_key - $current_time;
-            if($data['paused'])
-            {
-                $data['seconds_left'] = $this->draft_model->draft_paused();
-            }
-
             $this->load->model('myteam/myteam_settings_model');
-            if(!empty($data['current_pick']))
+            
+            $current_time = time();
+            $settings = $this->draft_model->get_settings();
+
+            // Recent/current pick data
+            $data['current_pick'] = $this->draft_model->get_current_pick_data();
+            $data['picks'] = $this->draft_model->get_recent_picks_data();
+
+            // if($settings->draft_start_time <= $current_time) // Draft has started
+            // {
+            //     $current_pick = $this->draft_model->get_current_pick_data();
+            // }
+
+            $data['start_time'] = $settings->scheduled_draft_start_time;
+            $data['per_page'] = $this->per_page;
+            $data['sort'] = array('a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');
+            $data['pos'] = $this->player_search_model->get_nfl_positions_data();
+
+            $data['scheduled_start_time'] = $settings->scheduled_draft_start_time;
+            $data['start_time'] = $settings->draft_start_time;
+            $data['current_time'] = $current_time;
+            $data['paused'] = false;
+            if ($settings->draft_paused > 0)
+                $data['paused'] = true;
+
+            if(($settings->scheduled_draft_start_time > $current_time && ($settings->draft_start_time == 0 || $settings->draft_start_time > $current_time)))
+                $data['block_title'] = 'Draft Begins';
+            elseif($settings->draft_end == $this->current_year)
+                $data['block_title'] = 'End of Draft';
+            else
             {
-                $data['logo_url'] = $this->myteam_settings_model->get_logo_url($data['current_pick']->team_id,'thumb');
-                $data['default_logo_url'] = $this->myteam_settings_model->get_default_logo_url();
+                $data['seconds_left'] = $settings->draft_update_key - $current_time;
+                if($data['paused'])
+                {
+                    $data['seconds_left'] = $this->draft_model->draft_paused();
+                }
+                $data['block_title'] = 'Now Picking';
+                if ($data['current_pick']->logo)
+                    $data['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_logo_url($data['current_pick']->team_id,'thumb');
+                else
+                    $data['current_pick']->{'logo_url'} = $this->myteam_settings_model->get_default_logo_url();
             }
 
+
+
+            $this->bc['Draft'] = site_url('season/draft');
+            $this->bc[$this->current_year.' Live'] = "";
+            $this->user_view('user/season/draft/live',$data);
         }
-        $this->load->view('user/season/draft/ajax_get_block_info',$data);
     }
-*/
+
     function pause()
     {
         if($this->is_league_admin)
@@ -231,10 +192,14 @@ class Draft extends MY_User_Controller{
 
     function ajax_get_myteam()
     {
-        $data = array();
-        $data['players'] = $this->draft_model->get_myteam();
-        $data['byeweeks'] = $this->common_model->get_byeweeks_array();
-        $this->load->view('user/season/draft/ajax_get_myteam',$data);
+        $data = array('success' => False);
+        $view_data = array();
+        $view_data['players'] = $this->draft_model->get_myteam();
+        $view_data['byeweeks'] = $this->common_model->get_byeweeks_array();
+        $data['success'] = True;
+        $data['html'] = $this->load->view('user/season/draft/ajax_get_myteam',$view_data,True);
+
+        echo json_encode($data);
     }
 
     function ajax_get_recent_picks()

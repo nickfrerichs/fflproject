@@ -41,7 +41,16 @@ function sse_stream_start()
 
 			if (d.debug != undefined)
 			{debug_out(d.debug);}
-        }
+		}
+		evtSource.onerror = function(e)
+		{
+			console.log('EventSource error');
+		}
+		evtSource.onopen = function()
+		{
+			console.log("open");
+		}
+		
 	}
 	else {
 		debug_out("Already started sse stream.");
@@ -140,8 +149,12 @@ function sse_chat_events(chat)
 // ============================
 function sse_live_draft_events(live_draft)
 {
+	if (live_draft.update != undefined)
+	{
+		console.log(live_draft);
+	}
 	// Live draft updates
-	if (live_draft != undefined && live_draft.update)
+	if (live_draft != undefined && live_draft.update) //&& live_draft.current_pick != null
 	{
 		// First, refresh recent picks table data				
 		function add_one_pick(pick_data, no_player)
@@ -150,7 +163,7 @@ function sse_live_draft_events(live_draft)
 			var tr_html = '';
 			if(pick_data.player_id == undefined){has_player = false;}
 
-			if (pick_data.pick_id == live_draft.current_pick.pick_id)
+			if (live_draft.current_pick != undefined && pick_data.pick_id == live_draft.current_pick.pick_id)
 			{tr_html = '<tr class="d-rp-currentpick">';}
 			else if(has_player)
 			{tr_html = '<tr class="d-rp-recentpick">';}
@@ -169,14 +182,19 @@ function sse_live_draft_events(live_draft)
 
 			$('#recent-picks').append(tr_html);
 		}
+
 		{$('#recent-picks').html('');}
-		$.each(live_draft.upcoming_picks,function(id, player){
-			if (live_draft.current_pick.pick_id == player.pick_id)
-				{return;}
-			add_one_pick(player,true);
-		});
+		if (live_draft.upcoming_picks != undefined)
+		{
+			$.each(live_draft.upcoming_picks,function(id, player){
+				if (live_draft.current_pick != undefined && live_draft.current_pick.pick_id == player.pick_id)
+					{return;}
+				add_one_pick(player,true);
+			});
+		}
 		
-		add_one_pick(live_draft.current_pick,true);
+		if (live_draft.current_pick != undefined)
+		{add_one_pick(live_draft.current_pick,true);}
 
 		$.each(live_draft.recent_picks,function(id,player){
 			// Update draft table to hide draft/watch buttons for recently drafted players
@@ -187,7 +205,9 @@ function sse_live_draft_events(live_draft)
 		});
 
 		// Disable/enable draft buttons if pause status changed
-		if ((live_draft.current_pick.team_id == TEAM_ID && live_draft.paused <= 0) || (LEAGUE_ADMIN && $("#admin-picks").data('on')))
+		if (live_draft.draft_end == true || live_draft.current_pick == undefined)
+		{$(".btn-draft:contains('Draft')").attr("disabled",false);}
+		else if ((live_draft.current_pick.team_id == TEAM_ID && live_draft.paused <= 0) || (LEAGUE_ADMIN && $("#admin-picks").data('on')))
 			{$(".btn-draft:contains('Draft')").attr("disabled",false);}
 		else
 			{$(".btn-draft:contains('Draft')").attr("disabled",true);}
@@ -197,17 +217,30 @@ function sse_live_draft_events(live_draft)
 		else{$('#countdown').data('paused', 0);}
 
 		// Next, refresh on-the-block data
-		$('#d-block-title').text('Now Picking');
-		$('#countdown').data('seconds', live_draft.current_pick.seconds_left-1);
-		$('#countdown').data('deadline', live_draft.current_pick.deadline);
-		$('#countdown').data('currenttime', live_draft.current_time);
-		$('#countdown').data('teamid', live_draft.current_pick.team_id);
-		$('.d-block-round').text("Round "+live_draft.current_pick.round+" Pick "+live_draft.current_pick.pick);
-		$('#d-block-team-logo').attr("src", live_draft.current_pick.logo_url);
-		$('.d-block-team-name').text(live_draft.current_pick.team_name);
+		if (live_draft.draft_end)
+		{
+			$('#d-block-title').text('End of Draft');
+			$('.d-block-round').text('');
+			$('#d-block-team-logo').attr("src", "");
+			$('.d-block-team-name').text("Draft is over");
+			$('#countdown').data('seconds',0);
+			$('#countdown').data('off',true);
+		}
+		else if (live_draft.current_pick != undefined)
+		{
+			$('#d-block-title').text('Now Picking');
+			$('#countdown').data('seconds', live_draft.current_pick.seconds_left-1);
+			$('#countdown').data('deadline', live_draft.current_pick.deadline);
+			$('#countdown').data('currenttime', live_draft.current_time);
+			$('#countdown').data('teamid', live_draft.current_pick.team_id);
+			$('.d-block-round').text("Round "+live_draft.current_pick.round+" Pick "+live_draft.current_pick.pick);
+			$('#d-block-team-logo').attr("src", live_draft.current_pick.logo_url);
+			$('.d-block-team-name').text(live_draft.current_pick.team_name);
+		}
+
 
 		// Also update some admin stuff in on-the-block
-		if (live_draft.start_time == "" || live_draft.start_time > live_draft.current_time)
+		if (live_draft.start_time == "" || live_draft.start_time == null || live_draft.start_time > live_draft.current_time)
 			{$("#admin-pause-button").text("Start Draft");}
 		else if ((live_draft.start_time <= live_draft.current_time) && live_draft.paused <= 0)
 			{$("#admin-pause-button").text("Pause Draft");}

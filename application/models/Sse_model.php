@@ -50,7 +50,7 @@ class Sse_model extends MY_Model{
 
     function keys()
     {
-        return $this->db->select('live_scores_key, draft_update_key, draft_paused, chat_key')->from('league_settings')->where('league_id',$this->leagueid)
+        return $this->db->select('live_scores_key, draft_update_key, draft_paused, chat_key, draft_end')->from('league_settings')->where('league_id',$this->leagueid)
             ->get()->row();
     }
 

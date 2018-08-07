@@ -5,7 +5,7 @@
 <div class="section">
 
 		<?php if ($draft_exists > 0): ?>
-		<div class="text-center"><strong>Warning: This will wipe out existing <?=$year?> draft data!!</strong></div>
+		<div class="text-center"><strong>Warning: This will wipe out existing <?=$year?> draft data and start the draft over!!</strong></div>
 		<?php endif; ?>
 			<table class="table is-narrow is-fullwidth fflp-table-fixed">
 			<?php for ($i=1; $i <= count($teams); $i++): ?>

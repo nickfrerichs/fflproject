@@ -39,5 +39,4 @@
 
 
 
-<!-- <tr id="draft-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$total_players?>">
-</tr> -->
+

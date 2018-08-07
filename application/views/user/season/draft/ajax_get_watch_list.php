@@ -1,5 +1,5 @@
 <?php if(count($players) == 0):?>
-	<tr><td class="text-center" style="padding-top:160px; padding-bottom:160px;">You aren't watching any players</td></tr>
+	<tr><td colspan="4" class="has-text-centered" style="padding-top:160px; padding-bottom:160px;">You aren't watching any players</td></tr>
 <?php else: ?>
 <?php foreach ($players as $key => $p): ?>
 	<tr class="watch-avail-<?=$p->id?>">
@@ -79,8 +79,7 @@
 	</tr>
 
 <?php endforeach; ?>
-<!-- <tr id="watch-list-data" class="hide" data-page="<?=$this->in_page?>" data-perpage="<?=$this->per_page?>" data-total="<?=$total_players?>">
-</tr> -->
+
 <?php endif;?>
 
 <script>
