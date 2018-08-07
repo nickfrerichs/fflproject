@@ -63,11 +63,18 @@ function loadContent(targetSel)
             debug_out("loadContent: success = false")
             debug_out(data);
         }
-    },'json').fail(function(){
-        notice('A system error as occured (loadContent).','error');
+    },'json').fail(function(xhr, status, error){
+        report_ajax_error(xhr, status, error);
         ajax_waits[aw_key] = false;
     });
 
+}
+
+function report_ajax_error(xhr, status, error)
+{
+    notice(status+', see console for details.','error');
+    console.log(status);
+    console.log(error);
 }
 
 // Filter changed events that reload the content
@@ -171,7 +178,7 @@ $(document).on('click','.editable-text-save-button', function(e){
         debug_out(d);
 		if(d.success) {$(input).val(d.value);}
         else {$(input).val($(input).data('initial-value'));}
-    }).fail(function(){notice('A system error occured.','error');});
+    }).fail(function(xhr, status, error){report_ajax_error(xhr, status, error);});
 
     $(input).prop('disabled',true);
     $(id+'-save-button').addClass('is-hidden');
@@ -214,7 +221,7 @@ $(document).on('click','.editable-select-save-button', function(e){
         var d = $.parseJSON(data);
 		if(d.success) {$(select).val(d.value);}
         else {$(select).val($(select).data('initial-value'));}
-    }).fail(function(){notice('A system error occured.','error');});
+    }).fail(function(xhr, status, error){report_ajax_error(xhr, status, error);});
 
     $(select).prop('disabled',true);
     $(id+'-save-button').addClass('is-hidden');
@@ -242,7 +249,7 @@ $(document).on('click','.toggle-control',function(e){
         {
             debug_out('error in toggle');
         }
-    }).fail(function(){notice('A system error occured.','error');});
+    }).fail(function(xhr, status, error){report_ajax_error(xhr, status, error);});
     
 });
 
@@ -319,7 +326,7 @@ $(document).on('click','.ajax-submit-button',function(e){
             notice(data.error,'error');
         }
 
-    },'json').fail(function(){notice('A system error occured.','error');});
+    },'json').fail(function(xhr, status, error){report_ajax_error(xhr, status, error);});
 
 });
 

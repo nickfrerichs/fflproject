@@ -325,8 +325,8 @@ class Draft_model extends MY_Model{
                 'id'    => $p->id,
                 'order' => $count+1);
         }
-	if (!empty($batch_update))
-	        $this->db->update_batch('draft_watch',$batch_update,'id');
+        if (!empty($batch_update))
+                $this->db->update_batch('draft_watch',$batch_update,'id');
     }
 
     function watch_player_order_change($player_id, $updn)
@@ -444,7 +444,7 @@ class Draft_model extends MY_Model{
             ->limit(500)->get()->result();
 
     }
-    function get_upcoming_picks_data()
+    function get_upcoming_picks_data($include_current=false)
     {
         $data = $this->db->select('draft_order.actual_pick, draft_order.round, draft_order.pick, draft_order.id as pick_id')
             ->select('team.team_name')
@@ -457,8 +457,8 @@ class Draft_model extends MY_Model{
             ->where('draft_order.year',$this->current_year)
             ->order_by('draft_order.deadline','asc')
             ->limit(3)->get()->result();
-
-        unset($data[0]);
+        if ($include_current == false)
+            unset($data[0]);
 
         return array_reverse($data);
     }
@@ -511,6 +511,10 @@ class Draft_model extends MY_Model{
         // Update draft_order table, store this player_id for this pick
         $this->db->where('id',$pickid);
         $this->db->update('draft_order',array('player_id' => $player_id, 'actual_pick' => $actual_pick));
+
+        // Added this in order to determine if the draft is over or not, might be overkill if there is another
+        // way to determine the end of draft here and send draft_end in legaue_settings table here
+        $this->get_update_key();
 
         $this->adjust_pick_deadlines();
 
@@ -623,7 +627,9 @@ class Draft_model extends MY_Model{
             $actual_pick++;
         }
 
-        $this->db->update_batch('draft_order',$update_batch,'id');
+        // Need to handle case when there are no remaining picks
+        if (count($update_batch)>0)
+            $this->db->update_batch('draft_order',$update_batch,'id');
         // $this->db->where('id',$pick->id);
         // $this->db->update('draft_order',array('deadline' => $this->t($new_deadline),'actual_pick' => $actual_pick));
 
@@ -640,7 +646,7 @@ class Draft_model extends MY_Model{
     {
         return $this->db->select('UNIX_TIMESTAMP(scheduled_draft_start_time) as scheduled_draft_start_time')
             ->select('UNIX_TIMESTAMP(draft_start_time) as draft_start_time')
-            ->select('draft_pick_id, draft_update_key, draft_paused, draft_team_id')
+            ->select('draft_pick_id, draft_update_key, draft_paused, draft_team_id, draft_end')
             ->from('league_settings')->where('league_id',$this->leagueid)->get()->row();
     }
 
