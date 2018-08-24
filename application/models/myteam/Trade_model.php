@@ -551,7 +551,7 @@ class Trade_model extends MY_Model{
             ->where('trade.league_id',$this->leagueid)->where('year',$this->current_year)->where('completed',1);
             if ($days != 0)
                 $this->db->where('trade.completed_date > date_sub(now(), INTERVAL '.$days.' day)');
-        $trades = $this->db->order_by('completed_date','desc')->limit($start,$limit)->get()->result();
+        $trades = $this->db->order_by('completed_date','desc')->limit($limit,$start)->get()->result();
 
 
 
