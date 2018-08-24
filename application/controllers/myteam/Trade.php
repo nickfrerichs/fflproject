@@ -332,8 +332,5 @@ class Trade extends MY_User_Controller{
         <?php
     }
 
-    function test()
-    {
-        $this->trade_model->trade_position_over_limit(27);
-    }
+
 }
