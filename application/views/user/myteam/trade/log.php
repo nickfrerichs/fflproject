@@ -1,4 +1,6 @@
 <div class="section">
+	<div class="container">
+	<div class="is-size-5">Trades - <?=$this->session->userdata('current_year')?> Season</div>
 	<?php if(count($log) > 0): ?>
 		<table class="table is-fullwidth is-striped">
 			<thead>
@@ -26,4 +28,5 @@
 	<?php else:?>
 		<div class="is-size-6">No Trades to report</div>
 	<?php endif;?>
+	</div>
 </div>
