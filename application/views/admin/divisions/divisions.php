@@ -16,8 +16,8 @@
 			<td>
 				<div class="select">
 					<select class="division-team-select" data-id="<?=$team['id']?>">
-					<?php foreach($division_array as $div2_id => $div2): ?>
-						<option value="<?=$div2_id?>" <?php if($div_id == $div2_id){echo "selected";}?>><?=$div2['name']?></option>
+					<?php foreach($divisions as $div): ?>
+						<option value="<?=$div->id?>" <?php if($div_id == $div->id){echo "selected";}?>><?=$div->name?></option>
 					<?php endforeach;?>
 					</select>
 				</div>
