@@ -19,7 +19,7 @@
         </div>
         <div class="level-right is-hidden-mobile" style="font-size:.75em">
             <div class="level-item has-text-link">
-            <span id="whos-online"></span>
+                <span id="whos-online"></span>
             </div>
         </div>
     </div>

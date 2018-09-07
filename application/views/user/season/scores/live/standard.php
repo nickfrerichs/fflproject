@@ -17,10 +17,10 @@
         <?php $cnt=0;?>
         <?php foreach($matchups as $id => $matchup): ?>
         <?php if($cnt % 6 == 0): ?>
-        <div class="columns">
+        <div class="columns is-multiline">
         <?php endif;?>
             <div class="column is-2" style="font-size:.8em">
-                <div class="columns ls-s-matchup-score <?php if($id == 0){echo 'ls-s-matchup-selected"';}?>" style="background-color: white;border-style:solid;border-color:#DDD;border-width:1px;" data-id="<?=$id?>">
+                <div class="columns ls-s-matchup-score <?php if($id == 0){echo 'ls-s-matchup-selected"';}?>" style="" data-id="<?=$id?>">
                     <div class="column is-9">
                         <div><?=substr($matchup['home_team']['team']->team_name,0,$max_name_len)?></div>
                         <div><?=substr($matchup['away_team']['team']->team_name,0,$max_name_len)?></div>
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            </div>
+            
             <?php $cnt++; ?>
             <?php endforeach;?>
     <?php fflp_html_block_end();?>

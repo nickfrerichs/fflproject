@@ -13,7 +13,7 @@ $this->load->view('template/body_js.php');
 <script>$(document).foundation();</script>
 
 <script>
-    if (Foundation.MediaQuery.atLeast('large')){window.location = "<?=site_url('season/scores/live/standard')?>";}
+    if ($(window).width()>800){window.location = "<?=site_url('season/scores/live/standard')?>";}
     else{window.location = "<?=site_url('season/scores/live/compact')?>";}
 </script>
 </body>

@@ -27,7 +27,7 @@
                         <?php if(!$compact): ?>
                             <td class="ls-c-playerphoto-box">
                                 <?php if($hp['player']->photo != "" && 1==1): ?>
-                                    <img class="ls-c-playerphoto-img" src="<?=site_url('images/'.$hp['player']->photo)?>">
+                                    <img class="ls-c-playerphoto-img" src="<?=site_url('images/'.$hp['player']->photo)?>" height=85px width=85px>
                                 <?php endif;?>
                             </td>
                         <?php endif;?>
@@ -55,7 +55,7 @@
                         <?php if(!$compact): ?>
                             <td class="ls-c-playerphoto-box">
                                 <?php if($ap['player']->photo != "" && 1==1): ?>
-                                    <img class="ls-c-playerphoto-img" src="<?=site_url('images/'.$ap['player']->photo)?>">
+                                    <img class="ls-c-playerphoto-img" src="<?=site_url('images/'.$ap['player']->photo)?>" height=85px width=85px>
                                 <?php endif;?>
                             </td>
                         <?php endif;?>

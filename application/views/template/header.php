@@ -19,17 +19,21 @@
                 Chat
                 </span>
             </button> -->
+            
             <div id="fflp-navbar-burger" class="navbar-burger burger" data-target="navMenuTransparentExample">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
         </div>
-    
+
         <div id="nav-menu" class="navbar-menu" style="padding:0px;">
             <div class="navbar-start">
+                <div class="navbar-item is-hoverable livescores-link is-hidden" >
+                    <a href="<?=site_url('season/scores/live')?>" style="color:#0CB805;}" class="livescore-link-text">Live</a>
+                </div>
                 <?php foreach($menu_items as $button => $subitem): ?>
-                <div class="navbar-item has-dropdown is-hoverable">
+                <div class="navbar-item has-dropdown">
                         <?php if(!is_array($subitem)): ?>
                         <a class="navbar-link" href="<?=site_url($subitem)?>">
                             <?=$button?>
@@ -48,7 +52,9 @@
                     </div>
                 </div>
                 <?php endforeach;?>
+
             </div>
+
             <div class="navbar-end">
             <?php if($this->session->userdata('league_id')): ?>
             <div class="navbar-item">

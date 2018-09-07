@@ -51,13 +51,10 @@ class Load_content extends MY_User_Controller{
 
     function test()
     {
-        $view_data['players'] = $this->player_search_model->get_career_data("2017", False, "21", array("avg_points", "desc"));
-        print_r($view_data['players']);
-        $this->data['html'] = $this->load->view('load_content/history_player_career_list',$view_data,True);
+        $this->load->model('season/draft_model');
+        $this->draft_model->get_available_players_data(10, 0, 0, array("last_name", "asc"), "");
 
-        $this->data['success'] = True;
-
-        echo json_encode($this->data);
+        $this->draft_model->get_watch_list(10, 0, 0);
     }
 
     function ajax_full_player_list()
