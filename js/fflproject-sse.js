@@ -67,9 +67,9 @@ function sse_global_events(global)
 	if (global.live_scores_active != undefined)
 	{
 		if (global.live_scores_active == "yes")
-			{$(".livescores-link").removeClass('hide');}
+			{$(".livescores-link").removeClass('is-hidden');}
 		else
-			{$(".livescores-link").addClass('hide');}
+			{$(".livescores-link").addClass('is-hidden');}
 	}
 	
 	// Update who's online text

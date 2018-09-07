@@ -38,6 +38,7 @@ table.text-5{font-size: .8em;}
 
 /* Change navbar dropdown colors */
 .navbar-link{background-color:#363636; color:#fff;}
+a.livescore-link-text:hover{background-color:#363636;}
 .navbar-dropdown{background-color:#363636;}
 .navbar-dropdown>a:hover{background-color:rgb(190, 190, 190); color:#000}
 .navbar-item{background-color:#363636; color:#fff;}
@@ -52,3 +53,9 @@ table.text-5{font-size: .8em;}
 /* .d-rp-currentpick td{background-color:#fc0;} */
 .d-rp-currentpick td{background-color:#ffe266;font-weight:bold}
 .d-rp-recentpick td{color:#888;}
+
+
+/* ----------------------- */
+/* Live scoring stuff      */
+/* ----------------------- */
+.s-c-playerphoto-img{width:45px; height:45px;}
