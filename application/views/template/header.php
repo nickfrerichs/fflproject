@@ -29,7 +29,9 @@
 
         <div id="nav-menu" class="navbar-menu" style="padding:0px;">
             <div class="navbar-start">
-
+                <div class="navbar-item is-hoverable livescores-link is-hidden" >
+                    <a href="<?=site_url('season/scores/live')?>" style="color:#0CB805;}" class="livescore-link-text">Live</a>
+                </div>
                 <?php foreach($menu_items as $button => $subitem): ?>
                 <div class="navbar-item has-dropdown is-hoverable">
                         <?php if(!is_array($subitem)): ?>
