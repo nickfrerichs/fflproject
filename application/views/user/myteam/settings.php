@@ -112,6 +112,15 @@ $this->load->view('components/modal', array('id' => 'change-password-modal',
                             </td>
                         </tr>
                         <tr>
+                            <td>Team Abbreviation</td>
+                            <td colspan=2>
+                                <?php $this->load->view('components/editable_text',array('id' => 'abbreviation', 
+                                                                                        'value' => $team_info->team_abbreviation,
+                                                                                        'url' => site_url('myteam/settings/ajax_change_item')));?>
+
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Team Logo</td>
                             <td id="team-logo" colspan=2>
                                 <?php if($team_info->logo): ?>

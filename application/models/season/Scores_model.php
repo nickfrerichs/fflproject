@@ -50,13 +50,13 @@ class Scores_model extends MY_Model{
         // 1. Fill all starts spots with empty positions
         if ($year == $this->current_year)
         {
-            $teams = $this->db->select('team.id, team.team_name, team.logo')->from('team')
+            $teams = $this->db->select('team.id, team.team_name, team.team_abbreviation, team.logo')->from('team')
                 ->where('league_id',$this->leagueid, 'team.active',1)->get()->result();
         }
         else
         {
             $team_ids = $this->common_model->team_id_array($year);
-            $teams = $this->db->select('team.id, team.team_name')->from('team')
+            $teams = $this->db->select('team.id, team.team_name, team.team_abbreviation')->from('team')
                 ->where('league_id',$this->leagueid)->where_in('team.id',$team_ids)->get()->result();
         }
         $teams_array = array();
