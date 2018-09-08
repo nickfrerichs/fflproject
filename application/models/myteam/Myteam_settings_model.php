@@ -17,7 +17,7 @@ class Myteam_settings_model extends MY_Model{
     {
         if ($id == 0)
             $id = $this->teamid;
-        return $this->db->select('long_name, logo')
+        return $this->db->select('long_name, team_abbreviation, logo')
             ->from('team')->where('id',$id)->get()->row();
     }
 
@@ -217,6 +217,15 @@ class Myteam_settings_model extends MY_Model{
         $this->db->update('team',$data);
 
         return $short_name;
+    }
+
+    function change_team_abbreviation($value)
+    {
+        $data = array('team_abbreviation' => $value);
+        $this->db->where('id', $this->teamid);
+        $this->db->update('team',$data);
+
+        return $value;
     }
 
     function change_owner_email($value)

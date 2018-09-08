@@ -41,6 +41,12 @@ class Settings extends MY_User_Controller{
             $response['value'] = $value;
             $response['success'] = true;
         }
+        if($type == "#abbreviation")
+        {
+            $response['msg'] = $this->myteam_settings_model->change_team_abbreviation($value);
+            $response['value'] = $value;
+            $response['success'] = true;
+        }
         if($type == '#phone')
         {
             $response['msg'] = $this->myteam_settings_model->change_owner_phone($value);

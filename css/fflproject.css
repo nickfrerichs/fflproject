@@ -59,3 +59,40 @@ a.livescore-link-text:hover{background-color:#363636;}
 /* Live scoring stuff      */
 /* ----------------------- */
 .s-c-playerphoto-img{width:45px; height:45px;}
+
+.ls-s-nflgame{
+	font-size:.85em;
+}
+
+.ls-s-nflgame-clock{
+	font-size:.9em;
+}
+
+.ls-s-matchup-selected{
+    border-color: #2199e8 !important;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.ls-s-matchup-score{
+    cursor: pointer;
+}
+
+/* div of yardline / field position */
+.ls-c-drivebar{
+	height:8px;
+	margin-bottom: 3px;
+	width: 50%;
+}
+
+.ls-c-td-right .ls-c-drivebar{float:right;}
+
+/* Text on drive bar, usually yard line */
+.ls-c-drivebar-text{
+	font-size: 8px;
+	color: white;
+}
+
+.ls-s-drivebar{
+	margin-bottom:0px;
+}

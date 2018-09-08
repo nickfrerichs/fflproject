@@ -362,8 +362,12 @@ function nflGameActive(id, game)
 	$(gamerowid+" .ls-s-nflgame-clock").text(game.data.t);
 	$(gamerowid+" .ls-s-nflgame-lastplay").text(game.d);
 
-	$(gamerowid+" .ls-s-drivebar").removeClass('hide');
+	$(gamerowid+" .ls-s-drivebar").removeClass('is-hidden');
+
 	var yl = game.y;
+
+	$(gamerowid+" .ls-s-drivebar").val(yl);
+
 	$(gamerowid+" .progress-meter").width(yl+"%");
 	if(yl > 50){yl=Math.abs(yl-100);}
 	$(gamerowid+" .progress-meter-text").text(yl+" yl");

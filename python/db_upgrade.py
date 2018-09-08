@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.60'
+CURRENT_VERSION = '1.70'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -21,6 +21,24 @@ def main():
 
 
 def upgrade_db(version):
+    if version == '1.60':
+        if not column_exists("short_name", "team"):
+            query = 'ALTER TABLE `team` ADD `team_abbreviation` varchar(5) DEFAULT ""'
+            cur.execute(query)
+            db.commit()
+
+            query = 'update team set team_abbreviation = left(team_name,5)'
+            cur.execute(query)
+            db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.70")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
+
+
+
     if version == "1.51":
         # **** user_login_attempts **** #
         if not table_exists('bench'):
