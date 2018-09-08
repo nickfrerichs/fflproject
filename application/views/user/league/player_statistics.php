@@ -11,6 +11,8 @@
 	$headers['Bye'] = array();
 	$headers['Points'] = array('by' => 'points', 'order' => 'asc');
 	$headers['Team'] = array();
+	if ($this->session->userdata('use_draft_ranks'))
+		$headers['Draft Rank'] = array('by' => 'draft_rank', 'order' => 'asc');
 
 	$pos_dropdown['All'] = 0;
 	foreach($positions as $p)
