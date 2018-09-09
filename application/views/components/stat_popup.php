@@ -84,15 +84,15 @@ $(document).on('click','.stat-popup',function(e){
 
 });
 
-// function showStatsPopup(id, type)
-// {
-//     //var p = $(this).position();
-//     var url = "<?=site_url('quickstats')?>"+"/"+type;
-//     // console.log(url);
-//     $.post(url,{'type' : type, 'id' : id},function(data)
-//     {
-//         $("#stat-popup-html").html(data);
-//         $("#stat-popup-modal").foundation('open');
-//     });
-// }
+function showStatsPopup(id, type)
+{
+    //var p = $(this).position();
+    var url = "<?=site_url('quickstats')?>"+"/"+type;
+    // console.log(url);
+    $.post(url,{'type' : type, 'id' : id},function(data)
+    {
+        $("#stat-popup-html").html(data);
+        $("#stat-popup-modal").addClass('is-active');
+    });
+}
 </script>
