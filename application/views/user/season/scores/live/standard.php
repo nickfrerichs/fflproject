@@ -23,7 +23,7 @@
                         <div class="is-hidden-tablet"><?=$matchup['home_team']['team']->team_abbreviation?></div>
                         <div class="is-hidden-mobile"><?=substr($matchup['home_team']['team']->team_name,0,$max_name_len)?></div>
                         <div class="is-hidden-tablet"><?=$matchup['away_team']['team']->team_abbreviation?></div>
-                        <div class="is-hidden-mobile"><?=substr($matchup['home_team']['team']->team_name,0,$max_name_len)?></div>
+                        <div class="is-hidden-mobile"><?=substr($matchup['away_team']['team']->team_name,0,$max_name_len)?></div>
                     </div>
                     <div class="column is-3">
                         <div class="teamscore-<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['points']?></div>
