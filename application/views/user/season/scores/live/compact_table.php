@@ -5,11 +5,21 @@
         <?php if(!$compact):?>
             <th class="ls-c-playerphoto-box"><img src="<?=$matchup['home_team']['thumb']?>"></th>
         <?php endif;?>
-        <th class="text-center"><a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['team']->team_name?></a></th>
+        <th class="text-center">
+            <a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['home_team']['team']->id?>">
+                <div class="is-hidden-tablet"><?=$matchup['home_team']['team']->team_abbreviation?></div>
+                <div class="is-hidden-mobile"><?=$matchup['home_team']['team']->team_name?></div>
+            </a>
+        </th>
         <th class="ls-c-teamscore text-left teamscore-<?=$matchup['home_team']['team']->id?>"><?=$matchup['home_team']['points']?></th>
         <th class="text-center ls-c-position">vs</th>
         <th class="ls-c-teamscore text-right teamscore-<?=$matchup['away_team']['team']->id?>"><?=$matchup['away_team']['points']?></th>
-        <th class="text-center"><a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['away_team']['team']->id?>"><?=$matchup['away_team']['team']->team_name?></a></th>
+        <th class="text-center">
+            <a href="#" class="stat-popup" data-type="team" data-id="<?=$matchup['away_team']['team']->id?>">
+                <div class="is-hidden-tablet"><?=$matchup['away_team']['team']->team_abbreviation?></div>
+                <div class="is-hidden-mobile"><?=$matchup['away_team']['team']->team_name?></div>
+            </a>
+        </th>
         <?php if(!$compact):?>
             <th class="ls-c-playerphoto-box"><img src="<?=$matchup['away_team']['thumb']?>"></th>
         <?php endif;?>
