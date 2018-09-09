@@ -2,29 +2,43 @@
 <?php //print_r($matchups);?>
 
 <?php $this->load->view('components/stat_popup'); ?>
-<div class="row align-center">
-    <div class="columns small-12 medium-12 large-6" style="padding:0">
-        <div id="ls-c-matchup-dots" class="row">
-            <div class="columns small-3"><a href="#"><i class="fi-arrow-left ls-c-dot-arrow" data-way="left"></i></a></div>
-            <div class="text-center columns small-6">
-                <?php foreach($matchups as $id => $matchup): ?>
-                        <i class="fi-marker ls-c-dot" id="ls-c-dot-<?=$id?>"></i>
-                <?php endforeach;?>
+
+    <div class="columns is-centered">
+        <div class="column is-12-tablet is-6-desktop">
+            <div id="ls-c-matchup-dots" class="columns is-mobile">
+                    <div class="column is-3 has-text-left">
+                        <span class="icon"> 
+                            <a href="#"><i class="fa fa-arrow-left ls-c-dot-arrow" data-way="left"></i></a>
+                        </span>
+                    </div>
+                    <div class="text-center column is-6 has-text-centered">
+                        <?php foreach($matchups as $id => $matchup): ?>
+                            <span class="icon"> 
+                                <a href="#"><i class="fa fa-circle ls-c-dot"id="ls-c-dot-<?=$id?>"></i></a>
+                            </span>
+                        <?php endforeach;?>
+                    </div>
+                    <div class="column is-3 has-text-right">
+                        <span class="icon">
+                            <a href="#"><i class="fa fa-arrow-right ls-c-dot-arrow" data-way="right"></i></a>
+                        </span>
+                    </div>
+
             </div>
-            <div class="columns small-3 text-right"><a href="#"><i class="fi-arrow-right ls-c-dot-arrow" data-way="right"></i></a></div>
+            <?php foreach($matchups as $id => $matchup): ?>
+                <?php $this->load->view('user/season/scores/live/compact_table',array('id' => $id, 'matchup' => $matchup, 'compact' => True)); ?>
+            <?php endforeach;?>
+            <div id="lsdata" class="is-hidden"></div>
         </div>
-        <?php foreach($matchups as $id => $matchup): ?>
-            <?php $this->load->view('user/season/scores/live/compact_table',array('id' => $id, 'matchup' => $matchup, 'compact' => True)); ?>
-        <?php endforeach;?>
-        <div id="lsdata" class="hide"></div>
     </div>
-</div>
+
 
 <script>
 adjustDots();
 //sse_on("sse_live_scores");
 
 $(".ls-c-playerbox").on('click',function(){
+    
     showStatsPopup($(this).data('id'),'player');
 });
 
@@ -34,7 +48,7 @@ $(".ls-c-dot-arrow").on('click',function(event){
     var end = 0;
     var newmatch = 0;
     $(".ls-matchup-table").each(function(){
-        if($(this).hasClass('hide') == false){current = $(this).data('id');}
+        if($(this).hasClass('is-hidden') == false){current = $(this).data('id');}
         end = $(this).data('id');
         matches.push($(this).data('id'))
     });
@@ -49,8 +63,8 @@ $(".ls-c-dot-arrow").on('click',function(event){
         if(cur_key == matches.length-1){newmatch = matches[0];}
         else{newmatch = matches[cur_key+1]}
     }
-    $('#matchup-'+newmatch).removeClass('hide');
-    $('#matchup-'+current).addClass('hide');
+    $('#matchup-'+newmatch).removeClass('is-hidden');
+    $('#matchup-'+current).addClass('is-hidden');
     adjustDots();
     event.preventDefault();
 });

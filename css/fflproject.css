@@ -60,22 +60,66 @@ a.livescore-link-text:hover{background-color:#363636;}
 /* ----------------------- */
 .s-c-playerphoto-img{width:45px; height:45px;}
 
-.ls-s-nflgame{
-	font-size:.85em;
+/* COMPACT VIEW */
+
+/* Make the matchup table look better */
+table.ls-matchup-table tr:nth-of-type(even) {background-color: transparent !important;}
+table.ls-matchup-table tr{border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;}
+table.ls-matchup-table tr td.ls-c-td-left{padding-left: 2px;}
+table.ls-matchup-table tr td.ls-c-td-right{padding-right: 2px;}
+table.ls-matchup-table{table-layout: fixed;}
+
+#ls-c-matchup-dots{
+	font-size: 1.3em;
+	padding:0px;
+	margin: 0px;
+}
+#ls-c-matchup-dots .fi-arrow-left{
+	padding-left: 20px;
 }
 
-.ls-s-nflgame-clock{
-	font-size:.9em;
+#ls-c-matchup-dots .fi-arrow-right{
+	padding-right: 20px;
 }
 
-.ls-s-matchup-selected{
-    border-color: #2199e8 !important;
-    border-style: solid;
-    border-width: 1px;
+#ls-c-matchup-dots .ls-c-dot{
+	padding-left: 2px;
+	padding-right: 2px;;
 }
 
-.ls-s-matchup-score{
-    cursor: pointer;
+.ls-c-dot-hidden{
+	color: #CCC;
+}
+
+/* td with player/game info */
+.ls-c-playerbox{
+	font-size: .8em;
+	padding-top:1px;
+	padding-bottom:1px;
+	height: 44px;
+	cursor: pointer;
+}
+
+/* td that lights up to highlight a players status */
+.ls-c-playerlight{
+	width: 7px;
+	padding: 0px !important;
+}
+/* tds containing team/player score */
+.ls-c-teamscore{width: 35px; padding: 3px; font-size: 1.2em; font-weight: normal;}
+.ls-c-playerscore{
+	color: #2199e8;
+	padding: 2px;
+	
+}
+
+/* middle td containing positions */
+.ls-c-position{
+	font-size: .8em;
+	background-color: #EEE;
+	color: #777;
+	padding:0px;
+	width: 30px;
 }
 
 /* div of yardline / field position */
@@ -93,6 +137,93 @@ a.livescore-link-text:hover{background-color:#363636;}
 	color: white;
 }
 
+
+/* text of current game status */
+.ls-c-gamestatus{
+	font-size: .8em;
+}
+
+.ls-s-nflgameactive{
+	background-color: #fffce5;
+	height: 50px;
+	/*vertical-align: top;*/
+}
+
+.ls-s-nflgameinactive{
+	background-color: transparent;
+	color: #AAA;
+}
+
+.ls-s-nflgameactive .ls-s-nflgame-lastplay{
+	overflow-y: auto;
+	font-size:.8em;
+	height: 49px;
+}
+
+.ls-s-nflgame{
+	font-size:.85em;
+}
+
 .ls-s-drivebar{
 	margin-bottom:0px;
+}
+
+.ls-s-drivebar-text{
+}
+
+.ls-s-nflgame-offense{
+	font-weight:bold;
+}
+
+.ls-s-row>.columns{
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.ls-playeractive{
+	background-color: #faf3c1;
+}
+.ls-playerinactive{
+	background-color: #EEE;
+}
+.ls-playeractive.ls-c-playerlight{
+	background-color: #fae336;
+}
+.ls-playerinactive.ls-c-playerlight{
+	background-color: #777;
+}
+.ls-playerevent{
+	background-color: #ffed66;
+	font-weight: bold;
+}
+
+.ls-gameinactive{
+	background-color: transparent;
+	color: #CCC;
+}
+
+.ls-c-playerphoto-box{
+	width: 60px;
+	text-align: center;
+	vertical-align: middle;
+	padding: 4px;
+}
+
+.ls-c-playerphoto-img{
+	max-width: 50px;
+	vertical-align: center;
+}
+
+.ls-s-matchup-score{
+	cursor:pointer;
+}
+
+.ls-s-matchup-selected{
+    border-color: #2199e8 !important;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.ls-s-nflgame-clock{
+	font-size:.9em;
 }
