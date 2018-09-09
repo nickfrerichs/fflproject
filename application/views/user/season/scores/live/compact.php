@@ -38,7 +38,6 @@ adjustDots();
 //sse_on("sse_live_scores");
 
 $(".ls-c-playerbox").on('click',function(){
-    
     showStatsPopup($(this).data('id'),'player');
 });
 
