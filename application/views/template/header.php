@@ -35,7 +35,7 @@
                 <?php foreach($menu_items as $button => $subitem): ?>
                 <div class="navbar-item has-dropdown is-hoverable">
                         <?php if(!is_array($subitem)): ?>
-                        <a class="navbar-link" href="<?=site_url($subitem)?>">
+                        <a class="navbar-link" href="<?=$subitem?>">
                             <?=$button?>
                         </a>
                         <?php continue;?>
@@ -45,9 +45,13 @@
                     </a>
                     <div class="navbar-dropdown" style="border-top-width:0px;">
                         <?php foreach($subitem as $subtext => $url): ?>
-                            <a class="navbar-item" href="<?=site_url($url)?>">
+                            <?php if($subtext == '_divider'): ?>
+                                <hr class="navbar-divider">
+                            <?php else: ?>
+                            <a class="navbar-item" href="<?=$url?>">
                                 <?=$subtext?>
                             </a>
+                            <?php endif;?>
                         <?php endforeach;?>
                     </div>
                 </div>
@@ -89,6 +93,52 @@
     </div>
 </div>
 <?php endif;?>
+
+
+<?php if(count($this->session->userdata('leagues')) > 0)
+{
+// Change League modal
+
+    $body = '<div class="is-size-5 has-text-left">Select a league to switch to</div>';
+    $body .= '<div class="field">';
+        $body .= '<div class="control is-expanded"><div class="select is-fullwidth"><select id="change-league-select">';
+        foreach($this->session->userdata('leagues') as $l_id => $l_name)
+        {
+            if ($this->session->userdata('league_id') != $l_id)
+                $body .= '<option value="'.$l_id.'">'.$l_name.'</option>';
+        }
+        $body .= '</select></div></div></div>';
+        $body .= '<div class="field"><div class="control"><button id="change-league-button" class="button is-link">Switch Leagues</button></div>';
+
+    $body .= "</div><br>";
+
+
+    $this->load->view('components/modal', array('id' => 'change-league-modal',
+                                                        'title' => 'Change League',
+                                                        'body' => $body,
+                                                        'reload_on_close' => True));
+
+
+}
+?>
+
+<?php if(count($this->session->userdata('leagues')) > 0):?>
+<script>
+        // Change League javascript
+        function fflp_change_league(){$("#change-league-modal").addClass("is-active");}
+
+        $('#change-league-button').on('click',function(){
+            var url="<?=site_url('myteam/settings/ajax_change_current_league')?>";
+            var leagueid = $("#change-league-select").val();
+            $.post(url,{'leagueid' : leagueid},function(data)
+            {
+                $("#change-league-modal").removeClass('is-active');
+                window.location.href = "<?=site_url()?>";
+            });
+        });
+</script>
+<?php endif;?>
+
 <script>
   $('.navbar-burger').on('click',function(){
     $('.navbar-dropdown').addClass('is-hidden-touch');

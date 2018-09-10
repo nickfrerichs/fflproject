@@ -43,12 +43,25 @@ class Menu_model extends CI_Model
             $menu_text = $this->fill_vars($row->menu_text);
             if ($row->item_text == "")
             {
-                $data_array[$menu_text] = $row->bar_url;
+                $data_array[$menu_text] = site_url('/'.$row->bar_url);
                 continue;
             }
             $item_text = $this->fill_vars($row->item_text);
-			$data_array[$menu_text][$item_text] = $row->url;
-		}
+			$data_array[$menu_text][$item_text] = site_url('/'.$row->url);
+        }
+        
+        // If user is in multiple leagues, add that to menu
+        if (count($this->session->userdata('leagues'))>1)
+        {
+            $menu_text = "League";
+            $data_array[$menu_text]['_divider'] = "";
+            $data_array[$menu_text]['Switch Leagues'] = "javascript:fflp_change_league();";
+            // foreach($this->session->userdata('leagues') as $l_id => $l_name)
+            // {
+            //     $data_array[$menu_text][$l_name] = site_url();
+            // }
+        }
+
 		return $data_array;
 	}
 
