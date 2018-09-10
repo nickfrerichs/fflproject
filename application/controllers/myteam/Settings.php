@@ -103,6 +103,7 @@ class Settings extends MY_User_Controller{
             $this->myteam_settings_model->set_current_league($leagueid);
             $this->load->model('security_model');
             $this->security_model->set_session_variables();
+
         }
     }
 
