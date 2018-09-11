@@ -178,6 +178,7 @@ class Common_noauth_model extends CI_Model{
         // Recalculate the bench for current week
         $week = $this->get_current_week($leagueid);
         $year = $this->get_current_year($leagueid);
+
         $weektype = $this->get_current_weektype($leagueid);
 
         if ($this->is_current_week($week,$year,$leagueid))
@@ -302,6 +303,7 @@ class Common_noauth_model extends CI_Model{
     // Sub function to set the bench players for a single team
     private function bench_players_recalc($teamid,$year,$week,$weektype_id,$leagueid)
     {
+        echo $teamid.' year:'.$year.' week:'.$week.' weektype_id:'.$weektype_id.' leagueid:'.$leagueid;
         // All players who are on the roster, aren't starters = bench
         $newbench_result = $this->db->select('roster.player_id')->from('roster')
             ->join('starter','starter.week = '.$week.' and starter.year = '.$year.
@@ -419,7 +421,7 @@ class Common_noauth_model extends CI_Model{
             $current_week = $this->session->userdata('current_week');
         else
         {
-            $week_year = get_current_week_year($leagueid);
+            $week_year = $this->get_current_week_year($leagueid);
             $current_week = $week_year->week;
         }
         return $current_week;
@@ -428,10 +430,12 @@ class Common_noauth_model extends CI_Model{
     function get_current_year($leagueid=0)
     {
         if ($this->session->userdata('current_year'))
+        {
             $current_year = $this->session->userdata('current_year');
+        }
         else
         {
-            $week_year = get_current_week($leagueid);
+            $week_year = $this->get_current_week_year($leagueid);
             $current_year = $week_year->year;
         }
         return $current_year;
