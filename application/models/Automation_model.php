@@ -42,7 +42,7 @@ class Automation_model extends CI_Model{
             // Check to see if waiver_wire_disable_days and is disabled today
             if ($this->common_waiverwire_model->today_is_disabled_day($leagueid))
             {
-                echo "WW disabled today.";
+                echo "WW disabled today.\n";
                 continue;
             }
 
@@ -51,7 +51,7 @@ class Automation_model extends CI_Model{
             {
                 if ($this->common_waiverwire_model->is_player_locked($r->player_id, $week_year->year, $week_year->week, $week_type, $leagueid))
                 {
-                    print "Player locked. ".$r->player_id."\n";
+                    echo "Player locked, is already active this week. ".$r->player_id."\n";
                     continue;
                 }
             }
@@ -74,14 +74,16 @@ class Automation_model extends CI_Model{
 
             // clear time has not passed, keep waiting.
             if ($dropped_time+$clear_time >= time())
+            {
+                echo "Waivers have not cleared for ".$r->player_id."\n";
                 continue;
+            }
             
 
             // Teams attempting to claim this pickup_player_id
             $teams = $this->db->select('team_id, id as ww_id')->from('waiver_wire_log')->where('league_id',$leagueid)
                 ->where('pickup_player_id',$r->player_id)
                 ->where('transaction_date',0)->where('approved',0)->get()->result();
-
 
             $ww_winner = array('priority' => PHP_INT_MAX);
             foreach ($teams as $t)
@@ -98,7 +100,6 @@ class Automation_model extends CI_Model{
                     $ww_winner['data'] = $t;
                 }
             }
-
 
             $priority_used = false;
             if (count($teams) > 1)
@@ -118,11 +119,13 @@ class Automation_model extends CI_Model{
                 continue;
             }
 
+
             // Approve the WW for this team, after checking that they still have the drop player,
             // If not, reject the transaction, email them either way.
 
             if ($this->common_waiverwire_model->admin_ok_to_process_transaction($ww_winner['data']->ww_id, $msg))
             {
+
                 $log = $this->db->select('pickup_player_id, drop_player_id, team_id, id')->from('waiver_wire_log')
                     ->where('id',$ww_winner['data']->ww_id)->get()->row();
                 // Process the transaction for the winner

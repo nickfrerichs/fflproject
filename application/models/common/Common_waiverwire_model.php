@@ -108,6 +108,7 @@ class Common_waiverwire_model extends CI_Model{
 
     function admin_ok_to_process_transaction($id, &$ret)
     {
+
         $log = $this->db->select('league_id, pickup_player_id, team_id, drop_player_id')->from('waiver_wire_log')->where('id',$id)
             ->get()->row();
         $leagueid = $log->league_id;
@@ -129,6 +130,8 @@ class Common_waiverwire_model extends CI_Model{
                 return False;
             }
         }
+
+
 
         $week_year = $this->common_noauth_model->get_current_week_year($leagueid);
 
@@ -315,7 +318,6 @@ class Common_waiverwire_model extends CI_Model{
 
     function is_player_locked($player_id, $year=0, $week=0, $weektype="", $leagueid=0)
     {
-
         if ($year == 0)
             $year = $this->session->userdata('current_year');
         if ($week == 0)
