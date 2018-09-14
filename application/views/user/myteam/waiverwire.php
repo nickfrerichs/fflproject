@@ -190,6 +190,7 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
 		url = "<?=site_url('myteam/waiverwire/transaction/execute')?>";
 		$.post(url,{'pickup_id' : pickup_id, 'drop_id' : drop_id},function(data)
 		{
+            console.log(data);
 			var response = jQuery.parseJSON(data);
 			//pickupSearch(1,getpos(),getsort(),getsearch());
            // $("#confirm-modal").foundation('close');
