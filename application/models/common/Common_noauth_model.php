@@ -303,7 +303,6 @@ class Common_noauth_model extends CI_Model{
     // Sub function to set the bench players for a single team
     private function bench_players_recalc($teamid,$year,$week,$weektype_id,$leagueid)
     {
-        echo $teamid.' year:'.$year.' week:'.$week.' weektype_id:'.$weektype_id.' leagueid:'.$leagueid;
         // All players who are on the roster, aren't starters = bench
         $newbench_result = $this->db->select('roster.player_id')->from('roster')
             ->join('starter','starter.week = '.$week.' and starter.year = '.$year.
