@@ -36,7 +36,6 @@ def upgrade_db(version):
 
         for cat in cat170:
             query = ('update nfl_scoring_cat set short_text = "%s" where text_id = "%s"') % (cat[1],cat[0])
-            print query
             cur.execute(query)
             db.commit()
 
