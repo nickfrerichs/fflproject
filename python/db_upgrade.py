@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.70'
+CURRENT_VERSION = '1.71'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -21,6 +21,32 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == '1.70':
+
+        cat170 = [
+            ('kicking_xptot','Total XPs'),
+            ('kicking_fgyds','FG Yds'),
+            ('punting_pts','Num Punts'),
+            ('kicking_totpfg','FG Pts'),
+            ('puntret_lngtd','Lng PR Td'),
+            ('kickret_lngtd','Lng KR TD'),
+
+        ]
+
+        for cat in cat170:
+            query = ('update nfl_scoring_cat set short_text = "%s" where text_id = "%s"') % (cat[1],cat[0])
+            print query
+            cur.execute(query)
+            db.commit()
+
+
+        query = 'update site_settings set db_version = "%s"' % ("1.71")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
+
     if version == '1.60':
         if not column_exists("short_name", "team"):
             query = 'ALTER TABLE `team` ADD `team_abbreviation` varchar(5) DEFAULT ""'
