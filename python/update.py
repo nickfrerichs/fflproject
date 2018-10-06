@@ -322,8 +322,8 @@ def update_players(year, week, weektype):
 
             add_count = add_count + 1
             query = ("insert into player (player_id,nfl_position_id,nfl_team_id,first_name,last_name,birthdate,college,"+
-            "short_name,height,weight,years_pro,number,profile_id,profile_url,status, active,photo) "+
-            "values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" %
+            "short_name,height,weight,years_pro,number,profile_id,profile_url,status, active,photo, last_seen) "+
+            "values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',now())" %
             			(player_id,
             			pos,
             			team,
@@ -370,14 +370,21 @@ def update_players(year, week, weektype):
             ", short_name = '"+short_name+"'"+
             ", status = '"+status+"'"+
             ", photo = '"+photo+"'"+
+            ", last_seen = now()"+
             " where player_id = '" + str(gsis_id)+"'")
         cur.execute(query)
 	db.commit()
-    db.commit()
+
     print "Added: " + str(add_count) + " players."
     print "Updated: " + str(update_count) + " players."
 
     update_esbids(year,week)
+
+    query = 'update player set active = 0 where last_seen < DATE_SUB(NOW(), INTERVAL 30 day)'
+    cur.execute(query)
+    num_inactive = cur.rowcount
+    print "Players marked inactive: "+str(num_inactive)
+    db.commit()
 
 
 def update_esbids(year, week):

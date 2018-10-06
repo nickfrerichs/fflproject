@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.71'
+CURRENT_VERSION = '1.72'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -22,6 +22,21 @@ def main():
 
 def upgrade_db(version):
 
+    if version == '1.71':
+        if not column_exists("last_seen", "player"):
+            query = 'ALTER TABLE `player` ADD `last_seen` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"'
+            cur.execute(query)            
+
+            query = 'update player set last_seen = NOW()'
+            cur.execute(query)
+            db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.72")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
+    
     if version == '1.70':
 
         cat170 = [
