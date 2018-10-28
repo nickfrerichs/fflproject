@@ -19,6 +19,7 @@ import urllib2
 import urllib
 import os
 import json
+import hashlib
 import pprint
 
 try:
@@ -88,6 +89,9 @@ def main():
 
   if(args.backfill_esbids):
     backfill_esbids(year)
+
+  if(args.clear_player_generic_photo is not None):
+      clear_player_photos(args.clear_player_generic_photo)
 
 
 def update_standings(year, week ,weektype):
@@ -229,6 +233,41 @@ def update_team_photos():
         cur.execute(query)
         db.commit()
         print "Updated "+row['nflgame_id']+" with "+photo
+
+
+
+def clear_player_photos(photo_filename):
+    photo_path =  os.path.join(c.BASEDIR,"images/players/"+photo_filename)
+    try:
+        md5_to_match = hashlib.md5(open(photo_path,'rb').read()).hexdigest()
+    except IOError:
+        sys.exit('File not found: '+photo_path)
+        
+        
+    count = 0
+    print "Scanning photos...\n"
+    for p_filename in os.listdir(os.path.join(c.BASEDIR,"images/players/")):
+        p_path = os.path.join(c.BASEDIR,"images/players/"+p_filename)
+        p_md5 = hashlib.md5(open(p_path,'rb').read()).hexdigest()
+        if p_md5 == md5_to_match:
+            
+            query = 'update player set photo = "" where photo = "players/'+p_filename+'"'
+            cur.execute(query)
+            
+            if cur.rowcount > 0:
+                count += cur.rowcount
+            db.commit()
+            os.remove(p_path)
+
+            print p_filename+" matched file hash and was cleared."
+    print
+    if count > 0:
+        print "Player photos cleared: "+str(count)
+        print "\nRun 'update.py -players -photos' to re-scan for new player photos"
+    else:
+        print "No player photos matched "
+    print
+
 
 
 
@@ -856,6 +895,7 @@ parser.add_argument('-schedule_clear', action="store_true", default=False, help=
 #parser.add_argument('-g', action="store_true", default=False, help="Update NFL game stats and recalculate fantasy stats")
 parser.add_argument('-players', action="store_true", default=False, help="Update NFL players")
 parser.add_argument('-photos', action="store_true", default=False, help="Check for photos for players that don't have one.")
+parser.add_argument('-clear_player_generic_photo', action="store", default=None, required=False, help="Specify filename of player photo. Photos matching this file's hash will be cleared so they can be re-scanned.")
 parser.add_argument('-stats_summary', action="store_true", default=False, help="Calculate and store player fantasy stats summaries")
 parser.add_argument('-standings', action="store_true", default=False, help="Calculate standings results and add to schedule table.")
 parser.add_argument('-year', action="store", default="0", required=False, help="Year")
