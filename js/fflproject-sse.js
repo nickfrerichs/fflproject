@@ -345,7 +345,15 @@ function sse_live_scores_events(live_scores)
 function nflGameInactive(id, game)
 {
 	var gamerowid = "."+id+"-gamerow";
-	$(gamerowid).addClass("ls-s-nflgameinactive");
+	if (game.s.indexOf('Final') == 0 ){
+		$(gamerowid).addClass("ls-s-nflgameinactivefinal");
+		$(gamerowid).removeClass("ls-s-nflgameinactive");
+	}
+	else{
+		$(gamerowid).addClass("ls-s-nflgameinactive");
+		$(gamerowid).removeClass("ls-s-nflgameinactivefinal");
+
+	}
 	$(gamerowid).removeClass("ls-s-nflgameactive");
 	$(gamerowid+" .ls-s-nflgame-down").text('');
 	$(gamerowid+" .ls-s-nflgame-clock").text('');
@@ -358,6 +366,7 @@ function nflGameActive(id, game)
 	var gamerowid = "."+id+"-gamerow";
 	$(gamerowid).addClass("ls-s-nflgameactive");
 	$(gamerowid).removeClass("ls-s-nflgameinactive");
+	$(gamerowid).removeClass("ls-s-nflgameinactivefinal");
 	$(gamerowid+" .ls-s-nflgame-down").text(game.data.d);
 	$(gamerowid+" .ls-s-nflgame-clock").text(game.data.t);
 	$(gamerowid+" .ls-s-nflgame-lastplay").text(game.d);
@@ -413,7 +422,7 @@ function playerTeamStatus(player_id,team,delay,team_name,last_key)
 		// This game is not live
 		if (team.a == undefined)
 		{
-			gameInactive(id);
+			gameInactive(id, team.s);
 		}
 		else
 		{
@@ -435,11 +444,13 @@ function playerTeamStatus(player_id,team,delay,team_name,last_key)
 
 }
 
-function gameInactive(id)
+function gameInactive(id, status)
 {
 	playerBoxFromTeam(id).removeClass("ls-playeractive");
 	playerBoxFromTeam(id).removeClass("ls-playerinactive");
-	playerBoxFromTeam(id).addClass("ls-gameinactive");
+	if (status.indexOf('Final') == 0 ){playerBoxFromTeam(id).addClass("ls-gameinactivefinal");}
+	else{playerBoxFromTeam(id).addClass("ls-gameinactive");}
+	
 	$("."+id+" .ls-c-drivebar").addClass("hide");
 
 }

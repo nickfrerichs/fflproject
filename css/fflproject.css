@@ -200,6 +200,13 @@ table.ls-matchup-table{table-layout: fixed;}
 .ls-gameinactive{
 	background-color: transparent;
 	color: #CCC;
+	
+}
+
+.ls-gameinactivefinal, .ls-s-nflgameinactivefinal{
+	background-color: transparent;
+	color: #757575;
+	font-style: italic;
 }
 
 .ls-c-playerphoto-box{
