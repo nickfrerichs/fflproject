@@ -28,6 +28,6 @@
 <?php endif;?>
 
 <!-- Leave these at the end since they may require the above -->
-<script src="<?=site_url('js/fflproject.js?1.07')?>"></script>
-<script src="<?=site_url('js/fflproject-sse.js?1.12')?>"></script>
+<script src="<?=site_url('js/fflproject.js?1.08')?>"></script>
+<script src="<?=site_url('js/fflproject-sse.js?1.13')?>"></script>
 <script src="<?=site_url('js/fflproject-chat.js?1.09')?>"></script>
