@@ -419,8 +419,18 @@ def update_players(year, week, weektype):
 
     update_esbids(year,week)
 
-    query = 'update player set active = 0 where last_seen < DATE_SUB(NOW(), INTERVAL 30 day)'
+    # Adding this temporarily to correct team positions that got marked inactive
+    query = ('UPDATE player JOIN nfl_position ON nfl_position.id = player.nfl_position_id SET player.active = 1 '
+            +'WHERE nfl_position.type = 3 or nfl_position.type = 4')
+    
     cur.execute(query)
+
+    # This one stays, sets all non-team players inactive if they have last_seen older than 30 days ago
+    query = ('UPDATE player JOIN nfl_position ON nfl_position.id = player.nfl_position_id SET player.active = 0 '
+            +'WHERE last_seen < DATE_SUB( NOW( ) , INTERVAL 30 DAY ) AND nfl_position.type !=3 AND nfl_position.type !=4')
+    cur.execute(query)
+
+
     num_inactive = cur.rowcount
     print "Players marked inactive: "+str(num_inactive)
     db.commit()
