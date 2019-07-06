@@ -116,6 +116,12 @@ def update_nfl_statistics(year, week, weektype, update_all):
 
 
     for game in games:
+      # Some options for storing pregame rather than having games show up as
+      # final right before they start
+      # print type(game.time)
+      # print game.time.is_pregame()
+      # print game.time
+      # print game.nice_score()
       # ------------------------------------------
       # Update nfl_live_game, nfl_live_player
       # ------------------------------------------
@@ -126,7 +132,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
         livestatus['time'] = game.time.clock
         livestatus['quarter'] = game.time.qtr
         livestatus['down'] = game.down
-        lastplay = None;
+        lastplay = None
 
         for drive in game.drives:
           if drive.team == "JAC": drive.team="JAX"
