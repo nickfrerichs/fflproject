@@ -12,51 +12,54 @@
 ?>
 
 <div class="section">
-    <div class="columns">
-        <div class="column container fflp-lg-container">
-            <h4><?=$info->league_name?></h4>
-            <h5>Settings</h5>
+    <div class="container">
+        <div class="title">Settings</div>
+        <div class="title is-size-5"><?=$info->league_name?></div>
+
+        <div class="is-divider"></div>
+        <div class="columns">
+            <div class="column is-one-third">
+                Join Password
+            </div>
+            <div class="column">
+                <?php $this->load->view('components/editable_text',array('id' => 'sitename', 
+                                                                                'value' => $settings->join_password,
+                                                                                'url' => site_url('admin/site/ajax_change_item')));?>
+            </div>
         </div>
-    </div>
-
-    <div class="columns">
-        <div class="column container fflp-lg-container">
-            <table class="table is-fullwidth fflp-table-fixed">
-                <tr>
-                    <td style="width: 150px;"><b>Join Password</b></td>
-                    <td colspan=2>
-                        <?php $this->load->view('components/editable_text',array('id' => 'join-password', 
-                                                                                          'value' => $settings->join_password,
-                                                                                          'url' => site_url('admin/site/ajax_change_item'),
-                                                                                          'var1' => $info->id));?>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><b>League Admins</b></td>
+        <hr>
+        <div class="columns">
+            <div class="column is-one-third">
+                League Admins
+            </div>
+            <div class="column is-italic is-size-7">
+                <div class="box has-background-light">
                     <?php if(count($admins) > 0): ?>
-                        <td class="text-center">
-                            <?php foreach($admins as $a): ?>
-                            <?=$a->first_name.' '.$a->last_name?><br>
-                            <?php endforeach?>
-                        </td>
+                        <?php foreach($admins as $a): ?>
+                        <?=$a->first_name.' '.$a->last_name?><br>
+                        <?php endforeach?>
                     <?php else: ?>
-                        <td class="text-center">(none)</td>
+                        (none)
                     <?php endif;?>
-                    <td class="text-center"><a href="#" id="set-admins-button">Manage</a></td>
-                </tr>
-                <tr class="fflp-overflow">
-                    <?php $inviteurl = site_url('joinleague/invite/'.$info->mask_id); ?>
-                    <td><b>Invite URL</b></td>
-                    <td colspan=2 style="word-wrap:break-word">
-                        <div>
-                            <a href="<?=$inviteurl?>"><?=$inviteurl?></a>
-                        </div>
-                    </td>
-                </tr>
-
-            </table>
+                </div>
+            </div>
+            <div class="column has-text-right">
+                <a href="#" id="set-admins-button">Manage Admins</a>
+            </div>
         </div>
+        <hr>
+        <div class="columns">
+            <div class="column">
+                
+                Invite URL
+            </div>
+            <div class="column">
+                <?php $inviteurl = site_url('joinleague/invite/'.$info->mask_id); ?>
+                <a href="<?=$inviteurl?>"><?=$inviteurl?></a>
+            </div>
+
+        </div>
+        <div class="is-divider"></div>
     </div>
 </div>
 

@@ -1,10 +1,7 @@
 <div class="section">
     <div class="container">
-        <a href="<?=site_url('admin/site/create_league')?>" class="button is-link">Create new league</a>
-        <br><br>
-        <div class="box">
             <?php if(count($leagues) > 0): ?>
-                <table class="table is-fullwidth">
+                <table class="table is-fullwidth is-striped">
                     <thead>
                         <th>League Name</th>
                         <th class="text-center">Teams</th>
@@ -32,11 +29,12 @@
                         <?php endforeach;?>
                     </tbody>
                 </table>
+                <a href="<?=site_url('admin/site/create_league')?>" class="button is-link">Create new league</a>
 
             <?php else:?>
                 No leagues currently exist.
             <?php endif;?>
-        </div>
+
     </div>
 </div>
 

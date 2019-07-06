@@ -1,8 +1,7 @@
 
     
 <div class="section">
-    <div class="columns is-centered" >
-        <div class="column is-5-tablet">
+    <div class="container">
             <div class="field">
                 <label class="label">League Name</label>
                 <div class="control">
@@ -14,9 +13,8 @@
 							If this is incorrect, first update the NFL schedule in your database by running: <pre>update.py -schedule</pre>
             </div>
             <button class="button small is-link" id="create-league">Create</button>
-
-        </div>
     </div>
+
 </div>
 
 <script>

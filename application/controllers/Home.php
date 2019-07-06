@@ -49,4 +49,5 @@ class Home extends MY_Basic_Controller{
             redirect('league/news');
         }
     }
+
 }
