@@ -1,41 +1,42 @@
 <?php //$this->load->view('components/stat_popup'); ?>
 
 <div class="section">
+	<div class="container">
+		<div class="title">Trades</div>
+		<br>
+		<div class="has-text-left">
 
-	<div class="is-size-3">Trades</div>
-	<br>
-	<div class="has-text-left">
+			<?php if(!$this->session->userdata('offseason')): ?>
+				<span><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></span> |
+			<?php endif;?>
+			<span><a href="<?=site_url('myteam/trade/log')?>">Trade log</a></span>
 
-		<?php if(!$this->session->userdata('offseason')): ?>
-			<span><a href="<?=site_url('myteam/trade/propose')?>">Propose a Trade</a></span> |
-		<?php endif;?>
-		<span><a href="<?=site_url('myteam/trade/log')?>">Trade log</a></span>
+		</div>
 
+
+		<!--
+		<table class="table"><tbody><tr><td>
+		<div class="text-center"><h4>No Current Offers</h4></div>
+		</td></tr></tbody></table>
+		-->
+
+		<?php if($this->session->userdata('offseason')): ?>
+			<?php $this->load->view('user/offseason'); ?>
+		<?php else:?>
+			<br>
+			<div class="title is-size-5">Outstanding Trades</div>
+
+			<div class="f-scrollbar">
+				<table class="table is-fullwidth is-striped is-size-7-mobile f-min-width-medium">
+					<thead>
+						<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
+					</thead>
+					<tbody id="open-trades-tbody">
+					</tbody>
+				</table>
+			</div>
+		<?php endif; ?>
 	</div>
-
-
-<!--
-<table class="table"><tbody><tr><td>
-<div class="text-center"><h4>No Current Offers</h4></div>
-</td></tr></tbody></table>
--->
-
-<?php if($this->session->userdata('offseason')): ?>
-	<?php $this->load->view('user/offseason'); ?>
-<?php else:?>
-	<br>
-	<div class="is-size-5">Outstanding Trades</div>
-	<br>
-	<div class="box">
-		<table class="table is-fullwidth is-striped">
-			<thead>
-				<th>Offer</th><th>Request</th><th>Expires</th><th>Status</th>
-			</thead>
-			<tbody id="open-trades-tbody">
-			</tbody>
-		</table>
-	</div>
-<?php endif; ?>
 </div>
 
 

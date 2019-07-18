@@ -16,7 +16,7 @@ hr{border: 1px solid #eaeaea;}
     <div class="container">
             <div class="tabs is-small is-boxed fflp-tabs-active">
                 <ul>
-                    <li class="is-active" data-for="news-news-tab" data-load-content="news-content"><a>Announce</a></li>
+                    <li class="is-active" data-for="news-news-tab" data-load-content="news-content"><a>News</a></li>
                     <li class="" data-for="news-moves-tab" data-load-content="moves-content"><a>Player Moves</a></li>
                     <li class="" data-for="news-standings-tab" data-load-content="standings-content"><a>Standings</a></li>
                     <?php if($show_moneylist):?>
@@ -37,7 +37,8 @@ hr{border: 1px solid #eaeaea;}
             </div>
 
             <div id="news-moves-tab" class="is-hidden">
-                <h2 class="title is-size-4">Player Moves</h2>
+                <div class="title">Player Moves</div>
+                <hr>
                 <div id="moves-content" data-url="<?=site_url('load_content/news_moves_items')?>" data-per-page="10">
                 </div>
                 <?php $this->load->view('load_content/template/load_more_buttons',array('for' => 'moves-content'));?>
@@ -45,14 +46,16 @@ hr{border: 1px solid #eaeaea;}
 
 
             <div id="news-standings-tab" class="is-hidden fflp-overflow">
-                <h2 class="title is-size-4">League Standings</h2>
+                <div class="title">League Standings</div>
+                <hr>
                 <div id="standings-content"
                     data-url="<?=site_url('load_content/news_standings')?>">
                 </div>
             </div>
         <?php if($show_moneylist): ?>
             <div id="moneylist-tab" class="is-hidden">
-            <div class="title is-size-4">Money List</div>
+            <div class="title">Money List</div>
+                <hr>
                 <div id="moneylist-content"
                      data-url="<?=site_url('load_content/moneylist')?>">
                 </div>

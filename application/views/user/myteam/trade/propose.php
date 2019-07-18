@@ -1,5 +1,4 @@
 <?php //$this->load->view('components/stat_popup'); ?>
-
 <?php
 // Choose team modal
 $body = '<div class="select"><select id="team-dropdown">';
@@ -10,7 +9,7 @@ foreach($team_options as $o => $t)
 $body .= '</select></div>';
 
 $this->load->view('components/modal', array('id' => 'choose-team-modal',
-                                                    'title' => 'Choose Team',
+                                                    'title' => 'Trade with team:',
                                                     'body' => $body,
                                                     'reload_on_close' => False));
 ?>
@@ -25,14 +24,16 @@ $this->load->view('components/modal', array('id' => 'choose-team-modal',
 
 				</select>
 				</div>
-				<table class="table is-fullwidth">
-						<thead>
-							<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
-						</thead>
-						<tbody id="requestpicks">
+				<div class="f-scrollbar">
+					<table class="table is-fullwidth f-min-width-small is-size-7-mobile">
+							<thead>
+								<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
+							</thead>
+							<tbody id="requestpicks">
 
-						</tbody>
-				</table>
+							</tbody>
+					</table>
+				</div>
 				<div id="trade-picks-with-team">
 				</div>';
 
@@ -45,23 +46,33 @@ $this->load->view('components/modal', array('id' => 'choose-team-modal',
 	$body = '
 			<div class="select">
 			<select id="offerpick-year">';
-				foreach($pick_years as $p)
+				if ($pick_years)
 				{
-					$body.='<option value="'.$p.'"';
-					if($p == $pick_year){$body.= "selected";}
-					$body.='>'.$p.'</option>';
+					foreach($pick_years as $p)
+					{
+						$body.='<option value="'.$p.'"';
+						if($p == $pick_year){$body.= "selected";}
+						$body.='>'.$p.'</option>';
+					}
+				}
+				else
+				{
+					$body.= '<option value="sd">N/A</option>';
 				}
 
 	$body.='</select>
 			</div>
-			<table class="table is-fullwidth">
-					<thead>
-						<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
-					</thead>
-					<tbody id="offerpicks">
+			<div class="f-scrollbar">
+				<table class="table is-fullwidth f-min-width-small is-size-7-mobile">
+						<thead>
+							<th class="text-center">Round</th><th class="text-center">Pick</th><th></th>
+						</thead>
+						<tbody id="offerpicks">
 
-					</tbody>
-			</table>';
+						</tbody>
+				</table>
+			</div>';
+		
 
 	$this->load->view('components/modal', array('id' => 'offer-picks-modal',
 														'title' => 'Pick offer',

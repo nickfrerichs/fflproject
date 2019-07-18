@@ -589,14 +589,16 @@ class Trade_model extends MY_Model{
         $result = array();
         $data = $this->db->select('distinct(year) as year')->from('draft_future')->where('league_id',$this->leagueid)
             ->where('year>',$this->current_year)->get()->result();
-
         foreach($data as $d)
         {
             $result[] = $d->year;
         }
         $default = $this->get_default_draft_trade_year();
-        if (!in_array($default,$result))
-            array_unshift($result,$default);
+        if ($default)
+        {
+            if (!in_array($default,$result))
+                array_unshift($result,$default);
+        }
         return $result;
     }
 

@@ -95,114 +95,129 @@ $this->load->view('components/modal', array('id' => 'change-password-modal',
 ?>
 
 <div class="section">
-
-            <div class="is-size-4">
+    <div class="container">
+            <div class="title">
                 Team Settings
             </div>
 
-                <table class="table is-fullwidth fflp-table-fixed">
-                    <tbody>
-                        <tr>
-                            <td>Team Name</td>
-                            <td colspan=2>
+
+            <div class="columns">
+                <div class="column is-one-third">
+                    Team Name
+                </div>
+                <div class="column">
+
                                 <?php $this->load->view('components/editable_text',array('id' => 'teamname', 
                                                                                         'value' => $team_info->long_name,
                                                                                         'url' => site_url('myteam/settings/ajax_change_item')));?>
 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Team Abbreviation</td>
-                            <td colspan=2>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-one-third">
+                    Team Abbreviation
+                </div>
+                <div class="column">
+
                                 <?php $this->load->view('components/editable_text',array('id' => 'abbreviation', 
                                                                                         'value' => $team_info->team_abbreviation,
                                                                                         'url' => site_url('myteam/settings/ajax_change_item')));?>
 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Team Logo</td>
-                            <td id="team-logo" colspan=2>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-one-third">
+                    Team Logo
+                </div>
+                <div id="team-logo" class="column">
+
                                 <?php if($team_info->logo): ?>
                                 <img src="<?=$team_thumb_logo_url?>">
                                 <?php else: ?>
                                 None
                                 <?php endif; ?>
-                                <div>
-                                <a href="#" id="logo-change">Upload Team Logo</a>
-                                </div>
-                            </td>
+                                
+                                <br><a href="#" id="logo-change">Upload Team Logo</a>
+                </div>
+            </div>
 
-                        </tr>
-                    </tbody>
-                </table>
-
-
-            <div class="is-size-4">
+            <hr>
+            <div class="title">
                 Owner Settings
             </div>
 
-            <br>
 
-                <table class="table is-fullwidth fflp-table-fixed">
-                    <thead>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>First Name</td>
-                            <td colspan=2>
+            <div class="columns">
+                <div class="column is-one-third">
+                    First Name
+                </div>
+                <div class="column">
+
                                 <?php $this->load->view('components/editable_text',array('id' => 'first', 
                                                                                         'value' => $owner_info->first_name,
                                                                                         'url' => site_url('myteam/settings/ajax_change_item')));?>
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Last Name</td>
-                            <td colspan=2>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-one-third">
+                    Last Name
+                </div>
+                <div class="column">
+        
                                 <?php $this->load->view('components/editable_text',array('id' => 'last', 
                                                                                         'value' => $owner_info->last_name,
                                                                                         'url' => site_url('myteam/settings/ajax_change_item')));?>
 
-                            </td>
-                        </tr>
-                        <tr>
-                        <td>Email Address</td>
-                            <td colspan=2>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-one-third">
+                    Email Address
+                </div>
+                <div class="column">
+
                                 <?php $this->load->view('components/editable_text',array('id' => 'email', 
                                                                                         'value' => $owner_info->email,
                                                                                         'url' => site_url('myteam/settings/ajax_change_item')));?>
 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Phone Number</td>
-                            <td colspan=2>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-one-third">
+                    Phone Number
+                </div>
+                <div class="column">
                                 <?php $this->load->view('components/editable_text',array('id' => 'phone', 
                                                                                         'value' => $owner_info->phone_number,
                                                                                         'url' => site_url('myteam/settings/ajax_change_item')));?>
 
-                            </td>
-                        </tr>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-one-third">
+                    Password
+                </div>
+                <div class="column">
+                    <a id="launch-change-password" href="#">Change Password</a>
+                </div>
+            </div>
+                
 
-                        <tr>
-                            <td>Password</td>
-                            <td colspan=2><a id="launch-change-password" href="#">Change Password</a></td>
-                        </tr>
 
-                        <tr>
-                            <td>Show Chat Balloons</td>
-                            <td colspan=2>
+            <div class="columns">
+                <div class="column is-one-third">
+                    Show Chat Balloons
+                </div>
+                <div class="column">
                                 <?php $this->load->view('components/toggle_switch',
                                                 array('id' => 'chat_balloon',
                                                         'url' => site_url('myteam/settings/ajax_toggle_item'),
                                                         'is_checked' => $owner_info->chat_balloon));
                                 ?>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                </div>
+            </div>
 
+    </div>
 </div>
 
 

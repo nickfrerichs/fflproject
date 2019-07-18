@@ -1,4 +1,5 @@
-<table class="table is-fullwidth is-narrow">
+<div class="f-scrollbar">
+    <table class="table is-fullwidth f-min-width-small is-size-7-mobile">
         <thead>
             <th class="text-center">Pos</th><th class="text-center">Player</th><th></th>
         </thead>
@@ -19,4 +20,5 @@
             </tr>
             <?php endforeach; ?>
         </tbody>
-</table>
+    </table>
+</div>

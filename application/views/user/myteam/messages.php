@@ -1,24 +1,22 @@
-<?php //print_r($inbox); ?>
-
 <style>
-	.activemessage{color:blue}
 	.unread{font-weight:bold}
 </style>
 
 <div class="section">
 	<div class="container">
-	<div class="is-size-4">Messages</div>
+	<div class="title">Messages</div>
 
 
 	<div class="columns">
 		<div class="column is-2-tablet">
-			<div><a href="<?=site_url('myteam/messages/compose')?>"><h6>Compose</h6></a></div>
+			<div><a class="button is-link" href="<?=site_url('myteam/messages/compose')?>"><h6>Compose</h6></a></div>
+			<br>
 			<div id="folder_0" class="folder"><a href="#"><h6>Inbox</h6></a></div>
 			<div id="folder_1" class="folder"><a href="#"><h6>Sent Items</h6></a></div>
 			<div id="folder_2" class="folder"><a href="#"><h6>Trash</h6></a></div>
 		</div>
 		<div class="column is-10-tablet box">
-			<div id="current_0" class="folder-name is-size-4"></div>
+			<div id="current_0" class="folder-name is-size-4 title"></div>
 			<div style="overflow: auto;max-height:200px; background-color:#FFF">
 				<table id="message-table" class="table is-fullwidth is-striped" style="border-color:#fff;">
 					<tbody id="message-list">
@@ -61,8 +59,10 @@ $(document).ready(function(){
 				$("#message-display").html(data);
 				show_controls();
 			});
-			$("#message-list tr").removeClass("activemessage")
-			$(this).addClass("activemessage");
+			$("#message-list tr").removeClass("has-background-link")
+			$("#message-list tr").removeClass("has-text-light")
+			$(this).addClass("has-background-link");
+			$(this).addClass("has-text-light")
 			$("#message-callout").removeClass("is-hidden");
 			if (current_folderid() == 2){$('#message-delete').addClass('is-hidden');}
 			else{$('#message-delete').removeClass('is-hidden');}
@@ -137,9 +137,9 @@ $(document).ready(function(){
 	}
 
 	function hide_controls()
-	{$("#message-buttons").addClass("is-hidden");}
+	{$("#message-buttons").addClass("is-hidden"); $("#message-display").addClass("is-hidden");}
 	function show_controls()
-	{$("#message-buttons").removeClass("is-hidden");}
+	{$("#message-buttons").removeClass("is-hidden"); $("#message-display").removeClass("is-hidden");}
 });
 
 </script>

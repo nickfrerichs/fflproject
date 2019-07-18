@@ -18,14 +18,15 @@ $this->load->view('components/modal', array('id' => 'confirm-modal',
 
 <?php 
 // Drop modal
-$body =     '
-                <table class="table is-bordered table-condensed is-fullwidth">
+$body =     '   <div class="f-scrollbar">
+                <table class="table is-bordered table-condensed is-fullwidth is-size-7-mobile" style="min-width:300px">
                 <thead>
                     <th colspan=3 class="text-center">Player</th>
                 </thead>
                 <tbody id="ww-drop-table" data-playerid="0">
                 </tbody>
-                </table>';
+                </table>
+                </div>';
 
 $this->load->view('components/modal', array('id' => 'drop-modal',
                                                     'title' => 'Drop Player',
@@ -36,62 +37,65 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
 
 
 <div class="section">
-    <div class="columns">
-        <div class="column">
-            <h5 class="is-size-4">Waiver wire</h5>
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="title">Waiver wire</div>
+            </div>
+            <div class="column">
+                <a href="<?=site_url('myteam/waiverwire/priority')?>">Priority & Rules</a> |
+                <a href="<?=site_url('myteam/waiverwire/log')?>">Log</a>
+                <?php if(!$this->session->userdata('offseason')): ?>
+                    | <a href="#" id="drop-only">Drop Player</a>
+                <?php endif;?>   
+            </div>
+            
         </div>
-        <div class="column">
-            <a href="<?=site_url('myteam/waiverwire/priority')?>">Priority & Rules</a> |
-            <a href="<?=site_url('myteam/waiverwire/log')?>">Log</a>
-            <?php if(!$this->session->userdata('offseason')): ?>
-                | <a href="#" id="drop-only">Drop Player</a>
-            <?php endif;?>   
-        </div>
-        
     </div>
+    <div class="is-divider"></div>
 
     <!-- Show pending waiver wire requests, if any -->
     <?php if(count($pending) > 0): ?>
-        <div class="columns box">
-            <div class="column">
-                <h6 class="is-size-5">Pending Requests</h6>
-                <table class="table is-fullwidth">
+        <div class="container">
+            <h6 class="title is-size-5">Pending Requests</h6>
+            <div class="f-scrollbar">
+                <table class="table is-fullwidth is-narrow is-size-7-mobile">
                     <thead>
                         <th>Clear Time</th><th>Pick Up</th><th>Drop</th>
                     </thead>
                     <tbody>
-                <?php foreach($pending as $i => $a): ?>
-                    <?php if ($a->clear_time)
-                    {
-                        $remaining = $a->clear_time - time();
-                        $hr = (int)($remaining / (60*60));
-                        $min = (int)(($remaining - $hr*(60*60)) / 60);
-                        $sec = (int)(($remaining - $hr*(60*60) - $min*60));
-                        $clear_text = "(".$hr.":".$min.")";
-                    }
-                    else
-                        {$clear_text = "";}
-                    ?>
-                    <tr>
-                        <td>
-                            <button class="button cancel-request is-link is-small" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
-                        </td>
-                        <td>
-                            <?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)
-                            <?php if(count($pending > 1) && $a->ww_id == $latest_request_id): ?>
-                                <span style="font-size:.8em"><b>*Preferred*</b></span>
-                            <?php elseif(count($pending)>1):?>
-                                <span style="font-size:.8em"><a class="set-preferred" data-id="<?=$a->ww_id?>" href="#">(Set Preferred)</a></span>
-                            <?php endif;?>
-                        </td>
-                        <td><?=$a->d_first.' ',$a->d_last?> (<?=$a->d_pos.' - '.$a->d_club_id?>)</td>
-                    </tr>
-                <?php endforeach;?>
-            </tbody>
-            </table>
+                        <?php foreach($pending as $i => $a): ?>
+                            <?php if ($a->clear_time)
+                            {
+                                $remaining = $a->clear_time - time();
+                                $hr = (int)($remaining / (60*60));
+                                $min = (int)(($remaining - $hr*(60*60)) / 60);
+                                $sec = (int)(($remaining - $hr*(60*60) - $min*60));
+                                $clear_text = "(".$hr.":".$min.")";
+                            }
+                            else
+                                {$clear_text = "";}
+                            ?>
+                            <tr>
+                                <td>
+                                    <button class="button cancel-request is-link is-small" data-id="<?=$a->ww_id?>"><b>Cancel</b> <?=$clear_text?></button>
+                                </td>
+                                <td>
+                                    <?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)
+                                    <?php if(count($pending > 1) && $a->ww_id == $latest_request_id): ?>
+                                        <span style="font-size:.8em"><b>*Preferred*</b></span>
+                                    <?php elseif(count($pending)>1):?>
+                                        <span style="font-size:.8em"><a class="set-preferred" data-id="<?=$a->ww_id?>" href="#">(Set Preferred)</a></span>
+                                    <?php endif;?>
+                                </td>
+                                <td><?=$a->d_first.' ',$a->d_last?> (<?=$a->d_pos.' - '.$a->d_club_id?>)</td>
+                            </tr>
+                        <?php endforeach;?>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <br>
+        <div class="is-divider"></div>
     <?php endif;?>
 
 
@@ -100,36 +104,34 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
     <?php else: ?>
 
     <!-- Show the main waiver wire player list for picking up new players -->
-    <div class="columns box">
-        <div class="column">
+    <div class="container">
+        <div class="title is-size-5">Request Player</div>
 
-            <div class="is-size-5">Player List</div>
+        <?php //Show the player list using player_search_table component
 
-            <?php //Show the player list using player_search_table component
+        $headers['Position'] = array('by' => 'position', 'order' => 'asc');
+        $headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
+        $headers['NFL Team'] = array('by' => 'club_id', 'order' => 'asc');
+        $headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
+        $headers['Bye'] = array();
+        $headers['Points'] = array('by' => 'points', 'order' => 'asc');
+        $headers['Team'] = array();
 
-            $headers['Position'] = array('by' => 'position', 'order' => 'asc');
-            $headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
-            $headers['NFL Team'] = array('by' => 'club_id', 'order' => 'asc');
-            $headers['Wk '.$this->session->userdata('current_week').' Opp.'] = array('classes' => array('hide-for-small-only'));
-            $headers['Bye'] = array();
-            $headers['Points'] = array('by' => 'points', 'order' => 'asc');
-            $headers['Team'] = array();
+        $pos_dropdown['All'] = 0;
+        foreach($pos as $p)
+            $pos_dropdown[$p->text_id] = $p->id;
 
-            $pos_dropdown['All'] = 0;
-            foreach($pos as $p)
-                $pos_dropdown[$p->text_id] = $p->id;
-
-            $this->load->view('components/player_search_table',
-                            array('id' => 'ww-list',
-                                'url' => site_url('load_content/ww_player_list'),
-                                'order' => 'desc',
-                                'by' => 'points',
-                                'pos_dropdown' => $pos_dropdown,
-                                'headers' => $headers));
+        $this->load->view('components/player_search_table',
+                        array('id' => 'ww-list',
+                            'url' => site_url('load_content/ww_player_list'),
+                            'order' => 'desc',
+                            'by' => 'points',
+                            'pos_dropdown' => $pos_dropdown,
+                            'headers' => $headers));
 
 
-            ?>
-        </div>
+        ?>
+
     </div>
     <?php endif;?>
 
