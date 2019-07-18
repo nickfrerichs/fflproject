@@ -1,5 +1,5 @@
 
-<link href="<?=site_url('/css/bulma.min.css?1')?>" rel="stylesheet">
+<link href="<?=site_url('/css/bulma.min.css?2')?>" rel="stylesheet">
 <link href="<?=site_url('/css/bulma-switch.min.css')?>" rel="stylesheet">
 <link href="<?=site_url('/css/bulma-divider.min.css')?>" rel="stylesheet">
 

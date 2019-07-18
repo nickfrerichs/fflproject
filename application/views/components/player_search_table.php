@@ -14,8 +14,6 @@ if (!isset($per_page))
     $per_page = 10;
 
 ?>
-
-
     <div class="columns">
         <div class="column is-8-tablet is-4-desktop">
             <?php if(isset($disable_search) && $disable_search == True): ?>
@@ -62,29 +60,30 @@ if (!isset($per_page))
             <?php endif;?>
         </div>
     </div>
-
-    <table class="table is-fullwidth fflp-table-fixed" >
-        <thead>
-            <?php foreach($headers as $header_text => $h):?>
-                <?php if(isset($h->classes) && is_array($classes)): ?>
-                    <th class="<?php implode(" ",$h->classes);?>">
-                <?php else:?>
-                    <th>
-                <?php endif;?>
-                <?php if(array_key_exists('order',$h) && array_key_exists('by',$h)):?>
-                    <a href="#" 
-                    <?php if(array_key_exists('order',$h)){echo 'data-order="'.$h['order'].'"';}?>
-                    data-for="<?=$id?>"
-                    <?php if(array_key_exists('by',$h)){echo 'data-by="'.$h['by'].'"';}?>
-                    class="lc-sort"><?=$header_text?></a>
-                <?php else:?>
-                    <?=$header_text?>
-                <?php endif;?>
-                </th>
-            <?php endforeach;?>
-        </thead>
-        <tbody id="<?=$id?>" data-by="<?=$by?>" data-per-page="<?=$per_page?>" data-order="<?=$order?>" data-url="<?=$url?>">
-        </tbody>
-    </table>
+    <div class="f-scrollbar">
+        <table class="table is-fullwidth f-table-fixed is-size-7-mobile is-striped" style="min-width: 500px;">
+            <thead>
+                <?php foreach($headers as $header_text => $h):?>
+                    <?php if(isset($h->classes) && is_array($classes)): ?>
+                        <th class="<?php implode(" ",$h->classes);?>">
+                    <?php else:?>
+                        <th>
+                    <?php endif;?>
+                    <?php if(array_key_exists('order',$h) && array_key_exists('by',$h)):?>
+                        <a href="#" 
+                        <?php if(array_key_exists('order',$h)){echo 'data-order="'.$h['order'].'"';}?>
+                        data-for="<?=$id?>"
+                        <?php if(array_key_exists('by',$h)){echo 'data-by="'.$h['by'].'"';}?>
+                        class="lc-sort"><?=$header_text?></a>
+                    <?php else:?>
+                        <?=$header_text?>
+                    <?php endif;?>
+                    </th>
+                <?php endforeach;?>
+            </thead>
+            <tbody id="<?=$id?>" data-by="<?=$by?>" data-per-page="<?=$per_page?>" data-order="<?=$order?>" data-url="<?=$url?>">
+            </tbody>
+        </table>
+    </div>
     <?php $this->load->view('load_content/template/load_more_buttons',array('for' => $id));?>
 

@@ -1,19 +1,21 @@
 <?php //print_r($data);?>
 
 <div class="section">
-
+    <div class="container">
+    
     <div>
         <a href="<?=site_url('myteam/waiverwire')?>">Back to Waiver Wire</a>
     </div>
     <br>
 
-        <div class="is-size-5" >Waiver Wire Priority</div>
+        <div class="title is-size-5" >Waiver Wire Priority</div>
             <div class="notification">
                 - If more than one team claims a player before waivers have cleared, the first listed team wins.<br>
                 - The team winning the claim immediately moves to the last priority position.
             </div>
             <?php if(count($data['priority']) > 0 && ($data['type'] == "standings" || $data['type'] == "draft_order")): ?>
-                <table class="table is-fullwidth">
+            <div class="f-scrollbar">
+                <table class="table is-fullwidth is-size-7-mobile f-min-width-small">
                     <thead>
                         <th>Priority</th>
                         <th>Team Name</th>
@@ -29,6 +31,7 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
             <?php else: ?>
                 No waiver wire priority set.
                 <br><br>
@@ -36,7 +39,7 @@
 
 
         <br>
-        <div class="is-size-5">Waiver Wire Rules</div>
+        <div class="title is-size-5">Waiver Wire Rules</div>
         <div class="notification">
             <?php if ($settings->type == "auto"):?>
             - Waiver wire approvals are automatic and the priority list will be used when contention for the same player occurs.
@@ -59,6 +62,6 @@
             <?php endif;?>
         </div>
 
-
+    </div>
 
 </div>
