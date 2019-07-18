@@ -46,7 +46,8 @@
 
                 <?php else:?>
 
-                        <?=$w->week?>
+                <a href="<?=site_url('season/scores/week/'.$w->week)?>">
+                        <div class="has-text-centered has-background-white">Week <?=$w->week?></div></a>
 
                 <?php endif;?>
             </div>
