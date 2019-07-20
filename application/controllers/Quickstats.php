@@ -126,7 +126,8 @@ class Quickstats extends MY_User_Controller{
                     </thead>
                     <tbody>
                         <?php foreach($stats as $week => $s): ?>
-                            <?php if($week > $this->current_week -3 && $week <= $this->current_week +1): ?>
+                            <?php //if($week > $this->current_week -3 && $week <= $this->current_week +1): ?>
+                            <?php if($week <= $this->current_week +1): ?>
                                 <?php if($week == $this->current_week): ?>
                                     <tr style="background-color:#E0ECF8">
                                 <?php else: ?>

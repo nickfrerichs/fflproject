@@ -1,10 +1,13 @@
 <?php //print_r($years); ?>
 <div class="section">
-
+	<div class="container">
+		<div class="title"> Draft Results</div>
+		<?php if ($draft_end != $this->session->userdata('current_year')): ?>
 		<div class="is-size-5">
 			<a href="<?=site_url('season/draft/live')?>"><?=$this->session->userdata('current_year')?> Live Draft</a>
 		</div>
 		<br>
+		<?php endif;?>
 		<div class="select">
 			<select id="year-select" class="form-control">
 				<?php if(!in_array($this->session->userdata('current_year'),$years)):?>
@@ -17,19 +20,20 @@
 		</div>
 
 		<br><br>
-
-		<table class="table is-fullwidth is-narrow is-striped fflp-table-fixed">
-			<thead>
-				<th>Pick</th>
-				<th>Player</th>
-				<th>Pos</th>
-				<th>NFL Team</th>
-				<th>Owner</th>
-			</thead>
-			<tbody id="draft-results-table">
-			</tbody>
-		</table>
-
+		<div class="f-scrollbar">
+			<table class="table is-fullwidth is-narrow is-striped f-table-fixed is-size-7-mobile">
+				<thead>
+					<th>Pick</th>
+					<th>Player</th>
+					<th>Pos</th>
+					<th>NFL Team</th>
+					<th>Owner</th>
+				</thead>
+				<tbody id="draft-results-table">
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <script>

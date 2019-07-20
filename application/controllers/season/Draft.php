@@ -20,7 +20,7 @@ class Draft extends MY_User_Controller{
         $data['per_page'] = $this->per_page;
         $data['sort'] = array('a'=>'A->Z','z'=>'Z->A', 'nfl_team'=>'NFL Team');
         $data['pos'] = $this->player_search_model->get_nfl_positions_data();
-
+        $data['draft_end'] = $settings->draft_end;
         $data['years'] = $this->draft_model->get_draft_years_array();
 
         //if ($data['start_time'] < time())
@@ -86,6 +86,7 @@ class Draft extends MY_User_Controller{
             $data['start_time'] = $settings->draft_start_time;
             $data['current_time'] = $current_time;
             $data['paused'] = false;
+            $data['draft_end'] = $settings->draft_end;
             if ($settings->draft_paused > 0)
                 $data['paused'] = true;
 

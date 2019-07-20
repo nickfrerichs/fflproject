@@ -1,12 +1,10 @@
 
 <div class="section">
-
-				<!-- <h5><span id="year"><?=$year?></span> Standings</h5> -->
-			<div class="is-size-5">Standings</div>
-
+	<div class="container">
+			<div class="subtitle">Standings</div>
 			<div id="standings-table">
 			</div>
-
+	</div>
 </div>
 
 
