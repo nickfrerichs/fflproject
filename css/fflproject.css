@@ -1,6 +1,6 @@
 /* New CSS 2019, trying to actually come up with useful custom CSS classes */
 .f-min-width-medium{min-width: 600px;}
-.f-min-width-small{min-width: 300px;}
+.f-min-width-small{min-width: 400px;}
 .f-scrollbar{overflow-y:auto;}
 .f-table-fixed{table-layout:fixed; width:100%;}
 

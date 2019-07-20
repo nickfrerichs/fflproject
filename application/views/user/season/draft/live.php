@@ -10,6 +10,12 @@ line-height: 60px;
 
 <?php if ($this->session->userdata('offseason')): ?>
 	<?php $this->load->view('user/offseason');?>
+<?php elseif ($draft_end == $this->session->userdata('current_year')): ?>
+	<div class="section">
+		<div class="container">
+			The <?=$draft_end?> draft is over.
+		</div>
+	</div>
 <?php else: ?>
 
 <!-- Confirm rank reset modal -->

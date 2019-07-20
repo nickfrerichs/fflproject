@@ -84,6 +84,9 @@ if (!isset($per_page))
             <tbody id="<?=$id?>" data-by="<?=$by?>" data-per-page="<?=$per_page?>" data-order="<?=$order?>" data-url="<?=$url?>">
             </tbody>
         </table>
+        
     </div>
     <?php $this->load->view('load_content/template/load_more_buttons',array('for' => $id));?>
+    
+    
 
