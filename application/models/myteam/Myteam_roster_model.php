@@ -175,6 +175,7 @@ class Myteam_roster_model extends MY_Model{
         // 2. The players NFL position must be defined as a league position, or be zero if benching.
         $nfl_pos = $this->db->select('player.nfl_position_id')->from('player')
                 ->where('player.id',$player_id)->get()->row()->nfl_position_id;
+        
         if($lea_pos !=0 && !$this->nfl_pos_in_lea_pos($nfl_pos, $lea_pos)) // Players NFL pos not defined in lea_pos, false
            return false;
 

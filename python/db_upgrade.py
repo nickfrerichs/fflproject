@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.72'
+CURRENT_VERSION = '1.80'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -21,6 +21,30 @@ def main():
 
 
 def upgrade_db(version):
+
+    if version == '1.72':
+        #########################################
+        ## 2019 Season - minor changes         ##
+        #########################################
+
+        # Add index to watch table
+        query = ('ALTER TABLE `draft_watch` ADD INDEX (`player_id`)')
+        cur.execute(query)
+        query = ('ALTER TABLE `draft_watch` ADD INDEX (`team_id`)')
+        cur.execute(query)
+
+
+        # Add rank_order to draft_player_rank, default value 999
+        if not column_exists("rank_order", "draft_player_rank"):
+            query = 'ALTER TABLE `draft_player_rank` ADD `rank_order` INT(11) unsigned DEFAULT 999'
+            cur.execute(query)
+            db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.80")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
 
     if version == '1.71':
         if not column_exists("last_seen", "player"):

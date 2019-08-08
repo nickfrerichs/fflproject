@@ -47,6 +47,22 @@ class Scores_model extends MY_Model{
             ->group_by('player.id')
             ->get()->result();
 
+        $bench_players = $this->db->select('player.id as player_id, player.short_name, player.photo, player.number')
+            ->select('bench.team_id')
+            ->select('nfl_team.club_id')
+            ->select('nfl_position.short_text as nfl_pos, nfl_position.type as nfl_pos_type')
+            ->select('IFNULL(sum(fs.points),"-") as points',false)
+            ->from('bench')
+            ->join('player','player.id = bench.player_id')
+            ->join('nfl_team','nfl_team.id = player.nfl_team_id','left')
+            ->join('nfl_position','nfl_position.id = player.nfl_position_id','left')
+            ->join($fs.' as fs','fs.player_id = player.id and fs.year = '.$year.' and fs.week='.$week.
+                    ' and fs.league_id = '.$this->leagueid,'left')
+            ->where('bench.year',$year)->where('bench.week',$week)
+            ->where('bench.league_id',$this->leagueid)
+            ->group_by('player.id')
+            ->get()->result();
+
         // 1. Fill all starts spots with empty positions
         if ($year == $this->current_year)
         {
@@ -63,9 +79,11 @@ class Scores_model extends MY_Model{
         $teams_array[0] = $this->get_empty_team();
         foreach($teams as $t)
         {
+            $teams_array[$t->id]['bench'] = array();
             $teams_array[$t->id]['starters'] = array();
             $teams_array[$t->id]['team'] = $t;
             $teams_array[$t->id]['points'] = 0;
+            $teams_array[$t->id]['bench_points'] = 0;
             foreach($positions as $p)
             {
                 for($i=0;$i<$p->max_start;$i++)
@@ -95,6 +113,13 @@ class Scores_model extends MY_Model{
                 }
             }
             $teams_array[$p->team_id]['points']+=$p->points;
+        }
+
+        // 3. Add bench players for bench stats
+        foreach($bench_players as $p)
+        {
+            $teams_array[$p->team_id]['bench'][] = $p;
+            $teams_array[$p->team_id]['bench_points'] += $p->points;
         }
 
 

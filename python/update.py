@@ -819,9 +819,20 @@ def update_player_draft_ranks():
             cur.execute(query)
         db.commit()
 
-    # Lastly, delete any records for players who haven't been updated, they are not ranked any longer.
+    # Delete any records for players who haven't been updated, they are not ranked any longer.
     query = 'delete from draft_player_rank where last_updated != "%s"' % (sql_now)
     cur.execute(query)
+    db.commit()
+
+    # Lastly, set the rank_order so players can be ordered by integers 1 to n, best to worst
+    query = 'select id from draft_player_rank order by rank asc'
+    cur.execute(query)
+    results = cur.fetchall()
+    cur_rank = 1
+    for row in results:
+        query = 'update draft_player_rank set rank_order = %s where id = %s' % (str(cur_rank), str(row['id']))
+        cur.execute(query)
+        cur_rank += 1
     db.commit()
 
 def update_player_injuries():
