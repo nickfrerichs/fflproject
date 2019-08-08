@@ -2,6 +2,7 @@
 <link href="<?=site_url('/css/bulma.min.css?2')?>" rel="stylesheet">
 <link href="<?=site_url('/css/bulma-switch.min.css')?>" rel="stylesheet">
 <link href="<?=site_url('/css/bulma-divider.min.css')?>" rel="stylesheet">
+<link href="<?=site_url('/css/bulma-tooltip.min.css')?>" rel="stylesheet">
 
 <!-- Leaving font awesome at cdn -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">

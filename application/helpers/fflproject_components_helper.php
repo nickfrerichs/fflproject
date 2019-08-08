@@ -6,7 +6,7 @@
 
 
 // PLAYER SEARCH TABLE
-function fflp_player_search_table($id,$url,$order="asc",$by="",$pos_dropdown=array(),$headers=array(),$classes="",$disable_search=False,$per_page=10)
+function fflp_player_search_table($id,$url,$order="asc",$by="",$pos_dropdown=array(),$headers=array(),$classes="",$disable_search=False,$per_page=10,$check=array())
 {
     // ID
     // Any sort by fields for table header row
@@ -24,23 +24,32 @@ function fflp_player_search_table($id,$url,$order="asc",$by="",$pos_dropdown=arr
                 <input type="text" class="player-list-text-input input pagination-filter" data-for="<?=$id?>" data-filter="search" placeholder="Search">
 
         <?php endif;?>
-
-        <?php if (count($pos_dropdown)>0): ?>
-
-                <div class="control">
-                    <div class="select">
-                        <select data-for="<?=$id?>" class="player-list-position-select pagination-filter" data-filter="pos">
-                            <?php foreach ($pos_dropdown as $text => $posid): ?>
-                                <option value="<?=$posid?>"><?=$text?></option>
-                            <?php endforeach; ?>
-                        </select>
+        <div class="columns is-mobile">
+            <?php if (count($pos_dropdown)>0): ?>
+                <div class="column is-narrow">
+                    <div class="control">
+                        <div class="select">
+                            <select data-for="<?=$id?>" class="player-list-position-select pagination-filter" data-filter="pos">
+                                <?php foreach ($pos_dropdown as $text => $posid): ?>
+                                    <option value="<?=$posid?>"><?=$text?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
+            <?php endif;?>
 
-        <?php endif;?>
+            <?php if(count($check)>0): ?>
+                <div class="column is-narrow" style="margin-top:5px;">
+                        <input  class="switch is-link player-list-checkbox" data-for="<?=$id?>" 
+                            id="<?=$id?>-checkbox" type="checkbox" <?php if($check['checked']){echo "checked";}?>>
+                        <label for="<?=$id?>-checkbox" class="is-size-7"><?=$check['text']?>
+                        </label>
+                </div>
+            <?php endif;?>
+        </div>
 
-
-        <div class="fflp-overflow">
+        <div class="f-scrollbar">
             <table class="table is-fullwidth is-narrow <?=$classes?>">
                 <?php if(count($headers)>0): ?>
                     <thead>

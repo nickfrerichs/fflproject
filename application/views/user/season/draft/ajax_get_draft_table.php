@@ -1,6 +1,9 @@
 <?php foreach ($players as $p): ?>
 	<tr>
 		<td>
+			<?=$p->rank?>
+		</td>
+		<td>
 			<!-- <div class="hide-for-small-only"><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong> </div> -->
 			<div class="show-for-small-only"><strong><span class="selected-player-name"><?=$p->first_name[0].'.'.$p->last_name?></span></strong></div>
 		</td>

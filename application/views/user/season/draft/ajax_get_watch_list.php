@@ -5,7 +5,7 @@
 	<tr class="watch-avail-<?=$p->id?>">
 		<td class="has-text-centered">
 
-					<?=$p->order?>
+					<?=$p->rank?>
 
 
 			<!-- <div>
@@ -24,7 +24,6 @@
 				<?php //endif;?>
 			</div> -->
 		</td>
-
 
 		<td>
 			<div style="display:inline-block">
@@ -54,7 +53,7 @@
 			</div>
 			<div style="display:inline-block">
 				<div>
-					<strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong>
+				<span class="has-text-right is-size-7"><?=$p->order?>. </span><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong>
 				</div>
 				<div>
 					<?=$p->club_id?> - <?=$p->position?> <span style="font-size: .8em">(bye <?=$byeweeks[$p->club_id]?>)</span>

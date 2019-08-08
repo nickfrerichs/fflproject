@@ -200,7 +200,8 @@ function sse_live_draft_events(live_draft)
 			// Update draft table to hide draft/watch buttons for recently drafted players
 			$('.draft-avail-'+player.player_id).text(player.team_name);
 			// Update watch table to remove recently drafted players
-			$('.watch-avail-'+player.player_id).remove();
+			if ($('.watch-avail-'+player.player_id).length > 0){loadContent('watch-list');}
+			//$('.watch-avail-'+player.player_id).remove();
 			add_one_pick(player);
 		});
 

@@ -37,10 +37,14 @@ function loadContent(targetSel)
     var order = $('#'+targetSel).data('order');
     var by = $('#'+targetSel).data('by');
     var var1 = $('#'+targetSel).data('var1');
+
+    var check_val = null;
+    if ($('#'+targetSel+'-checkbox') != undefined){var check_val = $('#'+targetSel+'-checkbox').is(':checked');}
+
     // $.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
     // 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
     var url = $('#'+targetSel).data('url');
-    $.post(url, {'limit':limit, 'order':order, 'by':by, 'filters':filters, 'var1':var1}, function(data){
+    $.post(url, {'limit':limit, 'order':order, 'by':by, 'filters':filters, 'var1':var1, 'checkbox' : check_val}, function(data){
         
         if(data.success)
         {
@@ -49,7 +53,7 @@ function loadContent(targetSel)
             $("#"+targetSel).html(data.html);
 
             $('.lc-remaining[data-for="'+targetSel+'"]').text(data.total-data.count);
-            $('.lc-count[data-for="'+targetSel+'"]').text(data.count);
+            $('.lc-count[data-for="'+targetSel+'"]').text(Math.min(data.count,data.total));
             $('.lc-total[data-for="'+targetSel+'"]').text(data.total);
 
             $("#"+targetSel).data('total',data.total);
@@ -90,6 +94,11 @@ $(document).on('input','.pagination-filter',function(e){
 });
 
 $(document).on('change','.pagination-filter', function(e){
+    var for_id = $(this).data('for');
+    loadContent(for_id);
+});
+
+$(document).on('change','.player-list-checkbox',function(e){
     var for_id = $(this).data('for');
     loadContent(for_id);
 });

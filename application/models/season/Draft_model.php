@@ -219,7 +219,7 @@ class Draft_model extends MY_Model{
         return date("Y-m-d H:i:s", $unixtimestamp);
     }
 
-    function get_available_players_data($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='')
+    function get_available_players_data($limit = 100000, $start = 0, $nfl_pos = 0, $order_by = array('last_name','asc'),$search='', $hide_drafted=false)
     {
         $pos_list = $this->common_model->league_nfl_position_id_array();
         if (count($pos_list) < 1)
@@ -233,14 +233,18 @@ class Draft_model extends MY_Model{
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('team.team_name')
                 ->select('draft_watch.id as watched')
+                ->select('IFNULL(draft_player_rank.rank_order,999) as rank',false)
                 ->from('player')
                 ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
+                ->join('draft_player_rank','draft_player_rank.player_id = player.id','left')
                 ->join('roster','player.id = roster.player_id and roster.league_id = '.$this->leagueid,'left')
                 ->join('team','team.id = roster.team_id and team.league_id = '.$this->leagueid,'left')
                 ->join('draft_watch','draft_watch.player_id = player.id and draft_watch.team_id = '.$this->teamid,'left')
                 ->where_in('nfl_position_id', $pos_list)
                 ->where('player.active', 1);
+        if ($hide_drafted == true)
+                $this->db->where('team.id',null);
         if ($search != '')
             $this->db->where('(`last_name` like "%'.$search.'%" or `first_name` like "%'.$search.'%")',NULL,FALSE);
         if (($nfl_pos != 0) && (is_numeric($nfl_pos)))
@@ -382,10 +386,12 @@ class Draft_model extends MY_Model{
                 ->select('nfl_position.text_id as position')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('draft_watch.order')
+                ->select('IFNULL(draft_player_rank.rank_order,999) as rank',false)
                 ->from('draft_watch')
                 ->join('player', 'player.id = draft_watch.player_id')
                 ->join('nfl_team', 'nfl_team.id = player.nfl_team_id','left')
                 ->join('nfl_position', 'nfl_position.id = player.nfl_position_id','left')
+                ->join('draft_player_rank','draft_player_rank.player_id = player.id','left')
                 ->where('draft_watch.team_id',$this->teamid);
         if (($pos != 0) && (is_numeric($pos)))
             $this->db->where('nfl_position.id', $pos);
@@ -676,6 +682,11 @@ class Draft_model extends MY_Model{
             ->where('draft_order.year',$year)
             ->order_by('overall_pick','asc')
             ->get()->result();
+    }
+
+    function clear_watch_list()
+    {
+        $this->db->where('team_id',$this->teamid)->delete('draft_watch');
     }
 
     function reset_player_ranks()

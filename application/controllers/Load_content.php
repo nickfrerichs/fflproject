@@ -24,6 +24,12 @@ class Load_content extends MY_User_Controller{
         // $this->in_pos = $this->input->post('pos');
         $this->by = $this->input->post('by');
         $this->order = $this->input->post('order');
+        
+        if ($this->input->post('checkbox'))
+        {
+            $this->checkbox = $this->input->post('checkbox') == "true";
+        }
+
         $this->filters = array();
         if ($this->input->post('filters'))
         {
@@ -179,7 +185,10 @@ class Load_content extends MY_User_Controller{
         if (!isset($this->filter_pos))
             $this->filter_pos = '';
 
-        $nfl_players = $this->draft_model->get_available_players_data($this->limit, 0, $this->filter_pos, array($this->by, $this->order), $this->filter_search);
+        if (!isset($this->checkbox))
+            $this->checkbox=false;
+
+        $nfl_players = $this->draft_model->get_available_players_data($this->limit, 0, $this->filter_pos, array($this->by, $this->order), $this->filter_search, $this->checkbox);
 
         $view_data['total'] = $nfl_players['count'];
         $view_data['players'] = $nfl_players['result'];
@@ -198,7 +207,6 @@ class Load_content extends MY_User_Controller{
         $this->data['html'] = $this->load->view('user/season/draft/ajax_get_draft_table', $view_data, True);
 
         $this->data['success'] = True;
-
         echo json_encode($this->data);
     }
 

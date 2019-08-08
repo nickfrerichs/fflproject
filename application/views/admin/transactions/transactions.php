@@ -142,6 +142,7 @@
 							// altInput: true,
 							//altFormat: "F j, Y H:i",
 							//altInputClass:"",
+							minDate: "2017",
 							dateFormat: "Y-m-d H:i",
 						};
 	$('#wwdeadline-input').flatpickr(picker_options);

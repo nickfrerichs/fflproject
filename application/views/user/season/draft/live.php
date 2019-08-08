@@ -24,15 +24,15 @@ line-height: 60px;
 $body =     '	<div class="text-center">This will clear your current watch list!</div>
 				<br>
 				<div>
-					<button class="button is-link is-small" type="button" id="confirm-rank-reset">
+					<button class="button is-link is-small" type="button" id="confirm-watch-clear">
 						Confirm
 					</button>
-					<button class="button is-link is-small" type-"button" id="cancel-rank-reset">
+					<button class="button is-link is-small modal-close" type-"button" id="cancel-watch-clear">
 						Cancel
 					</button>
 				</div>';
 
-fflp_modal('confirm-rank-reset-modal','Are you sure?',$body,True);
+			fflp_modal('confirm-watch-clear-modal','Are you sure?',$body);
 
 ?>
 
@@ -142,6 +142,7 @@ fflp_modal('confirm-rank-reset-modal','Are you sure?',$body,True);
 		<div id="draft-player-list-tab">
 			<?php //Show the player list using player_search_table component
 
+			$headers['Rank'] = array('by' => 'rank', 'order' => 'asc');
 			$headers['Name'] = array('by' => 'last_name', 'order' => 'asc');
 			$headers['Team'] = array('by' => 'club_id', 'order' => 'asc');
 			$headers['Position'] = array('by' => 'position', 'order' => 'asc');
@@ -157,14 +158,17 @@ fflp_modal('confirm-rank-reset-modal','Are you sure?',$body,True);
 			foreach($pos as $p)
 				$pos_dropdown[$p->text_id] = $p->id;
 
+			
 			fflp_player_search_table('draft-list',
 									site_url('load_content/draft_player_list'),
-									'desc',
-									'last_name',
+									'asc',
+									'rank',
 									$pos_dropdown,
 									$headers,
 									$classes='is-striped small-text',
-									$disable_search=False)
+									$disable_search=False,
+									$per_page=10,
+									$check=array('text'=>"Hide Drafted",'checked'=>true));
 
 			?>
 		</div>
@@ -174,7 +178,7 @@ fflp_modal('confirm-rank-reset-modal','Are you sure?',$body,True);
 
 			<?php if($this->session->userdata('use_draft_ranks')): ?>
 			<div class="has-text-centered">
-					<small><a onclick='$("#confirm-rank-reset-modal").addClass("is-active");'>(reset to NFL fantasy ranks)</a></small>
+					<small><a onclick='$("#confirm-watch-clear-modal").addClass("is-active");'>(clear watch list)</a></small>
 			</div>
 			<?php endif;?>
 
@@ -185,8 +189,6 @@ fflp_modal('confirm-rank-reset-modal','Are you sure?',$body,True);
 			$headers['Player'] = array();
 
 
-
-
 			$pos_dropdown['All'] = 0;
 			foreach($pos as $p)
 				$pos_dropdown[$p->text_id] = $p->id;
@@ -195,16 +197,16 @@ fflp_modal('confirm-rank-reset-modal','Are you sure?',$body,True);
 			fflp_player_search_table('watch-list',
 				site_url('load_content/draft_watch_list'),
 				$order='asc',
-				$by='meh',
+				$by='rank_order',
 				$pos_dropdown,
 				$headers,
-				$classes='is-striped small-text',
+				$classes='is-striped small-text f-min-width-small',
 				$disable_search=True)
 
 			?>
 		</div>
 
-		<div id="draft-myteam-list-tab" class="is-hidden fflp-overflow">
+		<div id="draft-myteam-list-tab" class="is-hidden f-scrollbar">
 			<!-- <div class="d-myteam-heading text-center"><h5>My Team</h5></div> -->
 			<table class="table is-narrow is-fullwidth is-striped small-text">
 				<thead>
@@ -250,9 +252,9 @@ $('#d-scroll-link').on('click',function(){
 	}
 });
 
-$('#confirm-rank-reset').on('click',function(){
-	$('#confirm-rank-reset-modal').removeClass('is-active');
-	var url="<?=site_url('season/draft/ajax_reset_player_ranks')?>"
+$('#confirm-watch-clear').on('click',function(){
+	$('#confirm-watch-clear-modal').removeClass('is-active');
+	var url="<?=site_url('season/draft/ajax_clear_watch_list')?>"
 	$.post(url,{}, function(data){
 		if (data.success)
 		{
