@@ -1,13 +1,17 @@
 # fflproject
 Fantasy Football League Project is an NFL fantasy football league manager created in the spirit of phpFFL. It's built on the Codeigniter framework with a goal of delivering a more modern experience to owners. It depnds on the python package nflgame for retrieving NFL data.
 
-### New for 2018 Season:
-- Players left on the bench each week are now recorded for historic purposes, just like starters.
-- Visual redesign using new CSS framework, it will continue to be refined.
-- New authentication package, you shouldn't notice a difference but it's better and more lightweight.
-- Fair amount of bug fixes.
+### New for 2019 Season:
 
-![News screenshot](https://user-images.githubusercontent.com/5790350/28981867-39c5f292-7919-11e7-923b-a04bc563b514.png)
+Whats new:
+
+- More consistent look on both the user and admin side
+- Slightly more mobile friendly
+- Bench scoring now appears on weekly scoring page
+- Draft: player ranks are now part of the normal search, watch list should be more useful for keeping an eye on prospects
+- A few bugs/performance issues fixed
+
+![News screenshot](https://user-images.githubusercontent.com/5790350/62672877-ef580480-b961-11e9-946f-0e4e2fecade6.png)
 
 
 
@@ -19,6 +23,7 @@ Features:
 - Multiple leagues
 - Live draft
 - Live scoring
+- Bench scoring
 - Player draft ranks import from NFL.com
 - Responsive design for better mobile support
 - League news page w/recent waiver wire moves
@@ -33,5 +38,7 @@ Features:
 
 More Screenshots
 
-![My Team](https://user-images.githubusercontent.com/5790350/28981874-3d2f88ee-7919-11e7-9a1c-28bd49ec6863.png)
-![Player Search](https://user-images.githubusercontent.com/5790350/28981883-408012c0-7919-11e7-91fc-4c1b41caad53.png)
+![My Team](https://user-images.githubusercontent.com/5790350/62673098-b8362300-b962-11e9-91fb-c21f1ce993ae.png)
+![Player Search](https://user-images.githubusercontent.com/5790350/62673194-0e0acb00-b963-11e9-8376-eac893087cf1.png)
+![Waiver Wire](https://user-images.githubusercontent.com/5790350/62673254-5c1fce80-b963-11e9-95ee-6f7e95eb10f4.png)
+
