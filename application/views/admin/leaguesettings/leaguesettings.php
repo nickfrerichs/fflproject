@@ -79,15 +79,15 @@
             <div class="columns">
                 <div class="column is-one-third">
                     <span data-tooltip class="has-tip top" title="Teams cannot start/sit players after the first game of the week has started.">Lock lineups after first game</span>
-                    </div>
-                    <div class="column">
-                            <?php $this->load->view('components/toggle_switch',
-                                            array('id' => 'locklineups',
-                                                    'url' => site_url('admin/leaguesettings/ajax_toggle_item'),
-                                                    'is_checked' => $settings->lock_lineups_first_game));
-                            ?>
-                    </div>
                 </div>
+                <div class="column">
+                        <?php $this->load->view('components/toggle_switch',
+                                        array('id' => 'locklineups',
+                                                'url' => site_url('admin/leaguesettings/ajax_toggle_item'),
+                                                'is_checked' => $settings->lock_lineups_first_game));
+                        ?>
+                </div>
+ 
             </div>
             <div class="columns">
                 <div class="column is-one-third">
@@ -148,7 +148,6 @@
             <div class="columns">
                 <div class="column is-one-third">
                     Invite URL
-                </div>
                 </div>
                 <div class="column">
                         <a href="<?=$invite_url?>"><?=$invite_url?></a></small>

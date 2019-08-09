@@ -7,6 +7,9 @@
 			<div class="content">
 				To get started:
 				<ol>
+					<li>
+						Make sure that you have <b>nflgame</b> intalled, check the wiki on GitHub if you need help.
+					</li>
 					<?php if($nfl_schedule_status): ?>
 						<li>
 							Current NFL schedule in your database is: <b><?=$nfl_schedule_status->year?>, <?=$nfl_schedule_status->gt?></b><br>
