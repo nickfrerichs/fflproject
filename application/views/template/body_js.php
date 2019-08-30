@@ -29,5 +29,5 @@
 
 <!-- Leave these at the end since they may require the above -->
 <script src="<?=site_url('js/fflproject.js?1.10')?>"></script>
-<script src="<?=site_url('js/fflproject-sse.js?1.14')?>"></script>
+<script src="<?=site_url('js/fflproject-sse.js?1.16')?>"></script>
 <script src="<?=site_url('js/fflproject-chat.js?1.09')?>"></script>
