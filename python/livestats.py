@@ -516,66 +516,67 @@ def add_other_player_stats(playerdict, player):
     playerdict[player.playerid]['rush_rec_yds'] = yards
 
 def update_live_players(play, gamekey):
-    for event in play.events:
-        elist = list()
-        for key, value in event.iteritems():
-            elist.append(key)
-        text = ""
+    if event is not None:
+      for event in play.events:
+          elist = list()
+          for key, value in event.iteritems():
+              elist.append(key)
+          text = ""
 
-        if "rushing_tds" in elist and "rushing_yds" in elist and text == "":
-            text = str(event["rushing_yds"])+" yard TD run!"
+          if "rushing_tds" in elist and "rushing_yds" in elist and text == "":
+              text = str(event["rushing_yds"])+" yard TD run!"
 
-        if "passing_tds" in elist and "passing_yds" in elist and text == "":
-            text = str(event["passing_yds"])+" yard TD pass!"
+          if "passing_tds" in elist and "passing_yds" in elist and text == "":
+              text = str(event["passing_yds"])+" yard TD pass!"
 
-        if "receiving_tds" in elist and "receiving_yds" in elist and text == "":
-            text = str(event["receiving_yds"])+" yard TD catch!"
+          if "receiving_tds" in elist and "receiving_yds" in elist and text == "":
+              text = str(event["receiving_yds"])+" yard TD catch!"
 
-        if "receiving_yds" in elist and text == "":
-            text = str(event["receiving_yds"])+" yard catch"
+          if "receiving_yds" in elist and text == "":
+              text = str(event["receiving_yds"])+" yard catch"
 
-        if "passing_yds" in elist and text == "":
-            text = str(event["passing_yds"])+" yard completion"
+          if "passing_yds" in elist and text == "":
+              text = str(event["passing_yds"])+" yard completion"
 
-        if "rushing_yds" in elist and text == "":
-            text = str(event["rushing_yds"])+" yard run"
+          if "rushing_yds" in elist and text == "":
+              text = str(event["rushing_yds"])+" yard run"
 
-        if "passing_ints" in elist and text == "":
-            text = "Interception!"
+          if "passing_ints" in elist and text == "":
+              text = "Interception!"
 
-        if "kicking_fgm" in elist and text == "":
-            text = str(event["kicking_fgm_yds"]) + " yard FG is good!"
+          if "kicking_fgm" in elist and text == "":
+              text = str(event["kicking_fgm_yds"]) + " yard FG is good!"
 
-        if "kicking_fgmissed" in elist and text == "":
-            text = "Field goal missed!"
+          if "kicking_fgmissed" in elist and text == "":
+              text = "Field goal missed!"
 
-        if "kicking_xpmade" in elist and text == "":
-            text = "XP is Good!"
+          if "kicking_xpmade" in elist and text == "":
+              text = "XP is Good!"
 
-        if "kicking_xpmade" in elist and text == "":
-            text = "Extra point is good."
+          if "kicking_xpmade" in elist and text == "":
+              text = "Extra point is good."
 
-        if "kicking_xpmissed" in elist and text == "":
-            text = "Extra point missed!"
+          if "kicking_xpmissed" in elist and text == "":
+              text = "Extra point missed!"
 
-        if "fumbles_lost" in elist and text == "":
-            text = "FUMBLE LOST!"
+          if "fumbles_lost" in elist and text == "":
+              text = "FUMBLE LOST!"
 
-        if text != "":
-            query = 'select id, play_id from nfl_live_player where nfl_player_id = "%s"' % (event['playerid'])
-            cur.execute(query)
-            if cur.rowcount > 0:
-                lprow = cur.fetchone()
-                if str(lprow['play_id']) != str(play.playid):
-                    query = ('update nfl_live_player set update_key = %s, play_id = %s, text="%s" where nfl_player_id = "%s"'
-                            % (str(unix_timestamp),str(play.playid),text,event['playerid']))
-                    cur.execute(query)
-            else:
-                query = (('insert into nfl_live_player (player_id, gsis_id, play_id, text, nfl_player_id, update_key)'+
-                    'values((select id from player where player_id = "%s"),%s,%s,"%s","%s",%s)')
-                    % (event['playerid'],str(gamekey),str(play.playid),text,event['playerid'],str(unix_timestamp)))
+          if text != "":
+              query = 'select id, play_id from nfl_live_player where nfl_player_id = "%s"' % (event['playerid'])
+              cur.execute(query)
+              if cur.rowcount > 0:
+                  lprow = cur.fetchone()
+                  if str(lprow['play_id']) != str(play.playid):
+                      query = ('update nfl_live_player set update_key = %s, play_id = %s, text="%s" where nfl_player_id = "%s"'
+                              % (str(unix_timestamp),str(play.playid),text,event['playerid']))
+                      cur.execute(query)
+              else:
+                  query = (('insert into nfl_live_player (player_id, gsis_id, play_id, text, nfl_player_id, update_key)'+
+                      'values((select id from player where player_id = "%s"),%s,%s,"%s","%s",%s)')
+                      % (event['playerid'],str(gamekey),str(play.playid),text,event['playerid'],str(unix_timestamp)))
 
-                cur.execute(query)
+                  cur.execute(query)
 
     db.commit()
 
