@@ -214,6 +214,10 @@ class CI_DB_mysqli_driver extends CI_DB {
 				log_message('error', $message);
 				return ($this->db_debug) ? $this->display_error($message, '', TRUE) : FALSE;
 			}
+			// ==================
+			// Added by FFLProject to disable only_full_group_by without having to modify mysql server config
+			$this->_mysqli->query("SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));");
+			// ==================
 
 			return $this->_mysqli;
 		}
