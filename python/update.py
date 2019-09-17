@@ -32,6 +32,8 @@ import config as c
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
+cur.execute("SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));")
+
 query = 'select current_timestamp'
 cur.execute(query)
 sql_now = cur.fetchone()['current_timestamp']
