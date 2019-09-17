@@ -516,7 +516,7 @@ def add_other_player_stats(playerdict, player):
     playerdict[player.playerid]['rush_rec_yds'] = yards
 
 def update_live_players(play, gamekey):
-    if event is not None:
+    if play is not None:
       for event in play.events:
           elist = list()
           for key, value in event.iteritems():
