@@ -32,18 +32,18 @@
         </div>
         </td>
         <td>
-            <?=$matchups[$p->club_id]['opp']?>
-            <?php if ($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] != ''): ?>
-                <?php if(date("D",$matchups[$p->club_id]['time']) == "Sun"): ?>
-                    <div><?=date("D g:i",$matchups[$p->club_id]['time'])?></div>
+            <?=$matchups[$p->nfl_team_id]['opp']?>
+            <?php if ($matchups[$p->nfl_team_id]['time'] > time() || $matchups[$p->nfl_team_id]['time'] != ''): ?>
+                <?php if(date("D",$matchups[$p->nfl_team_id]['time']) == "Sun"): ?>
+                    <div><?=date("D g:i",$matchups[$p->nfl_team_id]['time'])?></div>
                 <?php else: ?>
-                    <div><?=date("D g:i",$matchups[$p->club_id]['time'])?></div>
+                    <div><?=date("D g:i",$matchups[$p->nfl_team_id]['time'])?></div>
                 <?php endif; ?>
             <?php endif;?>
         </td>
         <td>
             <div class="column has-text-centered">
-                <span class="is-hidden-mobile"> Week </span><?=$byeweeks[$p->club_id]?>
+                <span class="is-hidden-mobile"> Week </span><?=$byeweeks[$p->nfl_team_id]?>
             </div>
         </td>
         <td class="is-hidden-mobile">
@@ -54,7 +54,7 @@
 
         <td>
             <div class="column has-text-centered">
-            <?php if($matchups[$p->club_id]['time'] > time() || $matchups[$p->club_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
+            <?php if($matchups[$p->nfl_team_id]['time'] > time() || $matchups[$p->nfl_team_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
                 <button class="button is-small is-link roster-sit-btn" value="<?=$p->player_id?>">
                         Sit
                 </button>

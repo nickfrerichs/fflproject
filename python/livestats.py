@@ -22,7 +22,14 @@ cur.execute(query)
 sql_now = cur.fetchone()['current_timestamp']
 unix_timestamp = int(time.mktime(sql_now.timetuple()))
 
+nfl_team_id_lookup = dict()
+nfl_club_id_lookup = dict()
+
 def main():
+    global nfl_team_id_lookup, nfl_club_id_lookup
+    nfl_team_id_lookup = get_nfl_team_id_dict()
+    nfl_club_id_lookup = get_nfl_club_id_dict()
+
     cur_year, cur_week = nflgame.live.current_year_and_week()
     cur_weektype = nflgame.live._cur_season_phase
 
@@ -137,17 +144,23 @@ def update_nfl_statistics(year, week, weektype, update_all):
         lastplay = None
 
         for drive in game.drives:
-          if drive.team == "JAC": drive.team="JAX"
-          if drive.team == "STL": drive.team="LA"
-          if game.away == "JAC": game.away="JAX"
-          if game.away == "STL": game.away="LA"
-          if game.home == "JAC": game.home="JAX"
-          if game.home == "STL": game.home="LA"
+          # This makes sure we're using the abbreviation FFLProject is expecting, if one isn't found, add it to the
+          # nfl_team as a alt_club_id
+          drive.team = nfl_club_id_lookup[nfl_team_id_lookup[drive.team]]
+          game.away = nfl_club_id_lookup[nfl_team_id_lookup[game.away]]
+          game.home = nfl_club_id_lookup[nfl_team_id_lookup[game.home]]
+
+          # if drive.team == "JAC": drive.team="JAX"
+          # if drive.team == "STL": drive.team="LA"
+          # if game.away == "JAC": game.away="JAX"
+          # if game.away == "STL": game.away="LA"
+          # if game.home == "JAC": game.home="JAX"
+          # if game.home == "STL": game.home="LA"
           livestatus['off'] = drive.team
           if drive.team == game.home:
-            livestatus['def'] = game.away
+            livestatus['def'] = nfl_team_id_lookup[game.away]
           else:
-            livestatus['def'] = game.home
+            livestatus['def'] = nfl_team_id_lookup[game.home]
           if drive.field_start is not None:
             livestatus['yardline'] = get_yard_line(drive.field_start.add_yards(drive.total_yds+drive.penalty_yds))
           else:
@@ -165,22 +178,22 @@ def update_nfl_statistics(year, week, weektype, update_all):
             query = 'select id, play_id from nfl_live_game where nfl_schedule_gsis = %s' % (livestatus['gamekey'])
             cur.execute(query)
             ls = livestatus
-            if ls['def'] == 'JAC': ls['def'] = 'JAX'
-            if ls['def'] == 'STL': ls['def'] = 'LA'
-            if ls['off'] == 'JAC': ls['off'] = 'JAX'
-            if ls['off'] == 'STL': ls['off'] = 'LA'
+            # if ls['def'] == 'JAC': ls['def'] = 'JAX'
+            # if ls['def'] == 'STL': ls['def'] = 'LA'
+            # if ls['off'] == 'JAC': ls['off'] = 'JAX'
+            # if ls['off'] == 'STL': ls['off'] = 'LA'
             if cur.rowcount > 0:
               lgrow = cur.fetchone()
               if str(lastplay.playid) != str(lgrow['play_id']): #only update if it's a new play
                   query = (('update nfl_live_game set update_key = %s, down = %s, to_go = %s, quarter = "%s", off_nfl_team_id = '+
-                    '(select id from nfl_team where club_id = "%s"), def_nfl_team_id = '+
-                    '(select id from nfl_team where club_id = "%s"), yard_line = %s, time="%s", home_score = %s, away_score = %s, note = "%s", details = "%s", play_id = %s '+
+                    '%s, def_nfl_team_id = '+
+                    '%s, yard_line = %s, time="%s", home_score = %s, away_score = %s, note = "%s", details = "%s", play_id = %s '+
                     'where id = %s') % (str(unix_timestamp), ls['down'],ls['to_go'],ls['quarter'],ls['off'],ls['def'],str(ls['yardline']),ls['time'],str(game.score_home), str(game.score_away),ls['note'],MySQLdb.escape_string(ls['details']),str(lastplay.playid),str(lgrow['id'])))
                   cur.execute(query)
                   live_changes_made = True
             else:
               query = (('insert into nfl_live_game (update_key, nfl_schedule_gsis, down, to_go, quarter, off_nfl_team_id, def_nfl_team_id, yard_line, time, week, nfl_week_type_id, year, home_score, away_score, note, details, play_id) values ('+
-                '%s,%s,%s,%s,"%s",(select id from nfl_team where club_id = "%s"),(select id from nfl_team where club_id = "%s"),%s,"%s",%s,(select id from nfl_week_type where text_id = "%s"),%s,%s,%s,"%s","%s",%s)') %
+                '%s,%s,%s,%s,"%s",%s,%s,%s,"%s",%s,(select id from nfl_week_type where text_id = "%s"),%s,%s,%s,"%s","%s",%s)') %
                 (str(unix_timestamp), ls['gamekey'],ls['down'],ls['to_go'],ls['quarter'],ls['off'],ls['def'],str(ls['yardline']),ls['time'],str(week),weektype,str(year), str(game.score_home), str(game.score_away),ls['note'],MySQLdb.escape_string(ls['details']),str(lastplay.playid)))
 
               cur.execute(query)
@@ -611,6 +624,29 @@ def init_playerdict(team_id):
   playerdict[team_id+"_ST"] = {}
 
   return playerdict
+
+# Used to look up database IDs for NFL teams
+def get_nfl_team__id_dict():
+  cur.execute('select id, club_id, alt_club_ids from nfl_team')
+  team_dict = collections.defaultdict(lambda: 0, {})
+  for row in cur.fetchall():
+      team_dict[row['club_id']] = row['id']
+      if row['alt_club_ids']:
+          for alt in row['alt_club_ids'].split(','):
+              alt = alt.strip()
+              if alt != "":
+                  team_dict[alt] = row['id']
+  return team_dict
+
+# Look up club_id from database ids
+def get_nfl_club_id_dict():
+  cur.execute('select id, club_id from nfl_team')
+  team_dict = dict()
+  for row in cur.fetchall():
+    team_dict[row['id']] = row['club_id']
+
+  return team_dict
+
 
 parser = argparse.ArgumentParser(description='Update Game Statistics using NFL Game')
 

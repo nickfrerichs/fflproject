@@ -60,7 +60,7 @@ class Admin_security_model extends MY_Model
     {
         $row = $this->db->select('max_teams')->from('league_settings')->where('league_id',$this->leagueid)
             ->get()->row();
-        if (count($row) > 0 && $row->max_teams > 0)
+        if ($row && $row->max_teams > 0)
             return True;
         return False;
     }
@@ -69,7 +69,7 @@ class Admin_security_model extends MY_Model
     {
         $row = $this->db->select('roster_max')->from('league_settings')->where('league_id',$this->leagueid)
             ->get()->row();
-        if (count($row) > 0 && $row->roster_max != 0)
+        if ($row && $row->roster_max != 0)
             return True;
         return False;
     }

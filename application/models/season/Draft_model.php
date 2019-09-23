@@ -228,7 +228,7 @@ class Draft_model extends MY_Model{
         $watch_list = $this->get_watch_players_array();
 
         $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
-        $this->db->select('player.id, player.first_name, player.last_name')
+        $this->db->select('player.id, player.first_name, player.last_name, player.nfl_team_id')
                 ->select('nfl_position.text_id as position')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('team.team_name')
@@ -382,7 +382,7 @@ class Draft_model extends MY_Model{
     function get_watch_list($limit = 100000, $start = 0, $pos = 0)
     {
         $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
-        $this->db->select('player.id, player.first_name, player.last_name')
+        $this->db->select('player.id, player.first_name, player.last_name, player.nfl_team_id')
                 ->select('nfl_position.text_id as position')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('draft_watch.order')
@@ -407,7 +407,7 @@ class Draft_model extends MY_Model{
 
     function get_myteam()
     {
-        return $this->db->select('player.id, player.first_name, player.last_name')
+        return $this->db->select('player.id, player.first_name, player.last_name, player.nfl_team_id')
                 ->select('nfl_position.text_id as position')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)
                 ->select('draft_order.actual_pick, draft_order.pick, draft_order.round')
@@ -432,7 +432,7 @@ class Draft_model extends MY_Model{
     {
 
         return $this->db->select('draft_order.actual_pick, draft_order.round, draft_order.pick')
-            ->select('player.id as player_id, player.first_name, player.last_name')
+            ->select('player.id as player_id, player.first_name, player.last_name, player.nfl_team_id')
             ->select('nfl_position.text_id as position')
             ->select('nfl_team.club_id')
             ->select('team.team_name')
@@ -473,7 +473,7 @@ class Draft_model extends MY_Model{
     {
         $row = $this->db->select('id')->from('roster')->where('league_id',$this->leagueid)
             ->where('player_id',$player_id)->get()->row();
-        if (count($row) > 0)
+        if ($row)
             return False;
         return True;
     }
@@ -671,7 +671,7 @@ class Draft_model extends MY_Model{
     function get_draft_results($year)
     {
         return $this->db->select('team.team_name, round, pick, overall_pick, owner.first_name as owner_first, owner.last_name as owner_last')
-            ->select('player.first_name, player.last_name, nfl_position.short_text as pos, nfl_team.club_id, player.short_name')
+            ->select('player.first_name, player.last_name, nfl_position.short_text as pos, nfl_team.club_id, player.short_name, player.nfl_team_id')
             ->from('draft_order')
             ->join('team','team.id = draft_order.team_id')
             ->join('player','player.id = draft_order.player_id')

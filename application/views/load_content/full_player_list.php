@@ -5,8 +5,8 @@
                 </td>
                 <td><?=$p->position?></td>
                 <td><?=$p->club_id?></td>
-                <td><?=$matchups[$p->club_id]['opp']?></td>
-                <td><span class="hide-for-small-only">Week </span><?=$byeweeks[$p->club_id]?></td>
+                <td><?=$matchups[$p->nfl_team_id]['opp']?></td>
+                <td><span class="hide-for-small-only">Week </span><?=$byeweeks[$p->nfl_team_id]?></td>
                 <td><?=$p->points?></td>
                 <td><?=$p->team_name?></td>
                 <?php if($this->session->userdata('use_draft_ranks')): ?>

@@ -14,7 +14,7 @@ class Waiverwire_model extends MY_Model{
 
     function get_roster_data()
     {
-    	return $this->db->select('player.first_name, player.last_name, player.short_name, player.id')
+    	return $this->db->select('player.first_name, player.last_name, player.short_name, player.id, player.nfl_team_id')
     		->select('IFNULL(nfl_team.club_id,"FA") as club_id, nfl_position.short_text as position',false)
     		->select('sum(fantasy_statistic.points)')
     		->from('roster')->join('player','player.id = roster.player_id')
@@ -86,7 +86,7 @@ class Waiverwire_model extends MY_Model{
         $owned_list = $this->get_owned_players_array();
 
         $this->db->select('SQL_CALC_FOUND_ROWS null as rows',FALSE);
-        $this->db->select('player.id, player.first_name, player.last_name, player.short_name')
+        $this->db->select('player.id, player.first_name, player.last_name, player.short_name, player.nfl_team_id')
                 ->select('IFNULL(sum(fs_w.points),0) as points',false)
                 ->select('nfl_position.short_text as position')
                 ->select('IFNULL(nfl_team.club_id,"FA") as club_id',false)

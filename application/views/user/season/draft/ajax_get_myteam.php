@@ -8,7 +8,7 @@
 			<div><?=$p->club_id.' - '.$p->position?></div>
 		</td>
 		<td>
-			<span>Week <?=$byeweeks[$p->club_id]?></span>
+			<span>Week <?=$byeweeks[$p->nfl_team_id]?></span>
 		</td>
 		<td>
 			<?=$p->actual_pick?>

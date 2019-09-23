@@ -37,7 +37,7 @@ class Teams_model extends MY_Model{
     function get_bench_data($teamid)
     {
         $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, '.
-            'nfl_position.text_id as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points '.
+            'nfl_position.text_id as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points, player.nfl_team_id '.
             'from `roster` join `player` on `roster`.`player_id` = `player`.`id` '.
             'join nfl_position on nfl_position.id = player.nfl_position_id '.
             'left join nfl_team on nfl_team.id = player.nfl_team_id '.
@@ -58,7 +58,7 @@ class Teams_model extends MY_Model{
         if ($year == "")
             $year = $this->current_year;
 
-        $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, '.
+        $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, player.nfl_team_id, '.
             'nfl_position.text_id as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points '.
             'from `roster` join `player` on `roster`.`player_id` = `player`.`id` '.
             'join nfl_position on nfl_position.id = player.nfl_position_id '.

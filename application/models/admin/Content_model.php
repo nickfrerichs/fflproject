@@ -34,7 +34,7 @@ class Content_model extends MY_Model
             $year = $this->current_year;
         $row = $this->db->select('*')->from('content')->where('league_id',$this->leagueid)
                 ->where('text_id','playoffs')->where('year',$year)->get()->row();
-        if (count($row) == 0)
+        if ($row)
         {
             $data = array('data' => '',
                         'title' => '',

@@ -57,7 +57,7 @@ class Account_model extends CI_Model{
     function get_username_from_email($email_address)
     {
         $row = $this->db->select('username')->from('user_accounts')->where('email',$email_address)->get()->row();
-        if (count($row) > 0)
+        if ($row)
         {
             return $row->username;
         }

@@ -23,18 +23,18 @@
             </div>
          </td>
          <td>
-             <div><?=$matchups[$b['data']->club_id]['opp']?></div>
-             <?php if($matchups[$b['data']->club_id]['time'] != ""):?>
-                 <?php if(date("D",$matchups[$b['data']->club_id]['time']) == "Sun"): ?>
-                     <div><?=date("D g:i",$matchups[$b['data']->club_id]['time'])?></div>
+             <div><?=$matchups[$b['data']->nfl_team_id]['opp']?></div>
+             <?php if($matchups[$b['data']->nfl_team_id]['time'] != ""):?>
+                 <?php if(date("D",$matchups[$b['data']->nfl_team_id]['time']) == "Sun"): ?>
+                     <div><?=date("D g:i",$matchups[$b['data']->nfl_team_id]['time'])?></div>
                  <?php else: ?>
-                     <div><?=date("D g:i",$matchups[$b['data']->club_id]['time'])?></div>
+                     <div><?=date("D g:i",$matchups[$b['data']->nfl_team_id]['time'])?></div>
                  <?php endif; ?>
             <?php endif;?>
          </td>
          <td class="has-text-centered">
             <div class="column">
-                <span class="is-hidden-mobile">Week</span> <?=$byeweeks[$b['data']->club_id]?>
+                <span class="is-hidden-mobile">Week</span> <?=$byeweeks[$b['data']->nfl_team_id]?>
             </div>
         </td>
         <td class="has-text-centered">
@@ -45,7 +45,7 @@
         <td>
   
             <div class="column has-text-centered">
-                <?php if ($matchups[$b['data']->club_id]['time'] > time() || $matchups[$b['data']->club_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
+                <?php if ($matchups[$b['data']->nfl_team_id]['time'] > time() || $matchups[$b['data']->nfl_team_id]['time'] == '' || $this->session->userdata('debug_week')): ?>
                     <?php if (isset($b['can_start'])): ?>
                         <?php foreach ($b['can_start'] as $pos_id => $can_pos): ?>
                                     <button class="button is-small is-link roster-start-btn" value="<?=$b['data']->player_id?>_<?=$pos_id?>">

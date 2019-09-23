@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.80'
+CURRENT_VERSION = '1.90'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -21,6 +21,59 @@ def main():
 
 
 def upgrade_db(version):
+
+    
+    if version == '1.80':
+        ###################################################################
+        # Switch to database ID to reference NFL teams instead of club_id
+        ###################################################################
+
+        # Add v_id and h_id columns to nfl_schedule table
+        if not column_exists("h_id", "nfl_schedule"):
+            query = 'ALTER TABLE `nfl_schedule` ADD `h_id` INT(11) unsigned DEFAULT 0'
+            cur.execute(query)
+        if not column_exists("v_id", "nfl_schedule"):
+            query = 'ALTER TABLE `nfl_schedule` ADD `v_id` INT(11) unsigned DEFAULT 0'
+            cur.execute(query)
+       
+        # Add alt_club_ids column to nfl_team to store alternate club_ids that refer to the same team
+        if not column_exists("alt_club_ids", "nfl_team"):
+            query = 'ALTER TABLE `nfl_team` ADD `alt_club_ids` VARCHAR(15) DEFAULT NULL'
+            cur.execute(query)
+
+        db.commit()
+
+        # Add alt_club_ids to nfl_team table for teams with an identity crisis
+        query = 'update nfl_team set alt_club_ids = "JAC,JAX" where club_id = "JAC" or club_id = "JAX"'
+        cur.execute(query)
+        query = 'update nfl_team set alt_club_ids = "LA,LAR,STL" where club_id = "LA" or club_id = "LAR" or club_id="STL"'
+        cur.execute(query)        
+        db.commit()
+
+
+        # Populate h_id and v_id in nfl_schedule table
+        team_id_lookup = dict()
+        cur.execute('select id, club_id, alt_club_ids from nfl_team')
+        results = cur.fetchall()
+        
+        for row in results:
+            team_id_lookup[row['club_id']] = row['id']
+            if row['alt_club_ids']:
+                for alt in row['alt_club_ids'].split(','):
+                    team_id_lookup[alt] = row['id']
+
+        for club_id in team_id_lookup:
+            query = 'update nfl_schedule set v_id = %s where v = "%s"' % (team_id_lookup[club_id], club_id)
+            cur.execute(query)
+            query = 'update nfl_schedule set h_id = %s where h = "%s"' % (team_id_lookup[club_id], club_id)
+            cur.execute(query)
+        db.commit()
+
+        query = 'update site_settings set db_version = "%s"' % ("1.90")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
 
     if version == '1.72':
         #########################################

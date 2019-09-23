@@ -27,7 +27,7 @@ class Common_noauth_model extends CI_Model{
             ->join('league_settings','league_settings.league_id = league.id')
             ->where('league.mask_id',$maskid)->get()->row();
 
-        if (count($row) > 0 && $row->join_password != "")
+        if ($row && $row->join_password != "")
             return true;
         return false;
     }
@@ -76,7 +76,7 @@ class Common_noauth_model extends CI_Model{
     function get_current_week_year($leagueid)
     {
         $row = $this->db->select('season_year')->from('league')->where('id',$leagueid)->get()->row();
-        if (count($row) > 0)
+        if ($row)
             $season_year = $row->season_year;
         $week_type = $this->get_week_type($leagueid);
         // Get the most recently past game start time.
@@ -95,7 +95,7 @@ class Common_noauth_model extends CI_Model{
             $this->db->where('year',$season_year);
         $next_game = $this->db->order_by('start_time','asc')->limit(1)->get()->row();
 
-        if (count($next_game) == 0)
+        if ($next_game)
             return $most_recent;
 
         // It's mid week, works for Thursday through Sunday
@@ -132,23 +132,24 @@ class Common_noauth_model extends CI_Model{
             ->where('year',$year)->where('week',$week)->where('gt',$weektype)
             ->order_by('start_time','desc')->limit(1)->get()->row();
 
-        if (count($row) == 0)
-            return "";
-        return $row->start_time;
+        if ($row)
+            return $row->start_time;
+        return "";
     }
 
+    // 2019_NFL_SCHEDULE_UPDATE (DONE)
     function player_game_start_time($playerid, $year, $week, $weektype)
     {
-        $club_id = $this->player_club_id($playerid);
+        $team_id = $this->player_team_id($playerid);
         $row = $this->db->select('UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
             ->where('year = '.$year.' and week ='.$week.' and gt ="'.$weektype.'"'.
-            ' and (h="'.$club_id.'" or v="'.$club_id.'")')
+            ' and (h_id="'.$team_id.'" or v_id="'.$team_id.'")')
             ->get()->row();
 
-        if (count($row) == 0)
-            return "";
-        else
+        if ($row)
             return $row->start_time;
+        else
+            return "";
     }
 
     function player_club_id($playerid)
@@ -158,6 +159,16 @@ class Common_noauth_model extends CI_Model{
         if ($row)
             return $row->club_id;
         return "None";
+    }
+
+    function player_team_id($playerid)
+    {
+        $row = $this->db->select('nfl_team.id')->from('player')->join('nfl_team','nfl_team.id = player.nfl_team_id')
+            ->where('player.id',$playerid)->get()->row();
+
+        if ($row)
+            return $row->id;
+        return 0;
     }
 
     function get_leagues_data()
@@ -372,7 +383,7 @@ class Common_noauth_model extends CI_Model{
 
         // 4. If it's the current week and the player doesn't have a bye, check if the game has started
         //    though if debug_week is set, don't worry about the start time.
-        if ($this->player_opponent($player_id,$year,$week,$weektype) != "Bye")
+        if ($this->player_opponent_id($player_id,$year,$week,$weektype) != 0)
         {
             $start_time = $this->player_game_start_time($player_id,$year,$week,$weektype);
             if ($start_time < time() && !$this->session->userdata('debug_week'))
@@ -381,21 +392,22 @@ class Common_noauth_model extends CI_Model{
         return False;
     }
 
-    function player_opponent($player_id,$year=0,$week=0,$weektype="REG")
+    // 2019_NFL_SCHEDULE_UPDATE (DONE)
+    function player_opponent_id($player_id,$year=0,$week=0,$weektype="REG")
     {
 
-        $p_team = $this->player_club_id($player_id);
+        $p_team_id = $this->player_team_id($player_id);
 
-        $game = $this->db->select('v,h,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
+        $game = $this->db->select('v,h,v_id,h_id,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
             ->where('year = '.$year.' and week = '.$week.' and gt ="'.$weektype.'"'.
-            ' and (v = "'.$p_team.'" or h = "'.$p_team.'")')
+            ' and (v_id = "'.$p_team_id.'" or h_id = "'.$p_team_id.'")')
             ->get()->row();
         if (count($game) == 0)
-            return 'Bye';
-        if ($p_team == $game->v)
-            return '@'.$game->h;
+            return 0;
+        if ($p_team_id == $game->v_id)
+            return $game->h_id;
         else
-            return $game->v;
+            return $game->v_id;
 
     }
 

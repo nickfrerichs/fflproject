@@ -56,7 +56,7 @@
 				<span class="has-text-right is-size-7"><?=$p->order?>. </span><strong><span class="selected-player-name"><?=$p->first_name.' '.$p->last_name?></span></strong>
 				</div>
 				<div>
-					<?=$p->club_id?> - <?=$p->position?> <span style="font-size: .8em">(bye <?=$byeweeks[$p->club_id]?>)</span>
+					<?=$p->club_id?> - <?=$p->position?> <span style="font-size: .8em">(bye <?=$byeweeks[$p->nfl_team_id]?>)</span>
 				</div>
 			</div>
 		</td>

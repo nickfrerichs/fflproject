@@ -67,24 +67,23 @@ class Player_statistics_model extends MY_Model{
                 ->where('player.id',$player_id)->get()->row();
     }
 
-
+    // 2019_NFL_SCHEDULE_UPDATE (DONE)
     function get_player_opponent_weeks_array($player_id,$year=0)
     {
         if ($year == 0)
             $year = $this->session->userdata('current_year');
 
-        $p_team = $this->common_model->player_club_id($player_id);
-
-        $games = $this->db->select('v,h,week,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
+        $p_team_id = $this->common_model->player_team_id($player_id);
+        $games = $this->db->select('v,h,v_id,h_id,week,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')
             ->where('year = '.$year.' and gt ="'.$this->session->userdata('week_type').'"'.
-            ' and (v = "'.$p_team.'" or h = "'.$p_team.'")')
+            ' and (v_id = "'.$p_team_id.'" or h_id = "'.$p_team_id.'")')
             ->get()->result();
 
         $weeks = array();
         foreach($games as $game)
         {
 
-            if ($p_team == $game->v)
+            if ($p_team_id == $game->v_id)
                 $weeks[$game->week] = '@'.$game->h;
             else
                 $weeks[$game->week] = $game->v;

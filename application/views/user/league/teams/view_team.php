@@ -185,17 +185,17 @@
                                 <td><a href="#" class="stat-popup" data-type="player" data-id="<?=$p['player']->player_id?>"><?=$p['player']->first_name.' '.$p['player']->last_name?></a></td>
                                 <td><?=$p['player']->club_id?></td>
                                 <td>
-                                    <div><?=$matchups[$p['player']->club_id]['opp']?></div>
-                                    <?php if($matchups[$p['player']->club_id]['time'] != ""):?>
-                                        <?php if(date("D",$matchups[$p['player']->club_id]['time']) == "Sun"): ?>
-                                            <div><?=date("D g:i",$matchups[$p['player']->club_id]['time'])?></div>
+                                    <div><?=$matchups[$p['player']->nfl_team_id]['opp']?></div>
+                                    <?php if($matchups[$p['player']->nfl_team_id]['time'] != ""):?>
+                                        <?php if(date("D",$matchups[$p['player']->nfl_team_id]['time']) == "Sun"): ?>
+                                            <div><?=date("D g:i",$matchups[$p['player']->nfl_team_id]['time'])?></div>
                                         <?php else: ?>
-                                            <div><?=date("D g:i",$matchups[$p['player']->club_id]['time'])?></div>
+                                            <div><?=date("D g:i",$matchups[$p['player']->nfl_team_id]['time'])?></div>
                                         <?php endif; ?>
                                     <?php endif;?>
                                 </td>
                                 <td>
-                                    <span class="hide-for-small-only">Week </span><?=$byeweeks[$p['player']->club_id]?>
+                                    <span class="hide-for-small-only">Week </span><?=$byeweeks[$p['player']->nfl_team_id]?>
                                 </td>
                                 <td><?=$p['player']->points?></td>
 
@@ -226,17 +226,17 @@
                                 <td><a href="#" class="stat-popup" data-type="player" data-id="<?=$p->player_id?>"><?=$p->first_name.' '.$p->last_name?></a></td>
                                 <td><?=$p->club_id?></td>
                                 <td>
-                                    <div><?=$matchups[$p->club_id]['opp']?></div>
-                                    <?php if($matchups[$p->club_id]['time'] != ""):?>
-                                        <?php if(date("D",$matchups[$p->club_id]['time']) == "Sun"): ?>
-                                            <div><?=date("D g:i",$matchups[$p->club_id]['time'])?></div>
+                                    <div><?=$matchups[$p->nfl_team_id]['opp']?></div>
+                                    <?php if($matchups[$p->nfl_team_id]['time'] != ""):?>
+                                        <?php if(date("D",$matchups[$p->nfl_team_id]['time']) == "Sun"): ?>
+                                            <div><?=date("D g:i",$matchups[$p->nfl_team_id]['time'])?></div>
                                         <?php else: ?>
-                                            <div><?=date("D g:i",$matchups[$p->club_id]['time'])?></div>
+                                            <div><?=date("D g:i",$matchups[$p->nl_team_id]['time'])?></div>
                                         <?php endif; ?>
                                     <?php endif;?>
                                 </td>
                                 <td>
-                                    <span class="hide-for-small-only">Week </span><?=$byeweeks[$p->club_id]?>
+                                    <span class="hide-for-small-only">Week </span><?=$byeweeks[$p->nfl_team_id]?>
                                 </td>
                                 <td><?=$p->points?></td>
                             </tr>

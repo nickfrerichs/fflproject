@@ -50,7 +50,7 @@ class Myteam_roster_model extends MY_Model{
 
     function get_bench_data($week)
     {
-        $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, '.
+        $query = $this->db->query('select player.id as player_id, player.first_name, player.last_name, player.nfl_position_id, player.short_name, player.nfl_team_id, '.
             'nfl_position.short_text as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id, IFNULL(sum(fantasy_statistic.points),0) as points, '.
             'team_keeper.id IS NOT NULL as keeper, '.
             'player_injury.injury, player_injury_type.text_id as injury_text_id, player_injury_type.short_text as injury_short_text, '.
@@ -79,7 +79,7 @@ class Myteam_roster_model extends MY_Model{
             $week = $this->current_week;
         if(!$teamid)
             $teamid = $this->teamid;
-        return $this->db->select('starter.starting_position_id, player.id as player_id, player.first_name, player.last_name, player.short_name')
+        return $this->db->select('starter.starting_position_id, player.id as player_id, player.first_name, player.last_name, player.short_name, player.nfl_team_id')
             ->select('nfl_position.short_text as pos_text, IFNULL(nfl_team.club_id,"FA") as club_id',false)
             ->select('IFNULL(sum(fantasy_statistic.points),0) as points',false)
             ->select('team_keeper.id IS NOT NULL as keeper',false)
@@ -263,30 +263,33 @@ class Myteam_roster_model extends MY_Model{
                 where('league_id',$this->leagueid)->get()->num_rows();
     }
 
+    // 2019_NFL_SCHEDULE_UPDATE (DONE)
     function get_nfl_opponent_array($week = 0)
     {
         if ($week == 0)
             $week = $this->current_week;
         $data = array();
 
-        $teams = $this->db->select('club_id')->from('nfl_team')->where('club_id !=','NONE')->get()->result();
-        $data["FA"] = array("opp" => "none","time" => "");
+        $teams = $this->db->select('id, club_id')->from('nfl_team')->where('club_id !=','NONE')->get()->result();
+        $data[0] = array("opp" => "none","time" => 0, "club_id" => "FA");
+        $data["FA"] = array("opp" => "none","time" => 0, "club_id" => "FA");
         foreach($teams as $t)
         {
-            $data[$t->club_id]['opp'] = "bye";
-            $data[$t->club_id]['time'] = "";
+            $data[$t->id]['opp'] = "bye";
+            $data[$t->id]['time'] = "";
+            $data[$t->id]['club_id'] = $t->club_id;
         }
 
-        $schedule = $this->db->select('h,v,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')->where('week',$week)
+        $schedule = $this->db->select('h,v,h_id,v_id,UNIX_TIMESTAMP(start_time) as start_time')->from('nfl_schedule')->where('week',$week)
             ->where('year',$this->current_year)->where('gt',$this->current_weektype)->get()->result();
 
         foreach($schedule as $s)
         {
-            $data[$s->v]['opp'] = '@'.$s->h;
-            $data[$s->v]['time'] = $s->start_time;
+            $data[$s->v_id]['opp'] = '@'.$s->h;
+            $data[$s->v_id]['time'] = $s->start_time;
 
-            $data[$s->h]['opp'] = $s->v;
-            $data[$s->h]['time'] = $s->start_time;
+            $data[$s->h_id]['opp'] = $s->v;
+            $data[$s->h_id]['time'] = $s->start_time;
         }
         $data['NONE']['opp'] = "-";
         $data['FA']['time'] = 0;
@@ -330,7 +333,7 @@ class Myteam_roster_model extends MY_Model{
     {
         $row = $this->db->select('id')->from('team_keeper')->where('team_id',$this->teamid)->where('year',$this->current_year)
             ->where('player_id',$player_id)->get()->row();
-        if (count($row) == 1)
+        if ($row)
         {
             $this->db->where('id',$row->id)->delete('team_keeper');
             return False;
