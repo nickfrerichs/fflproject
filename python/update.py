@@ -298,7 +298,7 @@ def update_players(year, week, weektype):
 
 
     # First, update nflgame
-    if 1==0 and not args.photos:
+    if not args.photos:
         if args.year == "0" and args.week == "0" and args.weektype == "none":
             subprocess.call(c.PLAYER_UPDATE_CMD.split(' '))
         else:
@@ -407,8 +407,6 @@ def update_players(year, week, weektype):
             ", status = '"+status+"'"+
             ", photo = '"+photo+"'"+
             " where player_id = '" + str(gsis_id)+"'")
-            if p == "00-0032144":
-                print query
         cur.execute(query)
         if cur.rowcount > 0:
             update_count += 1
