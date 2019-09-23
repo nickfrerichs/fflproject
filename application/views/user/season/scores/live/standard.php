@@ -49,17 +49,17 @@
                     <tbody id="ls-s-nflgames">
                     <?php foreach($nfl_matchups as $m):?>
                         <tr class="ls-s-nflgame">
-                            <td class="<?=$m->h?>_o-gamerow <?=$m->v?>_o-gamerow">
+                            <td class="<?=$m->h_id?>_o-gamerow <?=$m->v_id?>_o-gamerow">
                                 <div class="columns">
                                     <div class="column is-5">
                                         <div class="columns">
                                             <div class="column is-3">
-                                                <div class="<?=$m->v?>_o-clubid"><?=$m->v?></div>
-                                                <div class="<?=$m->h?>_o-clubid"><?=$m->h?></div>
+                                                <div class="<?=$m->v_id?>_o-clubid"><?=$m->v_id?></div>
+                                                <div class="<?=$m->h_id?>_o-clubid"><?=$m->h_id?></div>
                                             </div>
                                             <div class="column is-3">
-                                                <div class="<?=$m->v?>_o-score">-</div>
-                                                <div class="<?=$m->h?>_o-score">-</div>
+                                                <div class="<?=$m->v_id?>_o-score">-</div>
+                                                <div class="<?=$m->h_id?>_o-score">-</div>
                                             </div>
                                             <div class="column is-6">
                                                 <div>

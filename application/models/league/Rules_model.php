@@ -55,7 +55,7 @@ class Rules_model extends MY_Model{
 
         $row = $this->db->select('data')->from('content')->where('text_id','rules')->where('league_id',$this->leagueid)
             ->get()->row();
-        if (count($row) > 0)
+        if ($row)
             return $row->data;
         return False;
     }

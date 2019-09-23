@@ -23,18 +23,23 @@ class Common_model extends CI_Model{
         return $this->common_noauth_model->is_player_lineup_locked($player_id, $this->teamid, $this->current_year, $this->current_week, $this->current_weektype);
     }
 
-    function player_opponent($player_id,$week=0,$year=0)
-    {
-        if ($year == 0)
-            $year = $this->session->userdata('current_year');
-        if ($week == 0)
-            $week = $this->session->userdata('current_week');
-        $this->common_noauth_model($player_id,$year,$week,$this->current_weektype);
-    }
+    // function player_opponent($player_id,$week=0,$year=0)
+    // {
+    //     if ($year == 0)
+    //         $year = $this->session->userdata('current_year');
+    //     if ($week == 0)
+    //         $week = $this->session->userdata('current_week');
+    //     $this->common_noauth_model($player_id,$year,$week,$this->current_weektype);
+    // }
 
     function player_club_id($playerid)
     {
         return $this->common_noauth_model->player_club_id($playerid);
+    }
+
+    function player_team_id($playerid)
+    {
+        return $this->common_noauth_model->player_team_id($playerid);
     }
 
     function team_info($team_id)
@@ -280,11 +285,12 @@ class Common_model extends CI_Model{
             ->get()->result();
     }
 
+    // 2019_NFL_SCHEDULE_UPDATE (DONE)
     function get_byeweeks_array()
     {
-        $schedule = $this->db->select('h,v,week')->from('nfl_schedule')->where('year',$this->current_year)
+        $schedule = $this->db->select('h_id,v_id,week')->from('nfl_schedule')->where('year',$this->current_year)
             ->where('gt',$this->week_type)->get()->result();
-        $nfl_teams = $this->db->select('distinct(club_id) as club_id')->from('nfl_team')
+        $nfl_teams = $this->db->select('id')->from('nfl_team')
             ->where('club_id !=','NONE')->get()->result();
         $weeks = $this->num_season_weeks();
         $opp_array = array();
@@ -294,24 +300,24 @@ class Common_model extends CI_Model{
         {
             foreach (range(1,$weeks) as $w)
             {
-                $opp_array[$w][$t->club_id] = 'bye';
+                $opp_array[$w][$t->id] = 'bye';
             }
         }
 
         foreach($schedule as $s)
         {
 
-            $opp_array[$s->week][$s->h] = $s->v;
-            $opp_array[$s->week][$s->v] = $s->h;
+            $opp_array[$s->week][$s->h_id] = $s->v_id;
+            $opp_array[$s->week][$s->v_id] = $s->h_id;
 
         }
 
         foreach($opp_array as $week => $t)
         {
-            foreach($t as $team => $opp)
+            foreach($t as $team_id => $opp)
             {
                 if ($opp == 'bye')
-                    $bye_array[$team] = $week;
+                    $bye_array[$team_id] = $week;
             }
         }
 

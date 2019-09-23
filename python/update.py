@@ -275,14 +275,6 @@ def clear_player_photos(photo_filename):
 
 def update_players(year, week, weektype):
     # Helper functions for update_players
-    def get_team_dict():
-        cur.execute('select id, club_id from nfl_team')
-        team_dict = collections.defaultdict(lambda: 0, {})
-        for row in cur.fetchall():
-            team_dict[row['club_id']] = row['id']
-
-        return team_dict
-
     def get_pos_dict():
         cur.execute('select id, text_id from nfl_position')
         pos_dict = collections.defaultdict(lambda: 0, {})
@@ -306,7 +298,7 @@ def update_players(year, week, weektype):
 
 
     # First, update nflgame
-    if not args.photos:
+    if 1==0 and not args.photos:
         if args.year == "0" and args.week == "0" and args.weektype == "none":
             subprocess.call(c.PLAYER_UPDATE_CMD.split(' '))
         else:
@@ -326,7 +318,9 @@ def update_players(year, week, weektype):
 
     add_count = 0
     update_count = 0
+    checked_count = 0
     for p in players:
+
         # print ".",
         count = count + 1
         try:
@@ -384,6 +378,7 @@ def update_players(year, week, weektype):
                         photo))
 
         else: # Already have this player, update some stuff.
+
             row = cur.fetchone()
             short_name = MySQLdb.escape_string(gsis_name)
             if (short_name == ""):
@@ -402,7 +397,7 @@ def update_players(year, week, weektype):
                 print "Checking photo for "+player_info(players[p])
                 photo = get_photo(players[p])
 
-            update_count = update_count + 1
+            checked_count += 1
             query = ("update player set "+
             "nfl_team_id = " + team +
             ", years_pro = " + years_pro +
@@ -411,13 +406,22 @@ def update_players(year, week, weektype):
             ", short_name = '"+short_name+"'"+
             ", status = '"+status+"'"+
             ", photo = '"+photo+"'"+
-            ", last_seen = now()"+
             " where player_id = '" + str(gsis_id)+"'")
+            if p == "00-0032144":
+                print query
         cur.execute(query)
+        if cur.rowcount > 0:
+            update_count += 1
+        
+        query = 'update player set last_seen = now() where player_id ="%s"' % (str(gsis_id))
+        cur.execute(query)
+        
 	db.commit()
-
-    print "Added: " + str(add_count) + " players."
+    print "\n================================"
+    print "Added: " + str(add_count) + " new players."
+    print "Checked: "+str(checked_count)+ " players for changes."
     print "Updated: " + str(update_count) + " players."
+    print "================================\n"
 
     update_esbids(year,week)
 
@@ -513,6 +517,8 @@ def update_statistic_summaries(year, week, weektype):
 
 def update_schedule(season_year, week, weektype="REG"):
 
+  team_dict = get_team_dict()
+
   if week == 'all' and weektype == "REG":
     weeks = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
   elif weektype == "POST" and week == "all":
@@ -561,6 +567,8 @@ def update_schedule(season_year, week, weektype="REG"):
       p = g.getAttribute('p')
       rz = g.getAttribute('rz')
       ga = g.getAttribute('ga')
+      h_id = team_dict[home]
+      a_id = team_dict[away]
       (hour, minute) = time.split(":")
 
       # Ugh, this timezone stuff is ugly since it's in 12-hour with no AM/PM and there are games
@@ -587,13 +595,16 @@ def update_schedule(season_year, week, weektype="REG"):
 
       cur.execute("Select id from nfl_schedule where gsis = "+gsis)
       if cur.rowcount > 0:
-        query = (('update nfl_schedule set eid=%s,d=%s,t="%s",q="%s",k="%s",h="%s",hnn="%s",v="%s",vnn="%s",hs="%s",vs="%s",p="%s",rz="%s",ga="%s", start_time="%s", year="%s" where id = %s') %
-            (eid,day,time,quarter,k,home,home_long,away,away_long,home_score,away_score,p,rz,ga,str(start_time)[:-6],str(season_year),cur.fetchone()['id']))
+        query = (('update nfl_schedule set eid=%s,d=%s,t="%s",q="%s",k="%s",h="%s",hnn="%s",v="%s",vnn="%s",hs="%s",vs="%s"'
+                +',p="%s",rz="%s",ga="%s",start_time="%s",year="%s",h_id=%s,a_id=%s where id = %s') %
+            (eid,day,time,quarter,k,home,home_long,away,away_long,home_score,away_score,p,rz,ga,
+                str(start_time)[:-6],str(season_year),str(h_id),str(a_id),cur.fetchone()['id']))
         updated += 1
       else:
-        query = ("Insert into nfl_schedule (eid, gsis, d, t, q, k, h, hnn, hs, v, vnn, vs, p, rz, ga, gt, week, year, start_time) "+
-			   "Values(%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" %
-	       (eid, gsis, day, time, quarter, k, home, home_long, home_score, away, away_long, away_score, p, rz, ga, weektype, week, season_year, str(start_time)[:-6]))
+        query = ("Insert into nfl_schedule (eid, gsis, d, t, q, k, h, hnn, hs, v, vnn, vs, p, rz, ga, gt, week, year, start_time,h_id,a_id) "+
+			   "Values(%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s)" %
+	       (eid, gsis, day, time, quarter, k, home, home_long, home_score, away, away_long, away_score, p, rz, ga, 
+                weektype, week, season_year, str(start_time)[:-6],str(h_id),str(a_id)))
         added += 1
       cur.execute(query)
 
@@ -910,6 +921,20 @@ def update_player_injuries():
         print "No injured players to delete"
 
             
+# Used to look up database IDs for NFL teams
+def get_team_dict():
+    cur.execute('select id, club_id, alt_club_ids from nfl_team')
+    team_dict = collections.defaultdict(lambda: 0, {})
+    for row in cur.fetchall():
+        team_dict[row['club_id']] = row['id']
+        if row['alt_club_ids']:
+            for alt in row['alt_club_ids'].split(','):
+                alt = alt.strip()
+                if alt != "":
+                    team_dict[alt] = row['id']
+
+
+    return team_dict
 
 parser = argparse.ArgumentParser(description='FFLProject: Update various parts of the database')
 

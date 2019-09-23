@@ -13,7 +13,7 @@
 		<td>
 			<?=$p->position?>
 		</td><td>
-			<span style="font-size: .7em">(bye <?=$byeweeks[$p->club_id]?>)</span></div>
+			<span style="font-size: .7em">(bye <?=$byeweeks[$p->nfl_team_id]?>)</span></div>
 		</td>
 		<?php if($p->team_name == ""): ?>
 		<td style="vertical-align:middle" class="draft-avail-<?=$p->id?>">

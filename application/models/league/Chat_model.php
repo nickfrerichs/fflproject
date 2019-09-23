@@ -84,10 +84,10 @@ class Chat_model extends MY_Model{
     {
         $row = $this->db->select('chat_read')->from('team')->where('id',$this->teamid)
             ->where('league_id',$this->leagueid)->get()->row();
-        if (count($row) == 0)
-            return 0;
-        else
+        if ($row)
             return $row->chat_read;
+        else
+            return 0;
     }
 
     function get_messages($key = '', $limit=100, $show_owner=True)

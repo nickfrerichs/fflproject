@@ -71,7 +71,7 @@ class Quickstats extends MY_User_Controller{
                                 <?=$p->short_name?>
                             </a>
                             </td>
-                            <td><?=$data['matchups'][$p->club_id]['opp']?></td>
+                            <td><?=$data['matchups'][$p->nfl_team_id]['opp']?></td>
                             <td><?=$p->points?></td>
                         </tr>
                         <?php endforeach; ?>

@@ -31,7 +31,7 @@ class Scores_model extends MY_Model{
         if ($year == $this->current_year && $week == $this->current_week)
             $fs = "fantasy_statistic";
 
-        $started_players = $this->db->select('player.id as player_id, player.short_name, player.photo, player.number')
+        $started_players = $this->db->select('player.id as player_id, player.short_name, player.photo, player.number, player.nfl_team_id')
             ->select('starter.team_id, starter.starting_position_id')
             ->select('nfl_team.club_id')
             ->select('nfl_position.short_text as nfl_pos, nfl_position.type as nfl_pos_type')
@@ -47,7 +47,7 @@ class Scores_model extends MY_Model{
             ->group_by('player.id')
             ->get()->result();
 
-        $bench_players = $this->db->select('player.id as player_id, player.short_name, player.photo, player.number')
+        $bench_players = $this->db->select('player.id as player_id, player.short_name, player.photo, player.number, player.nfl_team_id')
             ->select('bench.team_id')
             ->select('nfl_team.club_id')
             ->select('nfl_position.short_text as nfl_pos, nfl_position.type as nfl_pos_type')
@@ -104,22 +104,24 @@ class Scores_model extends MY_Model{
                 if($spot['pos_id'] == $p->starting_position_id && !$spot['player'])
                 {
                     if($p->nfl_pos_type == 1 || ($p->nfl_pos_type == 3))
-                        {$team_class = $p->club_id.'_d';}
-                    else {$team_class = $p->club_id.'_o';}
+                        {$team_class = $p->nfl_team_id.'_d';}
+                    else {$team_class = $p->nfl_team_id.'_o';}
 
                     $teams_array[$p->team_id]['starters'][$key]['player'] = $p;
                     $teams_array[$p->team_id]['starters'][$key]['teamclass'] = $team_class;
                     break;
                 }
             }
-            $teams_array[$p->team_id]['points']+=$p->points;
+            if (is_numeric($p->points))
+                $teams_array[$p->team_id]['points']+=$p->points;
         }
 
         // 3. Add bench players for bench stats
         foreach($bench_players as $p)
         {
             $teams_array[$p->team_id]['bench'][] = $p;
-            $teams_array[$p->team_id]['bench_points'] += $p->points;
+            if (is_numeric($p->points))
+                $teams_array[$p->team_id]['bench_points'] += $p->points;
         }
 
 
@@ -181,10 +183,13 @@ class Scores_model extends MY_Model{
         foreach($players as $p)
         {
             $data['players'][$p->player_id] = $p->points;
-            if (!isset($data['teams'][$p->team_id]))
-                $data['teams'][$p->team_id] = $p->points;
-            else
-                $data['teams'][$p->team_id]+=$p->points;
+            if (is_numeric($p->points))
+            {
+                if (!isset($data['teams'][$p->team_id]))
+                    $data['teams'][$p->team_id] = $p->points;
+                else
+                    $data['teams'][$p->team_id]+=$p->points;
+            }
         }
 
         return $data;
@@ -215,6 +220,7 @@ class Scores_model extends MY_Model{
         return $players_array;
     }
 
+    // 2019_NFL_SCHEDULE_UPDATE
     function get_nfl_game_live_array()
     {
 
@@ -222,16 +228,16 @@ class Scores_model extends MY_Model{
 
         // First we fill all NFL team def and off keys with "bye"
 
-        $teams = $this->db->select('club_id')->from('nfl_team')->where('club_id !=','NONE')->get()->result();
+        $teams = $this->db->select('id, club_id')->from('nfl_team')->where('club_id !=','NONE')->get()->result();
         foreach($teams as $t)
         {
-            $team_class_array[$t->club_id.'_o']['s'] = "bye";
-            $team_class_array[$t->club_id.'_d']['s'] = "bye";
+            $team_class_array[$t->id.'_o']['s'] = "bye";
+            $team_class_array[$t->id.'_d']['s'] = "bye";
         }
 
 
         // Next we get all NFL team def and off keys with the game status.
-        $matchup = $this->db->select('gsis, h, v, t, eid, q, hs, vs, unix_timestamp(start_time) as start')
+        $matchup = $this->db->select('gsis, h_id, v_id, h, v, t, eid, q, hs, vs, unix_timestamp(start_time) as start')
                 ->from('nfl_schedule')->where('week',$this->current_week)->where('year',$this->current_year)
                 ->where('gt',$this->week_type)->get()->result();
 
@@ -244,18 +250,19 @@ class Scores_model extends MY_Model{
                 $match = "Final: ".$m->v.'@'.$m->h.' postgame';
             else // future game, show match up
                 $match = $m->v.'@'.$m->h.date(' D g:i',$m->start);
-            $team_class_array[$m->h.'_o']['s'] = $match;
-            $team_class_array[$m->v.'_o']['s'] = $match;
-            $team_class_array[$m->h.'_d']['s'] = $match;
-            $team_class_array[$m->v.'_d']['s'] = $match;
+            $team_class_array[$m->h_id.'_o']['s'] = $match;
+            $team_class_array[$m->v_id.'_o']['s'] = $match;
+            $team_class_array[$m->h_id.'_d']['s'] = $match;
+            $team_class_array[$m->v_id.'_d']['s'] = $match;
             if($m->vs != -1)
-                $team_class_array[$m->v.'_o']['pts'] = $m->vs;
+                $team_class_array[$m->v_id.'_o']['pts'] = $m->vs;
             if($m->hs != -1)
-                $team_class_array[$m->h.'_o']['pts'] = $m->hs;
+                $team_class_array[$m->h_id.'_o']['pts'] = $m->hs;
         }
 
         $livegames = $this->db->select('nfl_schedule_gsis, down, to_go, quarter, off.club_id as off_club_id, def.club_id as def_club_id')
             ->select('yard_line, time, h, v, home_score, away_score, note, details, nfl_live_game.id, play_id, nfl_live_game.update_key')
+            ->select('off.id as off_id, def.id as def_id')
             ->from('nfl_schedule')
             ->join('nfl_live_game', 'nfl_schedule.gsis = nfl_live_game.nfl_schedule_gsis')
             ->join('nfl_team as off', 'off.id = nfl_live_game.off_nfl_team_id')
@@ -351,40 +358,40 @@ class Scores_model extends MY_Model{
 
             // Here's where we use the data collected and parsed and assign the status strings.
             // If fantasy defensive player's team is on defense - on the field
-            $team_class_array[$game->def_club_id.'_d']['s'] = $on_status;
+            $team_class_array[$game->def_id.'_d']['s'] = $on_status;
             //if ($ls_key == $game->update_key) // Only if the details are from the most recent update
-            $team_class_array[$game->def_club_id.'_d']['d'] = $game->details;
-            $team_class_array[$game->def_club_id.'_d']['p'] = $game->play_id;
-            $team_class_array[$game->def_club_id.'_d']['y'] = $game->yard_line+50;
-            $team_class_array[$game->def_club_id.'_d']['a'] = 1;
+            $team_class_array[$game->def_id.'_d']['d'] = $game->details;
+            $team_class_array[$game->def_id.'_d']['p'] = $game->play_id;
+            $team_class_array[$game->def_id.'_d']['y'] = $game->yard_line+50;
+            $team_class_array[$game->def_id.'_d']['a'] = 1;
 
             // If fantasy offensive player's team is on defense - off the field
-            $team_class_array[$game->def_club_id.'_o']['s'] = $o_off_status;
-            $team_class_array[$game->def_club_id.'_o']['p'] = $game->play_id;
-            $team_class_array[$game->def_club_id.'_o']['y'] = $game->yard_line+50;
-            $team_class_array[$game->def_club_id.'_o']['a'] = 0;
-            $team_class_array[$game->def_club_id.'_o']['data'] = $gamedata;
+            $team_class_array[$game->def_id.'_o']['s'] = $o_off_status;
+            $team_class_array[$game->def_id.'_o']['p'] = $game->play_id;
+            $team_class_array[$game->def_id.'_o']['y'] = $game->yard_line+50;
+            $team_class_array[$game->def_id.'_o']['a'] = 0;
+            $team_class_array[$game->def_id.'_o']['data'] = $gamedata;
 
             // If fantasy offenseive player's team is on offense - on the field
-            $team_class_array[$game->off_club_id.'_o']['s'] = $on_status;
+            $team_class_array[$game->off_id.'_o']['s'] = $on_status;
             //if ($ls_key == $game->update_key) // Only if the details are from the most recent update
-            $team_class_array[$game->off_club_id.'_o']['d'] = $game->details;
-            $team_class_array[$game->off_club_id.'_o']['p'] = $game->play_id;
-            $team_class_array[$game->off_club_id.'_o']['y'] = $game->yard_line+50;
-            $team_class_array[$game->off_club_id.'_o']['a'] = 1;
-            $team_class_array[$game->off_club_id.'_o']['data'] = $gamedata;
+            $team_class_array[$game->off_id.'_o']['d'] = $game->details;
+            $team_class_array[$game->off_id.'_o']['p'] = $game->play_id;
+            $team_class_array[$game->off_id.'_o']['y'] = $game->yard_line+50;
+            $team_class_array[$game->off_id.'_o']['a'] = 1;
+            $team_class_array[$game->off_id.'_o']['data'] = $gamedata;
 
             // If fantasy defensive player's team is on offense - off the field
-            $team_class_array[$game->off_club_id.'_d']['s'] = $d_off_status;
-            $team_class_array[$game->off_club_id.'_d']['p'] = $game->play_id;
-            $team_class_array[$game->off_club_id.'_d']['y'] = $game->yard_line+50;
-            $team_class_array[$game->off_club_id.'_d']['a'] = 0;
+            $team_class_array[$game->off_id.'_d']['s'] = $d_off_status;
+            $team_class_array[$game->off_id.'_d']['p'] = $game->play_id;
+            $team_class_array[$game->off_id.'_d']['y'] = $game->yard_line+50;
+            $team_class_array[$game->off_id.'_d']['a'] = 0;
         }
 
         return $team_class_array;
     }
 
-
+//    2019_NFL_SCHEDULE_UPDATE ???
     function get_nfl_game_scores_array()
     {
         $scores_array = array();
@@ -502,14 +509,14 @@ class Scores_model extends MY_Model{
         if ($week == 0){$week = $this->current_week;}
         if ($year == 0){$year = $this->current_year;}
         if ($week_type = 0){$week_type = $this->week_type;}
-        return $this->db->select('gsis, h, v, t, eid, q, hs, vs')->from('nfl_schedule')->where('week',$week)->where('year',$year)
+        return $this->db->select('gsis, h_id, v_id, h, v, t, eid, q, hs, vs')->from('nfl_schedule')->where('week',$week)->where('year',$year)
                 ->where('gt',$week_type)->get()->result();
     }
 
     function get_live_nfl_matchups_data()
     {
         $data = array();
-        $matchups = $this->db->select('gsis, h, v, t, eid, q, hs, vs')->from('nfl_schedule')->where('week',$this->current_week)->where('year',$this->current_year)
+        $matchups = $this->db->select('gsis, h_id, v_id, h, v, t, eid, q, hs, vs')->from('nfl_schedule')->where('week',$this->current_week)->where('year',$this->current_year)
                 ->where('gt',$this->week_type)->order_by('q','asc')->get()->result();
 
         $final = array();
@@ -531,7 +538,7 @@ class Scores_model extends MY_Model{
     {
         $wtype = $this->db->select('id')->from('nfl_week_type')->where('text_id',$week_type)->get()->row()->id;
         return $this->db->select('nfl_schedule_gsis, down, to_go, quarter, off.club_id as off_club_id, def.club_id as def_club_id')
-            ->select('yard_line, time, h, v, home_score, away_score, note, details')
+            ->select('yard_line, time, h_id, v_id, h, v, home_score, away_score, note, details')
             ->from('nfl_live_game')
             ->join('nfl_team as off', 'off.id = nfl_live_game.off_nfl_team_id')
             ->join('nfl_team as def', 'def.id = nfl_live_game.def_nfl_team_id')
