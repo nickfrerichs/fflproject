@@ -94,20 +94,24 @@ class Common_noauth_model extends CI_Model{
         if(isset($season_year))
             $this->db->where('year',$season_year);
         $next_game = $this->db->order_by('start_time','asc')->limit(1)->get()->row();
-
         if ($next_game)
-            return $most_recent;
-
-        // It's mid week, works for Thursday through Sunday
-        if (!isset($most_recent) || $most_recent->week == $next_game->week)
-            return $next_game;
-        else  // It's after Monday night, need to adjust to allow MNF to end.
         {
-            // If the most recent game is 12 hours in the past, roll to the next week.
-            if ($most_recent->start + (60*60*12) < $current_time)
+            // It's mid week, works for Thursday through Sunday
+            if (!isset($most_recent) || $most_recent->week == $next_game->week)
                 return $next_game;
-            else
-                return $most_recent;
+            else  // It's after Monday night, need to adjust to allow MNF to end.
+            {
+                echo $most_recent->start;
+                // If the most recent game is 12 hours in the past, roll to the next week.
+                if ($most_recent->start + (60*60*12) < $current_time)
+                    return $next_game;
+                else
+                    return $most_recent;
+            }
+        }
+        else
+        {
+            return $most_recent;
         }
         return False;
     }
