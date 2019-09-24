@@ -1,6 +1,7 @@
 import sys
 import MySQLdb
 import MySQLdb.cursors
+import collections
 import nflgame
 import argparse
 import stat_functions as f
@@ -156,7 +157,7 @@ def update_nfl_statistics(year, week, weektype, update_all):
           # if game.away == "STL": game.away="LA"
           # if game.home == "JAC": game.home="JAX"
           # if game.home == "STL": game.home="LA"
-          livestatus['off'] = drive.team
+          livestatus['off'] = nfl_team_id_lookup[drive.team]
           if drive.team == game.home:
             livestatus['def'] = nfl_team_id_lookup[game.away]
           else:
@@ -195,7 +196,6 @@ def update_nfl_statistics(year, week, weektype, update_all):
               query = (('insert into nfl_live_game (update_key, nfl_schedule_gsis, down, to_go, quarter, off_nfl_team_id, def_nfl_team_id, yard_line, time, week, nfl_week_type_id, year, home_score, away_score, note, details, play_id) values ('+
                 '%s,%s,%s,%s,"%s",%s,%s,%s,"%s",%s,(select id from nfl_week_type where text_id = "%s"),%s,%s,%s,"%s","%s",%s)') %
                 (str(unix_timestamp), ls['gamekey'],ls['down'],ls['to_go'],ls['quarter'],ls['off'],ls['def'],str(ls['yardline']),ls['time'],str(week),weektype,str(year), str(game.score_home), str(game.score_away),ls['note'],MySQLdb.escape_string(ls['details']),str(lastplay.playid)))
-
               cur.execute(query)
               live_changes_made = True
 
@@ -626,7 +626,7 @@ def init_playerdict(team_id):
   return playerdict
 
 # Used to look up database IDs for NFL teams
-def get_nfl_team__id_dict():
+def get_nfl_team_id_dict():
   cur.execute('select id, club_id, alt_club_ids from nfl_team')
   team_dict = collections.defaultdict(lambda: 0, {})
   for row in cur.fetchall():
