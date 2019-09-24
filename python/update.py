@@ -566,7 +566,7 @@ def update_schedule(season_year, week, weektype="REG"):
       rz = g.getAttribute('rz')
       ga = g.getAttribute('ga')
       h_id = team_dict[home]
-      a_id = team_dict[away]
+      v_id = team_dict[away]
       (hour, minute) = time.split(":")
 
       # Ugh, this timezone stuff is ugly since it's in 12-hour with no AM/PM and there are games
@@ -594,15 +594,15 @@ def update_schedule(season_year, week, weektype="REG"):
       cur.execute("Select id from nfl_schedule where gsis = "+gsis)
       if cur.rowcount > 0:
         query = (('update nfl_schedule set eid=%s,d=%s,t="%s",q="%s",k="%s",h="%s",hnn="%s",v="%s",vnn="%s",hs="%s",vs="%s"'
-                +',p="%s",rz="%s",ga="%s",start_time="%s",year="%s",h_id=%s,a_id=%s where id = %s') %
+                +',p="%s",rz="%s",ga="%s",start_time="%s",year="%s",h_id=%s,v_id=%s where id = %s') %
             (eid,day,time,quarter,k,home,home_long,away,away_long,home_score,away_score,p,rz,ga,
-                str(start_time)[:-6],str(season_year),str(h_id),str(a_id),cur.fetchone()['id']))
+                str(start_time)[:-6],str(season_year),str(h_id),str(v_id),cur.fetchone()['id']))
         updated += 1
       else:
-        query = ("Insert into nfl_schedule (eid, gsis, d, t, q, k, h, hnn, hs, v, vnn, vs, p, rz, ga, gt, week, year, start_time,h_id,a_id) "+
+        query = ("Insert into nfl_schedule (eid, gsis, d, t, q, k, h, hnn, hs, v, vnn, vs, p, rz, ga, gt, week, year, start_time,h_id,v_id) "+
 			   "Values(%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s)" %
 	       (eid, gsis, day, time, quarter, k, home, home_long, home_score, away, away_long, away_score, p, rz, ga, 
-                weektype, week, season_year, str(start_time)[:-6],str(h_id),str(a_id)))
+                weektype, week, season_year, str(start_time)[:-6],str(h_id),str(v_id)))
         added += 1
       cur.execute(query)
 
