@@ -101,7 +101,6 @@ class Common_noauth_model extends CI_Model{
                 return $next_game;
             else  // It's after Monday night, need to adjust to allow MNF to end.
             {
-                echo $most_recent->start;
                 // If the most recent game is 12 hours in the past, roll to the next week.
                 if ($most_recent->start + (60*60*12) < $current_time)
                     return $next_game;
