@@ -54,8 +54,8 @@
                                     <div class="column is-5">
                                         <div class="columns">
                                             <div class="column is-3">
-                                                <div class="<?=$m->v_id?>_o-clubid"><?=$m->v_id?></div>
-                                                <div class="<?=$m->h_id?>_o-clubid"><?=$m->h_id?></div>
+                                                <div class="<?=$m->v_id?>_o-clubid"><?=$m->v?></div>
+                                                <div class="<?=$m->h_id?>_o-clubid"><?=$m->h?></div>
                                             </div>
                                             <div class="column is-3">
                                                 <div class="<?=$m->v_id?>_o-score">-</div>
