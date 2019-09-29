@@ -214,7 +214,7 @@ class Waiverwire_model extends MY_Model{
             ->where('position.year',$pos_year)->get()->result();
         $pickup_nfl_pos = $this->db->select('nfl_position_id')->from('player')->where('id',$pickup_id)->get()->row()->nfl_position_id;
         $temp = $this->db->select('nfl_position_id')->from('player')->where('id',$drop_id)->get()->row();
-        if (count($temp) == 1)
+        if ($temp)
             $drop_nfl_pos = $temp->nfl_position_id;
         else
             $drop_nfl_pos = 0;

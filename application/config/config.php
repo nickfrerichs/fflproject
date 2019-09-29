@@ -378,10 +378,10 @@ $config['encryption_key'] = $fflp_encryption_key;
 $config['sess_driver'] = 'database';
 $config['sess_save_path'] = 'ci_sessions';
 //$config['sess_cookie_name'] = 'ci_session';
-// if (isset($fflp_session_expire))
-//     $config['sess_expiration'] = $fflp_session_expire;
-// else
-$config['sess_expiration'] = 7200;
+if (isset($fflp_session_expire))
+    $config['sess_expiration'] = $fflp_session_expire;
+ else
+    $config['sess_expiration'] = 1;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

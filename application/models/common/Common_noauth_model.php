@@ -405,12 +405,15 @@ class Common_noauth_model extends CI_Model{
             ->where('year = '.$year.' and week = '.$week.' and gt ="'.$weektype.'"'.
             ' and (v_id = "'.$p_team_id.'" or h_id = "'.$p_team_id.'")')
             ->get()->row();
-        if (count($game) == 0)
-            return 0;
-        if ($p_team_id == $game->v_id)
-            return $game->h_id;
+        if ($game)
+        {
+            if ($p_team_id == $game->v_id)
+                return $game->h_id;
+            else
+                return $game->v_id;
+        }
         else
-            return $game->v_id;
+            return 0;
 
     }
 
