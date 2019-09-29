@@ -82,7 +82,7 @@ $this->load->view('components/modal', array('id' => 'drop-modal',
                                 </td>
                                 <td>
                                     <?=$a->p_first.' ',$a->p_last?> (<?=$a->p_pos.' - '.$a->p_club_id?>)
-                                    <?php if(count($pending > 1) && $a->ww_id == $latest_request_id): ?>
+                                    <?php if(count($pending) > 1 && $a->ww_id == $latest_request_id): ?>
                                         <span style="font-size:.8em"><b>*Preferred*</b></span>
                                     <?php elseif(count($pending)>1):?>
                                         <span style="font-size:.8em"><a class="set-preferred" data-id="<?=$a->ww_id?>" href="#">(Set Preferred)</a></span>
