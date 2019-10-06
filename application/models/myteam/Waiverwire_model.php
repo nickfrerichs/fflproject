@@ -395,12 +395,12 @@ class Waiverwire_model extends MY_Model{
             $pickup_player = $this->player_statistics_model->get_player_data($pickup_id);
             $drop_player = $this->player_statistics_model->get_player_data($drop_id);
 
-            if (count($pickup_player) == 1)
+            if ($pickup_player)
                 $text.= 'PICKUP: ('.$pickup_player->pos.' - '.$pickup_player->club_id.') '.$pickup_player->first_name.' '.$pickup_player->last_name.' ';
             else
                 $text.= 'PICKUP: No One ';
 
-            if (count($drop_player) == 1)
+            if ($drop_player)
                 $text.= 'DROP: ('.$drop_player->pos.' - '.$drop_player->club_id.') '.$drop_player->first_name.' '.$drop_player->last_name.' ';
             else
                 $text.= 'DROP: No One ';
