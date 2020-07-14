@@ -117,6 +117,9 @@ def update_standings(year, week ,weektype):
 
         for week in weeks:
 
+            # Check if this weeks NFL games are all marked complete?
+            # Either by the nfl_schedule quarter having F in it, or by 3 hours past the start times of all games
+
             # Get score totals for this week
             query = (('SELECT sum(fs.points) as points, team_id FROM fantasy_statistic as fs join starter as s on '+
                     's.player_id = fs.player_id and s.year = fs.year and s.week = fs.week where fs.league_id = %s and '+
