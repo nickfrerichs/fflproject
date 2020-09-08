@@ -1,15 +1,34 @@
 # fflproject
 Fantasy Football League Project is an NFL fantasy football league manager created in the spirit of phpFFL. It's built on the Codeigniter framework with a goal of delivering a more modern experience to owners. It depnds on the python package nflgame for retrieving NFL data.
 
-### New for 2019 Season:
+### 2020 Season:
 
-Whats new:
+The backend APIs used for stats went away recently. As such, much of this project is up in the air at the moment and mid-season development will likely happen this season. Be prepared to go several weeks with no scoring (yes, you may have to do pen/paper until a solution is figured out).
 
-- More consistent look on both the user and admin side
-- Slightly more mobile friendly
-- Bench scoring now appears on weekly scoring page
-- Draft: player ranks are now part of the normal search, watch list should be more useful for keeping an eye on prospects
-- A few bugs/performance issues fixed
+There is currently enough working for a draft to take place:
+- Player updates
+- NFL schedule updates
+
+Currently not working
+- Stats/scoring and live scoring
+- Draft ranks
+- Injuries
+- Most anyting else needing an outside data source.
+
+For those brave enough to proceed this season, here are steps to move from 2019s code to current 2020 code:
+- Run db_upgrade.py (Takes a few seconds to run this time)
+- add API_TOKEN_PATH to ./python/config.py (path to store a temporary token for data gathering)
+- python update.py -schedule -year 2020 -week all
+- python update.py -players
+- python update.py -player_draft_ranks (these aren't working, but this resets them to 999 to avoid confusion)
+
+In the GUI:
+- admin > league settings > season > end season (should see ready to begin 2020 season)
+- league > settings > offseason enabled off (logout and back in)
+- admin > season > draft > create draft order
+- admin > season > draft > draft settings
+
+Good Luck!
 
 ![News screenshot](https://user-images.githubusercontent.com/5790350/62672877-ef580480-b961-11e9-946f-0e4e2fecade6.png)
 
