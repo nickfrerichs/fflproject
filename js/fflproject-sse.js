@@ -249,7 +249,7 @@ function sse_live_draft_events(live_draft)
 
 
 		// Also update some admin stuff in on-the-block
-		if ((live_draft.start_time == "" || live_draft.start_time == null) && live_draft.scheduled_start_time > live_draft.current_time)
+		if ((live_draft.start_time == "" || live_draft.start_time == null || live_draft.start_time == 0) && live_draft.scheduled_start_time > live_draft.current_time)
 			{$("#admin-pause-button").text("Start Draft");}
 		else if ((live_draft.start_time <= live_draft.current_time) && live_draft.paused <= 0)
 			{$("#admin-pause-button").text("Pause Draft");}
