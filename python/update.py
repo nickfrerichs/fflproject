@@ -76,8 +76,8 @@ def main():
 #   if(args.player_news):
 #     update_player_news(year, week, weektype)
 
-#   if(args.player_draft_ranks):
-#     update_player_draft_ranks()
+    if(args.player_draft_ranks):
+        update_player_draft_ranks()
 
 #   if(args.player_injuries):
 #     update_player_injuries()
@@ -167,6 +167,9 @@ def update_players(year, week, weektype):
         gsis_id = p["person"]["gsisId"]
         esbid = p["person"]["esbId"]
         
+        if gsis_id == "00-0027656":
+            print(json.dumps(p,indent=4))
+
         # Used to be gsis_name, not sure if we have one of these, but creating it manually
         short_name = first[0]+". "+last
         if p["person"]["currentPlayer"]["height"] is not None:
@@ -209,7 +212,7 @@ def update_players(year, week, weektype):
         if p["person"]["currentPlayer"].get("currentTeam") is None:
             team = str(team_dict["None"])
         else:
-            team = str(team_dict[p["person"]["currentPlayer"]["currentTeam"]["id"]])
+            team = str(team_dict[p["person"]["currentPlayer"]["currentTeam"]["id"].split("-")[0]])
 
         active = (1 if status not in ["None","CUT"] else 0)
 
@@ -325,6 +328,11 @@ def update_players(year, week, weektype):
     print "Players marked inactive: "+str(num_inactive)
     db.commit()
 
+def update_player_draft_ranks():
+    query = "update draft_player_rank set rank = '999.99', aav = '99.9', rank_order = '999'"
+    cur.execute(query)
+    db.commit()
+
 def update_schedule(season_year, week, weektype="REG"):
 
     team_dict = get_team_dict()
@@ -380,8 +388,9 @@ def update_schedule(season_year, week, weektype="REG"):
 
             home_long = g["homeTeam"]["nickName"]
             away_long = g["awayTeam"]["nickName"]
-            h_id = team_dict[g["homeTeam"]["id"]]
-            v_id = team_dict[g["awayTeam"]["id"]]
+            h_id = team_dict[g["homeTeam"]["id"].split("-")[0]]
+            v_id = team_dict[g["awayTeam"]["id"].split("-")[0]]
+
 
             # Otherstuff I used to have available here, maybe just leave since this is the schedule update
             quarter = ""
@@ -617,7 +626,8 @@ def get_team_dict():
     cur.execute('select shield_id, id, club_id, alt_club_ids from nfl_team')
     team_dict = collections.defaultdict(lambda: 0, {})
     for row in cur.fetchall():
-        team_dict[row['shield_id']] = row['id']
+        shield_id = row['shield_id'].split("-")[0]
+        team_dict[shield_id] = row['id']
         # Old from when club_ids were used to match
         # if row['alt_club_ids']:
         #     for alt in row['alt_club_ids'].split(','):
@@ -643,7 +653,7 @@ parser.add_argument('-team_photos', action="store_true", default=False, help="Up
 #parser.add_argument('-photos', action="store_true", default=False, help="Check for photos for players that don't have one.")
 #parser.add_argument('-clear_player_generic_photo', action="store", default=None, required=False, help="Specify filename of player photo. Photos matching this file's hash will be cleared so they can be re-scanned.")
 #parser.add_argument('-player_news', action="store_true", default=False, help="Update player news from NFL Fantasy api.")
-#parser.add_argument('-player_draft_ranks', action="store_true", default=False, help="Update player draft rankings from NFL Fantasy api.")
+parser.add_argument('-player_draft_ranks', action="store_true", default=False, help="Update player draft rankings - Currently sets all to 999")
 #parser.add_argument('-player_injuries', action="store_true", default=False, help="Update player injury data from nfl.com/injuries.")
 
 
