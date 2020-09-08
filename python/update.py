@@ -167,9 +167,6 @@ def update_players(year, week, weektype):
         gsis_id = p["person"]["gsisId"]
         esbid = p["person"]["esbId"]
         
-        if gsis_id == "00-0027656":
-            print(json.dumps(p,indent=4))
-
         # Used to be gsis_name, not sure if we have one of these, but creating it manually
         short_name = first[0]+". "+last
         if p["person"]["currentPlayer"]["height"] is not None:
