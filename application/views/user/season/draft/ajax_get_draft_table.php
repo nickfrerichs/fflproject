@@ -1,6 +1,5 @@
 <?php foreach ($players as $p): ?>
 	<tr>
-		
 		<td>
 			<?=$p->rank?>
 		</td>

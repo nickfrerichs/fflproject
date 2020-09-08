@@ -204,7 +204,7 @@ function sse_live_draft_events(live_draft)
 			}
 			else
 			{
-				$(loadContent('draft-list'));
+
 			}
 			
 			// Update watch table to remove recently drafted players
@@ -249,7 +249,7 @@ function sse_live_draft_events(live_draft)
 
 
 		// Also update some admin stuff in on-the-block
-		if (live_draft.start_time == "" || live_draft.start_time == null || live_draft.start_time > live_draft.current_time)
+		if ((live_draft.start_time == "" || live_draft.start_time == null) && live_draft.scheduled_start_time > live_draft.current_time)
 			{$("#admin-pause-button").text("Start Draft");}
 		else if ((live_draft.start_time <= live_draft.current_time) && live_draft.paused <= 0)
 			{$("#admin-pause-button").text("Pause Draft");}
@@ -263,7 +263,7 @@ function sse_live_draft_events(live_draft)
 			var tr_html = '<tr>';
 			tr_html += '<td><strong>'+player.first_name+' '+player.last_name+'</strong></td>';
 			tr_html += '<td>'+player.club_id+' - '+player.position+'</td>';
-			tr_html += '<td>Week '+live_draft.byeweeks[player.club_id]+'</td>';
+			tr_html += '<td>Week '+live_draft.byeweeks[player.nfl_team_id]+'</td>';
 			tr_html += '<td>'+player.actual_pick+'</td>';
 			tr_html += '<td class="hide-for-extra-small">Rd: '+player.round+' Pick: '+player.pick+'</td>';
 

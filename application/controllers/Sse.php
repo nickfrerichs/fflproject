@@ -140,6 +140,7 @@ class Sse extends MY_User_Controller{
                     else // If no current pick, include it in upcoming
                         $data['live_draft']['upcoming_picks'] = $this->draft_model->get_upcoming_picks_data(true);
                     $data['live_draft']['start_time'] = $draft_settings->draft_start_time;
+                    $data['live_draft']['scheduled_start_time'] = $draft_settings->scheduled_draft_start_time;
                     $data['live_draft']['current_time'] = $now;
                     
                    if (is_object($data['live_draft']['current_pick']))

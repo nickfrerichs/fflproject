@@ -231,10 +231,8 @@ $body =     '	<div class="text-center">This will clear your current watch list!<
 $(document).ready(function(){
 
 	//$.post("<?=site_url('season/draft/ajax_get_update_key')?>"); // in case of stale key, force update on load
-	
 	$(loadContent('draft-list'));
 	$(loadContent('watch-list'));
-	
 	updateTimer();
 
 });
@@ -339,6 +337,7 @@ $("#draft-list, #watch-list").on("click",".btn-draft",function(event){
 		<?php endif;?>
 		$(loadContent('draft-list'));
 		$(loadContent('watch-list'));
+		
 		if(vals[0] == "draft"){loadMyTeam();}
 	});
 })

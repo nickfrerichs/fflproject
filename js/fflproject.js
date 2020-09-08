@@ -44,6 +44,7 @@ function loadContent(targetSel)
     // $.post(url, {'page':page, 'pos':pos, 'by':by, 'order':order, 'search' : search, 'per_page': per_page,
     // 'year':year, 'starter':starter, 'custom':custom, 'var1':var1}, function(data){
     var url = $('#'+targetSel).data('url');
+    console.log("post: " + url);
     $.post(url, {'limit':limit, 'order':order, 'by':by, 'filters':filters, 'var1':var1, 'checkbox' : check_val}, function(data){
         
         if(data.success)
