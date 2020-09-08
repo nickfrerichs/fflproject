@@ -3,7 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import config as c
 
-CURRENT_VERSION = '1.90'
+CURRENT_VERSION = '2.00'
 
 db = MySQLdb.connect(host=c.DBHOST, user=c.DBUSER, passwd=c.DBPASS, db=c.DBNAME, cursorclass=MySQLdb.cursors.DictCursor)
 cur = db.cursor()
@@ -23,6 +23,94 @@ def main():
 def upgrade_db(version):
 
     
+    if version == '1.90':
+        if not column_exists("shield_id", "nfl_team"):
+            query = 'ALTER TABLE `nfl_team` ADD `shield_id` varchar(36)'
+            cur.execute(query)
+            db.commit()
+
+            cur.execute("update nfl_team set shield_id = '10040610-2019-7c7b-0e9a-0f8d6220241e' where club_id = 'BUF'")
+            cur.execute("update nfl_team set shield_id = '10042700-2019-4b07-6a38-d3518b6884d9' where club_id = 'MIA'")
+            cur.execute("update nfl_team set shield_id = '10043200-2019-7cf1-7758-0ce80ec116ad' where club_id = 'NE'")
+            cur.execute("update nfl_team set shield_id = '10043430-2019-2e60-9b74-01423d60638a' where club_id = 'NYJ'")
+            cur.execute("update nfl_team set shield_id = '10041400-2019-35c8-1b91-898e2f05bad6' where club_id = 'DEN'")
+            cur.execute("update nfl_team set shield_id = '10042310-2019-54ba-add9-2b5d27db69a4' where club_id = 'KC'")
+            cur.execute("update nfl_team set shield_id = '10042520-2019-9265-6f1c-949afae5d4c2' where club_id = 'OAK'")
+            cur.execute("update nfl_team set shield_id = '10044400-2019-c128-1577-78c01f95406e' where club_id = 'LAC'")
+            cur.execute("update nfl_team set shield_id = '10040325-2019-fe5a-96d1-46b29a6a2b60' where club_id = 'BAL'")
+            cur.execute("update nfl_team set shield_id = '10040920-2019-88f4-2e7d-326ec335390f' where club_id = 'CIN'")
+            cur.execute("update nfl_team set shield_id = '10041050-2019-e8e3-87b7-16eebe43325a' where club_id = 'CLE'")
+            cur.execute("update nfl_team set shield_id = '10043900-2019-3a12-6e7b-264609c83faa' where club_id = 'PIT'")
+            cur.execute("update nfl_team set shield_id = '10042120-2019-1df5-9c5f-335a1621d612' where club_id = 'HOU'")
+            cur.execute("update nfl_team set shield_id = '10042200-2019-92bd-2b26-b917bef8834d' where club_id = 'IND'")
+            cur.execute("update nfl_team set shield_id = '10042250-2019-c1fb-5c25-57ced9e7e11f' where club_id = 'JAX'")
+            cur.execute("update nfl_team set shield_id = '10042100-2019-1a2b-fa0e-7315593369f1' where club_id = 'TEN'")
+            cur.execute("update nfl_team set shield_id = '10041200-2019-c801-5cdc-c88505520ad4' where club_id = 'DAL'")
+            cur.execute("update nfl_team set shield_id = '10043410-2019-baf7-581e-93795cda93c6' where club_id = 'NYG'")
+            cur.execute("update nfl_team set shield_id = '10043700-2019-3e28-0cb1-4bbe9b06a082' where club_id = 'PHI'")
+            cur.execute("update nfl_team set shield_id = '10045110-2019-998f-7582-b44a91c13987' where club_id = 'WAS'")
+            cur.execute("update nfl_team set shield_id = '10043800-2019-3db6-e772-19c9ba3f535c' where club_id = 'ARI'")
+            cur.execute("update nfl_team set shield_id = '10044500-2019-6f47-1cce-7b67a913d323' where club_id = 'SF'")
+            cur.execute("update nfl_team set shield_id = '10044600-2019-e8d2-8f4a-9ca6a49b04d5' where club_id = 'SEA'")
+            cur.execute("update nfl_team set shield_id = '10042510-2019-b9c6-8f8d-63eec0f3db77' where club_id = 'LA'")
+            cur.execute("update nfl_team set shield_id = '10040810-2019-3a06-01aa-61e81c04a8c8' where club_id = 'CHI'")
+            cur.execute("update nfl_team set shield_id = '10041540-2019-f1f7-3e6c-cf6f2328a15e' where club_id = 'DET'")
+            cur.execute("update nfl_team set shield_id = '10041800-2019-7f02-1c50-7b0b1698eb62' where club_id = 'GB'")
+            cur.execute("update nfl_team set shield_id = '10043000-2019-8ed4-5a69-08ce2bf7af27' where club_id = 'MIN'")
+            cur.execute("update nfl_team set shield_id = '10040200-2019-7231-8de9-4fafd774b04b' where club_id = 'ATL'")
+            cur.execute("update nfl_team set shield_id = '10040750-2019-b856-3e58-291f0af0caee' where club_id = 'CAR'")
+            cur.execute("update nfl_team set shield_id = '10043300-2019-7a23-65e6-76dca4e10c9a' where club_id = 'NO'")
+            cur.execute("update nfl_team set shield_id = '10044900-2019-66b1-6866-478f9b5b4539' where club_id = 'TB'")
+            cur.execute("update nfl_team set shield_id = 'None' where club_id = 'NONE'")  
+
+            db.commit()      
+
+        if not column_exists("shield_id", "nfl_schedule"):
+            query = 'ALTER TABLE `nfl_schedule` ADD `shield_id` varchar(36)'
+            cur.execute(query)
+            query = ('ALTER TABLE `nfl_schedule` ADD INDEX (`shield_id`)')
+            cur.execute(query)
+            db.commit()
+
+        if not column_exists("gameDetailId", "nfl_schedule"):
+            query = 'ALTER TABLE `nfl_schedule` ADD `gameDetailId` varchar(36)'
+            cur.execute(query)
+            query = ('ALTER TABLE `nfl_schedule` ADD INDEX (`gameDetailId`)')
+            cur.execute(query)
+            db.commit()
+
+        # Fix player birthdates, 0 is no longer valid
+        cur.execute('update player set birthdate = "0000-01-01" where CAST(birthdate AS CHAR(10)) = "0000-00-00"')
+        cur.execute('update player set last_seen = "0000-01-01 00:00:00" where CAST(last_seen AS CHAR(19)) = "0000-00-00 00:00:00"')
+        db.commit()
+        query = 'ALTER TABLE `player` CHANGE `last_seen` `last_seen` DATETIME NOT NULL DEFAULT "0000-01-01 00:00:00", CHANGE `birthdate` `birthdate` DATE NOT NULL DEFAULT "0000-01-01"'
+        cur.execute(query)
+        db.commit()
+
+        if not column_exists("shield_id", "player"):
+            query = 'ALTER TABLE `player` ADD `shield_id` varchar(36)'
+            cur.execute(query)
+            query = ('ALTER TABLE `player` ADD INDEX (`shield_id`)')
+            cur.execute(query)
+            db.commit()
+
+        if not column_exists("current_shield_id", "player"):
+            query = 'ALTER TABLE `player` ADD `current_shield_id` varchar(36)'
+            cur.execute(query)
+            query = ('ALTER TABLE `player` ADD INDEX (`current_shield_id`)')
+            cur.execute(query)
+            db.commit()
+
+        if not column_exists("headshot_url", "player"):
+            query = 'ALTER TABLE `player` ADD `headshot_url` varchar(100)'
+            cur.execute(query)
+
+        query = 'update site_settings set db_version = "%s"' % ("2.00")
+        cur.execute(query)
+        db.commit()
+
+        return get_db_version() 
+
     if version == '1.80':
         ###################################################################
         # Switch to database ID to reference NFL teams instead of club_id
