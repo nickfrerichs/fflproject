@@ -15,6 +15,8 @@ def GET_PLAYERS(first, season, after=None):
                             gsisId
                             esbId
                             collegeName
+                            slug
+                            displayName
                             headshot{
                                 url
                             }

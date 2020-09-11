@@ -20,6 +20,8 @@ query = 'select current_timestamp'
 cur.execute(query)
 sql_now = cur.fetchone()['current_timestamp']
 
+
+
 try:
     proxies = c.PROXIES
 except:
@@ -30,7 +32,7 @@ try:
 except:
     headers = None
 
-api = shieldquery.ShieldAPI(token_path=c.API_TOKEN_PATH, proxies=proxies, headers=headers)
+api = shieldquery.ShieldAPI(proxies=proxies, headers=headers)
 
 def main():
     result = api.current_season_state()
@@ -119,6 +121,7 @@ def update_players(year, week, weektype):
     print("Retreiving player data, please wait...")
     while True:
         result = api.query(q.GET_PLAYERS(200,2019,after))
+        print(result)
         count += len(result["data"]["viewer"]["players"]["edges"])
         if args.verbose:
             print("Got "+str(count)+" players.")
@@ -166,6 +169,9 @@ def update_players(year, week, weektype):
         full = p["person"]["firstName"] + " " +p["person"]["lastName"]
         gsis_id = p["person"]["gsisId"]
         esbid = p["person"]["esbId"]
+        if gsis_id == "00-0032187":
+            print(json.dumps(p,indent=4))
+
         
         # Used to be gsis_name, not sure if we have one of these, but creating it manually
         short_name = first[0]+". "+last
